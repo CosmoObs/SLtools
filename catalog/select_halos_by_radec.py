@@ -4,7 +4,8 @@
 # Select Halos based on position. 
 # 
 #@param HDUlist : pyfits catalog 
-#@param
+#@param ra is a tuple (ra_min, ra_max)
+#@param dec is a tuple (dec_min, dec_max)
 
 def select_halos_by_radec( hdulist, ra=(), dec=() ):
 
