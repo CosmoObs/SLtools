@@ -42,7 +42,6 @@ def select_halos_by_radec( hdulist, ra=(), dec=() ):
 
 ## choose_catalog
 # In case of more than one halo catalog,  this function returns the catalog file name which contains the given sky region
-
 #
 #@param sky_region two tuples e.g. ((ra_min, ra_max), (dec_min, dec_max)).
 #@return Return the catalog halo file name 
@@ -61,8 +60,8 @@ def choose_catalog( catalogs=[],sky_region=() ):
     pffset = catset - fitset; 
 
     for _each in fitset:
-        hdulist = open_FITS_catalog( _each )
-        fake_list = SelectHalos_by_RaDec( hdulist, RAmin, RAmax, DECmin, DECmax )
+        hdulist = open_fits_catalog( _each )
+        fake_list = select_halos_by_radec( hdulist, RAmin, RAmax, DECmin, DECmax )
         if (len(fake_list) != 0):
             return (Catalog)
 
