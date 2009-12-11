@@ -1,0 +1,76 @@
+
+*** get_nfw_concentration code versio 1.3 ***
+
+get_nfw_concentration returns the concentration parameter for a given halo mass and redshift based on Millennium Simulation results  for c(M) at z=0, 0.5, 1, 2 and 3. (Gao et al. 2008). We assume for z>0 the probability distribution function (P.D.F) for concentrations measured by Neto et al. (2007) at z=0. See more details on the get_nfw_concentration development code at http://twiki.on.br/bin/edit/StrongLensing/CMdist
+
+This release contains the files:
+
+README - this file
+HISTORY - what changed version to version
+get_nfw_concentration.c - main source file
+rand.c, rand.h - random generator adapted from Numerical Recipes
+get_nfw_concentration.conf - get_nfw_concentration configuration file 
+get_nfw_concentration.i - interface file for Python module
+testing/get_nfw_concentration_test.py - an example script using get_nfw_concentration python module
+
+*** Known issues ***
+
+Priority	Owner	Summary
+Medium	angelofausti	[get_nfw_concentration] -d option doesn't take effect
+Low	angelofausti	[get_nfw_concentration] Add verbose option
+Low	angelofausti	[get_nfw_concentration] Add -a option to return the mean concentration value for a given mass
+
+*** Installation instructions ***
+
+1) Compiling get_nfw_concentration for comand line usage
+
+$ cd get_nfw_concentration
+$ make
+
+Using get_nfw_concentration
+
+$ ./get_nfw_concentration -h
+Usage: get_nfw_concentration -m <mass> [-z <redshift>] [-d <output over density>] [-s seed] [-h]
+
+get_nfw_concentration 1.0 - Return the concentration parameter for a given halo mass and redshift.
+The input c(m,z) relations are specified in the configuration file 'get_nfw_concentration.conf'. 
+
+Options: 
+        -m : Set the halo mass in units of Msol/h
+        -z : Set the halo redshift (default z=0) 
+        -d : Set the output over density (default Delta=200)
+        -s : Fixed seed for random generator (default seed is variable, based on clock time)
+        -h : Show this help
+
+Note: Mass and redshift values must lie in the range specified in the configuration file.
+
+Each execution of get_nfw_concentration will return a random concentration value, following the P.D.F of c. But a fixed seed can be provided.
+
+$ ./get_nfw_concentration -m 1e14
+5.74
+$ ./get_nfw_concentration -m 1e14
+4.68
+$ ./get_nfw_concentration -m 1e14 -s 12345678
+4.10
+$ ./get_nfw_concentration -m 1e14 -s 12345678
+4.10
+
+2) Compiling get_nfw_concentration as a python module
+
+$ make module
+
+Make sure you have get_nfw_concentration.py, _get_nfw_concentration.so and get_nfw_concentration.conf in your PATH. Then use get_nfw_concentration inside a python script:
+
+>>> import get_nfw_concentration
+>>>
+>>> mass=1e14
+>>> redshift=0.2
+>>> seed=0
+>>>
+>>> get_nfw_concentration.read_config("get_nfw_concentration.conf")
+>>> get_nfw_concentration.c(mass, redshift, seed)
+4.69
+
+
+
+

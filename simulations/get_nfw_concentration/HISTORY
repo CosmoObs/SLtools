@@ -1,0 +1,21 @@
+Version 1.4
+	Renamed to get_nfw_concentration
+	Imported to git at slcode/tools/simulations
+
+Version 1.3
+	
+	Added release docs.
+	Fixed issue: Medium angelofausti When mass is beyond the valid range set in the configuration file should return warning not an error
+
+Version 1.2
+	Adapted for SWIG to create a python module
+	Fixed issue: Medium	angelofausti	Adapt code for using with Swig
+
+Version 1.1
+	A couple of bug fixed:
+	Medium	angelofausti	variable seed doesn't work when cmz is called in a for loop
+	Low	angelofausti	help text about -d option should be more precise
+
+Version 1.0
+
+	Initial version
