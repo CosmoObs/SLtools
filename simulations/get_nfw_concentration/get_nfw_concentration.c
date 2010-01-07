@@ -1,3 +1,28 @@
+/*! @package get_nfw_concentration 
+ *
+ *  @brief Get the NFW concentration parameter from fits of the c(M,z) relation obtained from cosmological simulations.
+ *
+ * get_nfw_concentrations runs as a standalone executable or as a Python module.
+ *
+ * After compiling and importing the module, the following functions are available: 
+ *
+ *    get_nfw_concentration.read_config("<get_nfw_concentration configuration file>");
+ *
+ *    get_nfw_concentration.c(mass, redshift, seed);
+ *
+ *    get_nfw_concentration.help();
+ * 
+ * Set the 'seed' parameter as 0 for random generation based on the clock time, 
+ * otherwise a fixed seed can be used to reproduce the same concentration value.
+ * 
+ * See file testing/testing.py for an example of using get_nfw_concentration with Python. 
+ *
+ * By default get_nfw_concentration uses the c(M,z) relation from Gao et al. 2008, but other results from cosmological simulations can be set in the configuration file.
+ *
+ * See also the documentation <A HREF="http://twiki.on.br/bin/view/StrongLensing/CMdist">wiki</A>.
+ *
+ */
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -15,8 +40,6 @@
 
 int count;
 
-// Store data from configuration file
-
 struct {
 	float redshift;
 	float a;
@@ -27,8 +50,22 @@ struct {
 	float delta;
 } config[MAX_CONFIG_LINES];
 
+
 void read_config(char* get_nfw_concentration_conf);
+
+/*! \func Show usage information
+ 
+   \param none
+   \param none
+*/
 void help (void);
+
+/*! Find the halo concentration from tables in the config file
+  
+   @param the halo mass, redshift and a seed for the random number generator
+   @return the halo con
+*/
+
 float c(float m, float redshift, long int start);
 float p_logc(float logc, float mean_logc, float sigma_logc);
 void usage(void);
@@ -168,6 +205,12 @@ float p_logc(float logc, float mean_logc, float sigma_logc)
 
 }
 
+/*! \fn  void read_config(char* get_nfw_concentration_conf)
+ * @brief Read the config file 
+ *
+ * @param name of the config file
+ * @return void
+ * */
 void read_config(char* get_nfw_concentration_conf)
 {
 	char buffer[MAX_CONFIG_SIZE];
