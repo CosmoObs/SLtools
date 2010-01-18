@@ -1,5 +1,8 @@
+import pyfits
+from numpy import zeros, where
+from pylab import poisson
 # poissonian noise addition
-def imgNoiseAdding(Arc_psf_file):
+def add_noise_2_image(Arc_psf_file):
 	Arcs_noise = []
 	for Arc_filename in Arc_psf_file:
 		# Unfortunately the convolution process outputs to a file..
@@ -22,7 +25,7 @@ def imgNoiseAdding(Arc_psf_file):
 		Filename_OUT = ''
 		for i in range( len(Arc_filename) - 6): # the last 6 characters corresponds to 'color.fits'
 			Filename_OUT = Filename_OUT + Arc_filename[i]
-		Filename_OUT = Filename_OUT + 'nz_' + Arc_filename[-6] + '.fits' # Arc_filename[-6] is the 6th str from the end (the colour)
+		Filename_OUT = Filename_OUT + 'ns_' + Arc_filename[-6] + '.fits' # Arc_filename[-6] is the 6th str from the end (the colour)
 
 		#Filename_OUT = string.replace(Arc_filename,'.fits','_psf_nz.fits')
 		pyfits.writeto(Filename_OUT,ArcImg_array,ArcImg_header)
