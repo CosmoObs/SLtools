@@ -4,7 +4,7 @@ import create_color_img
 import get_header_parameter
 import get_image_limits
 import get_length_2loops
-import image_noise_adding
+import add_noise_2_image
 import run_SE_on_frames
 
 add_arcs2image = add_arcs2image.add_arcs2image;
@@ -13,5 +13,5 @@ create_color_img = create_color_img.create_color_img;
 get_header_parameter = get_header_parameter.get_header_parameter;
 get_image_limits = get_image_limits.get_image_limits;
 get_length_2loops = get_length_2loops.get_length_2loops;
-image_noise_adding = image_noise_adding.image_noise_adding;
+add_noise_2_image = add_noise_2_image.add_noise_2_image;
 run_SE_on_frames = run_SE_on_frames.run_SE_on_frames;
