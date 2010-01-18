@@ -1,15 +1,13 @@
-from math import sqrt
-import os
-import string
-
-##@package convolve_frame
-# convolves the specified frames with the specified PSF.
-#
-#@param arc_files
-#@param PSF
-#@param dimpix
-#@return name of the convolved frame and the convolved image file
-def convolve_frame(arc_files, PSF, dimpix):
+# Arc images processing: gaussian convolution .
+# - Files dependencies: Arc_FITS_file
+# - Python dependencies: pyfits,numpy,string,os
+# - External dependencies: gravlens
+# - Internal dependencies: Read_from_Config
+def convolve_frame(ArcFiles_list, PSF):
+	from math import sqrt
+	import string
+	import os
+	dimpix = 0.27
 
 	# Instrumental parameters conversion (")|(px):
 	# The parameters below remain fixed yet
@@ -35,7 +33,7 @@ def convolve_frame(arc_files, PSF, dimpix):
 	pixel_xy = sqrt(Arcsec_per_px)
 
 	Arcs_convolved = []
-	for Arc_filename in arc_files:
+	for Arc_filename in ArcFiles_list:
 
 		if ( string.find(Arc_filename,'.fits') == -1 ) :
 			Arcs_convolved.append(Arc_filename)
@@ -53,7 +51,7 @@ def convolve_frame(arc_files, PSF, dimpix):
 		os.system('echo "sersic 1 0 0 0 0 %s 0 0.5 macro" >> gravlens.in' % (HLR_px))
 		os.system('echo "0 0 0 0 0 0 0 0" >> gravlens.in')
 		os.system('echo "convolve2 %s 3 %s %s %s 3" >> gravlens.in' % (Arc_filename,pixel_xy,pixel_xy,Filename_OUT))
-		os.system('gravlens gravlens.in > /dev/null' )
+		os.system('gravlens gravlens.in > /dev/null')
 		#os.remove('gravlens.in')
 		Arcs_convolved.append(Filename_OUT)
 	return (Arcs_convolved)

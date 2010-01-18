@@ -1,4 +1,4 @@
-import compute_NFW_lens_parameters as KSmod # import KSmod (Gabriel's modules); 
+import compute_nfw_lens_parameters as KSmod # import KSmod (Gabriel's modules); 
 import logging
 
 logging.basicConfig(level=logging.DEBUG,

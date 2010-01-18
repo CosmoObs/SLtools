@@ -24,7 +24,7 @@ module_lnx: $(SRCS) $(INTERFACE)
 
 module_mac: $(SRCS) $(INTERFACE)
 	swig $(SWIGOPT) $(INTERFACE)
-	g++ -I$(PYTHONINC) -framework Python -bundle -bundle_loader $(PYTHONBIN) $(SRCS) $(WRAPFILE) -o $(MODULE)
+	g++ -I$(PYTHONINC) -m32 -framework Python -bundle -bundle_loader $(PYTHONBIN) $(SRCS) $(WRAPFILE) -o $(MODULE)
 	mkdir $(MODULE_DIR)
 	mv $(TARGET).py $(MODULE) $(MODULE_DIR)
 

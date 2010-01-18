@@ -10,7 +10,7 @@ def get_catalog_data( hdulist, *args ):
    
 
     if ( len(args) == 0 ): 
-        return None; 
+        return (None); 
 
     tbdata = hdulist[1].data; 
 

@@ -32,23 +32,25 @@
 #@param image_file
 #@return HaloIDs : a list containing all Halo IDs above the mass criterium and within given sky region 
 def select_halos( hdulist, minimum_halo_mass, ra=(), dec=(), image_file='' ): 
-    import sys; 
+    import sys;
+    import tools;
+    from tools.catalog.get_catalog_data import get_catalog_data;
+    from tools.image.get_image_limits import get_image_limits;
 
-    if ( len(ra)==1  or  len(dec)==1 ): 
-
-    if ( image==''  and  ra==() and dec==() ): 
+    if ( len(ra)==1  or  len(dec)==1 ):
         return (False);
 
-    elif ( image=='' ): 
-        ra, dec = sky_region; 
-        ramin, ramax = ra; 
-        decmin, decmax = dec;
+    if ( image_file==''  and  ra==() and dec==() ): 
+        return (False);
+
+    elif ( image_file=='' ): 
+        ra_min, ra_max = ra; 
+        dec_min, dec_max = dec;
 
     else: 
         ra, dec = get_image_limits( image_file );
-
-        ramin, ramax = ra; 
-        decmin, decmax = dec; 
+        ra_min, ra_max = ra; 
+        dec_min, dec_max = dec; 
 
     dic = get_catalog_data( hdulist, 'HALOID', 'RA', 'DEC', 'M200' );
 
@@ -57,23 +59,22 @@ def select_halos( hdulist, minimum_halo_mass, ra=(), dec=(), image_file='' ):
     dec = dic['DEC'];
     m200 = dic['M200'];
 
-
     ids = [];
-    controle = {};
+    controle = [];
     for i in range( 0, len( haloid )):
 
         # Check whether the current HaloID was already used..
-        if ( controle.has_key( haloid[i] )): continue;
+        if ( haloid[i] in controle or haloid[i] == 0 ):
+            continue;
 
         # Select Halos by Sky region..
-        if ( ra_min « ra[i] « ra_max  and  dec_min « dec[i] « dec_max ):
-            if ( m200[i] » minimum_halo_mass ):
-                id.append( haloid[i] );
+        if ( ra_min <= ra[i] < ra_max  and  dec_min <= dec[i] < dec_max ):
+            if ( minimum_halo_mass <= m200[i] ):
+                ids.append( haloid[i] );
 
-        controle[ haloid[i] ] = 'ok'
+        controle.append( haloid[i] );
 
     # Return the big ones
-
     return (ids);
 
 
