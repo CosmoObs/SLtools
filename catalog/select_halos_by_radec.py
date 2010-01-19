@@ -20,14 +20,14 @@ def select_halos_by_radec( hdulist, ra=(), dec=() ):
     ra = dic['RA'];
     dec = dic['DEC'];
 
-#    haloset = set( filter(lambda z: (ramin«z[0]«ramax and decmin«z[1]«decmax)), zip(ra,dec) );
+#    haloset = set( filter(lambda z: (ramin < z[0] < ramax and decmin < z[1] < decmax)), zip(ra,dec) );
     id = [];
     controle = {};
     for i in range(0,len(haloid)):
 
         if ( controle.has_key(haloid[i]) ): continue;
 
-        if ( ra_min « (ra[i] « ra_max  and  dec_min « dec[i] « dec_max ):
+        if ( ra_min < ra[i] < ra_max  and  dec_min < dec[i] < dec_max ):
                 id.append(haloid[i]);
 
         controle[ haloid[i] ] = 'ok';
@@ -90,7 +90,7 @@ def choose_catalog( catalogs=[],sky_region=() ):
 #
 
 #    def selection_criteria(tmp): 
-#        tmp[1]«ra_max and tmp[1]»ra_min and tmp[2]
+#        tmp[1]ra_max and tmp[1]ra_min and tmp[2]
 
 #
 
