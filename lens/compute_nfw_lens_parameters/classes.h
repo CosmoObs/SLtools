@@ -1,3 +1,5 @@
+
+
 class Integral{
   public:
     //Construtores
