@@ -38,7 +38,7 @@
 #define CONFIG_FILE "get_nfw_concentration.conf"
 #define PROGNAME "get_nfw_concentration"
 
-int count;
+int32_t count;
 
 struct {
 	float redshift;
@@ -66,18 +66,18 @@ void help (void);
    @return the halo con
 */
 
-float c(float m, float redshift, long int start);
+float c(float m, float redshift, int32_t start);
 float p_logc(float logc, float mean_logc, float sigma_logc);
 void usage(void);
 void help(void);
 
-int main(int argc, char *argv[])
+int32_t main(int32_t argc, char *argv[])
 {
-	int s;
+	int32_t s;
 	float mass = 0.0;
 	float redshift = 0.0;
 	float delta = 200;
-	long int seed = 0;
+	int32_t seed = 0;
 	
 	while ((s = getopt(argc, argv, "m:z:d:s:h")) != -1) 
 	{
@@ -95,13 +95,13 @@ int main(int argc, char *argv[])
  				seed=atol(optarg);
 				break;
 			case 'h':
-				help();
+				usage();
 				exit(0);
 			case '?':
-				help();
+				usage();
 				exit(1);
 			default: 
-				help();
+				usage();
 				exit(0);
 		}
 	}
@@ -123,13 +123,13 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-float c(float m, float z, long int start)
+float c(float m, float z, int32_t start)
 {
-	int i;
+	int32_t i;
 	float u, v;
 	float f, a, b;
 	float logm, logc; // logc is the random variable
-	long int seed;
+	int32_t seed;
 
 	logm = log10(m);
 	
@@ -185,8 +185,8 @@ float c(float m, float z, long int start)
 
 	do { 
 		// sort a random point on logc vs. logM plane
-		u=ran0((long)&seed);
-		v=ran0((long)&seed);
+		u=ran0((int32_t)&seed);
+		v=ran0((int32_t)&seed);
 
 		logc = min_logc+v*(max_logc-min_logc);
 
