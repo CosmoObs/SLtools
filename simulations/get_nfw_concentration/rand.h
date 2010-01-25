@@ -1,2 +1,2 @@
-float ran0(int32_t seed);
+float ran0(long long *seed);
 

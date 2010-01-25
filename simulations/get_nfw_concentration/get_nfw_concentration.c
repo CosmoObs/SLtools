@@ -129,7 +129,7 @@ float c(float m, float z, int32_t start)
 	float u, v;
 	float f, a, b;
 	float logm, logc; // logc is the random variable
-	int32_t seed;
+	long long seed;
 
 	logm = log10(m);
 	
@@ -185,8 +185,8 @@ float c(float m, float z, int32_t start)
 
 	do { 
 		// sort a random point on logc vs. logM plane
-		u=ran0((int32_t)&seed);
-		v=ran0((int32_t)&seed);
+		u=ran0(&seed);
+		v=ran0(&seed);
 
 		logc = min_logc+v*(max_logc-min_logc);
 

@@ -14,7 +14,7 @@
  * the unlikely value MASK) to initialize the sequence; Adapted from Numerical 
  * Recipies section 7.1 */
 
-float ran0(int32_t *seed)
+float ran0(long long *seed)
 {
 	int32_t k;
 	float ans;
