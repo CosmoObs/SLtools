@@ -1,3 +1,0 @@
-import get_nfw_concentration;
-
-get_nfw_concentration = get_nfw_concentration.get_nfw_concentration;
