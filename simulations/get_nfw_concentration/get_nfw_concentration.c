@@ -39,7 +39,7 @@
 #define PROGNAME "get_nfw_concentration"
 
 int32_t count;
-
+int32_t read_config_flag = 0;
 struct {
 	float redshift;
 	float a;
@@ -142,6 +142,10 @@ float c(float m, float z, int32_t start)
 		seed = tv.tv_usec;
 	//	printf( "%li \n", seed);
 	}
+	 if (read_config_flag == 0) {
+                fprintf(stderr, "%s error: configuration file was not loaded.\n", PROGNAME);
+                exit(1);
+        }
 
 	// verify redshift range
 	if (z > config[count].redshift) {
@@ -216,6 +220,7 @@ void read_config(char* get_nfw_concentration_conf)
 	char buffer[MAX_CONFIG_SIZE];
 	char *p;
 	FILE *fp;
+	read_config_flag = 0;
 	fp = fopen(get_nfw_concentration_conf, "r");
 
 	if (!fp) {
@@ -251,6 +256,7 @@ void read_config(char* get_nfw_concentration_conf)
 		fprintf(stderr, "%s error: invalid configuration file.\n", PROGNAME);
 		exit(1);
 	}
+	read_config_flag = 1;
 		
 }
 
