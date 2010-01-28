@@ -19,12 +19,14 @@ module_lnx: $(SRCS) $(INTERFACE)
 	gcc -Wall -lm -fpic -c $(SRCS) $(WRAPFILE) -I$(PYTHONINC) 
 	gcc -shared $(COBJS) $(WRAPOBJ) -o $(MODULE)
 	mkdir -p $(MODULE_DIR)
+	cp $(TARGET).conf $(MODULE_DIR)
 	mv $(TARGET).py $(MODULE) $(MODULE_DIR)
 
 module_mac: $(SRCS) $(INTERFACE)
 	swig $(SWIGOPT) $(INTERFACE)
 	gcc -I$(PYTHONINC) -framework Python -bundle -bundle_loader $(PYTHONBIN) $(SRCS) $(WRAPFILE) -o $(MODULE)
 	mkdir -p $(MODULE_DIR)
+	cp $(TARGET).conf $(MODULE_DIR)
 	mv $(TARGET).py $(MODULE) $(MODULE_DIR)
 
 clean: 
