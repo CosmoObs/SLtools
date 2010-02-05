@@ -1,11 +1,6 @@
 import compute_nfw_lens_parameters as KSmod # import KSmod (Gabriel's modules); 
 import logging
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(message)s',
-                    filename='AddArcs.log')
-                    #filemode='w')
-
 ##@package compute_lens_model [formerly kappalens]
 # converts halo model to lens model. if halo is a surface density map, the lens model will be a kappa map. 
 #

@@ -1,12 +1,12 @@
+from math import sqrt
+import string
+import os
 # Arc images processing: gaussian convolution .
 # - Files dependencies: Arc_FITS_file
 # - Python dependencies: pyfits,numpy,string,os
 # - External dependencies: gravlens
 # - Internal dependencies: Read_from_Config
 def convolve_frame(ArcFiles_list, PSF):
-	from math import sqrt
-	import string
-	import os
 	dimpix = 0.27
 
 	# Instrumental parameters conversion (")|(px):
