@@ -1,21 +1,15 @@
 from __future__ import division
 import os
 import pyfits
-from math import pi, cos, sin, log10
-#from pylab import figure, plot, axis, savefig, clf
+import math
 import random
-import numpy
-from numpy import array, argmax, argmin, nonzero, shape, sum, zeros, sqrt, where
-from  numpy.random import poisson
-import string
-from string import replace
-from lens_parameters import lens_parameters # file with the functions
+import numpy as np
 import logging
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(message)s',
-                    filename='AddArcs.log')
-                    #filemode='w')
+#import tools;
+#from tools.gravlens import lens_parameters
+from lens_parameters import lens_parameters # file with the functions
+
 #---------------------------------------------------------------------------------------------------------------------
 
 ## get_source_model
@@ -123,10 +117,10 @@ def tang_caustic(inputlens):
 			rad_CC_x.append(xcritimg[i])
 			rad_CC_y.append(ycritimg[i])
 		#print abs(mu_t/mu_r)
-#	tan_CC_x = array(tan_CC_x)
-#	tan_CC_y = array(tan_CC_y)
+#	tan_CC_x = np.array(tan_CC_x)
+#	tan_CC_y = np.array(tan_CC_y)
 #	##############################################################################
-#	indice = argmax(tan_CC_x**2 + tan_CC_y**2)
+#	indice = np.argmax(tan_CC_x**2 + tan_CC_y**2)
 #	a = 3.0*( (tan_CC_x[indice]**2 + tan_CC_y[indice]**2)**0.5 ) # define 'a', which will be the region, in arcsec, to be converted to fits
 	return {'tan_caustic_x': tan_caustic_x, 'tan_caustic_y': tan_caustic_y, 'tan_CC_x': tan_CC_x, 'tan_CC_y': tan_CC_y, 'rad_caustic_x': rad_caustic_x, 'rad_caustic_y': rad_caustic_y}
 
@@ -146,16 +140,16 @@ def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, source_s
 	# converts tan_caustic_x and tan_caustic_y to the system of coordinates in which thetal = 0 (to find the 4 cusps)
 	# xcrit0 = cos(theta)*x + sin(theta)*y
 	# ycrit0 = -sin(theta)*x + cos(theta)*y
-	theta = thetal*pi/180 # convert thetal to radians
-	tan_caustic_x = array(tan_caustic_x)
-	tan_caustic_y = array(tan_caustic_y)
-	xcrit0 = cos(theta)*tan_caustic_x + sin(theta)*tan_caustic_y
-	ycrit0 = -sin(theta)*tan_caustic_x + cos(theta)*tan_caustic_y
+	theta = thetal*(math.pi)/180 # convert thetal to radians
+	tan_caustic_x = np.array(tan_caustic_x)
+	tan_caustic_y = np.array(tan_caustic_y)
+	xcrit0 = math.cos(theta)*tan_caustic_x + math.sin(theta)*tan_caustic_y
+	ycrit0 = -math.sin(theta)*tan_caustic_x + math.cos(theta)*tan_caustic_y
 	#global cusp1, cusp2, cusp3, cusp4, xlosango, ylosango
-	cusp1 = argmax(ycrit0)
-	cusp2 = argmax(xcrit0)
-	cusp3 = argmin(ycrit0)
-	cusp4 = argmin(xcrit0)
+	cusp1 = np.argmax(ycrit0)
+	cusp2 = np.argmax(xcrit0)
+	cusp3 = np.argmin(ycrit0)
+	cusp4 = np.argmin(xcrit0)
 	xlosango1 = tan_caustic_x[cusp1]*control_rectangle # x coord of point 1 of the losangle
 	ylosango1 = tan_caustic_y[cusp1]*control_rectangle # y coord of point 1 of the losangle
 	xlosango2 = tan_caustic_x[cusp2]*control_rectangle  # x coord of point 2 of the losangle
@@ -185,7 +179,7 @@ def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, source_s
 #@param source_surface_density
 #@return number of point sources to be generated
 def nsource(rectangle_area, source_surface_density):
-	nsources = poisson(rectangle_area*source_surface_density )
+	nsources = np.random.poisson(rectangle_area*source_surface_density )
 	return nsources
 
 #---------------------------------------------------------------------------------------------------------------------	
@@ -197,7 +191,7 @@ def nsource(rectangle_area, source_surface_density):
 #@param deformation_rectangle
 #@param nsources
 #@param inputlens
-#@return source_centers [former potarcxy]	
+#@return source_centers [former potarcxy], image_centers, image_distortions	
 def source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens):
 	minimum_distortion = source_selector_control_params['minimum_distortion']
 	x_vert_1, y_vert_1 = deformation_rectangle[0]
@@ -207,7 +201,7 @@ def source_positions(source_selector_control_params, deformation_rectangle, nsou
 	#global usq, vsq, usq2, vsq2
 	usq = []
 	vsq = []
-	for i in range(nsources):
+	for i in range(0,nsources):
 		xrand =  x_vert_2 + ( x_vert_1 - x_vert_2 ) * random.random() # x coordinate inside the square
 		yrand =  y_vert_2 + ( y_vert_1 - y_vert_2 ) * random.random() # y coordenada inside the square
 		usq.append(xrand) # x coord of a point inside the square, but outside the losangle
@@ -218,52 +212,59 @@ def source_positions(source_selector_control_params, deformation_rectangle, nsou
 	f = open('findimginput.txt', 'w')
 	f.write(inputlens)
 	for i in range (0,len(usq)): # determine the positions of the images of the source
-		f = open('findimginput.txt', 'a')
-		f.write('findimg %0.9f %0.9f findimgoutput%05d.txt\n'  % ( usq[i],vsq[i], i ))
-		f.close()
+		#f = open('findimginput.txt', 'a')
+		f.write('findimg %0.6f %0.6f findimgoutput%05d.txt\n'  % ( usq[i],vsq[i], i ))
+	f.close()
 	# runs gravlens to obtain the images of the positions inside the rectangle (usq,vsq)
 	os.system('gravlens findimginput.txt > /dev/null')
 	f1 = open('gravlensmagtensorcorte.txt', 'w')
 	f1.write(inputlens)
 	imagens = [] # contains the number of images of the source j
+	image_positions = [] # image_positions[i][j] is the (x,y) position of the image j of the source i
 	for i in range (0,len(usq)):
 		filemag	= open('findimgoutput%05d.txt' % i , 'r').readlines()
 		imagens.append(len(filemag)-2)
-		if len(imagens) == 0:
-			print "NUMBER OF POINT IMAGES OF A POINT SOURCE IS ZERO! IS THE GRID OK? "
+		image_positions.append([])
 		for j in range (2,len(filemag)):	
-			f1.write('magtensor %0.9f %0.9f\n' % ( float(filemag[j].split()[0]), float(filemag[j].split()[1])  ) )
+			f1.write('magtensor %0.6f %0.6f\n' % ( float(filemag[j].split()[0]), float(filemag[j].split()[1])  ) )
+			image_positions[i].append( [float(filemag[j].split()[0]), float(filemag[j].split()[1])] )
+	# if gravlens does not finf any images, the grid is not big enough
+	if 0 in imagens and len(imagens) != 0:
+		print 'There are %d point images outside the grid' % imagens.count(0) 
 
 	f1.close()
 	# obtain with the magtensor all the magnifications
 	os.system('gravlens gravlensmagtensorcorte.txt > saidamagtensorcorte.txt')
 	f = open('saidamagtensorcorte.txt' , 'r').readlines()
-	nlinha = len(f) - 6*(sum(imagens)) # I am using this to get the matrix elements without worrying about the number of lines the file has (which depends on the number of parameters of gravlens we modify). 'nlinha' is the number of lines that DON'T contain the output data of magtensor
+	nlinha = len(f) - 6*(np.sum(imagens)) # I am using this to get the matrix elements without worrying about the number of lines the file has (which depends on the number of parameters of gravlens we modify). 'nlinha' is the number of lines that DON'T contain the output data of magtensor
 	source_centers = []
+	image_centers = [] # image_positions[i][j] is the (x,y) position of the image j of the source i
+	image_distortions = [] # image_distortions[i][j] is the (mu_t,mu_r) distortion of the image j of the source i
 	usq2 = []
 	vsq2 = []
-	nimagensSersic = []
 	contj = 0
 	for i in range(0,len(imagens) ): # calculates the magnifications at each point
 		mutemp = 0	
+		distortion_temp = []
 		for j in range (0,imagens[i]): # note that the index 'i' is the same as of usq
 			a11 = float(f[nlinha + (contj)*6].split()[0]) # element 11 of the mag tensor
 			a12 = float(f[nlinha + (contj)*6].split()[1]) # element 12 (=21) of the mag tensor
 			a22 = float(f[nlinha + (contj)*6 + 1].split()[1]) # element 22 of the mag tensor
 			mu_t = ( ((a11 + a22)/2)/(a11*a22 - a12**2) - ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
 			mu_r = ( ((a11 + a22)/2)/(a11*a22 - a12**2) + ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
+			distortion_temp.append( [mu_t,mu_r] )
 			contj = contj + 1
-			#print mu_t/mu_r
 			if abs(mu_t/mu_r) > mutemp:
 				mutemp = abs(mu_t/mu_r)
 		if mutemp > minimum_distortion:
 			source_centers.append([usq[i], vsq[i]])
-			nimagensSersic.append(imagens[i])
+			image_centers.append( image_positions[i] )
+			image_distortions.append( distortion_temp )
 		else:
 			usq2.append(usq[i])
 			vsq2.append(vsq[i])
 	os.system('rm -f findimgoutput*.txt')
-	return source_centers #, usq2, vsq2, cusp1, cusp2, cusp3, cusp4, xlosango, ylosango, usq, vsq
+	return source_centers, image_centers, image_distortions  #, usq2, vsq2, cusp1, cusp2, cusp3, cusp4, xlosango, ylosango, usq, vsq
 
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -278,7 +279,7 @@ def source_positions(source_selector_control_params, deformation_rectangle, nsou
 #@param minimum_distortion : minimum ratio of the tangential and radial magnifications to an image be considered an arc 
 #@param control_rectangle : control parameter to define distance to cusps 
 #@param src_density_or_number
-#@return source_centers [former potarcxy] or "False" (in cases where no critical curves are found)
+#@return source_centers [former potarcxy] or "False" (in cases where no critical curves are found), and image_centers, image_distortions
 def select_source_positions(lens_model, gravlens_params, source_selector_control_params, src_density_or_number): # source_selector_control_params = [minimum_distortion, control_rectangle]
 	# find critical curves (returns 'False' if can't find them)
 	out_find_CC = find_CC(lens_model, gravlens_params)
@@ -317,17 +318,27 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	logging.debug('Number of point sources generated = %d' % nsources)
 	#-----------------------------------------------------------------------------------------------------------
 	# redefine gridhi1 to be half the maximum size of the rectangle
-	gravlens_params['gridhi1'] = 0.5 * max( [x_vert_1 - x_vert_2, y_vert_1 - y_vert_2] )
+	tan_CC_x = np.array(tan_CC_x)
+	tan_CC_y = np.array(tan_CC_y)
+	index = np.argmax(tan_CC_x**2 + tan_CC_y**2)
+	image_plane_factor = source_selector_control_params['image_plane_factor']
+	gravlens_params['gridhi1'] =  image_plane_factor * ( (tan_CC_x[index]**2 + tan_CC_y[index]**2)**0.5 )
 	print 'gridhi1 = ', gravlens_params['gridhi1']
 	inputlens, setlens = lens_parameters(lens_model, gravlens_params)
 	#-----------------------------------------------------------------------------------------------------------
-	source_centers = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
+	source_centers_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
+	source_centers = source_centers_output[0]
+	image_centers = source_centers_output[1]
+	image_distortions = source_centers_output[2]
+
 	logging.debug('Selected positions for finite sources: %s' % str(source_centers) )
+	logging.debug('Images of the point sources: %s' % str(image_centers) )
+	logging.debug('Corresponding mu_t and mu_r for each image: %s' % str(image_distortions) )
 
 	#from arcgeneratormodules import grafico
 	#grafico(tan_caustic_x,tan_caustic_y, rad_caustic_x,rad_caustic_y, usq2, vsq2, source_centers, cusp1, cusp2, cusp3, cusp4, xlosango, ylosango, usq, vsq, halo_id+'1')
 	#grafico(tan_caustic_x,tan_caustic_y, rad_caustic_x,rad_caustic_y, [0], [0], source_centers, cusp1, cusp2, cusp3, cusp4, xlosango, ylosango, [0], [0],halo_id+'2')
-	return source_centers
+	return source_centers, image_centers, image_distortions 
 
 
 

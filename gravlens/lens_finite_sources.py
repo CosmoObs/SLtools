@@ -2,10 +2,6 @@ from __future__ import division
 import os
 import logging
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(message)s',
-                    filename='AddArcs.log')
-                    #filemode='w')
 
 # This function generates sersic sources centered at (source_centers) and runs SExtractor on them. Inputs: source parameters (source_centers, eS, rS, nS). Output: fits files with the corresponding images, and the SE outputs (objects fits images and segmentation fits images, the segmentation being ran twice, for 2 different deblending values). Output: a matrix containing the properties of the source for each source
 
@@ -46,7 +42,7 @@ def lens_finite_sources(inputlens, a, dimpix, source_centers, ref_magzpt, refere
 			while source_model[i]['rs'] < dimpix/nover and nover < 3:
 				nover += 1
 			source_model[i]['nover'] = nover
-			#print "nover = ", nover
+			print "nover = ", nover
 			#------------------------------------------------------------------------
 			f199.write('%s %f %f %f %f %f %f 0 0 macro\n' % (source_type, totalsourceplaneflux, source_centers[i][0], source_centers[i][1], source_model[i]['es'], source_model[i]['thetas'], source_model[i]['rs'] ) ) # sersic/uniform F x y e PA halflightr nothing nS macro/micro
 			f199.write('0 0 0 0 0 0 0 0\n')

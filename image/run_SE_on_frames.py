@@ -1,6 +1,10 @@
 import os
 import logging
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(message)s',
+                    filename='AddArcs.log')
+                    #filemode='w')
 
 
 ##@package run_SE_on_frames
