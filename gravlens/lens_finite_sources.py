@@ -39,11 +39,11 @@ def lens_finite_sources(inputlens, half_frame_size, dimpix, source_centers, ref_
 		if source_type == 'sersic':
 			# determine 'totalsorceplaneflux', according to the source magnitude
 			totalsourceplaneflux = 10**((2/5)*(ref_magzpt - source_model[i][reference_band]))
-			f199.write('%s %f %f %f %f %f %f 0 %f macro\n' % (source_type, totalsourceplaneflux, source_centers[i][0], source_centers[i][1], source_model[i]['es'], source_model[i]['thetas'], source_model[i]['rs'], source_model[i]['ns']  ) ) # sersic/uniform F x y e PA halflightr nothing nS macro/micro
+			f199.write('%s %f %.6f %.6f %f %f %.6f 0 %f macro\n' % (source_type, totalsourceplaneflux, source_centers[i][0], source_centers[i][1], source_model[i]['es'], source_model[i]['thetas'], source_model[i]['rs'], source_model[i]['ns']  ) ) # sersic/uniform F x y e PA halflightr nothing nS macro/micro
 		if source_type == 'uniform':
 			# fix 'totalsorceplaneflux' to 1
 			totalsourceplaneflux = 1
-			f199.write('%s %f %f %f %f %f %f 0 0 macro\n' % (source_type, totalsourceplaneflux, source_centers[i][0], source_centers[i][1], source_model[i]['es'], source_model[i]['thetas'], source_model[i]['rs'] ) ) # sersic/uniform F x y e PA halflightr nothing macro/micro
+			f199.write('%s %f %.6f %.6f %f %f %.6f 0 0 macro\n' % (source_type, totalsourceplaneflux, source_centers[i][0], source_centers[i][1], source_model[i]['es'], source_model[i]['thetas'], source_model[i]['rs'] ) ) # sersic/uniform F x y e PA halflightr nothing macro/micro
 		#------------------------------------------------------------------------
 		f199.write('0 0 0 0 0 0 0 0\n')
 		f199.write('SBmap2 %0.9f %0.9f %d %0.9f %0.9f %d %d sbmap%05d_%s.fits 3\n' % (-half_frame_size, half_frame_size, Npix, -half_frame_size, half_frame_size, Npix, nover, i, reference_band) ) # <x lo> <hi> <# steps> <y lo> <hi> <# steps> <Nover> <file> <outtype>	
