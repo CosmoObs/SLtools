@@ -49,7 +49,7 @@ def find_CC(lens_model, gravlens_params):
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		critcurves(inputlens) # gets the critical curves (crit.txt file)
 		counter += 1
-	print '(Number of iterations on gridhi1 = %d)' % (counter) 
+	logging.info( '(Number of iterations on gridhi1 = %d)' % (counter) )
 
 	if os.path.isfile('./crit.txt') == False: # looks for the C.C. file (crit.txt) - if this file does not exist, returns 'False'
 		return False
@@ -58,7 +58,7 @@ def find_CC(lens_model, gravlens_params):
 		gravlens_params['gridhi1'] /= 3. # gridhi1 /= 3. 
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		critcurves(inputlens) # gets the critical curves (crit.txt file)
-	print 'gridhi1 = ', gravlens_params['gridhi1'], '(number of iterations on gridhi1 = ', counter,')'
+	logging.info( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (gravlens_params['gridhi1'],  counter) )
 	return inputlens, setlens
 
 #----------------------------------------------------------------------------------- 
@@ -116,7 +116,6 @@ def tang_caustic(inputlens):
 			rad_caustic_y.append(ycritsrc[i])
 			rad_CC_x.append(xcritimg[i])
 			rad_CC_y.append(ycritimg[i])
-		#print abs(mu_t/mu_r)
 #	tan_CC_x = np.array(tan_CC_x)
 #	tan_CC_y = np.array(tan_CC_y)
 #	##############################################################################
@@ -230,7 +229,7 @@ def source_positions(source_selector_control_params, deformation_rectangle, nsou
 			image_positions[i].append( [float(filemag[j].split()[0]), float(filemag[j].split()[1])] )
 	# if gravlens does not finf any images, the grid is not big enough
 	if 0 in imagens and len(imagens) != 0:
-		print 'There are %d point images outside the grid' % imagens.count(0) 
+		logging.debug( 'There are %d point images outside the grid' % imagens.count(0) )
 
 	f1.close()
 	# obtain with the magtensor all the magnifications
@@ -323,7 +322,7 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	index = np.argmax(tan_CC_x**2 + tan_CC_y**2)
 	image_plane_factor = source_selector_control_params['image_plane_factor']
 	gravlens_params['gridhi1'] =  image_plane_factor * ( (tan_CC_x[index]**2 + tan_CC_y[index]**2)**0.5 )
-	print 'gridhi1 = ', gravlens_params['gridhi1']
+	logging.info( 'gridhi1 = %f' % gravlens_params['gridhi1'] )
 	inputlens, setlens = lens_parameters(lens_model, gravlens_params)
 	#-----------------------------------------------------------------------------------------------------------
 	source_centers_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)

@@ -34,7 +34,6 @@ def lens_finite_sources(inputlens, half_frame_size, dimpix, source_centers, ref_
 		while source_model[i]['rs'] < dimpix/nover and nover < 3:
 			nover += 1
 		source_model[i]['nover'] = nover
-		print "nover = ", nover
 		# -------------------------------------------------------------------
 		if source_type == 'sersic':
 			# determine 'totalsorceplaneflux', according to the source magnitude
@@ -50,10 +49,10 @@ def lens_finite_sources(inputlens, half_frame_size, dimpix, source_centers, ref_
 		image_names.append('sbmap%05d_%s.fits' % (i, reference_band) )
 
 	f199.close()
-	print "gravlens is lensing %d finite source(s) (this may take several minutes depending on the resolution)..." % len(source_centers)
+	logging.info( "gravlens is lensing %d finite source(s) (this may take several minutes depending on the resolution)..." % len(source_centers) )
 	if len(source_centers) > 0:
 		status = os.system('gravlens sersicinput.txt > /dev/null')
-		logging.debug('Executed gravlens to lens the finite sources and returned status %s' % status)
+		logging.debug('Executed gravlens to lens the finite sources and returned status %s' % str(status) )
 	return image_names
 
 

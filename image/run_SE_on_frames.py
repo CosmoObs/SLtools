@@ -1,11 +1,6 @@
 import os
 import logging
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(message)s',
-                    filename='AddArcs.log')
-                    #filemode='w')
-
 
 ##@package run_SE_on_frames
 # runs SExtractor on a list of images
@@ -47,8 +42,7 @@ def run_SE_on_frames(input_image_names, sextractor_params):
 		SEstatus.append( os.system('sex %s -c default.sex -DEBLEND_MINCONT %f -CHECKIMAGE_TYPE SEGMENTATION -CATALOG_NAME catalogoF%05d.cat -CHECKIMAGE_NAME segF%s -FILTER N -DETECT_MINAREA %d -THRESH_TYPE %s -DETECT_THRESH %f -ANALYSIS_THRESH %f -PIXEL_SCALE %f -SEEING_FWHM %f -CATALOG_TYPE ASCII -BACK_TYPE %s -BACK_VALUE %s -MEMORY_OBJSTACK %d -MEMORY_PIXSTACK %d -MEMORY_BUFSIZE %d > /dev/null 2> /dev/null ' %(input_image_names[i], DEBLEND_MINCONT_merger, i, input_image_names[i], DETECT_MINAREA, THRESH_TYPE, DETECT_THRESH, ANALYSIS_THRESH, PIXEL_SCALE,SEEING_FWHM, BACK_TYPE, BACK_VALUE, MEMORY_OBJSTACK, MEMORY_PIXSTACK, MEMORY_BUFSIZE)) ) # merger arcs
 
 		if max(SEstatus) != 0:
-			print "BEWARE: SE error output number %d in image %d." % (max(SEstatus), i)
-			logging.debug('BEWARE: SE returned status: %d, %d, %d in image %d\n' % (SEstatus[0], SEstatus[1], SEstatus[2], i))
+			logging.warning('BEWARE: SE returned status: %d, %d, %d in image %d\n' % (SEstatus[0], SEstatus[1], SEstatus[2], i))
 		else:
 			img_list.append(i)
 	return img_list	
