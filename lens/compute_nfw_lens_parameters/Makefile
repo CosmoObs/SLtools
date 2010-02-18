@@ -13,11 +13,11 @@ PYTHONINC = $(shell echo "import sys; print sys.prefix+'/include/python'+str(sys
 all: compute_nfw_lens_parameters
 
 compute_nfw_lens_parameters: compute_nfw_lens_parameters.cpp
-	g++ -Wall -lm $(SRCS) -o $(TARGET)
+	g++ -Wall -mtune=generic -lm $(SRCS) -o $(TARGET)
 
 module_lnx: $(SRCS) $(INTERFACE)
 	swig $(SWIGOPT) $(INTERFACE)
-	g++ -Wall -lm -fpic -c $(SRCS) $(WRAPFILE) -I$(PYTHONINC)
+	g++ -Wall -mtune=generic -lm -fpic -c $(SRCS) $(WRAPFILE) -I$(PYTHONINC)
 	g++ -shared $(COBJS) $(WRAPOBJ) -o $(MODULE)
 	mkdir $(MODULE_DIR)
 	mv $(TARGET).py $(MODULE) $(MODULE_DIR)

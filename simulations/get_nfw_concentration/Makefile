@@ -13,11 +13,11 @@ PYTHONINC = $(shell echo "import sys; print sys.prefix+'/include/python'+str(sys
 all: get_nfw_concentration
 
 get_nfw_concentration: rand.c get_nfw_concentration.c
-	gcc -Wall -lm $(SRCS) -o $(TARGET)
+	gcc -Wall -mtune=generic -lm $(SRCS) -o $(TARGET)
 module_lnx: $(SRCS) $(INTERFACE)
 	swig $(SWIGOPT) $(INTERFACE)
-	gcc -Wall -lm -fpic -c $(SRCS) $(WRAPFILE) -I$(PYTHONINC) 
-	gcc -shared $(COBJS) $(WRAPOBJ) -o $(MODULE)
+	gcc -Wall -mtune=generic -fpic -c $(SRCS) $(WRAPFILE) -I$(PYTHONINC) 
+	gcc -mtune=generic -lm -shared $(COBJS) $(WRAPOBJ) -o $(MODULE)
 	mkdir -p $(MODULE_DIR)
 	cp $(TARGET).conf $(MODULE_DIR)
 	mv $(TARGET).py $(MODULE) $(MODULE_DIR)
