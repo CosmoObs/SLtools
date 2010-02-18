@@ -6,12 +6,12 @@ from numpy import argmax, sum
 #
 #@param ximg (x coordinates of the image)
 #@param yimg (y coordinates of the image)
-#@param ref_pos
+#@param ref_coordinates (a list: [x,y])
 #@return L, max_dist, furthest_pt_1, furthest_pt_2
-def get_extrema_2loops(ximg, yimg, ref_pos):
+def get_extrema_2loops(ximg, yimg, ref_coordinates):
 
-	x_ref = ximg[ref_pos]
-	y_ref = yimg[ref_pos]
+	x_ref = ref_coordinates[0] 
+	y_ref = ref_coordinates[1] 
 
 	furthest_pt1 = 0
 	furthest_pt2 = 0
