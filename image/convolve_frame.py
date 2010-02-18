@@ -6,8 +6,7 @@ import os
 # - Python dependencies: pyfits,numpy,string,os
 # - External dependencies: gravlens
 # - Internal dependencies: Read_from_Config
-def convolve_frame(ArcFiles_list, PSF):
-	dimpix = 0.27
+def convolve_frame(ArcFiles_list, PSF, dimpix):
 
 	# Instrumental parameters conversion (")|(px):
 	# The parameters below remain fixed yet
