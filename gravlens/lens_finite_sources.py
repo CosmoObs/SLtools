@@ -49,10 +49,15 @@ def lens_finite_sources(inputlens, half_frame_size, dimpix, source_centers, ref_
 		image_names.append('sbmap%05d_%s.fits' % (i, reference_band) )
 
 	f199.close()
-	logging.info( "gravlens is lensing %d finite source(s) (this may take several minutes depending on the resolution)..." % len(source_centers) )
+
+	logging.debug( "The sources properties are %s" % str(source_model) )
+
 	if len(source_centers) > 0:
+		logging.info( "gravlens is lensing %d finite source(s) (this may take several minutes depending on the resolution)..." % len(source_centers) )
 		status = os.system('gravlens sersicinput.txt > /dev/null')
 		logging.debug('Executed gravlens to lens the finite sources and returned status %s' % str(status) )
+	else:
+		logging.info( "There were no sources to be lensed" )
 	return image_names
 
 

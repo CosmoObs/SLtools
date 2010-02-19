@@ -11,10 +11,11 @@
 def add_arcs_2_image( image_array, arc_file, Xhalo, Yhalo ):
     import string;
     import pyfits;
+    import logging
 
 #    image_array, image_header = pyfits.getdata( image_file, header=True );
 
-    print Xhalo,Yhalo;
+    logging.debug(' Xhalo,Yhalo = %d, %d' % (Xhalo,Yhalo) )
 
 #    lista = [];
 #    tupla = ('Halo','Arc_conv_file','RA(deg)','DEC(deg)','X(px)','Y(px)');
