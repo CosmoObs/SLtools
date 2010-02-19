@@ -49,7 +49,7 @@ def find_CC(lens_model, gravlens_params):
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		critcurves(inputlens) # gets the critical curves (crit.txt file)
 		counter += 1
-	logging.info( '(Number of iterations on gridhi1 = %d)' % (counter) )
+	logging.debug( '(Number of iterations on gridhi1 = %d)' % (counter) )
 
 	if os.path.isfile('./crit.txt') == False: # looks for the C.C. file (crit.txt) - if this file does not exist, returns 'False'
 		return False
@@ -58,7 +58,7 @@ def find_CC(lens_model, gravlens_params):
 		gravlens_params['gridhi1'] /= 3. # gridhi1 /= 3. 
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		critcurves(inputlens) # gets the critical curves (crit.txt file)
-	logging.info( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (gravlens_params['gridhi1'],  counter) )
+	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (gravlens_params['gridhi1'],  counter) )
 	return inputlens, setlens
 
 #----------------------------------------------------------------------------------- 
@@ -322,7 +322,7 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	index = np.argmax(tan_CC_x**2 + tan_CC_y**2)
 	image_plane_factor = source_selector_control_params['image_plane_factor']
 	gravlens_params['gridhi1'] =  image_plane_factor * ( (tan_CC_x[index]**2 + tan_CC_y[index]**2)**0.5 )
-	logging.info( 'gridhi1 = %f' % gravlens_params['gridhi1'] )
+	logging.debug( 'gridhi1 = %f' % gravlens_params['gridhi1'] )
 	inputlens, setlens = lens_parameters(lens_model, gravlens_params)
 	#-----------------------------------------------------------------------------------------------------------
 	source_centers_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
