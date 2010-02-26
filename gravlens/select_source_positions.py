@@ -327,9 +327,8 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	#-----------------------------------------------------------------------------------------------------------
 	source_centers_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
 	while source_centers_output == False:
-		print 'loop em source_positions'
 		gravlens_params['gridhi1'] *=  1.15
-		logging.debug( 'gridhi1 = %f' % gravlens_params['gridhi1'] )
+		logging.debug( 'loop in source_positions: gridhi1 = %f' % gravlens_params['gridhi1'] )
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params)		
 		source_centers_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
 	source_centers = source_centers_output[0]
