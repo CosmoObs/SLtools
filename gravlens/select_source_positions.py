@@ -230,7 +230,7 @@ def source_positions(source_selector_control_params, deformation_rectangle, nsou
 	# if gravlens does not finf any images, the grid is not big enough
 	if 0 in imagens and len(imagens) != 0:
 		logging.debug( 'There are %d point images outside the grid' % imagens.count(0) )
-
+		return False
 	f1.close()
 	# obtain with the magtensor all the magnifications
 	os.system('gravlens gravlensmagtensorcorte.txt > saidamagtensorcorte.txt')
@@ -316,7 +316,7 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 		nsources = nsource(rectangle_area, src_density_or_number) # generates 'nsource' sources per arcsec^2
 	logging.debug('Number of point sources generated = %d' % nsources)
 	#-----------------------------------------------------------------------------------------------------------
-	# redefine gridhi1 to be half the maximum size of the rectangle
+	# redefine gridhi1
 	tan_CC_x = np.array(tan_CC_x)
 	tan_CC_y = np.array(tan_CC_y)
 	index = np.argmax(tan_CC_x**2 + tan_CC_y**2)
@@ -326,6 +326,12 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	inputlens, setlens = lens_parameters(lens_model, gravlens_params)
 	#-----------------------------------------------------------------------------------------------------------
 	source_centers_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
+	while source_centers_output == False:
+		print 'loop em source_positions'
+		gravlens_params['gridhi1'] *=  1.15
+		logging.debug( 'gridhi1 = %f' % gravlens_params['gridhi1'] )
+		inputlens, setlens = lens_parameters(lens_model, gravlens_params)		
+		source_centers_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
 	source_centers = source_centers_output[0]
 	image_centers = source_centers_output[1]
 	image_distortions = source_centers_output[2]
