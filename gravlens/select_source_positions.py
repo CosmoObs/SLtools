@@ -325,15 +325,15 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	logging.debug( 'gridhi1 = %f' % gravlens_params['gridhi1'] )
 	inputlens, setlens = lens_parameters(lens_model, gravlens_params)
 	#-----------------------------------------------------------------------------------------------------------
-	source_centers_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
-	while source_centers_output == False:
+	source_positions_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
+	while source_positions_output == False:
 		gravlens_params['gridhi1'] *=  1.15
 		logging.debug( 'loop in source_positions: gridhi1 = %f' % gravlens_params['gridhi1'] )
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params)		
-		source_centers_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
-	source_centers = source_centers_output[0]
-	image_centers = source_centers_output[1]
-	image_distortions = source_centers_output[2]
+		source_positions_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
+	source_centers = source_positions_output[0]
+	image_centers = source_positions_output[1]
+	image_distortions = source_positions_output[2]
 
 	logging.debug('Selected positions for finite sources: %s' % str(source_centers) )
 	logging.debug('Images of the point sources: %s' % str(image_centers) )
