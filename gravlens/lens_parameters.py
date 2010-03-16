@@ -17,6 +17,14 @@ set gallev = %d
 set imglev = %d 
 startup 1 1
 %s
-0 0 0 0 0 0 0 0 0 0\n""" % (gravlens_params['gridhi1'], gravlens_params['ngrid1'], gravlens_params['ngrid2'], gravlens_params['xtol'], gravlens_params['crittol'], gravlens_params['inttol'], gravlens_params['maxlev'], gravlens_params['gallev'], gravlens_params['imglev'], setlens) 
+0 0 0 0 0 0 0 0 0 0\n""" % ( float(gravlens_params['gridhi1']),
+                             int(gravlens_params['ngrid1']),
+                             int(gravlens_params['ngrid2']),
+                             float(gravlens_params['xtol']),
+                             float(gravlens_params['crittol']),
+                             float(gravlens_params['inttol']),
+                             int(gravlens_params['maxlev']),
+                             int(gravlens_params['gallev']),
+                             int(gravlens_params['imglev']), setlens) 
 # xtol: Tolerance on image positions in numerical root finding.
 	return inputlens, setlens

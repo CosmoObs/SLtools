@@ -11,12 +11,12 @@ import logging
 #@param cosmological_background_params (Omega_m, Omega_l)
 #@return Return a dictionary with the lens model parameters
 def compute_lens_model (zl, zs, halo_model, cosmological_background_params):
-        m200=halo_model['m200'] 
-        c200=halo_model['c200']
-        el=halo_model['el'] 
-        thetal=halo_model['thetal'] 
-        omega_m = cosmological_background_params['omega_m'] 
-        omega_l = cosmological_background_params['omega_l'] 
+        m200 = float(halo_model['m200']);
+        c200 = float(halo_model['c200']);
+        el = float(halo_model['el']);
+        thetal = float(halo_model['thetal']);
+        omega_m = float(cosmological_background_params['omega_m']);
+        omega_l = float(cosmological_background_params['omega_l']);
         # kappas and xsl
         #------------------------------------------------------------------------------
         kappas = KSmod.kappa_s(zl,zs,m200,c200,omega_m,omega_l) # NFW kappas calculated by Gabriel's module

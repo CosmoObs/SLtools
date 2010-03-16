@@ -20,18 +20,18 @@ def run_SE_on_frames(input_image_names, sextractor_params):
 	os.system('echo "XY_IMAGE" >> default.param')
 	#---------------------------------------------------------------------------------
 	# gets SE variables from the config file
-	DEBLEND_MINCONT_merger = sextractor_params['DEBLEND_MINCONT_merger']
-	DETECT_MINAREA = sextractor_params['DETECT_MINAREA']
-	THRESH_TYPE = sextractor_params['THRESH_TYPE']
-	DETECT_THRESH = sextractor_params['DETECT_THRESH']
-	ANALYSIS_THRESH = sextractor_params['ANALYSIS_THRESH']
-	PIXEL_SCALE = sextractor_params['PIXEL_SCALE']
-	SEEING_FWHM = sextractor_params['SEEING_FWHM']
-	BACK_TYPE = sextractor_params['BACK_TYPE']
-	BACK_VALUE = sextractor_params['BACK_VALUE']
-	MEMORY_OBJSTACK = sextractor_params['MEMORY_OBJSTACK']
-	MEMORY_PIXSTACK = sextractor_params['MEMORY_PIXSTACK']
-	MEMORY_BUFSIZE = sextractor_params['MEMORY_BUFSIZE']
+	DEBLEND_MINCONT_merger = float(sextractor_params['deblend_mincont_merger']);
+	DETECT_MINAREA = float(sextractor_params['detect_minarea']);
+	THRESH_TYPE = sextractor_params['thresh_type'];
+	DETECT_THRESH = float(sextractor_params['detect_thresh']);
+	ANALYSIS_THRESH = float(sextractor_params['analysis_thresh']);
+	PIXEL_SCALE = float(sextractor_params['PIXEL_SCALE']);
+	SEEING_FWHM = float(sextractor_params['seeing_fwhm']);
+	BACK_TYPE = sextractor_params['back_type'];
+	BACK_VALUE = sextractor_params['back_value'];
+	MEMORY_OBJSTACK = float(sextractor_params['memory_objstack']);
+	MEMORY_PIXSTACK = float(sextractor_params['memory_pixstack']);
+	MEMORY_BUFSIZE = float(sextractor_params['memory_bufsize']);
 	#----------------------------------------------
 	# now we run SE on the images. The list 'SEstatus' will tell if the run was OK
 	img_list = [] # list that contains the images properly generated and SExtracted 

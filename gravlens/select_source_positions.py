@@ -135,7 +135,7 @@ def tang_caustic(inputlens):
 #@param source_selector_control_params
 #@return deformation_rectangle: [x_vert_1,y_vert_1],[x_vert_2, y_vert_2] (vert_1 refers to the upper right corner, while vert_2 refers to the botton left corner)
 def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, source_selector_control_params):
-	control_rectangle = source_selector_control_params['control_rectangle']
+	control_rectangle = float(source_selector_control_params['control_rectangle'])
 	# converts tan_caustic_x and tan_caustic_y to the system of coordinates in which thetal = 0 (to find the 4 cusps)
 	# xcrit0 = cos(theta)*x + sin(theta)*y
 	# ycrit0 = -sin(theta)*x + cos(theta)*y
@@ -192,7 +192,7 @@ def nsource(rectangle_area, source_surface_density):
 #@param inputlens
 #@return source_centers [former potarcxy], image_centers, image_distortions	
 def source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens):
-	minimum_distortion = source_selector_control_params['minimum_distortion']
+	minimum_distortion = float(source_selector_control_params['minimum_distortion']);
 	x_vert_1, y_vert_1 = deformation_rectangle[0]
 	x_vert_2, y_vert_2 = deformation_rectangle[1]
 	#-----------------------------------------------------------------------------------------------------------
@@ -320,9 +320,9 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	tan_CC_x = np.array(tan_CC_x)
 	tan_CC_y = np.array(tan_CC_y)
 	index = np.argmax(tan_CC_x**2 + tan_CC_y**2)
-	image_plane_factor = source_selector_control_params['image_plane_factor']
+	image_plane_factor = float(source_selector_control_params['image_plane_factor']);
 	gravlens_params['gridhi1'] =  image_plane_factor * ( (tan_CC_x[index]**2 + tan_CC_y[index]**2)**0.5 )
-	logging.debug( 'gridhi1 = %f' % gravlens_params['gridhi1'] )
+	logging.debug( 'gridhi1 = %s' % gravlens_params['gridhi1'] )
 	inputlens, setlens = lens_parameters(lens_model, gravlens_params)
 	#-----------------------------------------------------------------------------------------------------------
 	source_positions_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
