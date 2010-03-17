@@ -25,7 +25,10 @@ def run_SE_on_frames(input_image_names, sextractor_params):
 	THRESH_TYPE = sextractor_params['thresh_type'];
 	DETECT_THRESH = float(sextractor_params['detect_thresh']);
 	ANALYSIS_THRESH = float(sextractor_params['analysis_thresh']);
-	PIXEL_SCALE = float(sextractor_params['pixel_scale']);
+	try:
+		PIXEL_SCALE = float(sextractor_params['pixel_scale']);
+	except KeyError:
+		PIXEL_SCALE = float(sextractor_params['PIXEL_SCALE']);
 	SEEING_FWHM = float(sextractor_params['seeing_fwhm']);
 	BACK_TYPE = sextractor_params['back_type'];
 	BACK_VALUE = sextractor_params['back_value'];
