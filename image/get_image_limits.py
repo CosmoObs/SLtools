@@ -1,5 +1,3 @@
-#if __name__ == "__main__" :
-
 
 ##@package get_image_limits [formerly RaDecLimits]
 

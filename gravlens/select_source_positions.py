@@ -33,6 +33,7 @@ def critcurves(gravinput):
 #@param gravlens_params
 #@return "inputlens" and "setlens": two strins that are used to compose gravlens' input files
 def find_CC(lens_model, gravlens_params):
+
 	inputlens, setlens = lens_parameters(lens_model, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)	# setlens is the gravlens input line that concerns the lens (ex: nfw 1 0 ...)
 	logging.debug('Determined the strings that defines the mass model in gravlens through the \'lensparameter\' function')
 	#--------------------------------------
@@ -45,7 +46,7 @@ def find_CC(lens_model, gravlens_params):
 	# ITERATION ON gridhi1 (TO GET BETTER RESOLUTION ON CC)
 	counter = 0
 	while os.path.isfile('./crit.txt') == False and counter < 20: # looks for the C.C. file (crit.txt) - if this file does not exist, add a note to arccatalog and quit
-		gravlens_params['gridhi1'] /= 5. # gridhi1 /= 5. 
+		gravlens_params['gridhi1'] = float(gravlens_params['gridhi1']) / 5.; # gridhi1 /= 5. 
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		critcurves(inputlens) # gets the critical curves (crit.txt file)
 		counter += 1
@@ -55,10 +56,10 @@ def find_CC(lens_model, gravlens_params):
 		return False
 
  	if len(open('./crit.txt').readlines() ) < 200: # these correspond to critical cases when the CC have too few points.
-		gravlens_params['gridhi1'] /= 3. # gridhi1 /= 3. 
+		gravlens_params['gridhi1'] = float(gravlens_params['gridhi1']) / 3. # gridhi1 /= 3. 
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		critcurves(inputlens) # gets the critical curves (crit.txt file)
-	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (gravlens_params['gridhi1'],  counter) )
+	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (float(gravlens_params['gridhi1']),  counter) )
 	return inputlens, setlens
 
 #----------------------------------------------------------------------------------- 
@@ -135,6 +136,7 @@ def tang_caustic(inputlens):
 #@param source_selector_control_params
 #@return deformation_rectangle: [x_vert_1,y_vert_1],[x_vert_2, y_vert_2] (vert_1 refers to the upper right corner, while vert_2 refers to the botton left corner)
 def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, source_selector_control_params):
+
 	control_rectangle = float(source_selector_control_params['control_rectangle'])
 	# converts tan_caustic_x and tan_caustic_y to the system of coordinates in which thetal = 0 (to find the 4 cusps)
 	# xcrit0 = cos(theta)*x + sin(theta)*y
@@ -178,6 +180,7 @@ def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, source_s
 #@param source_surface_density
 #@return number of point sources to be generated
 def nsource(rectangle_area, source_surface_density):
+
 	nsources = np.random.poisson(rectangle_area*source_surface_density )
 	return nsources
 
@@ -192,6 +195,7 @@ def nsource(rectangle_area, source_surface_density):
 #@param inputlens
 #@return source_centers [former potarcxy], image_centers, image_distortions	
 def source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens):
+
 	minimum_distortion = float(source_selector_control_params['minimum_distortion']);
 	x_vert_1, y_vert_1 = deformation_rectangle[0]
 	x_vert_2, y_vert_2 = deformation_rectangle[1]
@@ -301,7 +305,7 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	#----------------------------------------------------------------------------------------------
 
 	#------------ call compute_deformation_rectangle ---------------------------
-	deformation_rectangle = compute_deformation_rectangle(lens_model['thetal'], tan_caustic_x, tan_caustic_y, source_selector_control_params)
+	deformation_rectangle = compute_deformation_rectangle(float(lens_model['thetal']), tan_caustic_x, tan_caustic_y, source_selector_control_params)
 	logging.debug('Obtained the deformation rectangle: %s' % str(deformation_rectangle) )
 	#---------------------------------------------------------------------------
 
@@ -327,8 +331,8 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	#-----------------------------------------------------------------------------------------------------------
 	source_positions_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
 	while source_positions_output == False:
-		gravlens_params['gridhi1'] *=  1.15
-		logging.debug( 'loop in source_positions: gridhi1 = %f' % gravlens_params['gridhi1'] )
+		gravlens_params['gridhi1'] = float(gravlens_params['gridhi1']) * 1.15;
+		logging.debug( 'loop in source_positions: gridhi1 = %f' % float(gravlens_params['gridhi1']) )
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params)		
 		source_positions_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
 	source_centers = source_positions_output[0]
@@ -343,20 +347,3 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	#grafico(tan_caustic_x,tan_caustic_y, rad_caustic_x,rad_caustic_y, usq2, vsq2, source_centers, cusp1, cusp2, cusp3, cusp4, xlosango, ylosango, usq, vsq, halo_id+'1')
 	#grafico(tan_caustic_x,tan_caustic_y, rad_caustic_x,rad_caustic_y, [0], [0], source_centers, cusp1, cusp2, cusp3, cusp4, xlosango, ylosango, [0], [0],halo_id+'2')
 	return source_centers, image_centers, image_distortions 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

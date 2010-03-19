@@ -2,8 +2,6 @@ from __future__ import division
 import os
 import logging
 
-
-
 ##@package lens_finite_sources
 # lenses sources (centered in source_centers) and measures the resulting images, identifing which ones are arcs
 #
@@ -22,6 +20,7 @@ import logging
 #
 #@return list with the names of the arcs
 def lens_finite_sources(inputlens, half_frame_size, dimpix, source_centers, ref_magzpt, reference_band, source_model):
+
 	Npix = int( (2*half_frame_size) / dimpix)
 	image_names = []
 	f199 = open('sersicinput.txt', 'w')
@@ -45,7 +44,7 @@ def lens_finite_sources(inputlens, half_frame_size, dimpix, source_centers, ref_
 			f199.write('%s %f %.6f %.6f %f %f %.6f 0 0 macro\n' % (source_type, totalsourceplaneflux, source_centers[i][0], source_centers[i][1], source_model[i]['es'], source_model[i]['thetas'], source_model[i]['rs'] ) ) # sersic/uniform F x y e PA halflightr nothing macro/micro
 		#------------------------------------------------------------------------
 		f199.write('0 0 0 0 0 0 0 0\n')
-		f199.write('SBmap2 %0.9f %0.9f %d %0.9f %0.9f %d %d sbmap%05d_%s.fits 3\n' % (-half_frame_size, half_frame_size, Npix, -half_frame_size, half_frame_size, Npix, nover, i, reference_band) ) # <x lo> <hi> <# steps> <y lo> <hi> <# steps> <Nover> <file> <outtype>	
+		f199.write('SBmap2 %0.9f %0.9f %d %0.9f %0.9f %d %d sbmap%05d_%s.fits 3\n' % (-1*half_frame_size, half_frame_size, Npix, -1*half_frame_size, half_frame_size, Npix, nover, i, reference_band) ) # <x lo> <hi> <# steps> <y lo> <hi> <# steps> <Nover> <file> <outtype>	
 		image_names.append('sbmap%05d_%s.fits' % (i, reference_band) )
 
 	f199.close()

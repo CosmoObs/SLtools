@@ -13,24 +13,7 @@ def add_arcs_2_image( image_array, arc_file, Xhalo, Yhalo ):
     import pyfits;
     import logging
 
-#    image_array, image_header = pyfits.getdata( image_file, header=True );
-
     logging.debug(' Xhalo,Yhalo = %d, %d' % (Xhalo,Yhalo) )
-
-#    lista = [];
-#    tupla = ('Halo','Arc_conv_file','RA(deg)','DEC(deg)','X(px)','Y(px)');
-#    lista.append(tupla);
-
-
-#    for arc in arcs:
-
-        # Read Halo ID and corresponding arc(s) image file
-#        HaloID = pair[0];
-#        Arc_filename = pair[1];
-
-#        HaloParameters = GetHaloParameters( hdulist,HaloID );
-#        ra = HaloParameters[2];
-#        dec = HaloParameters[3];
 
     # Read Fits file to array
     arcimg_array, arcimg_header = pyfits.getdata( arc_file, header=True );

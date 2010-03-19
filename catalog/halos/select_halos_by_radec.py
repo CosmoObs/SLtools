@@ -68,35 +68,3 @@ def choose_catalog( catalogs=[],sky_region=() ):
 
         return (False)
 
-
-
-
-#
-
-## filer_by_sky_region 
-# Return halos inside inside a given sky_region 
-# 
-#@todo filters are a good idea, but need more testing... we should have selected_halos as zip(selected_halos)
-
-#@param selected_halos a tuple with (ids,ra,dec,m200,z) 
-#@param sky_region two tuples e.g. ((ra_min, ra_max), (dec_min, dec_max)) 
-#@return
-
-#def select_halos_by_sky_region(sky_region=()):
-
-#
-
-#    ((ra_min, ra_max), (dec_min, dec_max))=sky_region 
-#
-
-#    def selection_criteria(tmp): 
-#        tmp[1]ra_max and tmp[1]ra_min and tmp[2]
-
-#
-
-#   (filter_by_sky_region,)=filter(selection_criteria, selected_halos) 
-#
-
-#return filter_by_sky_region
-
-

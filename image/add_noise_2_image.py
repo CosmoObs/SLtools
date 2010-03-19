@@ -3,6 +3,7 @@ from numpy import zeros, where
 from pylab import poisson
 # poissonian noise addition
 def add_noise_2_image(Arc_psf_file):
+
 	Arcs_noise = []
 	for Arc_filename in Arc_psf_file:
 		# Unfortunately the convolution process outputs to a file..
