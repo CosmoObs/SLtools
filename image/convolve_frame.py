@@ -1,15 +1,21 @@
+
+##@package convole_frame
+#
+# Arc images processing: gaussian convolution
+#
+#@param ArcFiles_list, PSF, dimpix
+#@return ConvolvedFiles_list
+
+# ---
 from math import sqrt
-import string
-import os
-# Arc images processing: gaussian convolution .
-# - Files dependencies: Arc_FITS_file
-# - Python dependencies: pyfits,numpy,string,os
-# - External dependencies: gravlens
-# - Internal dependencies: Read_from_Config
+import math as m;
+import string;
+import os;
+# ---
 def convolve_frame(ArcFiles_list, PSF, dimpix):
 
 	# Instrumental parameters conversion (")|(px):
-	# The parameters below remain fixed yet
+	#
 	Arcsec_per_px = dimpix
 	FWHM_arcsec = PSF
 	##########################################
@@ -27,31 +33,38 @@ def convolve_frame(ArcFiles_list, PSF, dimpix):
 	# Half Light Radius:
 	#    HLR(px) = FWHM_arcsec/(2*sqrt(Arcsec_per_px^2))
 	##########################################
-	HLR_px = FWHM_arcsec/(2*sqrt(Arcsec_per_px))
+	HLR_px = FWHM_arcsec/(2*m.sqrt(Arcsec_per_px))
 	# Pixel sides dimension (considering square pixels)
-	pixel_xy = sqrt(Arcsec_per_px)
+	pixel_xy = m.sqrt(Arcsec_per_px)
 
-	Arcs_convolved = []
+	ConvolvedFiles_list = []
 	for Arc_filename in ArcFiles_list:
 
 		if ( string.find(Arc_filename,'.fits') == -1 ) :
-			Arcs_convolved.append(Arc_filename)
+			ConvolvedFiles_list.append(Arc_filename)
  			continue
+
 		# Using IRAF's gauss routine to convolve arc image with a gaussian PSF
 		#    cl> gauss image.in image.out sigma=Sigma(px)
 		# Usage: gauss('arc.fits','arc_PSF.fits',sigma=Sigma_px)
-		Arc_psf_file = string.replace(Arc_filename,'.fits','_psf.fits')
 		#gauss(Arc_filename,Arc_psf_file,sigma=Sigma_px)
+
+		Arc_psf_file = string.replace(Arc_filename,'.fits','_psf.fits')
+
 		Filename_OUT = ''
 		for i in range( len(Arc_filename) - 6): # the last 6 characters corresponds to 'color.fits'
 			Filename_OUT = Filename_OUT + Arc_filename[i]
 		Filename_OUT = Filename_OUT + 'psf_' + Arc_filename[-6] + '.fits' # Arc_filename[-6] is the 6th str from the end (the color)
+
 		os.system('echo "setsource 1" > gravlens.in')
 		os.system('echo "sersic 1 0 0 0 0 %s 0 0.5 macro" >> gravlens.in' % (HLR_px))
 		os.system('echo "0 0 0 0 0 0 0 0" >> gravlens.in')
 		os.system('echo "convolve2 %s 3 %s %s %s 3" >> gravlens.in' % (Arc_filename,pixel_xy,pixel_xy,Filename_OUT))
 		os.system('gravlens gravlens.in > /dev/null')
-		#os.remove('gravlens.in')
-		Arcs_convolved.append(Filename_OUT)
-	return (Arcs_convolved)
 
+		#os.remove('gravlens.in')
+
+		ConvolvedFiles_list.append(Filename_OUT)
+
+	return ConvolvedFiles_list;
+# -

@@ -1,7 +1,15 @@
+
+##@package plot_gravlens_crit
+#
+#@param file_name
+#@return -
+
+# ---
+import matplotlib as mplib;
 from matplotlib.pyplot import plot, show
 from numpy import loadtxt, where, unique1d, array
-
-def plot_gravlens_crit(file_name=None):
+# ---
+def plot_gravlens_crit( file_name=None ):
 
     if file_name is None:
         file_name='cc.dat'
@@ -39,6 +47,8 @@ def plot_gravlens_crit(file_name=None):
         plot(u[start_point[j]:end_point[j]],v[start_point[j]:end_point[j]])
 
     show()
+
+# -
 
 if __name__ == "__main__":
     import sys
