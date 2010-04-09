@@ -53,7 +53,6 @@ def add_noise_2_image(list_fitsFiles):
 		for i in range( len(Arc_filename) - 6): # the last 6 characters corresponds to 'color.fits'
 			Filename_OUT = Filename_OUT + Arc_filename[i]
 		Filename_OUT = Filename_OUT + 'ns_' + Arc_filename[-6] + '.fits' # Arc_filename[-6] is the 6th str from the end (the colour)
-		tic = time.time() - tic;
 
 
 #		_part = string.split( Arc_filename, sep="_");
