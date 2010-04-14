@@ -1,3 +1,7 @@
+#
+import sys;
+import os;
+
 import get_catalog_data
 import get_halo_parameters
 import open_fits_catalog

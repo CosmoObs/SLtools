@@ -1,3 +1,7 @@
+#
+import sys;
+import os;
+
 import add_arcs_2_image
 import add_noise_2_image
 import convolve_frame
