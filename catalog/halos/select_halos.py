@@ -8,14 +8,15 @@
 #@param image_file : sky image/tile fits filename
 #@return HaloIDs : a list containing all Halo IDs above the mass criterium and within given sky region 
 
+
 import sys;
 
 # AddArcs/SLtools..
-from tools.catalog.halos import get_catalog_data;
-from tools.image import get_image_limits;
+from tools.catalog.halos.get_catalog_data import get_catalog_data;
+from tools.image.get_image_limits import get_image_limits;
 
 # AddArcs/Pipeline..
-from functions import readout_radec;
+from pipeline.functions import readout_radec;
 
 
 #####################################
@@ -74,7 +75,7 @@ def select_halos( hdulist, minimum_halo_mass, ra=(), dec=(), image_file='' ):
     for i in range( 0, len( haloid )):
 
         # Check whether the current HaloID was already used..
-        if ( haloid[i] in controle or haloid[i] == 0 ):
+        if ( haloid[i] in controle ):   # "or haloid[i] == 0 ):" - This was necessary because of a bug with haloID "0" in carmen catalog v1.08
             continue;
 
         # Select Halos by Sky region..
