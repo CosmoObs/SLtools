@@ -295,6 +295,9 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	#----------------------------------------------------------------------------------------------
 	# we now get the outputs of the function tang_caustic (radial and tangential caustic and CC)
 	outtang_caustic = tang_caustic(inputlens)
+	# treat the case no caustic points are tangential 
+	if len(outtang_caustic['tan_caustic_x']) == 0:
+		return False
 	tan_caustic_x = outtang_caustic['tan_caustic_x'] # tangencial caustic x coordinate
 	tan_caustic_y = outtang_caustic['tan_caustic_y'] # tangencial caustic y coordinate
 	tan_CC_x = outtang_caustic['tan_CC_x'] # tangential CC x coordinate
