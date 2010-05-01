@@ -46,10 +46,11 @@ def lens_finite_sources(inputlens, half_frame_size, dimpix, source_centers, ref_
 		f199.write('0 0 0 0 0 0 0 0\n')
 		f199.write('SBmap2 %0.9f %0.9f %d %0.9f %0.9f %d %d sbmap%05d_%s.fits 3\n' % (-1*half_frame_size, half_frame_size, Npix, -1*half_frame_size, half_frame_size, Npix, nover, i, reference_band) ) # <x lo> <hi> <# steps> <y lo> <hi> <# steps> <Nover> <file> <outtype>	
 		image_names.append('sbmap%05d_%s.fits' % (i, reference_band) )
+		logging.debug( "The source %d is centered at %s and is properties are %s" % (i+1, source_centers[i] ,str(source_model) ) )
 
 	f199.close()
 
-	logging.debug( "The sources properties are %s" % str(source_model) )
+
 
 	if len(source_centers) > 0:
 		logging.info( "gravlens is lensing %d finite source(s) (this may take several minutes depending on the resolution)..." % len(source_centers) )
