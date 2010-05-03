@@ -287,7 +287,7 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	# find critical curves (returns 'False' if can't find them)
 	out_find_CC = find_CC(lens_model, gravlens_params)
 	if out_find_CC == False:
-		return False
+		return False, False # the repetition of "False" is only because the output os this function is expected to be a list
 	logging.debug('Obtained critical curves')
 	inputlens, setlens = out_find_CC
 	#----------------------------------------------------------
@@ -297,7 +297,7 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	outtang_caustic = tang_caustic(inputlens)
 	# treat the case no caustic points are tangential 
 	if len(outtang_caustic['tan_caustic_x']) == 0:
-		return False
+		return False, False # the repetition of "False" is only because the output os this function is expected to be a list
 	tan_caustic_x = outtang_caustic['tan_caustic_x'] # tangencial caustic x coordinate
 	tan_caustic_y = outtang_caustic['tan_caustic_y'] # tangencial caustic y coordinate
 	tan_CC_x = outtang_caustic['tan_CC_x'] # tangential CC x coordinate
