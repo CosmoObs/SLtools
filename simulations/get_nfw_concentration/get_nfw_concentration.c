@@ -32,7 +32,7 @@
 #include"./rand.h"
 
 
-#define VERSION "1.2"
+#define VERSION "1.3"
 #define MAX_CONFIG_LINES 16
 #define MAX_CONFIG_SIZE 2048
 #define CONFIG_FILE "get_nfw_concentration.conf"
@@ -56,7 +56,6 @@ void read_config(char* get_nfw_concentration_conf);
 /*! \func Show usage information
  
    \param none
-   \param none
 */
 void help (void);
 
@@ -66,7 +65,9 @@ void help (void);
    @return the halo con
 */
 
-float c(float m, float redshift, int32_t start);
+float mean_log10c(float m, float z);
+float sigma_log10c(float m, float z);
+float c(float m, float z, int32_t start);
 float p_logc(float logc, float mean_logc, float sigma_logc);
 void usage(void);
 void help(void);
@@ -78,8 +79,9 @@ int32_t main(int32_t argc, char *argv[])
 	float redshift = 0.0;
 	float delta = 200;
 	int32_t seed = 0;
+	int32_t flag_mean_log10c = 0;
 	
-	while ((s = getopt(argc, argv, "m:z:d:s:h")) != -1) 
+	while ((s = getopt(argc, argv, "m:z:d:s:ph")) != -1) 
 	{
 		switch(s) {
 			case 'm':
@@ -93,6 +95,9 @@ int32_t main(int32_t argc, char *argv[])
 				break;
 			case 's':
  				seed=atol(optarg);
+				break;
+			case 'p':
+				flag_mean_log10c = 1;
 				break;
 			case 'h':
 				usage();
@@ -118,30 +123,50 @@ int32_t main(int32_t argc, char *argv[])
 
 	read_config(CONFIG_FILE);
 	
-	fprintf(stdout, "%.2f\n",  c(mass, redshift, seed));
+	if (flag_mean_log10c == 1) {
+		fprintf(stdout, "%.2f %2f\n", mean_log10c(mass, redshift), sigma_log10c(mass, redshift));
+	}
+	else {
+		fprintf(stdout, "%.2f\n",  c(mass, redshift, seed));
+	}
 
 	return 0;
 }
-
-float c(float m, float z, int32_t start)
+float sigma_log10c(float m, float z)
 {
 	int32_t i;
-	float u, v;
+	
+	if (read_config_flag == 0) {
+                fprintf(stderr, "%s error: configuration file was not loaded.\n", PROGNAME);
+                exit(1);
+        }
+
+	// verify redshift range
+	if (z > config[count].redshift) {
+		fprintf(stderr, "%s error: the redshift must be <= %.1f (max. value in %s)\n", PROGNAME, config[count].redshift, CONFIG_FILE);
+		exit(1);
+	}
+		
+	// select c(M,z) from configuration file
+	for (i=count; i > 0; i--)
+	{
+		if (z >= config[i].redshift)
+			break;
+	}
+
+	return config[i].sigma_logc;
+
+}
+
+
+float mean_log10c(float m, float z)
+{
+	int32_t i;
 	float f, a, b;
-	float logm, logc; // logc is the random variable
-	long long seed;
+	float logm; // logc is the random variable
 
 	logm = log10(m);
 	
-	struct timeval tv;
-
-	if (start > 0) {
-		seed = start;
-	} else {
-		gettimeofday(&tv, NULL);
-		seed = tv.tv_usec;
-	//	printf( "%li \n", seed);
-	}
 	 if (read_config_flag == 0) {
                 fprintf(stderr, "%s error: configuration file was not loaded.\n", PROGNAME);
                 exit(1);
@@ -177,10 +202,46 @@ float c(float m, float z, int32_t start)
 	b = config[i].b + f*(config[i+1].b - config[i].b);
 
 	// mean c(M) relation for a given z
-	float mean_logc = a*logm + b;
+	return a*logm + b;
+
+}
+
+float c(float m, float z, int32_t start)
+{
+	int32_t i;
+	float u, v;
+	float logc; // logc is the random variable
+	float mean_logc;
+	float sigma_logc;
+	long long seed;
+
+	struct timeval tv;
+
+	if (start > 0) {
+		seed = start;
+	} else {
+		gettimeofday(&tv, NULL);
+		seed = tv.tv_usec;
+	//	printf( "%li \n", seed);
+	}
+
+	if (read_config_flag == 0) {
+                fprintf(stderr, "%s error: configuration file was not loaded.\n", PROGNAME);
+                exit(1);
+        }
+
+	// mean c(M) relation for a given z
+	mean_logc = mean_log10c(m,z);
+
+	// select c(M,z) from configuration file
+	for (i=count; i > 0; i--)
+	{
+		if (z >= config[i].redshift)
+			break;
+	}
 
 	// scatter on logc at fixed mass is well represented by a normal pdf
-	float sigma_logc = config[i].sigma_logc;
+	sigma_logc = config[i].sigma_logc;
 	
 	// implements rejection method for a normal random generator
 	float min_logc = mean_logc-3.0*sigma_logc;	
@@ -262,11 +323,11 @@ void read_config(char* get_nfw_concentration_conf)
 
 void help(void)
 {
-	fprintf(stdout," get_nfw_concentration python module:\n\n First load the get_nfw_concentration configuration file:\n >>> get_nfw_concentration.read_config('get_nfw_concentration.conf')\n\n Then call:\n >>> get_nfw_concentration.c(mass, redshift, seed)\n to generate a random value of concentration for a given halo mass and redshift. \n Set seed as 0 for random generation based on the clock time, otherwise a fixed seed can be used to reproduce the same concentration value.\n");
+	fprintf(stdout," get_nfw_concentration python module:\n\n First load the get_nfw_concentration configuration file:\n >>> get_nfw_concentration.read_config('get_nfw_concentration.conf')\n\n Then call:\n >>> get_nfw_concentration.c(mass, redshift, seed)\n to generate a random value of concentration for a given halo mass and redshift. \n Set seed as 0 for random generation based on the clock time, otherwise a fixed seed can be used to reproduce the same concentration value.\n\n The other available functions are:\n >>> get_nfw_concentration.mean_log10c(mass, redshift)\n and \n >>> get_nfw_concentration.sigma_log10c(mass, redshift)\n");
 
 }
 
 void usage(void)
 {
-	fprintf(stderr,"Usage: get_nfw_concentration -m <mass> [-z <redshift>] [-d <over density>] [-s seed] [-h]\n\n\nget_nfw_concentration %s - Return the concentration parameter for a given halo mass and redshift. The input c(m,z) relations are specified in the configuration file 'get_nfw_concentration.conf'. \n\nOptions: \n\t-m : Set the halo mass in units of Msol/h\n\t-z : Set the halo redshift (default z=0) \n\t-d : Set the density constrast with respect to the critical density (Not implemented yet using by default Delta=200)\n\t-s : Fixed seed for random generator (default seed is variable, based on clock time)\n\t-h : Show this help\n\nNote: Mass and redshift values must lie in the range specified in the configuration file.\n", VERSION); 
+	fprintf(stderr,"Usage: get_nfw_concentration -m <mass> [-z <redshift>] [-d <over density>] [-s seed] [-a] [-h]\n\n\nget_nfw_concentration %s - Return the concentration parameter for a given halo mass and redshift. The input P(c|m,z) relations are specified in the configuration file 'get_nfw_concentration.conf'. \n\nOptions: \n\t-m : Set the halo mass in units of Msol/h\n\t-z : Set the halo redshift (default z=0) \n\t-d : Set the density constrast with respect to the critical density (Not implemented yet using by default Delta=200)\n\t-s : Fixed seed for random generator (default seed is variable, based on clock time)\n\t-p : use this flag to return the P(c|M,z) parameters, i.e, the  mean concentration and sigma.\n\t-h : Show this help\n\nNote: Mass and redshift values must lie in the range specified in the configuration file.\n", VERSION); 
 }

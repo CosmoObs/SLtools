@@ -12,8 +12,7 @@ n=50000
 c=range(n)
 
 mass=1e14
-redshift=0
-	
+redshift=1.0
 
 get_nfw_concentration.read_config("get_nfw_concentration.conf")
 
@@ -23,6 +22,12 @@ for i in range(n):
 # statistics
 
 c_mean=np.mean(c)
+c_median=np.median(c)
+print "c_mean from distribution = ", c_mean 
+print "c_median from distribution = ", c_median
+print "c_mean from code = ", 10**get_nfw_concentration.mean_log10c(mass,redshift)
+
+get_nfw_concentration.help()
 
 # the histogram of the data
 
