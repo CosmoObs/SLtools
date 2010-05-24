@@ -329,7 +329,6 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	index = np.argmax(tan_CC_x**2 + tan_CC_y**2)
 	image_plane_factor = float(source_selector_control_params['image_plane_factor']);
 	gravlens_params['gridhi1'] =  image_plane_factor * ( (tan_CC_x[index]**2 + tan_CC_y[index]**2)**0.5 )
-	logging.debug( 'gridhi1 = %s' % float( gravlens_params['gridhi1'] ) )
 	inputlens, setlens = lens_parameters(lens_model, gravlens_params)
 	#-----------------------------------------------------------------------------------------------------------
 	source_positions_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
@@ -338,6 +337,7 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 		logging.debug( 'loop in source_positions: gridhi1 = %f' % float( gravlens_params['gridhi1'] ) )
 		inputlens, setlens = lens_parameters(lens_model, gravlens_params)		
 		source_positions_output = source_positions(source_selector_control_params, deformation_rectangle, nsources, inputlens)
+	logging.debug( 'gridhi1 = %s' % float( gravlens_params['gridhi1'] ) )
 	source_centers = source_positions_output[0]
 	image_centers = source_positions_output[1]
 	image_distortions = source_positions_output[2]
