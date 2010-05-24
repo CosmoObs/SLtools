@@ -25,6 +25,5 @@ def check_dependencies( dependencies_struct ):
 			print "Error: could not import %s module." % (_mod);
 			check_flag = False;
 
-	if (check_flag) : print "\nCheck dependencies:   OK\n"
 	return check_flag
 
