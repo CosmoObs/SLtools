@@ -3,6 +3,7 @@
 Module to deal with (fits) image copy/cuts
 
 Funtions:
+
    cutout( FITS image file ) -> (np.array, header)
 
 """
