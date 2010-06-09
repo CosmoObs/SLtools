@@ -12,7 +12,6 @@
 def compute_source_density(zS, delta_zS, source_selection_criteria): 
 
 	UDF = source_selection_criteria['source_catalog']
-	enhance_nsource = float(source_selection_criteria['enhance_nsource']);
 	X = open('%s' % (UDF)).readlines()
 	z0 = []
 	zs = []
@@ -22,4 +21,4 @@ def compute_source_density(zS, delta_zS, source_selection_criteria):
 			zs.append(z0[i])
 	N_area = len(zs)/43092.0
 	#print min(zs)                               # or 11.97.0 arcmin**2
-	return N_area * enhance_nsource
+	return N_area,
