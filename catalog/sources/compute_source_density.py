@@ -10,7 +10,16 @@
 #
 #@return Return the source density (increased by enhance_nsource)
 def future_compute_source_density(zS, delta_zS, source_catalog): 
-	"""
+	"""Returns the number of sources(objects) from given catalog per unit area
+
+	Input:
+	 zS : source (central) redshift
+	 delta_zS : width of redshift slice to look for
+	 source_catalog : string with source catalog filename
+
+	Output:
+	 N_area : number of objects per unit area
+
 	"""
 	UDF = source_catalog;
 	X = open('%s' % (UDF)).readlines()
@@ -21,11 +30,11 @@ def future_compute_source_density(zS, delta_zS, source_catalog):
 		if z0[i]>= (zS-delta_zS/2.0) and z0[i]< (zS+delta_zS/2.0): 
 			zs.append(z0[i])
 	N_area = len(zs)/43092.0
-	#print min(zs)                               # or 11.97.0 arcmin**2
+
 	return N_area
 
 def compute_source_density(zS, delta_zS, source_selection_criteria):
 
 	source_catalog = source_selection_criteria['source_catalog']
-	return future_compute_source_density(zS, delta_zS, source_catalog): 
+	return future_compute_source_density(zS, delta_zS, source_catalog);
 
