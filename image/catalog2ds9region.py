@@ -5,10 +5,14 @@
 
 Module to create SAO DS9 region files from DC5 FITS object catalogs
 
-Funtions:
+#param input_file : Input FITS catalog
+#param ra_0, dec_0 : RA and DEC values of reference (deg)
+#param radius : Search objetcs inside the radius (arcsec) 
+#param pixel_scale : Angular size of the pixel
+#param scale_factor : Scale the ellipse size
+#param output_file : Output ds9 region file
 
-?
-
+# return 0 success or 1 fail
 """
 
 from numpy import *
@@ -27,19 +31,26 @@ from get_catalog_data import get_catalog_data
 
 def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor, output_file):
 
-	print ra_0, dec_0, radius, pixel_scale, scale_factor
+	ra_0 = float(ra_0)
+
+	if ra_0 < 0:	
+		ra_0 = (360. + ra_0)
+
+        dec_0 = float(dec_0)
+	radius = float(radius) 				
+	pixel_scale = float(pixel_scale) 
+	scale_factor = float(scale_factor)
 
 	data = get_catalog_data(input_file, "RA", "DEC", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "TILENAME")
     	
-	search_radius = sqrt(((data['RA'] - ra_0)**2)*(math.cos(math.radians(dec_0))**2) + (data['DEC'] - dec_0)**2)
-	
-	print search_radius
+	search_radius = ((data['RA'] - ra_0)**2)*(math.cos(math.radians(dec_0))**2) + (data['DEC'] - dec_0)**2
 
-	select = search_radius < radius/3600.
+	select = search_radius < (radius/3600.)**2
 
 	index = where(select)[0]
-
-	print index
+	
+	if len(index) == 0:
+		print "No objects found."
 
 	output = open(output_file,"w")
 	
@@ -51,7 +62,7 @@ def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor
 
     # Circle entities
 	for i in index:
-		output.write("ellipse(%f,%f,%f\",%f\",%f) \n" %(data['RA'][i],data['RA'][i], pixel_scale*scale_factor*data['A_IMAGE'][i],pixel_scale*scale_factor*data['B_IMAGE'][i], data['THETA_IMAGE'][i]))
+		output.write("ellipse(%f,%f,%f\",%f\",%f) \n" %(data['RA'][i],data['DEC'][i], pixel_scale*scale_factor*data['A_IMAGE'][i],pixel_scale*scale_factor*data['B_IMAGE'][i], data['THETA_IMAGE'][i]))
 	
 if __name__ == "__main__" :
 
@@ -79,17 +90,17 @@ if __name__ == "__main__" :
 			  help='Angular size of the pixel [0.27]');
 	parser.add_option('-s','--scale_fator',
 			  dest='scale_factor', default=2.5,
-			  help='Size of x side on output [2.5]');
+			  help='Scale the ellipse size [2.5]');
 
 	(opts,args) = parser.parse_args();
 
 	input_file = opts.input_file;
 	output_file = opts.output_file;
-	ra_0 = float(opts.ra_0);
-	dec_0 = float(opts.dec_0);
-	radius = float(opts.radius);
-	pixel_scale = float(opts.pixel_scale);
-	scale_factor = float(opts.scale_factor);
+	ra_0 = opts.ra_0;
+	dec_0 = opts.dec_0;
+	radius = opts.radius;
+	pixel_scale = opts.pixel_scale;
+	scale_factor = opts.scale_factor;
 
 	if ( opts=={} ):
 		print"";
@@ -103,6 +114,8 @@ if __name__ == "__main__" :
 		sys.exit(1);
 
 	catalog2ds9region(input_file,ra_0,dec_0,radius,pixel_scale,scale_factor,output_file)
+
+	print "Created %s file." % output_file
 
 	sys.exit(0);
 
