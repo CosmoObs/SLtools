@@ -9,9 +9,10 @@
 #@param source_selection_criteria (to get the catalog path and enhance_nsource, that artificially increases the source density by a multiplicative factor)
 #
 #@return Return the source density (increased by enhance_nsource)
-def compute_source_density(zS, delta_zS, source_selection_criteria): 
-
-	UDF = source_selection_criteria['source_catalog']
+def future_compute_source_density(zS, delta_zS, source_catalog): 
+	"""
+	"""
+	UDF = source_catalog;
 	X = open('%s' % (UDF)).readlines()
 	z0 = []
 	zs = []
@@ -21,4 +22,10 @@ def compute_source_density(zS, delta_zS, source_selection_criteria):
 			zs.append(z0[i])
 	N_area = len(zs)/43092.0
 	#print min(zs)                               # or 11.97.0 arcmin**2
-	return N_area,
+	return N_area
+
+def compute_source_density(zS, delta_zS, source_selection_criteria):
+
+	source_catalog = source_selection_criteria['source_catalog']
+	return future_compute_source_density(zS, delta_zS, source_catalog): 
+
