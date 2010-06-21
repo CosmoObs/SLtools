@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
+"""@file
+
+gauss_convolution module
+
+"""
+
 
 """@package gauss_convolution
-
 
 Module to convolve images with a gaussian kernel of size defined as a 
 multiple of sigma.
