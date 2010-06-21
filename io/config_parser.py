@@ -1,24 +1,35 @@
 #!/usr/bin/env python
-
+#
 import sys;
 
 # Read config file to structure:
 # 
 def read_config( config_file, *args ):
 
-    """Functions to read '.cfg' config files and return a structure
-    (list) with ( arg, items ). 'arg' is the name of an existing section
-    and 'items' is a dictionary with the corresponding "key:value" entries.
+    """Function to read ".ini"-lyke config files into a python structure.
 
-    dic = read_config( config-like.cfg [,'section1','section2',...])
+    The function returns a dictionary of dictionaries. That is, the config 
+    file sections are the items of *config_struct*; Each item (section) is
+    a dictionary with config (option:value) entries.
+
+    config_struct = read_config( ini-like_config.cfg [,'section1','section2',...])
+
+    If 'section..' keys are not given as arguments for the function, it will return
+    the whole config file into config_struct; Otherwise, if "section1", "section2"
+    are given as arguments, then the function will return the same structure with just
+    the sections 'section1' and 'section2' contents read out from "ini-like_config.cfg".
+
+    # print config_struct
+    { 'section1': ... , 'section2': ... }
+
 
     Input:
-    -> config_file : '.cfg' ('.ini' like file) configuration file
-    -> *args : (optional) list of strings regarding section names on config file
+     - config_file : '.cfg' ('.ini' like) configuration file
+     - *args : (optional) list of strings regarding section names on config file
                if provided, only those sections will be read out and returned
     Output:
-    <- config_sections : dictionary of pairs key-value where key is a section name
-                         and value is a dictionary with the options on 'section'
+     - config_sections : dictionary of pairs key-value where key is a section name
+                         and value is a dictionary with the items on that 'section'
 
     """
     
@@ -74,11 +85,11 @@ def read_config( config_file, *args ):
 
 # ---
 
-# Read config file to structure:
+# Write config structure to .ini file:
 # 
 def write_config( config_sections, output_filename ):
 
-    """Function to write '.cfg' structured (config-like) files.
+    """Function to write '.ini' structured (config-like) files.
     The idea is to "dump" dictionary structures to text-file and
     pass it through AddArcs pipeline modules.
 
