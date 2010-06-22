@@ -1,18 +1,45 @@
 #!/usr/bin/env python
+
+"""Package to read/write config (ini) files"""
+
+##@ config_parser
 #
+#
+# Functions deal with ini-like configuration files.
+# INI files have the following structure:
+#
+# [section]
+# option = value
+#
+# So that, function read from config
+#   section:option:value
+# to python dicitonary
+#   {'section' : { 'option' = 'value' }}
+#
+# Also, package write from dictionary
+# to config (ini) file
+#
+# Read config file has to have at least one section name!
+#
+
+
 import sys;
 
+
+#=====================================
 # Read config file to structure:
 # 
 def read_config( config_file, *args ):
-
-    """Function to read ".ini"-lyke config files into a python structure.
+    """
+    Function to read ".ini"-lyke config files into a python structure.
+    (About INI files: http://en.wikipedia.org/wiki/INI_file)
 
     The function returns a dictionary of dictionaries. That is, the config 
     file sections are the items of *config_struct*; Each item (section) is
     a dictionary with config (option:value) entries.
+    * At least one section should exist in given config file.
 
-    config_struct = read_config( ini-like_config.cfg [,'section1','section2',...])
+    config_struct = read_config( ini-like_config.txt [,'section1','section2',...])
 
     If 'section..' keys are not given as arguments for the function, it will return
     the whole config file into config_struct; Otherwise, if "section1", "section2"
@@ -20,8 +47,7 @@ def read_config( config_file, *args ):
     the sections 'section1' and 'section2' contents read out from "ini-like_config.cfg".
 
     # print config_struct
-    { 'section1': ... , 'section2': ... }
-
+    { 'section1': {...} , 'section2': {...} }
 
     Input:
      - config_file : '.cfg' ('.ini' like) configuration file
@@ -85,11 +111,14 @@ def read_config( config_file, *args ):
 
 # ---
 
+#====================================================
 # Write config structure to .ini file:
 # 
 def write_config( config_sections, output_filename ):
+    """
+    Function to write '.ini' structured (config-like) files.
+    (About INI files: http://en.wikipedia.org/wiki/INI_file)
 
-    """Function to write '.ini' structured (config-like) files.
     The idea is to "dump" dictionary structures to text-file and
     pass it through AddArcs pipeline modules.
 
@@ -124,6 +153,7 @@ def write_config( config_sections, output_filename ):
     config.write(fp);
     fp.close();
 
+
     return;
 
 # ---
@@ -145,8 +175,8 @@ if __name__ == "__main__" :
         parser.print_help();
         sys.exit();
 
-    config = read_config(configfile,'input','path','run_flags');
-#    config = read_config(configfile);
+#    config = read_config(configfile,'input','path','run_flags');
+    config = read_config(configfile);
 
     while config:
         dic_sect = config.popitem();

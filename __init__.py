@@ -1,8 +1,21 @@
-#
-import catalog;
-import gravlens;
-import image;
-import lens;
-import simulate_arcs;
-import simulations;
-import io;
+"""
+Functions library for scientific computing
+
+Strong Lensing tools (SLtools) is a collection of functions
+primarily designed support scientific computing applied to
+cosmological modeling.
+
+Daily common tasks evolving catalog handling, image processing,
+gravitational lensing simulations and other numerical calculations
+are covered by SLtools modules.
+
+"""
+
+import image
+import catalog
+import gravlens
+import image
+import io
+import lens
+import plot
+import simulations
