@@ -10,12 +10,3 @@ gravitational lensing simulations and other numerical calculations
 are covered by SLtools modules.
 
 """
-
-import image
-import catalog
-import gravlens
-import image
-import io
-import lens
-import plot
-import simulations

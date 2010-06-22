@@ -12,8 +12,10 @@
 import sys;
 
 # AddArcs/SLtools..
-from tools.catalog.halos.get_catalog_data import get_catalog_data;
-from tools.image.get_image_limits import get_image_limits;
+#from tools.catalog.halos.get_catalog_data import get_catalog_data;
+#from tools.image.get_image_limits import get_image_limits;
+from get_catalog_data import get_catalog_data;
+from get_image_limits import get_image_limits;
 
 # AddArcs/Pipeline..
 from pipeline.functions import readout_radec;
