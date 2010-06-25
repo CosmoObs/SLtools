@@ -3,16 +3,19 @@
 
 """@package catalog2ds9region
 
-Module to create SAO DS9 region files from DC5 FITS object catalogs
+Module to create SAO DS9 region files from DES Data Challenge FITS catalogs
 
-@param input_file : Input FITS catalog
-@param ra_0, dec_0 : RA and DEC values of reference (deg)
-@param radius : Search objetcs inside the radius (arcsec) 
-@param pixel_scale : Angular size of the pixel
-@param scale_factor : Scale the ellipse size
-@param output_file : Output ds9 region file
+Executable package: YES
 
-@return 0 success or 1 fail
+To see the package help message, type:
+
+> python catalog2ds9region.py --help
+
+ 'catalog2ds9region' has three mandatory arguments: the (input) FITS catalog and
+ the reference center coordinates (RA and DEC)
+
+> python catalog2ds9region.py -i input_file.fits --ra 10 --dec 20
+
 """
 
 from numpy import *
@@ -30,6 +33,17 @@ import sys
 from get_catalog_data import get_catalog_data
 
 def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor, output_file):
+''' Main function to create DS9 region file 
+
+	@param input_file : Input FITS catalog
+	@param ra_0, dec_0 : RA and DEC values of reference (deg)
+	@param radius : Search objetcs inside the radius (arcsec) 
+	@param pixel_scale : Angular size of the pixel
+	@param scale_factor : Scale the ellipse size
+	@param output_file : Output ds9 region file
+
+	@return 0 success or 1 fail
+'''
 
 	ra_0 = float(ra_0)
 
@@ -60,10 +74,12 @@ def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor
 	output.write("global color=green dashlist=8 3 width=1 font=\"helvetica 10 normal\" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n")
 	output.write("fk5\n")
 
-    # Circle entities
+        # Circle entities
 	for i in index:
 		output.write("ellipse(%f,%f,%f\",%f\",%f) \n" %(data['RA'][i],data['DEC'][i], pixel_scale*scale_factor*data['A_IMAGE'][i],pixel_scale*scale_factor*data['B_IMAGE'][i], data['THETA_IMAGE'][i]))
-	
+
+
+#@cond	
 if __name__ == "__main__" :
 
 	from optparse import OptionParser;
@@ -119,6 +135,6 @@ if __name__ == "__main__" :
 
 	sys.exit(0);
 
-
+#@endcond 
 
 
