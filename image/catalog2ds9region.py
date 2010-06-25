@@ -5,14 +5,14 @@
 
 Module to create SAO DS9 region files from DC5 FITS object catalogs
 
-#param input_file : Input FITS catalog
-#param ra_0, dec_0 : RA and DEC values of reference (deg)
-#param radius : Search objetcs inside the radius (arcsec) 
-#param pixel_scale : Angular size of the pixel
-#param scale_factor : Scale the ellipse size
-#param output_file : Output ds9 region file
+@param input_file : Input FITS catalog
+@param ra_0, dec_0 : RA and DEC values of reference (deg)
+@param radius : Search objetcs inside the radius (arcsec) 
+@param pixel_scale : Angular size of the pixel
+@param scale_factor : Scale the ellipse size
+@param output_file : Output ds9 region file
 
-# return 0 success or 1 fail
+@return 0 success or 1 fail
 """
 
 from numpy import *
