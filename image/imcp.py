@@ -335,20 +335,24 @@ def poststamp( image, header=None, output_size=None, increase=0, relative_increa
 
     # Otherwise, if the output has variable size, according to feature dimensions..
     #
-    y_inds, x_inds = np.where(image != 0);
+    y_inds, x_inds = np.where(image);
+    if ( len(y_inds) <= 1  or  len(x_inds) <= 1 ):
+	    print >> sys.stderr, "Error: Null image given.";
+	    return (None,None);
 
-    y_ind_max = max(y_inds);
+    y_indp_max = max(y_inds) + 1;
     y_ind_min = min(y_inds);
 
-    x_ind_max = max(x_inds);
+    x_indp_max = max(x_inds) + 1;
     x_ind_min = min(x_inds);
     
-    if ( increase != 0 ):
+    x_size = x_indp_max - x_ind_min;
+    y_size = y_indp_max - y_ind_min;
 
-        x_size = (x_ind_max - x_ind_min)/2.;
-        y_size = (y_ind_max - y_ind_min)/2.;
-        xo = x_size + x_ind_min;
-        yo = y_size + y_ind_min;
+    xo = x_ind_min + x_size/2;
+    yo = y_ind_min + y_size/2;
+
+    if ( increase != 0 ):
 
         if (relative_increase == True):
 
@@ -361,11 +365,11 @@ def poststamp( image, header=None, output_size=None, increase=0, relative_increa
             y_size = y_size + 2*increase;
 
 
-        image_out, header = cutout( image, header, xo=xo, yo=yo, x_size=x_size, y_size=y_size );
+        image_out, header = cutout( image, header, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size) );
 
     else:
 
-        image_out = image;
+        image_out, header = cutout( image, header, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size) );
 
 
     return (image_out, header);
@@ -418,7 +422,7 @@ if __name__ == "__main__" :
 	parser.add_option('--increase',
 			  dest='incr', default=0,
 			  help='Amount of border/enlarge of image. It is an additive or multiplicative factor. See "relative_increase" flag');
-	parser.add_option('--relative_increase', action='store_true'
+	parser.add_option('--relative_increase', action='store_true',
 			  dest='rel_incr', default=False,
 			  help='Turn on the multiplicative factor for increase image.')
 

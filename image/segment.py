@@ -22,7 +22,7 @@ import numpy as np;
 
 
 #=======================================================================
-def run_sex(fits_image, params=["NUMBER","X_IMAGE","Y_IMAGE"], args={}):
+def run_sex(fits_image, params=["NUMBER","X_IMAGE","Y_IMAGE"], args={}, cats_name="catalog"):
     """
     Run Sextractor on given (fits) image, with optional parameters
 
@@ -34,8 +34,8 @@ def run_sex(fits_image, params=["NUMBER","X_IMAGE","Y_IMAGE"], args={}):
     be passed as a dictionary {'key' = 'value'}.
     * Output parameter "NUMBER" is always placed as the first column on catalog
 
-    Two catalogue files are created during sex's runs: 'catalog_obj.cat' and 
-    'catalog_seg.cat', with "objects" and "segmentation" features output 
+    Two catalogue files are created during sex's runs: cats_name+'_obj.cat' and 
+    cats_name+'_seg.cat', with "objects" and "segmentation" features output 
     values, respectively.
     Two FITS files - images - are also created during the runs, one for each
     run type: "objects" and "segmentation". File names are just the given 
@@ -47,9 +47,10 @@ def run_sex(fits_image, params=["NUMBER","X_IMAGE","Y_IMAGE"], args={}):
      - params     : List of parameters to output on catalogues
      - args       : Dictionary with sextractor line arguments. If not given,
                     'sex -dd' will be used as default options.
+     - cats_name  : Root name used for genereated catalogue names. ["catalog"]
 
     Output:
-     * Two ascii files and two fits images. See above paragraph.
+     * Two ascii files (catalogues) and two fits images. See above paragraph.
 
     """
 
@@ -62,35 +63,36 @@ def run_sex(fits_image, params=["NUMBER","X_IMAGE","Y_IMAGE"], args={}):
     fparam = open('default.param','w');
     fparam.write( "NUMBER\n" );               # I've fixed the first param for compatibility reasons.
     for _param in params:
+        _param.rstrip("\n")
+        if (_param != "NUMBER"):
             fparam.write( "%s\n" % (_param) );
     fparam.close();
 
 
     # Build sextractor command line..
     #
-    args = {};
     cmd_line = ' ';
     for key in args:
-        cmd_line = cmd_line + ' -' + key + ' ' + kwargs[key];
+        cmd_line = cmd_line + ' -' + string.upper(key) + ' ' + args[key];
 
 
     rootname = string.replace( fits_image,".fits","" );
 
     # OBJECTS output
     outobjimage = rootname + "_obj.fits";
-    status= os.system( 'sex %s -CHECKIMAGE_TYPE OBJECTS -CATALOG_TYPE ASCII -CATALOG_NAME catalog_obj.cat -CHECKIMAGE_NAME %s %s' % (fits_image,outobjimage,cmd_line));
+    status= os.system( 'sex %s -CHECKIMAGE_TYPE OBJECTS -CATALOG_TYPE ASCII_HEAD -CATALOG_NAME %s_obj.cat -CHECKIMAGE_NAME %s %s' % (fits_image,cats_name,outobjimage,cmd_line));
     if ( status != 0 ): print >> sys.stderr, "Warning: Sextractor raised an error code '%s' during 'OBJECTS' run. Continuing." % (status);
 
     # SEGMENTATION output
     outsegimage = rootname + "_seg.fits";
-    status= os.system( 'sex %s -CHECKIMAGE_TYPE SEGMENTATION -CATALOG_TYPE ASCII -CATALOG_NAME catalog_seg.cat -CHECKIMAGE_NAME %s %s' % (fits_image,outsegimage,cmd_line));
+    status= os.system( 'sex %s -CHECKIMAGE_TYPE SEGMENTATION -CATALOG_TYPE ASCII_HEAD -CATALOG_NAME %s_seg.cat -CHECKIMAGE_NAME %s %s' % (fits_image,cats_name,outsegimage,cmd_line));
     if ( status != 0 ): print >> sys.stderr, "Warning: Sextractor raised an error code '%s' during 'SEGMENTATION' run. Continuing." % (status);
 
 
     if (status):
         return (False);
 
-    return (True);
+    return ( {'SEGMENTATION':outsegimage , 'OBJECTS':outobjimage} );
 
 # ---
 
@@ -126,7 +128,7 @@ def objects_IDfy(objIDs, seg_img, obj_img):
     #
     try:
         for objID in objIDs:
-            merged_img = np.zeros( seg_img.shape, dtype=int );
+            merged_img = np.zeros( seg_img.shape, dtype=float );
             _ind = np.where(seg_img == objID);
             merged_img[_ind] = obj_img[_ind];
 
@@ -136,7 +138,7 @@ def objects_IDfy(objIDs, seg_img, obj_img):
         objID = objIDs;
         # Identify and copy the pixels in obj_img to a new blank image
         #
-        merged_img = np.zeros( seg_img.shape, dtype=int );
+        merged_img = np.zeros( seg_img.shape, dtype=float );
         _ind = np.where(seg_img == objID);
         merged_img[_ind] = obj_img[_ind];
 
@@ -148,7 +150,7 @@ def objects_IDfy(objIDs, seg_img, obj_img):
 # ---
 
 #==========================================================================================================================
-def image_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
+def images_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
     """
     Identify objects on given images by their IDs on catalog and write object images
 
@@ -185,13 +187,15 @@ def image_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
     objIDs = list(cat[:,0]);   # Notice that I'm supposing that the object IDs
                                # are placed in the first column of given catalog
 
+    objIDs = [ int(id) for id in objIDs ];
     imgs_list = objects_IDfy(objIDs, seg, obj);
 
     # Write down each returned fits image..
     #
-    for img in imgs_list:
+    for i in range(len(imgs_list)):
 
-        pyfits.writeto( out_rootname+'%s.fits', img, hdr % (ID));
+        _id = objIDs[i];
+        pyfits.writeto( out_rootname+str(_id)+'.fits', imgs_list[i], hdr );
 
 
     return (True);
@@ -212,6 +216,7 @@ def image_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
 #    fp_cat.close();
 # ---
 
+"""
 # @cond
 #==========================
 if __name__ == "__main__" :
@@ -222,7 +227,7 @@ if __name__ == "__main__" :
 
 	parser = OptionParser(usage=usage);
 
-	parser.add_option('--run_sex', action='store_true'
+	parser.add_option('--run_sex', action='store_true',
 			  dest='run_sex', default=True,
 			  help='Run sextractor on given FITS image');
         parser.add_option('--params_file',
@@ -254,3 +259,4 @@ if __name__ == "__main__" :
 
 # ------------------
 # @endcond
+"""
