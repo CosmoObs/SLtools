@@ -35,11 +35,11 @@ def lens_finite_sources(inputlens, half_frame_size, dimpix, source_centers, ref_
 		source_model[i]['nover'] = nover
 		# -------------------------------------------------------------------
 		if source_type == 'sersic':
-			# determine 'totalsorceplaneflux', according to the source magnitude
+			# determine 'totalsourceplaneflux', according to the source magnitude
 			totalsourceplaneflux = 10**((2/5)*(ref_magzpt - source_model[i][reference_band]))
 			f199.write('%s %f %.6f %.6f %f %f %.6f 0 %f macro\n' % (source_type, totalsourceplaneflux, source_centers[i][0], source_centers[i][1], source_model[i]['es'], source_model[i]['thetas'], source_model[i]['rs'], source_model[i]['ns']  ) ) # sersic/uniform F x y e PA halflightr nothing nS macro/micro
 		if source_type == 'uniform':
-			# fix 'totalsorceplaneflux' to 1
+			# fix 'totalsourceplaneflux' to 1
 			totalsourceplaneflux = 1
 			f199.write('%s %f %.6f %.6f %f %f %.6f 0 0 macro\n' % (source_type, totalsourceplaneflux, source_centers[i][0], source_centers[i][1], source_model[i]['es'], source_model[i]['thetas'], source_model[i]['rs'] ) ) # sersic/uniform F x y e PA halflightr nothing macro/micro
 		#------------------------------------------------------------------------
