@@ -1,18 +1,19 @@
 '''@file 
-get_catalog_data module
+	get_catalog_data module
 '''
 
 
 '''@package get_catalog_data 
-Get a list of variables from a FITS catalog 
+	Get a list of variables from a FITS catalog 
 '''
+
 import pyfits 
 def get_catalog_data( file_name, *args ): 
 
 	''' Get a list of variables from a FITS catalog
 
-	@param file_name: name of the FITS catalog 
-	@param *args is a comma separated list of variables to be read 
+	@param file_name is the name of the FITS catalog 
+	@param args is a comma separated list of variables to be read 
 
 	@return a dictionary with the variable names and values
 	'''

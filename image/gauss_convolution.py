@@ -12,8 +12,7 @@ gauss_convolution module
 Module to convolve images with a gaussian kernel of size defined as a 
 multiple of sigma.
 
-See http://twiki.on.br/bin/view/StrongLensing/CompareConvolutionCodes for a 
-quantitative comparison with the results of IRAF and Gravlens convolution tasks. 
+See <A HREF="http://twiki.on.br/bin/view/StrongLensing/CompareConvolutionCodes"> CompareConvolutionCodes</A> wiki page for a quantitative comparison with the results of IRAF and Gravlens convolution tasks. 
 
 """
 

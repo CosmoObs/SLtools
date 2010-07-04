@@ -33,7 +33,7 @@ import sys
 from get_catalog_data import get_catalog_data
 
 def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor, output_file):
-''' Main function to create DS9 region file 
+	''' Main function to create DS9 region file 
 
 	@param input_file : Input FITS catalog
 	@param ra_0, dec_0 : RA and DEC values of reference (deg)
@@ -43,7 +43,7 @@ def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor
 	@param output_file : Output ds9 region file
 
 	@return 0 success or 1 fail
-'''
+	'''
 
 	ra_0 = float(ra_0)
 
