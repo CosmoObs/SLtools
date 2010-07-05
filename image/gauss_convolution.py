@@ -10,7 +10,10 @@ gauss_convolution module
 """@package gauss_convolution
 
 Module to convolve images with a gaussian kernel of size defined as a 
-multiple of sigma.
+multiple of the standard deviation sigma.
+
+The standard deviation sigma can be obtained from the FWHM using the expression 
+FWHM = 2 \sqrt{2 \ln 2} \sigma 
 
 See <A HREF="http://twiki.on.br/bin/view/StrongLensing/CompareConvolutionCodes"> CompareConvolutionCodes</A> wiki page for a quantitative comparison with the results of IRAF and Gravlens convolution tasks. 
 
@@ -28,9 +31,9 @@ def gauss_kernel(n_sig,sigma,sigmay=None):
 	The size of the 2D gaussian kernel array is defined as a multiple (n_sig)
 	of sigma.
 	
-	@param n_sig  multiple of sigma (integer) that defines the size of the 2D gaussian kernel
-	@param sigma  sigma of the gaussian kernel
-	@param sigmay  sigma in the y direction of the gaussian kernel
+	@param n_sig  multiple of sigma that defines the size of the 2D gaussian kernel
+	@param sigma  standard deviation sigma of the gaussian kernel
+	@param sigmay  standard deviation sigma in the y direction of the gaussian kernel
 	
 	@return normalized 2D gaussian kernel array for convolution
     	"""
@@ -56,9 +59,9 @@ def fftconvolve_image(im_array, n_sig, sig, sigy=None) :
         
         
         @param im_array  image array to be convolved
-        @param n_sig  multiple of sigma (integer) that defines the size of the 2D gaussian kernel
-        @param sig sigma of the gaussian kernel
-        @param sigy  sigma in the y direction of the gaussian kernel
+        @param n_sig  multiple of sigma that defines the size of the 2D gaussian kernel
+        @param sig  standard deviation sigma of the gaussian kernel
+        @param sigy  standard deviation sigma in the y direction of the gaussian kernel
         
         @return image (fft) convolved array 
     	"""
@@ -79,9 +82,9 @@ def convolve_image(im_array, n_sig, sig, sigy=None) :
         
         
         @param im_array  image array to be convolved
-        @param n_sig  multiple of sigma (integer) that defines the size of the 2D gaussian kernel
-        @param sig sigma of the gaussian kernel
-        @param sigy  sigma in the y direction of the gaussian kernel
+        @param n_sig  multiple of sigma that defines the size of the 2D gaussian kernel
+        @param sig standard deviation sigma of the gaussian kernel
+        @param sigy  standard deviation sigma in the y direction of the gaussian kernel
         
         @return image convolved array 
         
