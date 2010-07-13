@@ -35,9 +35,11 @@ def add_noise_2_image(list_fitsFiles):
 		###########################################################################
 		# Here I am treating a strange "behavior" of the Arc images... !-P (negative counts)
 		#
-		Arc_tmp = np.zeros( ArcImg_array.shape );
-		Arc_tmp[ np.where( ArcImg_array>0 ) ] = ArcImg_array[ np.where( ArcImg_array>0 ) ];
-		ArcImg_array = np.random.poisson( Arc_tmp );
+		Arc_tmp = np.zeros( ArcImg_array.shape, dtype=float );
+		non_null = np.where( ArcImg_array > 0.0 );
+		Arc_tmp[ non_null ] = ArcImg_array[ non_null ];
+		ArcImg_array = Arc_tmp.copy();
+		del Arc_tmp;
 		###########################################################################
 
 

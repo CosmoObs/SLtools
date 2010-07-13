@@ -9,7 +9,6 @@
 # Functions are designed primarily to work with Sextractor
 #
 # Executable package : No
-#
 
 
 import sys;
@@ -21,8 +20,128 @@ import pyfits;
 import numpy as np;
 
 
+# INTERNAL FUNCTIONS #
+#-------------------------
+def _cstm_args(telescope):
+
+    if telescope == 'DC4':
+        _dic = {
+            'FILTER_NAME' : 'default.conv',
+            'STARNNW_NAME' : 'default.nnw',
+            'DETECT_TYPE' : 'CCD',
+            'DETECT_IMAGE' : 'SAME',
+            'FLAG_IMAGE' : 'NONE',
+            'DETECT_MINAREA' : '8',
+            'THRESH_TYPE' : 'RELATIVE',
+            'DETECT_THRESH' : '2.5',
+            'ANALYSIS_THRESH' : '2.5',
+            'FILTER' : 'Y',
+            'DEBLEND_NTHRESH' : '20',
+            'DEBLEND_MINCONT' : '0.0005',
+            'CLEAN' : 'Y',
+            'CLEAN_PARAM' : '1.0',
+            'BLANK' : 'Y',
+            'PHOT_APERTURES' : '5',
+            'PHOT_AUTOPARAMS' : '2.5,',
+            'SATUR_LEVEL' : '50000.0',
+            'MAG_ZEROPOINT' : '31.0414',
+            'MAG_GAMMA' : '4.0',
+            'GAIN' : '0.0',
+            'PIXEL_SCALE' : '0.27',
+            'SEEING_FWHM' : '1.2',
+            'BACK_SIZE' : '64',
+            'BACK_FILTERSIZE' : '3',
+            'BACKPHOTO_TYPE' : 'GLOBAL',
+            'BACKPHOTO_THICK' : '24',
+            'MEMORY_OBJSTACK' : '2000',
+            'MEMORY_PIXSTACK' : '100000',
+            'MEMORY_BUFSIZE' : '512',
+            'SCAN_ISOAPRATIO' : '0.6',
+            'VERBOSE_TYPE' : 'NORMAL'
+            };
+
+    elif telescope == 'DC5':
+        _dic = {
+            'FILTER_NAME' : 'default.conv',
+            'STARNNW_NAME' : 'default.nnw',
+            'DETECT_TYPE' : 'CCD',
+            'DETECT_IMAGE' : 'SAME',
+            'FLAG_IMAGE' : 'NONE',
+            'DETECT_MINAREA' : '10',
+            'THRESH_TYPE' : 'RELATIVE',
+            'DETECT_THRESH' : '2.5',
+            'ANALYSIS_THRESH' : '2.5',
+            'FILTER' : 'Y',
+            'DEBLEND_NTHRESH' : '20',
+            'DEBLEND_MINCONT' : '0.0005',
+            'CLEAN' : 'Y',
+            'CLEAN_PARAM' : '1.0',
+            'BLANK' : 'Y',
+            'PHOT_APERTURES' : '5',
+            'PHOT_AUTOPARAMS' : '2.5,3.5',
+            'SATUR_LEVEL' : '50000.0',
+            'MAG_ZEROPOINT' : '31.0414',
+            'MAG_GAMMA' : '4.0',
+            'GAIN' : '0.0',
+            'PIXEL_SCALE' : '0.27',
+            'SEEING_FWHM' : '0.8',
+            'BACK_SIZE' : '64',
+            'BACK_FILTERSIZE' : '3',
+            'BACKPHOTO_TYPE' : 'GLOBAL',
+            'BACKPHOTO_THICK' : '24',
+            'MEMORY_OBJSTACK' : '2000',
+            'MEMORY_PIXSTACK' : '100000',
+            'MEMORY_BUFSIZE' : '512',
+            'SCAN_ISOAPRATIO' : '0.6',
+            'VERBOSE_TYPE' : 'NORMAL'
+            };
+
+    elif telescope == 'HST':
+        _dic = {
+            'FILTER_NAME' : 'default.conv',
+            'STARNNW_NAME' : 'default.nnw',
+            'DETECT_TYPE' : 'CCD',
+            'DETECT_IMAGE' : 'SAME',
+            'FLAG_IMAGE' : 'NONE',
+            'DETECT_MINAREA' : '10',
+            'THRESH_TYPE' : 'RELATIVE',
+            'DETECT_THRESH' : '2.7',
+            'ANALYSIS_THRESH' : '2.7',
+            'FILTER' : 'Y',
+            'DEBLEND_NTHRESH' : '20',
+            'DEBLEND_MINCONT' : '0.0005',
+            'CLEAN' : 'Y',
+            'CLEAN_PARAM' : '1.0',
+            'BLANK' : 'Y',
+            'PHOT_APERTURES' : '5',
+            'PHOT_AUTOPARAMS' : '2.5,3.5',
+            'SATUR_LEVEL' : '50000.0',
+            'MAG_ZEROPOINT' : '21.59',
+            'MAG_GAMMA' : '4.0',
+            'GAIN' : '7.0',
+            'PIXEL_SCALE' : '0.1',
+            'SEEING_FWHM' : '0.22',
+            'BACK_SIZE' : '64',
+            'BACK_FILTERSIZE' : '3',
+            'BACKPHOTO_TYPE' : 'GLOBAL',
+            'BACKPHOTO_THICK' : '24',
+            'MEMORY_OBJSTACK' : '3000',
+            'MEMORY_PIXSTACK' : '300000',
+            'MEMORY_BUFSIZE' : '1024',
+            'SCAN_ISOAPRATIO' : '0.6',
+            'VERBOSE_TYPE' : 'NORMAL'
+            };
+
+    else:
+        _dic = {};
+
+
+    return (_dic);
+
+# ---
+
 #=======================================================================
-def run_sex(fits_image, params=["NUMBER","X_IMAGE","Y_IMAGE"], args={}, cats_name="catalog"):
+def run_sex(fits_image, params=[], args={}, custom=''):
     """
     Run Sextractor on given (fits) image, with optional parameters
 
@@ -42,48 +161,81 @@ def run_sex(fits_image, params=["NUMBER","X_IMAGE","Y_IMAGE"], args={}, cats_nam
     filename with extension ".fits" changed by "_obj.fits" and "_seg.fits", 
     respectively.
 
+    Custom SExtractor configuration parameters can be used, chosen to be *good*
+    extraction parameters for different telescopes.
+    custom : 'HST'
+             'DC4'
+             'DC5'
+    Notice that this custom choices do not disable other parameters.
+
     Input:
      - fits_image : FITS image filename
      - params     : List of parameters to output on catalogues
      - args       : Dictionary with sextractor line arguments. If not given,
                     'sex -dd' will be used as default options.
      - cats_name  : Root name used for genereated catalogue names. ["catalog"]
+     - custom     : HST, DC4, DC5
 
     Output:
      * Two ascii files (catalogues) and two fits images. See above paragraph.
 
     """
 
-    # Sextractor config file..
-    #
-#    os.system( 'sex -dd > default.sex' );
 
     # Object features to output..
     #
-    fparam = open('default.param','w');
-    fparam.write( "NUMBER\n" );               # I've fixed the first param for compatibility reasons.
-    for _param in params:
-        _param.rstrip("\n")
-        if (_param != "NUMBER"):
+    if ( params != [] ):
+
+        param_file = "run_sex.param";
+        args.update( {'parameters_name' : param_file} );
+
+        fparam = open(param_file,'w');
+        for _param in params:
             fparam.write( "%s\n" % (_param) );
-    fparam.close();
+        fparam.close();
 
 
-    # Build sextractor command line..
+    # ==========================================================================
+    # WRITE DOWN "default.conv" for sextractor if necessary..
     #
-    cmd_line = ' ';
-    for key in args:
-        cmd_line = cmd_line + ' -' + string.upper(key) + ' ' + args[key];
+    if not ( args.has_key('filter_name') ):
+        fp = open('default.conv','w');
+        fp.write("CONV NORM\n");
+        fp.write("# 3x3 ``all-ground'' convolution mask with FWHM = 2 pixels.\n");
+        fp.write("1 2 1\n");
+        fp.write("2 4 2\n");
+        fp.write("1 2 1\n");
+        fp.close();
+    # ==========================================================================
 
 
-    rootname = string.replace( fits_image,".fits","" );
+    cargs = _cstm_args( custom );
+    cargs.update( args );
 
-    # OBJECTS output
+    # Build up sextractor command line..
+    #
+    cmd_line = '';
+    for key in cargs:
+        cmd_line = cmd_line + ' -' + string.upper(key) + ' ' + re.sub( "\s+","",str(cargs[key]));
+
+    # Run sex..
+    #
+    status = os.system( 'sex %s %s' % (fits_image,cmd_line));
+    if ( status != 0 ): print >> sys.stdout, "Warning: Sextractor raised an error code '%s' during Sextractor run. Continuing." % (status);
+
+
+    if (status):
+        return (False);
+
+    return (True);
+
+"""
+    ' OBJECTS output
     outobjimage = rootname + "_obj.fits";
     status= os.system( 'sex %s -CHECKIMAGE_TYPE OBJECTS -CATALOG_TYPE ASCII_HEAD -CATALOG_NAME %s_obj.cat -CHECKIMAGE_NAME %s %s' % (fits_image,cats_name,outobjimage,cmd_line));
     if ( status != 0 ): print >> sys.stderr, "Warning: Sextractor raised an error code '%s' during 'OBJECTS' run. Continuing." % (status);
 
-    # SEGMENTATION output
+    ' SEGMENTATION output
     outsegimage = rootname + "_seg.fits";
     status= os.system( 'sex %s -CHECKIMAGE_TYPE SEGMENTATION -CATALOG_TYPE ASCII_HEAD -CATALOG_NAME %s_seg.cat -CHECKIMAGE_NAME %s %s' % (fits_image,cats_name,outsegimage,cmd_line));
     if ( status != 0 ): print >> sys.stderr, "Warning: Sextractor raised an error code '%s' during 'SEGMENTATION' run. Continuing." % (status);
@@ -93,7 +245,7 @@ def run_sex(fits_image, params=["NUMBER","X_IMAGE","Y_IMAGE"], args={}, cats_nam
         return (False);
 
     return ( {'SEGMENTATION':outsegimage , 'OBJECTS':outobjimage} );
-
+"""
 # ---
 
 #=============================================================================
@@ -128,7 +280,7 @@ def objects_IDfy(objIDs, seg_img, obj_img):
     #
     try:
         for objID in objIDs:
-            merged_img = np.zeros( seg_img.shape, dtype=float );
+            merged_img = np.zeros( seg_img.shape, dtype = obj_img.dtype );
             _ind = np.where(seg_img == objID);
             merged_img[_ind] = obj_img[_ind];
 
@@ -138,7 +290,7 @@ def objects_IDfy(objIDs, seg_img, obj_img):
         objID = objIDs;
         # Identify and copy the pixels in obj_img to a new blank image
         #
-        merged_img = np.zeros( seg_img.shape, dtype=float );
+        merged_img = np.zeros( seg_img.shape, dtype = obj_img.dtype );
         _ind = np.where(seg_img == objID);
         merged_img[_ind] = obj_img[_ind];
 
@@ -180,7 +332,7 @@ def images_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
     #
     obj, hdr = pyfits.getdata(obj_image, header=True);
     seg = pyfits.getdata(seg_image);
-    cat = np.loadtxt(catalog, comments="#");
+    cat = np.loadtxt(catalog, comments="'");
 
 
     # Object IDs
@@ -209,7 +361,7 @@ def images_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
 #    for line in fp_cat.readlines():
 #        line.rstrip("\n");
 #        if ( re.search("^$",line) ): continue;
-#        if ( re.search("^\s*#",line) ): continue;
+#        if ( re.search("^\s*'",line) ): continue;
 #        line = re.sub("^\s*","",line);
 #        line = string.split(line);
 #        objIDs.append( int(line[0]) );
@@ -217,7 +369,7 @@ def images_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
 # ---
 
 """
-# @cond
+# \cond
 #==========================
 if __name__ == "__main__" :
 
@@ -258,5 +410,5 @@ if __name__ == "__main__" :
 	sys.exit(0);
 
 # ------------------
-# @endcond
+# \endcond
 """

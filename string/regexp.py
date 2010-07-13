@@ -9,8 +9,8 @@ import re;
 ##@package regexp
 
 # =====================
-def str2lst( wort, sep="," ):
-	"""Function to read a string with special chars as a list of strings
+def str2lst( wort, sep=",", xchar="", valid_chars="a-zA-Z0-9_\ \-\+\.\^" ):
+	"""Function to read a string with special chars and return without them
 
         str2lst( 'string' )
 
@@ -18,19 +18,26 @@ def str2lst( wort, sep="," ):
         a list of strings if any comma is found.
 
         Special characters here are considered to be any one not is the list:
-        a-z , A-Z , 0-9 , _ , - , + , . , ^
+        a-z , A-Z , 0-9 , _ ,   , - , + , . , ^
         And comma ( , ) is used as separator by default.
 
+	The function flow first split the string and then removes the special chars
+
         Input:
-         - wort : A string
-         - sep  : string separator
+         - wort  : A string
+         - sep   : string separator
+	 - xchar : extra character to be used as valid in string
 
         Output:
          - a list with given string content(s)
 
         """
 
-	return ( string.split( re.sub("[^a-zA-Z0-9_,\-\+\.\^]", "", wort), sep=',') );
+	valid_chars = valid_chars + xchar;
+
+	lista = string.split( wort, sep=sep );
+
+	return ( [ re.sub( "[^"+valid_chars+"]", "", i )  for i in lista ] );
 
 # ---
 
@@ -62,13 +69,14 @@ def select_lines( ascii_file, comments="#", inverse=False ):
 
     for line in fp_cont.readlines():
 
-        line.rstrip("\n");
+        line = line.rstrip('\n');
         line = re.sub( "^\s*", "", line );
+        line = re.sub( "\s+", " ", line );
 
         if ( re.search("^$", line) ): continue;
 
         if ( re.search("^"+comments, line) ):
-            comment_lines.append( line );
+            comment_lines.append( re.sub("^#\s*", "", line) );
             continue;
 
         data_lines.append( line );

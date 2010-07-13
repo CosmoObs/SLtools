@@ -86,19 +86,22 @@ cp src/get_nfw_concentration/module/*.conf tools/simulations &> /dev/null
 cp src/compute_nfw_lens_parameters/module/*.py tools/lens &> /dev/null
 cp src/compute_nfw_lens_parameters/module/*.so tools/lens &> /dev/null
 
-rm -rf src/
 
-# ------------------------------------------------------------------------------------------
-# We can do better and install AddArcs into another place on the system..
+# ----------------------------------------------------------------------
+# We can do better and install SLtools into another place on the system
 #
 echo ""
-echo "Where do you want to install SLtools? [${HOME}]   "
-echo "( If you want to leave it here, type . )"
+echo "Where do you want to install SLtools? [${HOME}/lib]   "
+echo "(Type Ctrl+C to cancel the installation if you want to)"
 read INSTALLDIR
 
-# Set the default value (HOME) if the user agreed
+# Set the default value (HOME) nothing was given
 #
-[ -z "$INSTALLDIR" ] && INSTALLDIR=$HOME
+[ -z "$INSTALLDIR" ] && INSTALLDIR="${HOME}/lib"
+
+# Check if INSTALLDIR exist, if not, create it
+#
+[ ! -d "$INSTALLDIR" ] && { mkdir -p $INSTALLDIR || exit 1; }
 
 # Check if it can be written
 #
@@ -109,22 +112,23 @@ then
     exit 1
 fi
 
-if [ "$INSTALLDIR" = "." ]
-then
-    DIR=$PWD
-else
-    DIR=${INSTALLDIR}/SLtools-${VERSION}
-    mkdir -p $DIR/sltools || exit 1
-    echo ""
-    echo "Copying files to $DIR/sltools ..."
-    cp -R * ${DIR}/sltools/.
-    echo ""
-fi
+# Create directories where files will be copied, and do it
+#
+DIR=${INSTALLDIR}/SLtools-${VERSION}
+mkdir -p $DIR/sltools || exit 1
+echo ""
+echo "Copying files to $DIR/sltools ..."
+cp -R * ${DIR}/sltools/.
+mv ${DIR}/sltools/bin ${DIR}/sltools/.
+echo ""
 
-[ -z "$PYTHONPATH" ] && PYTHONPATH=${DIR} || PYTHONPATH=${DIR}:${PYTHONPATH}
 
-export PYTHONPATH
+#[ -z "$PYTHONPATH" ] && PYTHONPATH=${DIR} || PYTHONPATH=${DIR}:${PYTHONPATH}
+#export PYTHONPATH
 
-echo "Update your login file with the following line if you want to have SLtools in your PYTHON environment."
+echo "If you want SLtools to be readable in your PYTHON environment, use the command-line below."
+echo "Update your login file (.login, .profile, ...) with the following line for permanent use."
+echo ""
 echo "   export PYTHONPATH=${DIR}:\$PYTHONPATH"
+echo "   export PATH=${DIR}/bin:\$PATH"
 echo ""

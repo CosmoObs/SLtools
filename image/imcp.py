@@ -38,7 +38,9 @@ import commands
 import numpy as np;
 
 
-#============================================================================================
+# \cond
+# INTERNAL FUNCTIONS #
+#----------------------
 def _hdr_dimpix( hdr ):
 	"""Read header params and output image size and degrees-to-pixel convertion factor"""
 
@@ -46,8 +48,15 @@ def _hdr_dimpix( hdr ):
 #	x_img_size = NAXIS1 = int(hdr['NAXIS1']);
 #	y_img_size = NAXIS2 = int(hdr['NAXIS2']);
 
-	CUNIT1 = str(hdr['CUNIT1']);
-	CUNIT2 = str(hdr['CUNIT2']);
+	try:
+		CUNIT1 = str(hdr['CUNIT1']);
+		CUNIT2 = str(hdr['CUNIT2']);
+	except:
+		print >> sys.stderr, "Warning: Unable to find 'CUNIT[1|2]' parameters in header instance for image coordinates unit.";
+		print >> sys.stderr, "         Degrees ('deg') is being used as default value.";
+		print >> sys.stderr, "         Take a look inside image header parameters for coordinate units and email us so we can improve the code.";
+		CUNIT1 = 'deg';
+		CUNIT2 = 'deg';
 
 	CD1_1 = float(hdr['CD1_1']);
 	CD2_2 = float(hdr['CD2_2']);
@@ -56,11 +65,6 @@ def _hdr_dimpix( hdr ):
 	#
 	if ( CUNIT1 == 'deg' and CUNIT2 == 'deg' ):
 		conv_factor = 3600.0;
-	else:
-		print >> sys.stderr, "Error: Don't know how to deal with coordinates units of given image.";
-		print >> sys.stderr, "       This was written to deal with degrees-to-arcsec transformation.";
-		print >> sys.stderr, "       Take a look at 'CUNIT*' parameters on header files and email us.";
-		return (False,False);
 
 # Scale is given, using CD1_1, CD1_2, CD2_1, CD2_2 header keys:
 #   scale = 3600. * sqrt ((cd11**2+cd21**2+cd12**2+cd22**2)/2.) 
@@ -73,7 +77,7 @@ def _hdr_dimpix( hdr ):
 
 # ---
 
-#====================================================================
+#----------------------------------
 def _hdr_update(hdr, x_ini, y_ini):
 	"""Update header information about world coordinate system"""
 
@@ -124,10 +128,10 @@ def _hdr_update(hdr, x_ini, y_ini):
 	# Header update..
 	#
 	if (LTV1 != None) :
-#		hdr.update('LTV1',LTV1)
+		hdr.update('LTV1',LTV1)
 		hdr.update('CRPIX1',CRPIX1)
 	if (LTV2 != None) :
-#		hdr.update('LTV2',LTV2)
+		hdr.update('LTV2',LTV2)
 		hdr.update('CRPIX2',CRPIX2)
 	hdr.update('WCSDIM',WCSDIM)
 	hdr.update('CDELT1',CDELT1)
@@ -142,18 +146,24 @@ def _hdr_update(hdr, x_ini, y_ini):
 	return (hdr);
 
 # ---
+# \endcond
 
-#===============================================================================================================
-def cutout( image, header, coord_unit='pixel', xo=None, yo=None, size_unit='pixel', x_size=None, y_size=None ):
+
+# =============================================================================================================================
+def cutout( image, header=None, coord_unit='pixel', xo=None, yo=None, size_unit='pixel', x_size=None, y_size=None, mask=None ):
 	"""
 	Do a snapshot from given fits image.
 
-	cutout( image.array, header [,...] ) -> (ndarray, header)
+	cutout( image.array [,...] ) -> (ndarray, header)
 
 	The function can deal with 'pixel' and 'degrees' cordinate units. As input, besides the image FITS 
 	filename (input_file), it receives a central position (xo,yo) and side lengths (x_size,y_size) for
 	output image position and dimensioning. Function returns two values: a numpy.array with resultant 
 	image pixel intensities and respective header object.
+
+	In addition, an image mask information can be given to use as interest region selection. 'mask' is
+	expected to be a numpy.where like structure (i.e, mask=numpy.where()). If given, returned image will
+	have all pixels null except the ones listed in 'mask' parameter.
 
 	If 'xo=None' and 'yo=None', given image (input_file) central pixel will be chosen as (xo,yo).
 	If 'x_size=None' and 'y_size=None', half length of each side will be used for output dimensions.
@@ -167,11 +177,16 @@ def cutout( image, header, coord_unit='pixel', xo=None, yo=None, size_unit='pixe
 	 - size_unit  : 'pixel' or 'degrees' for size (x_size,y_size) values
 	 - x_size     : Horizontal size (in pixels) of output image
 	 - y_size     : Vertical size (in pixels) of output image
+	 - mask       : tuple with arrays (y,x) with image/array indexes of interest
 
 	Output:
-	 - (ndarray, header) : image array and header object
+	 - (ndarray, header) : resultant image array and (updated) header instance
 
 	"""
+
+
+	imagem = image;
+	hdr = header;
 
 	# Initialize some variables..
 	#
@@ -181,14 +196,9 @@ def cutout( image, header, coord_unit='pixel', xo=None, yo=None, size_unit='pixe
 	y_fin = 0;   y_ini = 0;
 
 
-	# Read fits file..
-	#
-#	imagem, hdr = pyfits.getdata( input_file, header=True );
-	imagem = image;
-	hdr = header;
-
-	if (hdr != None):
+	if ( hdr ):
 		x_arcsec_to_pixel, y_arcsec_to_pixel = _hdr_dimpix( hdr );
+
 
 	y_img_size, x_img_size = imagem.shape;
 
@@ -208,7 +218,7 @@ def cutout( image, header, coord_unit='pixel', xo=None, yo=None, size_unit='pixe
 			y_cut_size = int(float(y_size)/y_arcsec_to_pixel);
 
 	else:
-		print >> sys.stderr, "Error: Side sizes type (degrees/pixel) not correctly defined."
+		print >> sys.stderr, "Error: Side sizes type (unit = degrees|pixel) not correctly defined."
 		return (False,False);
 
 
@@ -226,18 +236,15 @@ def cutout( image, header, coord_unit='pixel', xo=None, yo=None, size_unit='pixe
 	# Check requested output.vs.input image sizes..
 	#
 	if ( x_cut_size == x_img_size and y_cut_size == y_img_size ):
-		print >> sys.stdout, "Warning: Requested output sizes are the same as input image. Returning original image and header.";
+		print >> sys.stdout, "Warning: Requested output sizes are the same as input image. Returning image and header unchanged.";
 		return (imagem,hdr);
-
-
-	imagemnova = np.zeros( (y_cut_size,x_cut_size), dtype=float );
 
 
 	# Verify central coordinates values..
 	#
 	if ( coord_unit == 'pixel' and (xo != None and yo != None) ):
-		x_halo = int(xo)-1;
-		y_halo = int(yo)-1;
+		x_halo = int(xo);
+		y_halo = int(yo);
 
 	elif ( coord_unit == 'degrees' and (xo != None and yo != None) ):
 		_out = commands.getoutput( 'sky2xy %s %s %s' % (input_file, xo, yo) );
@@ -257,8 +264,10 @@ def cutout( image, header, coord_unit='pixel', xo=None, yo=None, size_unit='pixe
 
 	# Define the images (in/out) slices to be copied..
 	#
-	x_ini = x_halo - int(x_cut_size/2) -1;   x_fin = x_ini + x_cut_size;
-	y_ini = y_halo - int(y_cut_size/2) -1;   y_fin = y_ini + y_cut_size;
+	x_ini = x_halo - int(x_cut_size/2) #-1;
+	x_fin = x_ini + x_cut_size;
+	y_ini = y_halo - int(y_cut_size/2) #-1;
+	y_fin = y_ini + y_cut_size;
 
 	x_ini_old = max( 0, x_ini );   x_fin_old = min( x_img_size, x_fin );
 	y_ini_old = max( 0, y_ini );   y_fin_old = min( y_img_size, y_fin );
@@ -266,138 +275,142 @@ def cutout( image, header, coord_unit='pixel', xo=None, yo=None, size_unit='pixe
 	x_ini_new = abs( min( 0, x_ini ));   x_fin_new = x_cut_size - (x_fin - x_fin_old);
 	y_ini_new = abs( min( 0, y_ini ));   y_fin_new = y_cut_size - (y_fin - y_fin_old);
 
-	if (hdr != None):
-		hdr = _hdr_update(hdr, x_ini, y_ini);
+	# If header, update pixel<->sky information..
+	#
+	if ( hdr ):
+		hdr = _header_update(hdr, x_ini, y_ini);
 
+	# Initialize new image, and take all index list..
+	#
+	imagemnova = np.zeros( (y_cut_size,x_cut_size), dtype=imagem.dtype );
+	ind_z = np.where(imagemnova == 0);
+
+	# Copy requested image slice..
+	#
 	imagemnova[ y_ini_new:y_fin_new, x_ini_new:x_fin_new ] = imagem[ y_ini_old:y_fin_old, x_ini_old:x_fin_old ];
 
+	# If 'mask', maintain just "central" object on it..
+	#
+	if ( mask ):
+		msk = ( mask[0]-y_ini, mask[1]-x_ini )
+
+		zip_m = zip( msk[0], msk[1] );
+		zip_z = zip( ind_z[0], ind_z[1] );
+
+		L = list(set(zip_z) - set(zip_m));
+
+		try:
+			ind_0, ind_1 = zip(*L);
+			indx = ( np.array(ind_0), np.array(ind_1) );
+			imagemnova[ indx ] = 0;
+		except:
+			pass;
 
 	return (imagemnova, hdr);
 
 # ---
 
-#=======================================================================================
-def poststamp( image, header=None, output_size=None, increase=0, relative_increase=False ):
+#==========================================================================================
+def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, objIDs=[]):
     """
-    Create poststamp from given image array
+    Identify objects on given images by their IDs and return object images
 
-    poststamp( image.array [,...] ) -> image_out.array
+    sextamp( seg_img.ndarray, obj_img.ndarray [,...] )
 
-    Function resize the given 'image' array according to image features. The region of interest
-    is defined as the largest rectangular region containing non-null pixels, this region will be 
-    called "object". Resizing will be done based on the object dimensions.
-    Resizing can be done in three different ways:
-     i)   Fixing the returned image size by 'output_size' argument.### A single value (for square output)
-          or a tuple (Num-raws,Num-columns) can be passed for fixed output size:
-          Use:
-              output_size != None
+    By default, if 'objIDs' is not given, postamp will scan segmentation image ('seg_img') for
+    the list of object ID numbers. If 'objIDs' is given, those IDs will be used for object
+    poststamps creation.
 
-     ii)  Fixing the increase in number of pixels for output image border
-          Use:
-              increase != 0
-              relative_increase = False
+    'increase' and 'relative_increase' define whether the poststamps will have a size different
+    from object-only dimensions or just the object (pixels) itself, and, also, if this increasement
+    value is a multiplicative factor (True) or an additive one (False).
 
-     iii) Defining the border size by a relative factor based on the object dimensions
-          Use:
-              increase != 0
-              relative_increase = True
-
-    If just 'image' array is passed, function will return an image array with just the region of interest
-    pixels on it. No increase is done.
+    Since a list with object IDs is given, a list with arrays, with each IDentified
+    object, is returned.
 
     Input:
-     - image             : 2D ndarray
-     - header            : If there is a FITS header object related to 'image', give it here to be updated
-     - output_size       : A single value (for square output) or a tuple (Num_raws, Num_columns) can be passed
-                           If given, none of following parameters will be used
-     - increase          : Absolute or relative factor. 'relative_increase' defines if it is a fixed number 
-                           of pixels or relative to image object size
-     - relative_increase : If True, 'increase' will be used as a multiplicative factor of object size
-                           If False, 'increase' will be the border size over object pixels
+     - seg_img           : image with segmented objects (e.g, SEx's segmentation image)
+     - obj_img           : image with objects (observed pixel values)
+     - header            : FITS header to be updated and passed for each poststamp
+     - increase          : float value for poststamp resizing (>0)
+     - relative_increase : Is 'increase' a additive value (default) or multiplicative one(?)
+     - objIDs            : List with objects ID in 'seg_img'. Default is to scan 'seg_img' for IDs
 
     Output:
-     - (ndarray,header)  : Resized image array and header instance
+     - (ndarrays,headers)  : lists with image (poststamps) arrays and corresponding headers
 
     """
 
-    # If output image is required to have a fixed size, do that and finish the funtion..
+
+    # Initialize outputs:
+    objs_list = [];
+    hdrs_list = [];
+
+    # If object IDs are not given, scan segmentation image for those ids..
     #
-    if ( output_size != None ):
-        try:
-            y_size, x_size = output_size;
-        except:
-            y_size = x_size = output_size;
+    if ( objIDs == [] ):
+	    objIDs = list( set( seg_img.flatten() ) - set([0]) );
 
-        image_out, header = cutout( image, header, x_size=x_size, y_size=y_size );
-
-        return (image_out,header);
-
-
-    # Otherwise, if the output has variable size, according to feature dimensions..
+    # For each object (id) scan the respective indices for image mask and 'cutout' params
     #
-    y_inds, x_inds = np.where(image);
-    if ( len(y_inds) <= 1  or  len(x_inds) <= 1 ):
-	    print >> sys.stderr, "Error: Null image given.";
-	    return (None,None);
+    for id in objIDs:
 
-    y_indp_max = max(y_inds) + 1;
-    y_ind_min = min(y_inds);
+        ind = np.where(seg_img == id);
 
-    x_indp_max = max(x_inds) + 1;
-    x_ind_min = min(x_inds);
-    
-    x_size = x_indp_max - x_ind_min;
-    y_size = y_indp_max - y_ind_min;
+	y_min = min( ind[0] );
+	x_min = min( ind[1] );
 
-    xo = x_ind_min + x_size/2;
-    yo = y_ind_min + y_size/2;
+	y_idx = ind[0] - y_min;
+	x_idx = ind[1] - x_min;
 
-    if ( increase != 0 ):
+	y_size = max( y_idx ) + 1;
+	x_size = max( x_idx ) + 1;
 
-        if (relative_increase == True):
+	# Central pixel on original image:
+	yo = y_size/2 + y_min;
+	xo = x_size/2 + x_min;
 
-            x_size = x_size*increase;
-            y_size = y_size*increase;
+	if ( increase != 0 ):
 
-        else:
+		if (relative_increase == True):
 
-            x_size = x_size + 2*increase;
-            y_size = y_size + 2*increase;
+			x_size = x_size*increase;
+			y_size = y_size*increase;
 
+		else:
 
-        image_out, header = cutout( image, header, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size) );
-
-    else:
-
-        image_out, header = cutout( image, header, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size) );
+			x_size = x_size + 2*increase;
+			y_size = y_size + 2*increase;
 
 
-    return (image_out, header);
+	try:
+		hdr = header.copy();
+	except:
+		hdr = None;
+
+
+	# Get the final image from 'cutout' output..
+	#
+        image_out, hdr = cutout( obj_img, header=hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
+
+        objs_list.append( image_out );
+	hdrs_list.append( hdr );
+
+
+    return ( objs_list,hdrs_list );
 
 # ---
 
-#======================================================================
-def _write_fitsimg( outfile, image, header ):
-	"""Just write down the image array and header to a FITS file"""
-	os.system('[ -f %s ] && rm %s' % (outfile,outfile));
-	pyfits.writeto( outfile, image, header );
-	return (True);
-# ---
 
-
-# @cond
+# \cond
 #==========================
 if __name__ == "__main__" :
 
 	from optparse import OptionParser;
 
-	usage="Usage: %prog [options] <image_fits_file>"
-
+	usage="Usage: %prog [options] <image.fits>"
 	parser = OptionParser(usage=usage);
 
-#	parser.add_option('-f',
-#			  dest='input_file', default=None,
-#			  help='Input FITS image');
 	parser.add_option('-o',
 			  dest='output_file', default='output.fits',
 			  help='Output FITS image [output.fits]');
@@ -419,12 +432,16 @@ if __name__ == "__main__" :
 	parser.add_option('--y_size',
 			  dest='y_size', default=None,
 			  help='Size of y side on output');
-	parser.add_option('--increase',
-			  dest='incr', default=0,
-			  help='Amount of border/enlarge of image. It is an additive or multiplicative factor. See "relative_increase" flag');
-	parser.add_option('--relative_increase', action='store_true',
-			  dest='rel_incr', default=False,
-			  help='Turn on the multiplicative factor for increase image.')
+#	parser.add_option('--increase',
+#			  dest='incr', default=0,
+#			  help='Amount of border/enlarge of image. It is an additive or multiplicative factor. See "relative_increase" flag');
+#	parser.add_option('--relative_increase', action='store_true',
+#			  dest='rel_incr', default=False,
+#			  help='Turn on the multiplicative factor for increase image.');
+	parser.add_option('--header', action='store_true',
+			  dest='use_header', default=False,
+			  help="Use image header for WCS adjustment(?)");
+
 
 	(opts,args) = parser.parse_args();
 
@@ -435,24 +452,33 @@ if __name__ == "__main__" :
 	size = opts.size_unit;
 	dx = opts.x_size;
 	dy = opts.y_size;
-	incr = opts.incr;
-	rel_incr = opts.rel_incr;
+#	incr = opts.incr;
+#	rel_incr = opts.rel_incr;
+	use_header = opts.use_header;
 
 	if ( len(args) != 1 ):
 		parser.error("Wrong number of arguments. Try option '--help' for usage and help messages.")
 
 	infits = args[0];
 
-	image, hdr = pyfits.getdata(infits,header=True);
-
-	if (incr == 0):
-		imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
+	if (use_header):
+		image, hdr = pyfits.getdata(infits,header=True);
 	else:
-		imgcut, hdr = poststamp( image, header=hdr, increase=incr, relative_increase=rel_incr )
+		image = pyfits.getdata(infits, header=False);
+		hdr = None;
 
-	_write_fitsimg( outfits, imgcut, hdr );
+#	if (incr == 0):
+#		imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
+#	else:
+#		imgcut, hdr = poststamp( image, header=hdr, increase=incr, relative_increase=rel_incr )
+
+	imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
+
+	os.system('[ -f %s ] && rm %s' % (outfits,outfits));
+	pyfits.writeto( outfits, imgcut, hdr );
+
 
 	sys.exit(0);
 
 # ------------------
-# @endcond
+# \endcond
