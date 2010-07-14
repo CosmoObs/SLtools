@@ -28,7 +28,7 @@ if [ -z "$SWIG" -o -z "$CC" ]
 then
     echo
     echo " Dependencies check error!"
-    echo " Check if you have GCC compiler and Swig installed on your system."
+    echo " Check if you have GCC compilers and Swig installed on your system."
     echo " Remember you also have to have Python headers (devel package) installed."
     echo
     exit 1
@@ -115,11 +115,11 @@ fi
 # Create directories where files will be copied, and do it
 #
 DIR=${INSTALLDIR}/SLtools-${VERSION}
-mkdir -p $DIR/sltools || exit 1
+mkdir -p $DIR/sltools/bin || exit 1
 echo ""
 echo "Copying files to $DIR/sltools ..."
 cp -R * ${DIR}/sltools/.
-mv ${DIR}/sltools/bin ${DIR}/sltools/.
+mv ${DIR}/sltools/bin ${DIR}/.
 echo ""
 
 
