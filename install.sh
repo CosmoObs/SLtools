@@ -126,9 +126,14 @@ echo ""
 #[ -z "$PYTHONPATH" ] && PYTHONPATH=${DIR} || PYTHONPATH=${DIR}:${PYTHONPATH}
 #export PYTHONPATH
 
-echo "If you want SLtools to be readable in your PYTHON environment, use the command-line below."
-echo "Update your login file (.login, .profile, ...) with the following line for permanent use."
+echo "----------------------------------------------------------------------------------------"
+echo ""
+echo "If you want SLtools to be reachable from your Python shell(env) as well as system bash, "
+echo "update your login file (.login, .profile, ...) with the following lines:"
 echo ""
 echo "   export PYTHONPATH=${DIR}:\$PYTHONPATH"
 echo "   export PATH=${DIR}/bin:\$PATH"
+echo ""
+echo "----------------------------------------------------------------------------------------"
+echo "Done."
 echo ""
