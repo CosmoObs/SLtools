@@ -38,8 +38,6 @@ from sltools.io import config_parser as cp;
 from sltools.io import check_dependencies as cdep;
 
 
-# \cond
-# INTERNAL FUNCTIONS #
 #---------------------
 def _valid_line(wort):
 
@@ -81,7 +79,6 @@ def _check_config(cfg_file):
     return (True);
 
 # ---
-# \endcond
 
 # ===========================================================================
 def run(fits_image, params=[], args={}, header=False, increase=0, custom=''):
@@ -278,16 +275,6 @@ if __name__ == "__main__" :
     # ===================================================================================
 
 
-    # Run ObjSShot main function. It passes fits filename and read params and config settings.
-    # The output is a list of image arrays (numpy) with identified objects on them.
-    #
-    outdic = run( "../"+fits_image, params, config['default'], header=use_header, increase=float(increase), custom=instrument );
-
-    objIDs = outdic['IDs'];
-    objs_list = outdic['images'];
-    hdrs_list = outdic['headers'];
-
-
     # OK.. Now lets run the objects identification procedure..
     # I'll first create a directory to put the output images in there
     #
@@ -298,11 +285,22 @@ if __name__ == "__main__" :
 
     os.chdir( dir_name );
 
+
+    # Run ObjSShot main function. It passes fits filename and read params and config settings.
+    # The output is a list of image arrays (numpy) with identified objects on them.
+    #
+    outdic = run( "../"+fits_image, params, config['default'], header=use_header, increase=float(increase), custom=instrument );
+
+    objIDs = outdic['IDs'];
+    objs_list = outdic['images'];
+    hdrs_list = outdic['headers'];
+
+
     # And for each object array in list, write down their pixels ;-)
     #
     for i in xrange( len(objIDs) ):
 
-        outname = out_name+str(objIDs[i])+".fits";
+        outname = out_name+"%03d.fits" % (i);
         os.system( 'rm %s &> /dev/null' % (outname) );
         pyfits.writeto( outname, objs_list[i], hdrs_list[i] );
 
