@@ -9,43 +9,43 @@ import re;
 ##@package regexp
 
 # =====================
-def str2lst( wort, sep=",", xchar="", valid_chars="a-zA-Z0-9_\ \-\+\.\^" ):
+def str2lst( wort, sep=",", digits="a-zA-Z0-9_\ .", symbols="\-\+\^" ):
 	"""Function to read a string with special chars and return without them
 
         str2lst( 'string' )
 
-        This function cleans a given string from special characters and return
-        a list of strings if any comma is found.
+        This function cleans the given string from non-given characters and splits
+	it if 'sep' character is found. A list is returned with resultant string(s).
 
-        Special characters here are considered to be any one not is the list:
-        a-z , A-Z , 0-9 , _ ,   , - , + , . , ^
-        And comma ( , ) is used as separator by default.
+	Character used as "valid ones" are passed through 'digits' and 'symbols' params;
+	These two parameters are concateneted to form one "valid" string for the processing.
 
-	The function flow first split the string and then removes the special chars
+	The function flow first split the string and then removes the non-given chars.
 
         Input:
-         - wort  : A string
-         - sep   : string separator
-	 - xchar : extra character to be used as valid in string
+         - wort    : A string
+         - sep     : string separator
+	 - digits  : valid characters
+	 - symbols : valid characters
 
         Output:
          - a list with given string content(s)
 
         """
 
-	valid_chars = valid_chars + xchar;
+	valid_chars = digits + symbols;
 
-	lista = string.split( wort, sep=sep );
+	lista = [ re.sub( "[^"+valid_chars+"]", "", i )  for i in string.split( wort, sep=sep ) ];
 
-	return ( [ re.sub( "[^"+valid_chars+"]", "", i )  for i in lista ] );
+	return ( lista );
 
 # ---
 
 # ==========================================================
-def select_lines( ascii_file, comments="#", inverse=False ):
+def line_filter( list_str, comments="#", inverse=False ):
     """Function to return uncommented lines of given file
 
-    select_lines( file.txt [,...] )
+    line_filter( list_str [,...] )
 
     Lines that not begin with 'comments' symbol are returned as 
     a list of strings, each line being an entry on the list.
@@ -53,35 +53,32 @@ def select_lines( ascii_file, comments="#", inverse=False ):
     returned in the same way.
 
     Input:
-     - ascii_file : ASCII file
-     - comments   : Symbol used as comment
-     - inverse    : Return commented lines(?)
+     - list_str : List with string(s)
+     - comments : Symbol used as comment
+     - inverse  : Return commented lines(?)
 
     Output:
      - list   : selected lines as list entries
 
     """
 
-    fp_cont = open(ascii_file,'r');
-
     data_lines = [];
     comment_lines = [];
 
-    for line in fp_cont.readlines():
+    for line in list_str:
 
-        line = line.rstrip('\n');
+        line = line.rstrip("\n");
         line = re.sub( "^\s*", "", line );
         line = re.sub( "\s+", " ", line );
 
         if ( re.search("^$", line) ): continue;
 
         if ( re.search("^"+comments, line) ):
-            comment_lines.append( re.sub("^#\s*", "", line) );
+            comment_lines.append( re.sub("^"+comments, "", line) );
             continue;
 
         data_lines.append( line );
 
-    fp_cont.close();
 
     if ( inverse ):
         return (comment_lines);
