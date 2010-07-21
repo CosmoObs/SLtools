@@ -132,6 +132,37 @@ def _cstm_args(telescope):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
+    elif telescope == 'HST':
+        _dic = {
+            'DETECT_TYPE' : 'CCD',
+            'DETECT_MINAREA' : '3',
+            'DETECT_THRESH' :  '3',
+            'ANALYSIS_THRESH' : '3',
+            'FILTER' : 'Y',
+            'FILTER_NAME' : 'default.conv',
+            'DEBLEND_NTHRESH' : '32',
+            'DEBLEND_MINCONT' : '0.005',
+            'CLEAN' : 'Y',
+            'CLEAN_PARAM' : '1.0',
+            'MASK_TYPE' : 'CORRECT',
+            'PHOT_APERTURES' : '10',
+            'PHOT_AUTOPARAMS' : '2.5,3.5',
+            'SATUR_LEVEL' : '50000.0',
+            'MAG_GAMMA' : '4.0',
+            'GAIN' : '0.0',
+            'PIXEL_SCALE' : '1.0',
+            'SEEING_FWHM' : '1.2',
+            'STARNNW_NAME' : 'default.nnw',
+            'BACK_SIZE' : '64',
+            'BACK_FILTERSIZE' : '3',
+            'BACKPHOTO_TYPE' : 'GLOBAL',
+            'CHECKIMAGE_TYPE' : 'NONE',
+            'MEMORY_OBJSTACK' : '3000',
+            'MEMORY_PIXSTACK' : '300000',
+            'MEMORY_BUFSIZE' : '1024',
+            'VERBOSE_TYPE' : 'NORMAL'
+            };
+
     else:
         _dic = {};
 
@@ -174,7 +205,7 @@ def run_sex(fits_image, params=[], args={}, custom=''):
      - args       : Dictionary with sextractor line arguments. If not given,
                     'sex -dd' will be used as default options.
      - cats_name  : Root name used for genereated catalogue names. ["catalog"]
-     - custom     : HST, DC4, DC5
+     - custom     : 'HST', 'DC4', 'DC5' or 'CFHTLS'
 
     Output:
      * Two ascii files (catalogues) and two fits images. See above paragraph.
@@ -229,23 +260,6 @@ def run_sex(fits_image, params=[], args={}, custom=''):
 
     return (True);
 
-"""
-    ' OBJECTS output
-    outobjimage = rootname + "_obj.fits";
-    status= os.system( 'sex %s -CHECKIMAGE_TYPE OBJECTS -CATALOG_TYPE ASCII_HEAD -CATALOG_NAME %s_obj.cat -CHECKIMAGE_NAME %s %s' % (fits_image,cats_name,outobjimage,cmd_line));
-    if ( status != 0 ): print >> sys.stderr, "Warning: Sextractor raised an error code '%s' during 'OBJECTS' run. Continuing." % (status);
-
-    ' SEGMENTATION output
-    outsegimage = rootname + "_seg.fits";
-    status= os.system( 'sex %s -CHECKIMAGE_TYPE SEGMENTATION -CATALOG_TYPE ASCII_HEAD -CATALOG_NAME %s_seg.cat -CHECKIMAGE_NAME %s %s' % (fits_image,cats_name,outsegimage,cmd_line));
-    if ( status != 0 ): print >> sys.stderr, "Warning: Sextractor raised an error code '%s' during 'SEGMENTATION' run. Continuing." % (status);
-
-
-    if (status):
-        return (False);
-
-    return ( {'SEGMENTATION':outsegimage , 'OBJECTS':outobjimage} );
-"""
 # ---
 
 #=============================================================================
