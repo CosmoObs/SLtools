@@ -10,10 +10,6 @@
 # ==========================================================================================
 
 
-# Code version - VERSION is read from version.txt
-source ./etc/version.txt
-
-
 # ------------------------------------------------------------------------------------------
 
 # Checking dependencies for c/python modules creation
@@ -113,7 +109,7 @@ fi
 #
 mkdir -p ${INSTALLDIR}/sltools/bin || exit 1
 echo 
-echo "Copying files to $DIR/sltools ..."
+echo "Copying files..."
 cp -r * ${INSTALLDIR}/sltools
 echo
 
@@ -122,8 +118,8 @@ echo ""
 echo "sltools must be available in your path, "
 echo "update your login file (.login, .profile, ...) with the following lines:"
 echo ""
-echo "   export PYTHONPATH=${INSTALLDIR}:\$PYTHONPATH"
-echo "   export PATH=${INSTALLDIR}/bin:\$PATH"
+echo "   export PYTHONPATH=${INSTALLDIR}/sltools:\$PYTHONPATH"
+echo "   export PATH=${INSTALLDIR}/sltools/bin:\$PATH"
 echo ""
 echo "----------------------------------------------------------------------------------------"
 echo "Done."
