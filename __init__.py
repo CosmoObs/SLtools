@@ -1,12 +1,10 @@
 """
-Library of functions for scientific computing
+sltools - a library of strong lensing tools
 
-Strong Lensing tools (SLtools) is a collection of functions
-primarily designed to support scientific computing applied to
-cosmological modeling.
+sltools is a collection of modules designed to support application for strong lensing 
 
-Daily common tasks concerning catalog handling, image processing,
+Tools concerning catalog handling, image processing,
 gravitational lensing simulations and other numerical calculations
-are covered by SLtools modules.
+are covered by sltools modules.
 
 """

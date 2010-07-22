@@ -4,9 +4,6 @@
 #
 # Script for SLtools installation.
 #
-# Once SLtools has been downloaded and this package is unpacked, one just have to set up
-# some files and SLtools should be ready to work.
-#
 # 1) Compile some libraries written in C/C++ (Soon, Fortran files should appear)
 # 2) Copy the package to another place and set the PATH env variable
 #
@@ -14,7 +11,7 @@
 
 
 # Code version - VERSION is read from version.txt
-. ./version.txt
+source ./etc/version.txt
 
 
 # ------------------------------------------------------------------------------------------
@@ -91,13 +88,13 @@ cp src/compute_nfw_lens_parameters/module/*.so tools/lens &> /dev/null
 # We can do better and install SLtools into another place on the system
 #
 echo ""
-echo "Where do you want to install SLtools? [${HOME}/lib]   "
+echo "Where do you want to install sltools? [${HOME}]   "
 echo "(Type Ctrl+C to cancel the installation if you want to)"
 read INSTALLDIR
 
 # Set the default value (HOME) nothing was given
 #
-[ -z "$INSTALLDIR" ] && INSTALLDIR="${HOME}/lib"
+[ -z "$INSTALLDIR" ] && INSTALLDIR="${HOME}"
 
 # Check if INSTALLDIR exist, if not, create it
 #
@@ -114,25 +111,19 @@ fi
 
 # Create directories where files will be copied, and do it
 #
-DIR=${INSTALLDIR}/SLtools-${VERSION}
-mkdir -p $DIR/sltools/bin || exit 1
-echo ""
+mkdir -p ${INSTALLDIR}/sltools/bin || exit 1
+echo 
 echo "Copying files to $DIR/sltools ..."
-cp -R * ${DIR}/sltools/.
-mv ${DIR}/sltools/bin ${DIR}/.
-echo ""
-
-
-#[ -z "$PYTHONPATH" ] && PYTHONPATH=${DIR} || PYTHONPATH=${DIR}:${PYTHONPATH}
-#export PYTHONPATH
+cp -r * ${INSTALLDIR}/sltools
+echo
 
 echo "----------------------------------------------------------------------------------------"
 echo ""
-echo "If you want SLtools to be reachable from your Python shell(env) as well as system bash, "
+echo "sltools must be available in your path, "
 echo "update your login file (.login, .profile, ...) with the following lines:"
 echo ""
-echo "   export PYTHONPATH=${DIR}:\$PYTHONPATH"
-echo "   export PATH=${DIR}/bin:\$PATH"
+echo "   export PYTHONPATH=${INSTALLDIR}:\$PYTHONPATH"
+echo "   export PATH=${INSTALLDIR}/bin:\$PATH"
 echo ""
 echo "----------------------------------------------------------------------------------------"
 echo "Done."
