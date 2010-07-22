@@ -1,0 +1,1 @@
+../image/objsshot.py
