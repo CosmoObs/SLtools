@@ -1,26 +1,7 @@
-##@package select_halos
-# Select halos with mass greater than a given bottom value.
-# 
-#@param HDUlist : pyfits catalog object
-#@param minimum_halo_mass : bottom value for Halos mass in Msun units
-#@param ra : a tuple (ra_min,ra_max) with Right Ascension limit values for sky region
-#@param dec : a tuple (dec_min,dec_max) with Declination limit values for sky region
-#@param image_file : sky image/tile fits filename
-#@return HaloIDs : a list containing all Halo IDs above the mass criterium and within given sky region 
-
-
 import sys;
-
 import numpy as np;
+from sltools import *;
 
-from get_catalog_data import get_catalog_data;
-from tools.image.get_image_limits import get_image_limits;
-
-# AddArcs/Pipeline..
-from pipeline.functions import readout_radec;
-
-
-#==============================================================================
 def select_halos( hdulist, minimum_halo_mass=0, ra=(), dec=(), image_file='' ): 
     """Select halos with mass greater than a given bottom value.
 
@@ -108,8 +89,5 @@ def select_halos( hdulist, minimum_halo_mass=0, ra=(), dec=(), image_file='' ):
 
     # Return the big ones
     return (ids);
-
-
-# ----- 
 
 

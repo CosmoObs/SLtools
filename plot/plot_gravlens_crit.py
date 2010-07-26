@@ -1,4 +1,3 @@
-
 ##@package plot_gravlens_crit
 #
 #@param file_name

@@ -1,6 +1,5 @@
-# log.py : for log handling facilities
-import sys;
 
+import sys;
 import logging;
 
 """ Package for logging facilities """
@@ -8,7 +7,7 @@ import logging;
 ##@package log
 
 # ===================================
-def init( logfile='logging.log', debug=False, verbose==False ):
+def init( logfile='logging.log', debug=False, verbose=False ):
 	"""Initialize logging handler
 
 	init( )
@@ -58,4 +57,3 @@ def init( logfile='logging.log', debug=False, verbose==False ):
 
 	return logging;
 
-# ---

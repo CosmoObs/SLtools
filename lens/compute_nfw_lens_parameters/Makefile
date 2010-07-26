@@ -3,7 +3,6 @@ INTERFACE = compute_nfw_lens_parameters.i
 WRAPFILE = $(TARGET)_wrap.c
 WRAPOBJ = $(TARGET)_wrap.o
 MODULE = _$(TARGET).so
-MODULE_DIR = module
 SRCS = compute_nfw_lens_parameters.cpp
 COBJS = $(SRCS:.cpp=.o)
 SWIGOPT = -python
@@ -19,16 +18,11 @@ module_lnx: $(SRCS) $(INTERFACE)
 	swig $(SWIGOPT) $(INTERFACE)
 	g++ -Wall -lm -fpic -c $(SRCS) $(WRAPFILE) -I$(PYTHONINC)
 	g++ -shared $(COBJS) $(WRAPOBJ) -o $(MODULE)
-	mkdir $(MODULE_DIR)
-	mv $(TARGET).py $(MODULE) $(MODULE_DIR)
 
 module_mac: $(SRCS) $(INTERFACE)
 	swig $(SWIGOPT) $(INTERFACE)
 	g++ -I$(PYTHONINC) -framework Python -bundle -bundle_loader $(PYTHONBIN) $(SRCS) $(WRAPFILE) -o $(MODULE)
-	mkdir $(MODULE_DIR)
-	mv $(TARGET).py $(MODULE) $(MODULE_DIR)
 
 clean: 
 	rm -f $(TARGET) $(WRAPFILE) $(WRAPOBJ) $(COBJS)
-	rm -rf module
 

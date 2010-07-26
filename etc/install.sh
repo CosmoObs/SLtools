@@ -36,7 +36,7 @@ OS=$(uname -s)
 
 # Compile each function on their respective directories..
 #
-cd src/get_nfw_concentration
+cd simulations/get_nfw_concentration
 make clean &> /dev/null
 
 if [ "$OS" == "Linux" ]
@@ -54,7 +54,7 @@ fi
 cd - &> /dev/null
 
 
-cd src/compute_nfw_lens_parameters
+cd lens/compute_nfw_lens_parameters
 make clean &> /dev/null
 
 if [ "$OS" == "Linux" ]
@@ -70,15 +70,6 @@ else
     exit 1
 fi
 cd - &> /dev/null
-
-# Copy the C/Python compiled functions to their place on "tools" tree
-#
-cp src/get_nfw_concentration/module/*.py tools/simulations &> /dev/null
-cp src/get_nfw_concentration/module/*.so tools/simulations &> /dev/null
-cp src/get_nfw_concentration/module/*.conf tools/simulations &> /dev/null
-cp src/compute_nfw_lens_parameters/module/*.py tools/lens &> /dev/null
-cp src/compute_nfw_lens_parameters/module/*.so tools/lens &> /dev/null
-
 
 # ----------------------------------------------------------------------
 # We can do better and install SLtools into another place on the system
@@ -111,6 +102,7 @@ mkdir -p ${INSTALLDIR}/sltools/bin || exit 1
 echo 
 echo "Copying files..."
 cp -r * ${INSTALLDIR}/sltools
+rm -rf ${INSTALLDIR}/sltools/install.sh
 echo
 
 echo "----------------------------------------------------------------------------------------"
@@ -118,7 +110,7 @@ echo ""
 echo "sltools must be available in your path, "
 echo "update your login file (.login, .profile, ...) with the following lines:"
 echo ""
-echo "   export PYTHONPATH=${INSTALLDIR}/sltools:\$PYTHONPATH"
+echo "   export PYTHONPATH=${INSTALLDIR}:\$PYTHONPATH"
 echo "   export PATH=${INSTALLDIR}/sltools/bin:\$PATH"
 echo ""
 echo "----------------------------------------------------------------------------------------"

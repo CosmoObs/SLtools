@@ -18,19 +18,12 @@ To see the package help message, type:
 
 """
 
-from numpy import *
-import math
-import sys
+import sys;
+from numpy import *;
+from math import cos, radians;
+from sltools import *;
 
-# TODO: remove halos/get_catalog_data, fix select_halos.py and select_halos_by_radec to use the current module
 
-# move get_catalog_data to tools/catalog and use  Intra-package References (http://docs.python.org/tutorial/modules.html)
-# the solution below didn't work
-
-#sys.path.append(os.path.abspath(os.path.abspath("../../"))
-#from tools.catalog.get_catalog_data import get_catalog_data
-
-from get_catalog_data import get_catalog_data
 
 def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor, output_file):
 	''' Main function to create DS9 region file 

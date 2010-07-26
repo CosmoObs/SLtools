@@ -30,12 +30,7 @@ import string;
 import numpy as np;
 import pyfits;
 
-import sltools;
-from sltools.string import regexp;
-from sltools.image import imcp;
-from sltools.image import segment;
-from sltools.io import config_parser as cp;
-from sltools.io import check_dependencies as cdep;
+from sltools import *;
 
 
 #---------------------
@@ -188,11 +183,10 @@ if __name__ == "__main__" :
 
 
     # Checking dependencies..
-    stat = cdep( { 'binaries':['sex'], 'modules':['sltools'] } );
+    stat = check_dependencies( { 'binaries':['sex'] } );
     if not stat:
         print >> sys.stderr, "Error: Dependencies check failed. Fix it!";
         sys.exit(2);
-
 
     # Read input options..
     usage="Usage:  %prog [options] <objects_image.fits>";

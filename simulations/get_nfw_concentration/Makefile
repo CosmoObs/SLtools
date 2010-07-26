@@ -3,7 +3,7 @@ INTERFACE = get_nfw_concentration.i
 WRAPFILE = $(TARGET)_wrap.c
 WRAPOBJ = $(TARGET)_wrap.o
 MODULE = _$(TARGET).so
-MODULE_DIR = module
+PYMODULE = $(TARGET).py
 SRCS = get_nfw_concentration.c rand.c
 COBJS = $(SRCS:.c=.o)
 SWIGOPT = -python
@@ -18,18 +18,11 @@ module_lnx: $(SRCS) $(INTERFACE)
 	swig $(SWIGOPT) $(INTERFACE)
 	gcc -Wall -fpic -c $(SRCS) $(WRAPFILE) -I$(PYTHONINC) 
 	gcc -lm -shared $(COBJS) $(WRAPOBJ) -o $(MODULE)
-	mkdir -p $(MODULE_DIR)
-	cp $(TARGET).conf $(MODULE_DIR)
-	mv $(TARGET).py $(MODULE) $(MODULE_DIR)
 
 module_mac: $(SRCS) $(INTERFACE)
 	swig $(SWIGOPT) $(INTERFACE)
 	gcc -I$(PYTHONINC) -framework Python -bundle -bundle_loader $(PYTHONBIN) $(SRCS) $(WRAPFILE) -o $(MODULE)
-	mkdir -p $(MODULE_DIR)
-	cp $(TARGET).conf $(MODULE_DIR)
-	mv $(TARGET).py $(MODULE) $(MODULE_DIR)
 
 clean: 
-	rm -f $(TARGET) $(WRAPFILE) $(WRAPOBJ) $(COBJS)
-	rm -rf module
+	rm -f $(TARGET) $(WRAPFILE) $(WRAPOBJ) $(COBJS) $(MODULE) $(PYMODULE)
 

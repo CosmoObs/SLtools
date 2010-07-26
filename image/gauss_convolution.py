@@ -25,18 +25,18 @@ from scipy import mgrid,signal
 
 
 def gauss_kernel(n_sig,sigma,sigmay=None):
-   	""" Creates a normalized 2D gaussian kernel array for convolution.
-	The optional keyword argument sigmay allows for a different
-        sigma in the y direction.
-	The size of the 2D gaussian kernel array is defined as a multiple (n_sig)
-	of sigma.
-	
-	@param n_sig  multiple of sigma that defines the size of the 2D gaussian kernel
-	@param sigma  standard deviation sigma of the gaussian kernel
-	@param sigmay  standard deviation sigma in the y direction of the gaussian kernel
-	
-	@return normalized 2D gaussian kernel array for convolution
-    	"""
+    """ Creates a normalized 2D gaussian kernel array for convolution.
+    The optional keyword argument sigmay allows for a different
+    sigma in the y direction.
+    the size of the 2D gaussian kernel array is defined as a multiple (n_sig)
+    of sigma.
+    
+    @param n_sig  multiple of sigma that defines the size of the 2D gaussian kernel
+    @param sigma  standard deviation sigma of the gaussian kernel
+    @param sigmay  standard deviation sigma in the y direction of the gaussian kernel
+
+    @return normalized 2D gaussian kernel array for convolution
+    """
 
     x_length = int(n_sig * sigma + 0.5) #Add 0.5 to approximate to nearest integer
     
@@ -52,30 +52,27 @@ def gauss_kernel(n_sig,sigma,sigmay=None):
 
 
 def fftconvolve_image(im_array, n_sig, sig, sigy=None) :
-    	""" Convolve the image array with a gaussian kernel of size defined as a 
-        multiple (n_sig) of sigma (sig) using FFT. 
-	The optional keyword argument sigy allows for a different
-        sigma in the y direction.
+    """ Convolve the image array with a gaussian kernel of size defined as a 
+    multiple (n_sig) of sigma (sig) using FFT. 
+    The optional keyword argument sigy allows for a different
+    sigma in the y direction.
+
+   
+    @param im_array  image array to be convolved
+    @param n_sig  multiple of sigma that defines the size of the 2D gaussian kernel
+    @param sig  standard deviation sigma of the gaussian kernel
+    @param sigy  standard deviation sigma in the y direction of the gaussian kernel
         
-        
-        @param im_array  image array to be convolved
-        @param n_sig  multiple of sigma that defines the size of the 2D gaussian kernel
-        @param sig  standard deviation sigma of the gaussian kernel
-        @param sigy  standard deviation sigma in the y direction of the gaussian kernel
-        
-        @return image (fft) convolved array 
-    	"""
+    @return image (fft) convolved array 
+    """
 
     im_kernel_array = gauss_kernel(n_sig, sig, sigmay=sigy)
     fftconv_image = signal.fftconvolve(im_array,im_kernel_array,mode = 'same')
 
     return (fftconv_image) 
 
-
-
-
 def convolve_image(im_array, n_sig, sig, sigy=None) :
-    	""" Convolve the image array with a gaussian kernel of size defined as a 
+    """ Convolve the image array with a gaussian kernel of size defined as a 
         multiple (n_sig) of sigma (sig). 
 	The optional keyword argument sigy allows for a different
         sigma in the y direction.
@@ -88,7 +85,7 @@ def convolve_image(im_array, n_sig, sig, sigy=None) :
         
         @return image convolved array 
         
-    	"""
+    """
 
     im_kernel_array = gauss_kernel(n_sig, sig, sigmay=sigy)
     conv_image = signal.convolve(im_array,im_kernel_array,mode = 'same')
