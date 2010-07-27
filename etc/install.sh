@@ -75,13 +75,13 @@ cd - &> /dev/null
 # We can do better and install SLtools into another place on the system
 #
 echo ""
-echo "Where do you want to install sltools? [${HOME}]   "
+echo "Where do you want to install sltools? [${HOME}/lib]   "
 echo "(Type Ctrl+C to cancel the installation if you want to)"
 read INSTALLDIR
 
 # Set the default value (HOME) nothing was given
 #
-[ -z "$INSTALLDIR" ] && INSTALLDIR="${HOME}"
+[ -z "$INSTALLDIR" ] && INSTALLDIR="${HOME}/lib"
 
 # Check if INSTALLDIR exist, if not, create it
 #
