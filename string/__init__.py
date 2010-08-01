@@ -10,6 +10,7 @@ are covered by sltools modules.
 """
 
 from regexp import *
+from replace import *
 
 
 

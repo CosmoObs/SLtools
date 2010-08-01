@@ -1,28 +1,26 @@
 #!/usr/bin/env python
-#-*- coding:utf-8 -*-
 
-"""@package catalog2ds9region
 
-Module to create SAO DS9 region files from DES Data Challenge FITS catalogs
+"""Module to create SAO DS9 region files from DES Data Challenge FITS catalogs"""
 
-Executable package: YES
-
-To see the package help message, type:
-
-> python catalog2ds9region.py --help
-
- 'catalog2ds9region' has three mandatory arguments: the (input) FITS catalog and
- the reference center coordinates (RA and DEC)
-
-> python catalog2ds9region.py -i input_file.fits --ra 10 --dec 20
-
-"""
+#@package catalog2ds9region
+#
+#
+# Executable package: YES
+#
+# To see the package help message, type:
+#
+# > python catalog2ds9region.py --help
+#
+# 'catalog2ds9region' has three mandatory arguments: the (input) FITS catalog and
+# the reference center coordinates (RA and DEC)
+#
+# > python catalog2ds9region.py -i input_file.fits --ra 10 --dec 20
 
 import sys;
 from numpy import *;
 from math import cos, radians;
-from sltools import *;
-
+from sltools.image import *;
 
 
 def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor, output_file):
@@ -48,7 +46,7 @@ def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor
 	pixel_scale = float(pixel_scale) 
 	scale_factor = float(scale_factor)
 
-	data = get_catalog_data(input_file, "RA", "DEC", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "TILENAME")
+	data = get_fits_data(input_file, "RA", "DEC", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "TILENAME")
     	
 	search_radius = ((data['RA'] - ra_0)**2)*(math.cos(math.radians(dec_0))**2) + (data['DEC'] - dec_0)**2
 

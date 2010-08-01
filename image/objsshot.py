@@ -30,7 +30,7 @@ import string;
 import numpy as np;
 import pyfits;
 
-from sltools import *;
+from sltools.io import *;
 
 
 #---------------------

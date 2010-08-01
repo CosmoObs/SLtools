@@ -1,7 +1,7 @@
 import fileinput
 import sys
 
-def search_replace(file_name,option_char,replace_exp,section):
+def replace(file_name, option_char, replace_exp, section):
 	#To edit configuration files which lines have the form "option_char expression"
 	#Search the option_char and rewrite the line in the form "option_char replaced_expression"
 	

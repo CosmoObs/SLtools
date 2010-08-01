@@ -1,14 +1,14 @@
 '''@file 
-	get_catalog_data module
+	get_fits_data module
 '''
 
 
-'''@package get_catalog_data 
+'''@package get_fits_data 
 	Get a list of variables from a FITS catalog 
 '''
 
 import pyfits 
-def get_catalog_data( file_name, *args ): 
+def get_fits_data( file_name, *args ): 
 
 	''' Get a list of variables from a FITS catalog
 

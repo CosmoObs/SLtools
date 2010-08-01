@@ -1,19 +1,15 @@
 #!/bin/bash
-
-# ==========================================================================================
 #
 # Script for SLtools installation.
 #
 # 1) Compile some libraries written in C/C++ (Soon, Fortran files should appear)
 # 2) Copy the package to another place and set the PATH env variable
 #
-# ==========================================================================================
-
-
-# ------------------------------------------------------------------------------------------
-
 # Checking dependencies for c/python modules creation
 #
+
+version=%VERSION%
+
 SWIG=$(which swig 2> /dev/null )
 CC=$(which cc 2> /dev/null )
 
@@ -36,7 +32,7 @@ OS=$(uname -s)
 
 # Compile each function on their respective directories..
 #
-cd simulations/get_nfw_concentration
+cd lens/get_nfw_concentration
 make clean &> /dev/null
 
 if [ "$OS" == "Linux" ]
@@ -98,21 +94,26 @@ fi
 
 # Create directories where files will be copied, and do it
 #
+
+
+INSTALLDIR=${INSTALLDIR}/sltools-v$version
+
 mkdir -p ${INSTALLDIR}/sltools/bin || exit 1
+
 echo 
 echo "Copying files..."
 cp -r * ${INSTALLDIR}/sltools
 rm -rf ${INSTALLDIR}/sltools/install.sh
 echo
 
-echo "----------------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------"
 echo ""
 echo "sltools must be available in your path, "
-echo "update your login file (.login, .profile, ...) with the following lines:"
+echo "update your login file (.login, .bashrc or equivalent) with the following lines:"
 echo ""
 echo "   export PYTHONPATH=${INSTALLDIR}:\$PYTHONPATH"
 echo "   export PATH=${INSTALLDIR}/sltools/bin:\$PATH"
 echo ""
-echo "----------------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------"
 echo "Done."
 echo ""

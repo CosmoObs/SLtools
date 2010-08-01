@@ -1,27 +1,27 @@
-##@package add_noise_2_image
-#
-# Add poissonian noise to given list of FITS files.
-#
-#@param list_fitsFiles
-#@return 
+""" add_noise """
 
-# ---
-import pyfits;
-import string;
-import numpy as np;
-# ---
-def add_noise_2_image(list_fitsFiles):
+##@package add_noise
+
+"""
+Add poisson noise to a list of FITS images
+"""
+
+import pyfits
+import string
+import numpy as np
+from numpy.random import poisson
+
+def add_noise(list_fitsFiles):
+
 	""" Add poissonian noise to given list of FITS files.
 
 	Input:
 	-> list of fits filenames
-	Output:
-	<- list of fits filenames with noise added
+	
+    Output:
+	<- list of fits filenames with poisson noise added
 
 	"""
-	from numpy import zeros, where
-	from numpy.random import poisson
-
 
 	list_noisyFiles = []
 	for Arc_filename in list_fitsFiles:
@@ -31,9 +31,8 @@ def add_noise_2_image(list_fitsFiles):
 		#
 		ArcImg_array,ArcImg_header = pyfits.getdata( Arc_filename, header=True );
 
-
 		###########################################################################
-		# Here I am treating a strange "behavior" of the Arc images... !-P (negative counts)
+		# Here I am treating a strange "behavior" (negative counts)
 		#
 		Arc_tmp = np.zeros( ArcImg_array.shape, dtype=float );
 		non_null = np.where( ArcImg_array > 0.0 );
@@ -68,4 +67,3 @@ def add_noise_2_image(list_fitsFiles):
 		list_noisyFiles.append( Filename_OUT );
 
 	return (list_noisyFiles);
-# -

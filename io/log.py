@@ -1,8 +1,8 @@
 
+""" Module for logging facilities """
+
 import sys;
 import logging;
-
-""" Package for logging facilities """
 
 ##@package log
 

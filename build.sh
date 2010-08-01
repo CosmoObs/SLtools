@@ -50,6 +50,9 @@ GenDoxygenDoc()
 	sed -i "s/%PROJECT_NUMBER%/\"Version $version\"/" doc/doxygen.cfg
 
 
+	GenDoxygenDoc sltools $version
+
+
 	# work around for bug #600 [AddArcs] Fix doxygen documentation issue
 
 	for file in $(find . -name "__init__.py")
@@ -99,7 +102,7 @@ sltools()
 
 
 
-        cd simulations/get_nfw_concentration &> /dev/null
+        cd lens/get_nfw_concentration &> /dev/null
 	make clean &> /dev/null
 	cd - &> /dev/null
 
@@ -114,16 +117,20 @@ sltools()
         cp -r gravlens $folder  
         cp -r io $folder	
         cp -r lens $folder
-	cp -r simulations $folder
         cp -r plot $folder
         cp -r string $folder
         cp -r image $folder
-        cp -r wcs $folder
+        cp -r coordinate $folder
         cp -r bin $folder
 	cp -r etc/install.sh $folder
+	cp -r etc/INSTALL $folder
+	cp -r etc/README $folder
+	cp -r etc/HISTORY $folder
 
 
-	GenDoxygenDoc sltools $version
+	# Edit installation file version number
+
+	sed -i "s/%VERSION%/$version/" $folder/install.sh
 
 	# make package
 	echo "Compressing $folder..."
@@ -142,9 +149,9 @@ then
 
     # Read package VERSION and exec building function:
 
-    source etc/version.txt
+    version=$(cat ./etc/version.txt)
 
-    $1 $VERSION
+    $1 $version
 
 else
 

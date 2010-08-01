@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Package to deal with (Sextractor) segmentation procedures"""
+"""Module to deal with (Sextractor) segmentation procedures"""
 
 ##@ segment
 #

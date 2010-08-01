@@ -1,1 +1,1 @@
-../image/catalog2ds9region.py
+../catalog/catalog2ds9region.py

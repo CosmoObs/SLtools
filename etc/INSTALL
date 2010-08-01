@@ -1,0 +1,18 @@
+============================================
+External dependencies to install sltools
+============================================
+
+Before installing sltools you need to instal:
+
+- Python development files
+- gcc, GNU Compiler Collection 
+- g++
+- swig
+
+To install these dependencies you can use packages distributed with
+your Linux/Mac distribution.
+
+Just search for python-dev, gcc, g++, and swig package with your prefered
+package manager. 
+
+

@@ -1,22 +1,37 @@
+""" linear_transformation """
 
-def readout_radec( ra, dec, RAshift=0, DECfactor=1 ):
-    """Reorder and possibly shift of RA/DEC coordinates
+##@package linear_transformation
 
-    Since mock catalogues and DC images objects don't agree
+import sys;
+
+"""Linear transformation of coordinates"""
+
+##@package transform
+
+# =================================================
+def linear_trasnformation( ra, dec, RAshift=0, DECfactor=1 ):
+    """Shift and reorder of RA/DEC coordinates
+
+    * Since mock catalogues and DC images objects don't agree
     in RA/DEC position, coordinates values have to be re-centered.
 
-    readout_radec( ra, dec, RAshift=0, DECfactor=1 )
-    readout_radec() ---> ra,dec
+    shift_radec( ra.float, dec.float [,...])
+
+    Function shift given RA and DEC values as follow:
+    RA_out = RA_in + RAshift
+    DEC_out = DEC_in * DECfactor
+
+    RA and DEC values are constrained to 0 < RA < 360 and -90 < DEC < 90
 
     Input:
-    ra : scalar or tuple (RA_min,RA_max) of Right Ascension
-    dec : scalar or tuple (DEC_min,DEC_max) of Declination
-    RAshift : value to translate given RA value(s)
-    DECfactor* : value to multiply given DEC value(s)
-    * There is no much meaning in using a DECfactor value other than -1, although it can be done.
+     - ra        : scalar or tuple (RA_min,RA_max) of Right Ascension
+     - dec       : scalar or tuple (DEC_min,DEC_max) of Declination
+     - RAshift   : value to translate given RA value(s)
+     - DECfactor : value to multiply given DEC value(s)
 
     Output:
-    ra,dec : scalars or tuples of coordinates
+     - (ra,dec) : scalars or tuples of coordinates
+
     """
 	
     try:
@@ -56,4 +71,7 @@ def readout_radec( ra, dec, RAshift=0, DECfactor=1 ):
 
         dec = float(dec) * float(DECfactor);
 
+
     return ra,dec;
+
+# ---

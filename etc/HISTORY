@@ -1,0 +1,12 @@
+v0.1.3 changes:
+
+Modules reorganization
+
+renamed:    image/catalog2ds9region.py -> catalog/catalog2ds9region.py
+deleted:    catalog/readout_radec.py 
+renamed:    catalog/ordering.py -> catalog/sort_by_column.py
+renamed:    wcs/transform.py -> coordinate/linear_transformation.py
+renamed:    image/add_noise_2_image.py -> image/add_noise.py
+renamed:    io/replace.py -> string/replace.py
+renamed:    simulations/get_nfw_concentration -> lens/get_nfw_concentration
+renamed:	image/add_arcs_2_image.py -> image/add_images.py

@@ -153,7 +153,7 @@ def cutout( image, header=None, coord_unit='pixel', xo=None, yo=None, size_unit=
 	"""
 	Do a snapshot from given fits image.
 
-	cutout( image.array [,...] ) -> (ndarray, header)
+	cutout( image [,...] ) -> (ndarray, header)
 
 	The function can deal with 'pixel' and 'degrees' cordinate units. As input, besides the image FITS 
 	filename (input_file), it receives a central position (xo,yo) and side lengths (x_size,y_size) for
@@ -168,8 +168,8 @@ def cutout( image, header=None, coord_unit='pixel', xo=None, yo=None, size_unit=
 	If 'x_size=None' and 'y_size=None', half length of each side will be used for output dimensions.
 
 	Input:
-	 - image      : Image (FITS) ndarray
-	 - header     : Image (FITS) header object
+	 - image      : Image (numpy ndarray)
+	 - header     : Image header object
 	 - coord_unit : 'pixel' or 'degrees' for position (xo,yo) values
 	 - xo         : Horizontal central position for output (cut) image
 	 - yo         : Vertical central position for output (cut) image
