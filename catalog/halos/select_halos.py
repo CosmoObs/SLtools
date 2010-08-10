@@ -1,6 +1,8 @@
 import sys;
 import numpy as np;
-from sltools import *;
+from sltools.coordinate import *;
+from sltools.image  import *;
+from sltools.catalog  import *;
 
 def select_halos( hdulist, minimum_halo_mass=0, ra=(), dec=(), image_file='' ): 
     """Select halos with mass greater than a given bottom value.
@@ -43,9 +45,9 @@ def select_halos( hdulist, minimum_halo_mass=0, ra=(), dec=(), image_file='' ):
 
     # Read out some columns of interest from halo catalogue..
     #
-    dic = get_catalog_data( hdulist, 'HALOID', 'RA', 'DEC', 'M200' );
+    dic = get_fits_data( hdulist, 'HALOID', 'RA', 'DEC', 'M200' );
     if not (dic):
-        print >> sys.stderr, "Error: empty output from get_catalog_data().";
+        print >> sys.stderr, "Error: empty output from get_fits_data().";
         return (False);
 
 

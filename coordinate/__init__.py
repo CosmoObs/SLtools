@@ -5,4 +5,4 @@ coordinate package has modules for coordinate transformation and conversions
 """
 
 from linear_transformation import *
-
+from readout_radec import *
