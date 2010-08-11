@@ -277,7 +277,7 @@ def cutout( image, header=None, coord_unit='pixel', xo=None, yo=None, size_unit=
 	# If header, update pixel<->sky information..
 	#
 	if ( hdr ):
-		hdr = _header_update(hdr, x_ini, y_ini);
+		hdr = _hdr_update(hdr, x_ini, y_ini);
 
 	# Initialize new image, and take all index list..
 	#
