@@ -278,6 +278,8 @@ def cutout( image, header=None, coord_unit='pixel', xo=None, yo=None, size_unit=
 	#
 	if ( hdr ):
 		hdr = _hdr_update(hdr, x_ini, y_ini);
+		hdr.update('NAXIS1',x_cut_size);
+		hdr.update('NAXIS2',y_cut_size);
 
 	# Initialize new image, and take all index list..
 	#
