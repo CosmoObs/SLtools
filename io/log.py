@@ -7,7 +7,7 @@ import logging;
 ##@package log
 
 # ===================================
-def init( logfile='logging.log', debug=False, verbose=False ):
+def log_init( logfile='logging.log', debug=False, verbose=False ):
 	"""Initialize logging handler
 
 	init( )
@@ -36,7 +36,7 @@ def init( logfile='logging.log', debug=False, verbose=False ):
 	logging.basicConfig(level=level,
 			    format='%(asctime)s %(module)-25s : %(levelname)-8s %(message)s',
 			    datefmt='%m-%d %H:%M',
-			    filename=filename,
+			    filename=logfile,
 			    filemode='w')
 
 	
@@ -46,7 +46,7 @@ def init( logfile='logging.log', debug=False, verbose=False ):
 	if ( verbose ):
 		# Write INFO messages or higher to the console 
 		console = logging.StreamHandler()
-		#console.setLevel(logging.INFO)
+		console.setLevel(logging.INFO)
 
 		# Tell the handler to use this format
 		console.setFormatter(formatter)

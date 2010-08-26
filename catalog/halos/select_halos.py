@@ -51,45 +51,15 @@ def select_halos( hdulist, minimum_halo_mass=0, ra=(), dec=(), image_file='' ):
         return (False);
 
 
-    haloid = dic['HALOID'];
+    haloids = dic['HALOID'];
     ra = dic['RA'];
     dec = dic['DEC'];
     m200 = dic['M200'];
 
 
-    ra__1 = np.where( ra_min <= ra, haloid, -1 );
-    ra__2 = np.where( ra < ra_max, haloid, -1 );
-    ra_set = set(ra__1).intersection(set(ra__2));
+    select = ( ra > ra_min) & ( ra < ra_max ) & ( dec > dec_min) & (dec < dec_max) & (m200 > minimum_halo_mass) 
 
-    dec__1 = np.where( dec_min <= dec, haloid, -1 );
-    dec__2 = np.where( dec < dec_max, haloid, -1 );
-    dec_set = set(dec__1).intersection(set(dec__2));
+    index = np.where(select)[0]
 
-    radec_set = dec_set.intersection(ra_set);
-
-    m_set = set( np.where(minimum_halo_mass <= m200, haloid, -1) );
-
-    mask_set = m_set.intersection(radec_set)
-
-    ids = list( mask_set - set([-1]) );
-
-
-#    ids = [];
-#    controle = [];
-#    for i in range( 0, len( haloid )):
-#
-#        # Check whether the current HaloID was already used..
-#        if ( haloid[i] in controle ):
-#            continue;
-#
-#        # Select Halos by Sky region..
-#        if ( ra_min <= ra[i] < ra_max  and  dec_min <= dec[i] < dec_max ):
-#            if ( minimum_halo_mass <= m200[i] ):
-#                ids.append( haloid[i] );
-#
-#        controle.append( haloid[i] );
-
-    # Return the big ones
-    return (ids);
-
+    return  haloids[np.where(select)[0]] 
 

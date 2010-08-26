@@ -1,5 +1,5 @@
 
-##@package get_image_limits [formerly RaDecLimits]
+##@package get_image_limits
 #
 # This function reads RA and DEC values correponding to the spatial limits of the sky image. 
 # 
@@ -8,34 +8,30 @@
 
 # ---
 import pyfits;
-import commands;
-# ---
-def get_image_limits( image_file ):
+import pywcs
+import numpy
 
-        # Image Header..
-	#
-        hdr = pyfits.getheader( image_file );
+def get_image_limits(image):
 
-        # Some image coordinates info..
-	#
-        naxis1 = hdr['NAXIS1'];
-        naxis2 = hdr['NAXIS2'];
-        ra_centre = hdr['CRVAL1'];
-        dec_centre = hdr['CRVAL2'];
+    hdr = pyfits.getheader( image)
+    
+    wcs = pywcs.WCS(hdr) 
 
-        # Pixels (0,0) and (10000,10000) are the sizes of the images
-	# transform them to sky (degrees) coordinates..
-	#
-	out = commands.getoutput( 'xy2sky -d "%s" %s %s %s %s' % ( image_file, 1, 1, 10000, 10000 ));
-        out_min,out_max = out.split('\n');
-	out_min = out_min.split(None);
-	out_max = out_max.split(None);
-        ra_min = float(out_min[0]);
-        dec_min = float(out_min[1]);
-	ra_max = float(out_max[0]);
-	dec_max = float(out_max[1]);
+    naxis1 = hdr['NAXIS1']
+    naxis2 = hdr['NAXIS2']
+    ra_centre = hdr['CRVAL1']
+    dec_centre = hdr['CRVAL2']
+    pixcrd = numpy.array([[1,1],[naxis1,naxis2]])
 
-        # Function returns sky coordinates in degrees..
-	#
-        return ((ra_min,ra_max),(dec_min,dec_max)); 
-# -
+    skycrd = wcs.wcs_pix2sky(pixcrd,1)
+
+    ra_min = skycrd[0][0]
+    dec_min = skycrd[0][1]
+    ra_max = skycrd[1][0]
+    dec_max = skycrd[1][1]
+
+
+    return ((ra_min,ra_max),(dec_min,dec_max))
+
+
+
