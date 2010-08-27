@@ -4,15 +4,57 @@ External dependencies to install sltools
 
 Before installing sltools you need to instal:
 
-- Python development files
+- Python 2.5 or 2.6 (sltools was not tested with Python 3.0)
+- Other Python packages: numpy and matplotlib
+- Python development files (python-dev)
 - gcc, GNU Compiler Collection 
 - g++
 - swig
 
-To install these dependencies you can use packages distributed with
+To install these dependencies you can install the packages from 
 your Linux/Mac distribution.
 
-Just search for python-dev, gcc, g++, and swig package with your prefered
-package manager. 
+External applications required:
+
+- gravlens 1.99o (binary)
+- sextractor 2.5.0 (source code)
+- WCSTools 3.7.7 (source code)
+- pyfits 1.0.7 (python source)
+- pywcs 1.9-4.4.4 (python source)
+
+All command line tools must be available in the system path, edit your .bashrc or .cshrc if needed to include the correspondent paths to the PATH environment variable.
+
+Installation procedure:
+
+- Gravlens: a software for gravitational lensing developed by Chuck Keeton - is distributed as binary only. 
+
+http://redfive.rutgers.edu/~keeton/gravlens/Working/index.html
+
+- Sextractor:  after extracted from tarball follow the package installation instructions.
+
+http://astromatic.iap.fr/software/sextractor/ 
+
+- WCSTools : from wcstools we just need sky2xy and xy2sky. So, if you don't want to compile the whole package, just type:
+
+> make sky2xy 
+> make xy2sky
+
+and a directory "bin" will be created with the tools you just build. 
+
+- Pyfits : to install pyfits just follow the instructions inside the package. Pyfits needs NumPy to run. Basically you will have to type:
+
+$ python setup.py build
+$ python setup.py install
+
+Tip: For installing python modules, try to use "easy_install", distributed within "setuptools":
+http://pypi.python.org/pypi/setuptools
+
+- Pywcs: is a set of routines for handling the FITS World Coordinate System (WCS) standard
+
+http://stsdas.stsci.edu/astrolib/pywcs-1.9-4.4.4.tar.gz
 
 
+Enjoy.
+
+Strong Lensing Working Group,
+DES-Brazil

@@ -1,6 +1,21 @@
-sltools is a library designed to support strong lensing applications 
+SLtools is a library designed to support strong lensing applications 
 
-The following example shows how to import a package:
+See INSTALL file for installation details.
+
+The library contains the following packages:
+
+    catalog
+    coordinate
+    gravlens
+    image
+    io
+    lens
+    plot
+    string
+
+The bin folder has links to standalone modules.
+
+Once the library is installed, you can import their packages. Example:
 
     import sltools.image
 
@@ -10,7 +25,7 @@ Use the help command to see the available modules or details for this package.
 
     help(sltools.image.add_images)
 
-The following command makes the modules available in the current namespace:
+The following command makes the package modules available in the current namespace:
 
     from sltools.images import *
 

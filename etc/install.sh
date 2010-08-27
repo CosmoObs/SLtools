@@ -8,7 +8,7 @@
 # Checking dependencies for c/python modules creation
 #
 
-version=%VERSION%
+version=0.1.4
 
 SWIG=$(which swig 2> /dev/null )
 CC=$(which cc 2> /dev/null )
@@ -110,8 +110,8 @@ echo "------------------------------------------------------------------------"
 echo ""
 echo "Update your login file (.login, .bashrc or equivalent) with the following lines:"
 echo ""
-echo "   export PYTHONPATH=${INSTALLDIR}/sltools-v$version:\$PYTHONPATH"
-echo "   export PATH=${INSTALLDIR}/sltools-v$version/sltools/bin:\$PATH"
+echo "   export PYTHONPATH=${INSTALLDIR}:\$PYTHONPATH"
+echo "   export PATH=${INSTALLDIR}/sltools/bin:\$PATH"
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Done."
