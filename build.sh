@@ -33,9 +33,7 @@ GenDoxygenDoc()
 {
 	application=$1
 	version=$2
-
-	# compile documentation
-	echo "Generating Doxygen documentation for $folder"
+	mode=$3
 
 	# Check if doxypy is present 
 	[ $(which doxypy.py) ] || { echo "Failed: doxypy not found."; exit 1; }
@@ -50,9 +48,6 @@ GenDoxygenDoc()
 	sed -i "s/%PROJECT_NUMBER%/\"Version $version\"/" doc/doxygen.cfg
 
 
-	GenDoxygenDoc sltools $version
-
-
 	# work around for bug #600 [AddArcs] Fix doxygen documentation issue
 
 	for file in $(find . -name "__init__.py")
@@ -63,16 +58,23 @@ GenDoxygenDoc()
 	
 	doxygen doc/doxygen.cfg &> /dev/null || { echo "Failed.";  cd $dir &> /dev/null; exit 1; }
 
-	find . -name "__init__" -exec mv '{}' '{}'.py \;	
+	find . -name "__init__" -exec mv '{}' '{}'.py \;
 
-	cd doc/html
-	namespace2module html
+	(
+	    cd doc/html
+	    namespace2module html
+	)
 
-	cd ../latex &> /dev/null
-	namespace2module tex 
+	(
+	    cd ../latex &> /dev/null
+	    namespace2module tex
 
-	make &> /dev/null || { echo "Failed to create PDF documentation."; exit 1; }
-	[ -f refman.pdf ] && mv refman.pdf $application-v$version.pdf
+	    if [ "$mode" != "--no-pdf" ]; then
+		make &> /dev/null || { echo "Failed to create PDF documentation."; exit 1; }
+		[ -f refman.pdf ] && mv refman.pdf $application-v$version.pdf
+	    fi
+	)
+
 	cd $dir &> /dev/null
 
 }
@@ -82,11 +84,7 @@ GenDoxygenDoc()
 sltools()
 {
 
-	version=$1
-
-	echo "Building sltools v$version"
-
-	folder=sltools-v$version
+	folder=$1
 
 	if [ -d "$folder" -o -f "$folder.tgz" ]
 	then
@@ -99,8 +97,6 @@ sltools()
 	echo "Creating missing sltools folders..."
 
 	mkdir -p $folder
-
-
 
         cd lens/get_nfw_concentration &> /dev/null
 	make clean &> /dev/null
@@ -127,35 +123,44 @@ sltools()
 	cp -r etc/README $folder
 	cp -r etc/HISTORY $folder
 
-
-	# Edit installation file version number
-
-	sed -i "s/%VERSION%/$version/" $folder/install.sh
-
-	# make package
-	echo "Compressing $folder..."
-	tar cvzf $folder.tgz $folder &> /dev/null
-	rm -rf $folder &> /dev/null
-
-	echo "Done."
-	echo
 }
 
 
 # Call a specific build function
 
-if [ "$1" == "sltools" ]
+[ ! -z "$1" ] && opt1="$1" || opt1="null"
+[ ! -z "$2" ] && opt2="$2" || opt2="--all"
+
+[ "$opt2" == "--all" -o "$opt2" == "--no-doc" -o "$opt2" == "--no-pdf" ] && mode=$2 || opt1="null"
+
+if [ "$opt1" == "sltools" ]
 then
 
     # Read package VERSION and exec building function:
-
     version=$(cat ./etc/version.txt)
+    folder=$opt1-v$version
 
-    $1 $version
+    echo "Building $opt1 v$version..."
+    $1 $folder
+
+    if [ "$mode" != "--no-doc" ]; then
+	# compile documentation
+	echo "Generating Doxygen documentation..."
+	GenDoxygenDoc $opt1 $version $mode
+    fi
+
+    sed -i "s/%VERSION%/$version/" $folder/install.sh
+
+    echo "Compressing $folder..."
+    tar cvzf $folder.tgz $folder &> /dev/null
+    rm -rf $folder &> /dev/null
+
+    echo "Done."
+    echo
 
 else
 
-    echo "Usage: ./build.sh [ sltools ]"
+    echo "Usage: ./build.sh { sltools } [ --all | --no-doc | --no-pdf ]"
     echo
     exit 1
 
