@@ -8,7 +8,7 @@
 # Checking dependencies for c/python modules creation
 #
 
-version=0.1.4
+version=%VERSION%
 
 SWIG=$(which swig 2> /dev/null )
 CC=$(which cc 2> /dev/null )
