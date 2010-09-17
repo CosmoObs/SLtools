@@ -9,6 +9,11 @@
 #@param source_selection_criteria (to get the catalog path and enhance_nsource, that artificially increases the source density by a multiplicative factor)
 #
 #@return Return the source density (increased by enhance_nsource)
+import sys
+sys.path.append("./..")                # relative path  to modules get_fits_data and open_fits_catalog 
+import get_fits_data
+import open_fits_catalog
+sys.path.append("./sources")           # back to current path 
 def future_compute_source_density(zS, delta_zS, source_catalog): 
 	"""Returns the number of sources(objects) from given catalog per unit area
 
@@ -22,13 +27,12 @@ def future_compute_source_density(zS, delta_zS, source_catalog):
 
 	"""
 	UDF = source_catalog;
-	X = open('%s' % (UDF)).readlines()
-	z0 = []
+	X = open_fits_catalog.open_fits_catalog(UDF)
+	z=get_fits_data.get_fits_data(X,'z').values()
 	zs = []
-	for i in range(len(X)):
-		z0.append(float(X[i].split()[7]))              # redshifts from the UDF catalog
-		if z0[i]>= (zS-delta_zS/2.0) and z0[i]< (zS+delta_zS/2.0): 
-			zs.append(z0[i])
+	for i in range(len(z[0])):
+		if z[0][i]>= (zS-delta_zS/2.0) and z[0][i]< (zS+delta_zS/2.0): 
+			zs.append(z[0][i])
 	N_area = len(zs)/43092.0
 
 	return N_area
