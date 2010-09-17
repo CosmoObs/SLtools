@@ -1,5 +1,5 @@
 /** @file
-* Example of doxygen documentation for C functions. 
+* Example of doxygen documentation for C functions FIXME. 
 */
 
 /** @package perturbative_method
@@ -23,13 +23,13 @@
 * \f$ r \f$ is the radial coordinate and pot_params[] is a vector that contains all the potential parameters (ex: \f$ \kappa_s \f$ and \f$ \rho_s \f$ from NFW profile)
 *
 */
-
 typedef double (*phi_type) (double r, double pot_params[]);
 /** \brief \f$ \psi(r,\theta) \f$ type function 
 *
 * \f$ r \f$ and \f$ \theta \f$ are the radial and angular coordinate, pert_params[] is a vector that contains all the perturbation parameters
 *
 */
+
 typedef double (*psi_type) (double r, double theta, double pert_params[]);
 
 /** \brief \f$ f_{n}(\theta)\equiv \frac{1}{n!} \left[\frac{\partial^n\psi(r,\theta)}{\partial r^{n}}\right]_{r=r_e} \f$ type function 
@@ -48,11 +48,11 @@ typedef double (*f_type)   (double theta, double pert_params[]);
 *
 *  y0 (\f$ y_0\f$) ->     position at y axis
 *
-*  R0 (\f$ R_0\f$)->     characteristic size
+*  R0 (\f$ R_0\f$) ->     characteristic size
 *
-*  eta0 (\f$ \eta_0\f$)->    parameter relater to the ellipticity ( e = sqrt(2*eta0) )
+*  eta0 (\f$ \eta_0\f$) ->    parameter relater to the ellipticity
 *
-*  theta0 (\f$ \theta_0\f$)->  inclination to the main axis
+*  theta0 (\f$ \theta_0\f$) ->  inclination to the main axis
 */
 typedef struct {
   double x0 ;     //position at x axis
@@ -75,8 +75,10 @@ typedef struct {
 *  \sa f_type, elliptical_source
 */
 double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pert_params[]){
-  return f1_in(theta, pot_params) + source_in.x0*cos(theta) + source_in.y0*sin(theta);
+  return f1_in(theta, pert_params) + source_in.x0*cos(theta) + source_in.y0*sin(theta);
 }
+
+
 
 /**  \f$ \overline{\frac{d f_1(\theta)}{d \theta}} \equiv \frac{d f_0(\theta)}{d \theta} - x0\sin(\theta) + y0\cos(\theta) \f$
 *
@@ -88,12 +90,13 @@ double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pe
 *
 *  \sa f_type, elliptical_source
 */
-double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pot_params[]){
-  return Df0Dtheta_in(theta, pot_params) - source_in.x0*sin(theta) +  source_in.y0*cos(theta);
+double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pert_params[]){
+  return Df0Dtheta_in(theta, pert_params) - source_in.x0*sin(theta) +  source_in.y0*cos(theta);
 }
 
 
-/**  Argument of square root: \f$ R_{0}^2(1-\eta_0\cos(\theta - \theta_0))-(1-\eta_0^2) \overline{\frac{d f_1(\theta)}{d \theta}} \f$ 
+
+/**  Argument of square root: \f$ R_{0}^2(1-\eta_0\cos(\theta - \theta_0))-(1-\eta_0^2) \overline{\frac{d f_1(\theta)}{d \theta}}^2 \f$ 
 *
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param source_in a struct that define elliptical sources
@@ -114,6 +117,8 @@ double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, 
 
   return R0_tmp2*S - (1.0-eta0_tmp2)*Df0Dtheta_bar_tmp2;
 }
+
+
 
 /**  
 *
@@ -147,6 +152,8 @@ double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sour
   return 1.0/kappa2 * (f1_bar_tmp + quant_tmp + sqrt(sqrt_arg)/S);
 }
 
+
+
 /**  
 *
 *  \param Df0Dtheta_in function related to the perturbed potential
@@ -178,6 +185,5 @@ double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
 
   return 1.0/kappa2 * (f1_bar_tmp + quant_tmp - sqrt(sqrt_arg)/S);
 }
-
 
 #endif

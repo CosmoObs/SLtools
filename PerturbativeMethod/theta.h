@@ -1,15 +1,30 @@
+/** @file
+* Example of doxygen documentation for C functions FIXME. 
+*/
+
+/** @package theta
+*  Short description FIXME 
+*   
+*
+*  Detailed description FIXME
+*
+*/
+
+#ifndef THETA_H
+#define THETA_H
+
 #include <cstdio>
 #include <cstdlib>
 
 #include "perturbative_method.h"
 
-void theta(f_type Df0Dtheta_in, elliptical_source source_in,int N=100){
+void theta(f_type Df0Dtheta_in, elliptical_source source_in,int N=1000){
 
   double theta[N];
   double arg[N];
   int N_pair=0;
 
-  for(int i=0;i<N;i++) theta[i] = double(i)*2.0*3.14159/double(N);
+  for(int i=0;i<N;i++) theta[i] = double(i)*2.0*3.141592654/double(N);
   for(int i=0;i<N;i++) arg[i] = arg_sqrt(Df0Dtheta_in, source_in, theta[i], NULL);
 
 
@@ -34,8 +49,6 @@ void theta(f_type Df0Dtheta_in, elliptical_source source_in,int N=100){
   test=arg_sqrt(Df0Dtheta_in, source_in, (theta_N[0]+theta_N[1])/2.0, NULL);
 
 
-
-
   
   FILE * pFile = fopen ("theta_out.txt","w");
   fprintf(pFile,"%i\n",N_pair/2);
@@ -51,3 +64,4 @@ void theta(f_type Df0Dtheta_in, elliptical_source source_in,int N=100){
   }
 
 }
+#endif
