@@ -1,5 +1,5 @@
 /** @file
-* Example of doxygen documentation for C functions. 
+* Example of doxygen documentation for C functions FIXME. 
 */
 
 /** @package perturbative_method
@@ -48,11 +48,11 @@ typedef double (*f_type)   (double theta, double pert_params[]);
 *
 *  y0 (\f$ y_0\f$) ->     position at y axis
 *
-*  R0 (\f$ R_0\f$)->     characteristic size
+*  R0 (\f$ R_0\f$) ->     characteristic size
 *
-*  eta0 (\f$ \eta_0\f$)->    parameter relater to the ellipticity ( e = sqrt(2*eta0) )
+*  eta0 (\f$ \eta_0\f$) ->    parameter relater to the ellipticity
 *
-*  theta0 (\f$ \theta_0\f$)->  inclination to the main axis
+*  theta0 (\f$ \theta_0\f$) ->  inclination to the main axis
 */
 typedef struct {
   double x0 ;     //position at x axis
