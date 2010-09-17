@@ -1,0 +1,309 @@
+\documentclass[a4paper,twoside,prd]{revtex4}
+\usepackage{latexsym}
+\usepackage[pdftex]{color,graphicx}
+\usepackage{latexsym}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{ccaption}
+\usepackage{natbib}
+\usepackage{amssymb}
+\usepackage[brazilian]{babel}
+\usepackage[latin1]{inputenc}
+\def \ks {\kappa_s}
+\def \rs {r_s}
+\def \mf {\mathcal{F}}
+\def \ma {\mathcal{A}}
+\def \atanh {\mathrm{arctanh} }
+\def \atan {\arctan}
+\def \acosh {\mathrm{arccosh} }
+\def \acos {\arccos}
+\def \re {r_{\mathrm{E}}}
+\def \ren{r^\eta_{\mathrm{E}}}
+\def \ret {r^\eta}
+\def \po {\phi_0}
+\def \al {\alpha}
+\def \v {\vec}
+\def \w {\widetilde}
+\def \te {\theta}
+\def \pa{\partial}
+\def \del {\Delta}
+\def \l {\lambda}
+\def \ae {a_{1\eta}}
+\def \be {a_{2\eta}}
+\def \es {\eps_\Sigma}
+\def \xm {\bf x}
+\def \xe {x^\eta}
+\def \xee {x^\eta_{\mathrm{E}}}
+\def \ree {r^\eta_{\mathrm{E}}}
+
+\begin{document}
+\title{Perturbative Method for Pseudo-Elliptical NFW lens model\\ Preliminary Version}
+%
+\author{Habib S. Dumet-Montoya}
+% email{hdumetm@cbpf.br}
+\affiliation{ICRA-CBPF}
+% \author{Mart\'in Makler}
+% \email{martin@cbpf.br}
+% \affiliation{Instituto de Cosmologia, Relatividade e Astrof\'{\i}sica,
+% Centro Brasileiro  de Pesquisas F\'{\i}sicas.\\
+% Rua Dr. Xavier Sigaud 150, Cep 22290-180, Urca, Rio de Janeiro, RJ,
+% Brasil.}
+\begin{abstract}
+In this work I shall develop the Perturbative Method  for the Navarro-Frenk-White (NFW), considering as perturbator a difference between Pseudo-Elliptical NFW and NFW models. Basically this procedure could be adapted for other pseudo-elliptical models.
+\end{abstract}
+
+\date{\today}
+\maketitle
+
+\section{Introduction}
+An other alternative to the classical theory for strong gravitational lensing was implemented by Alard (Alard 2007). In this new approach, we  considerer small deviation from the Einstein Ring. The main elements of this approach are:
+\begin{eqnarray*}
+r&=&\re +\epsilon x\\
+\phi(r)&=&\po(r)+\epsilon\psi(r)
+\end{eqnarray*}
+In other word we add a small perturbation on the source position and on the lensing potential, being the key aspect the Einstein Radius.  
+In  general case, that radius is obtained solving the following equation
+\begin{equation}
+\al(r)-r=0
+\label{reeq}
+\end{equation}
+In many cases, this equation is not trivial and we need numerical methods to solve it.
+
+Following Alard 2007, for the image reconstruction we also need some ingredients.
+From the unperturbed potential $\po(r)$ we need
+\begin{equation}
+\po(r) \rightarrow \left\{
+\begin{array}{l}
+C_n=\dfrac{1}{n!}\dfrac{d\po(r)}{dr}{\Big|_{r=\re}}\\
+\\
+\kappa_2=1-2C_2 
+\end{array}\right.
+\label{nfwcis}
+\end{equation}
+and from the perturbed potential $\psi(r)$ we need
+\begin{equation}
+\psi(r) \rightarrow \left\{
+\begin{array}{l}
+f_n=\dfrac{1}{n!}\dfrac{d\psi(r,\te)}{dr}{\Big|_{r=\re}}\\
+\\
+\dfrac{d\bar{f}_i}{d\te}=\dfrac{d f_i}{d\te}+\left(-x_0\sin{\te}+y_0\cos{\te}\right)\re^{i-1}
+\end{array}\right.
+\label{nfwfis}
+\end{equation}
+
+In this work we propose a new alternative to introduce a small perturbation in the Perturbative Approach. In Sect.~\ref{secunper}, I shall show the basic calculation for the unperturbed solution. In Sect.~\ref{secpeper}, I shall show the calculations for the perturbed solution and give the interpretation of the expressions to be obtained. In Sect.~\ref{sec_caust}, I shall show the calculation for other quantity very useful when we are interested in the calculation of the tangential caustics. Besides I shall show how to can connect these expressions with the classical method for strong gravitational lensing. In Appendix A, I shall give an alternative expression for some lensing functions corresponding to the NFW lens models.
+
+\section{\label{secunper}Unperturbed Solution}
+
+Following the expressions for the NFW lens model in Keeton 2002 (A Catalog of Mass Model for Gravitational Lensing, astro-ph/0102341) in which 
+the unperturbed potential is
+\begin{equation}
+\po(r)=2\ks \rs^2\left[\ln^2\dfrac{x}{2}-\atanh^2\sqrt{1-x^2}\right],
+\label{nfwpot}
+\end{equation}
+where $\ks$ and $\rs$ are the characteristic convergence and scale radius respectively. Where, for convenience we use $x=\frac{r}{rs}$ as  the dimensionless radial coordinate.
+
+The next step is the calculation of the derivatives of the unperturbed potential in relation to $r$. For the first 
+derivative we have
+\begin{equation}
+\al(r)=\dfrac{d\po}{dr}=\frac{1}{\rs}\frac{d\po}{dx}=4\ks\rs\left[\dfrac{\ln\frac{x}{2}+\mf(x)}{x}\right].
+\label{nfwfd}
+\end{equation}
+where the function $\mf(x)$ is defined at Keeton 2002. From the equation above we also have
+\begin{equation}
+\dfrac{d\po}{dx}=\rs\al(r)
+\label{rda}
+\end{equation}
+
+The second derivative is
+\begin{eqnarray}
+\dfrac{d^2\po}{dr^2}&=&\dfrac{d\al(r)}{dr}=\frac{1}{\rs}\dfrac{d}{dx}\left(\dfrac{d\po}{dx} \right) \nonumber \\
+                    &=& 4\ks\left\{\frac{1}{x}\left[\frac{1}{x}+\mf^\prime(x)\right]%
+                    -\frac{1}{x}\left[\dfrac{\ln\frac{x}{2}+\mf(x)}{x}\right]\right\}.
+\label{nfwsd}
+\end{eqnarray}
+After a little algebra (using the property of the $\mf^\prime(x)$\footnote{$\mf^\prime=\dfrac{1-x^2\mf(x)}{x(x^2-1)} $}) and using the
+Eq.~(\ref{nfwfd}) we have
+\begin{eqnarray*}
+\frac{1}{x}+\mf^\prime(x)&=& \dfrac{\kappa(r)x}{2\ks}\\
+\dfrac{\ln\frac{x}{2}+\mf(x)}{x}&=&\dfrac{1}{4\ks\rs}\dfrac{d\po}{dr}.
+\end{eqnarray*}
+Substituting the expressions above in  Eq.~(\ref{nfwsd}), we get to 
+\begin{equation}
+\dfrac{d^2\po}{dr^2}=\dfrac{d\al(r)}{dr}=2\kappa(r)-\frac{1}{r}\dfrac{d\po}{dr},
+\label{nfwsdb}
+\end{equation}
+where we have defined the convergence for the NFW model as
+\begin{equation}
+\kappa(r)=2\ks\dfrac{1-\mf(x)}{x^2-1}.
+\label{nfwk}
+\end{equation}
+
+Then, applying the definition of the coefficients $C_i$ (Eq.~\ref{nfwcis}) we have
+\begin{eqnarray}
+C_1&=&\al(\re) \label{nfwc1} \\
+C_2&=&\frac{1}{2}\dfrac{d^2\po}{dr^2}=\kappa(\re)-\frac{1}{2} \label{nfwc2} \\
+\kappa_2&=& 1-2C_2=2-2\kappa(\re) \label{nfwk2}.
+\end{eqnarray}
+where $\re$ is the solution of Eq.~(\ref{reeq})
+
+
+\section{\label{secpeper}Pseudo-Elliptical Perturbed Solution}
+We will distort the lensing potential following the general case in which the radial coordinate $r$ is replaced by $\ret$ on 
+the expression for the lensing potential, i.e. $\phi(r)\rightarrow\phi(\ret)$ and
+\begin{equation}
+\xe=\dfrac{\ret}{\rs}=\sqrt{\ae x_1^2+ \be x_2^2},
+\label{pe_cord}
+\end{equation}
+Here, $\ae$ and $\be$ are two parameters defining the ellipticity and are given by
+\begin{eqnarray}
+\ae=1-\eta &\qquad& \be =1+\eta \label{par_gk}\\
+\ae=1-\eta &\qquad & \be =\dfrac{1}{1-\eta} \label{par_gen}
+\end{eqnarray}
+where the Eq.~ (\ref{par_gk}) corresponds to the parametrization of the Angle Deflection Model ($\eta=\varepsilon$ following the notation of  Golse \& Kneib 2002) and the other one corresponds to the standard parametrization ($\eta=\varepsilon_\varphi$ following the notation of Meneghetti et al 2002). Don't forget that
+\begin{equation*} x_1^\eta=\sqrt{\ae}x_1 \quad \textrm{and} \quad x_2^\eta=\sqrt{\ae}x_2. \end{equation*}.
+
+Regarding the Perturbative Approach, we can express the lensing potential as
+\begin{equation*}
+\phi(\ret)=\po(r)+\phi(\ret)-\po(r),
+\end{equation*}
+here, we can considerer the unperturbed potential as $\po(r)$ and the perturbation function as being $\psi(r)=\phi(\ret)-\po(r)$.
+Working with polar coordinates $x_1=x\cos{\te}$ and $x_2=x\sin{\te}$, we can rewrite the  Eq.~(\ref{pe_cord}) as
+\begin{equation}
+\xe=x\sqrt{\ae\cos^2{\te}+\be\sin^2{\te}},
+\label{xepol}
+\end{equation}
+\noindent and we have a function $\xe=\xe(x,\te)$ (or equivalently $\ret=\ret(r,\te)$). Then, using some properties for the derivatives,
+we have
+\begin{eqnarray}
+\dfrac{d f_0}{d\te}&=&\dfrac{d \phi(\ret)}{d \te}-\dfrac{d\po}{d\te} \nonumber \\
+                   &=& \dfrac{d\phi(\ret)}{d\xe}\dfrac{d\xe}{d\te} \label{nfwdf0dt}.
+\end{eqnarray}
+From Eq.~(\ref{rda}), since $r$ or $x$ are dummy variables we have
+\begin{equation*} \dfrac{d\phi(\ret)}{d\xe}=\rs\al(r^\eta) \end{equation*}.
+
+Performing the derivative of $\xe(x,\te)$ in relation to $\te$, we also have
+
+\begin{equation}
+\dfrac{d\xe}{d\te}=\frac{x}{2}\frac{x}{\xe}\ma(\eta)\sin{2\te}, \quad \ma(\eta)= \be-\ae
+\label{dxedte}
+\end{equation}
+
+Substituting these last expressions in  Eq.~(\ref{nfwdf0dt}) using $r=x\rs$ (and $r^\eta=\xe\rs$) and evaluating at Einstein Radius we have
+
+\begin{equation}
+\frac{1}{\re}\dfrac{d f_0}{d\te}=\frac{1}{2}\al(\ree)\left(\dfrac{\re}{\ree}\right)\ma(\eta)\sin{2\te}.
+\label{nfwdf0dt_b}
+\end{equation}
+
+The other interesting quantity $f_1(\te)$, given in Eq.~(\ref{nfwfis}), is
+\begin{equation*}
+f_1(r,\te)=\dfrac{d\phi(\ret)}{dr}{\Big|_{r=\re}}-\dfrac{d\po(r)}{dr}{\Big|_{r=\re}}.
+\end{equation*}
+The second term of the expression above corresponds to the angle deflection. To find the first term, we apply the rule of derivatives
+\begin{eqnarray}
+\dfrac{d\phi(\ret)}{dr}&=&\dfrac{dx}{dr}\dfrac{d\xe}{dx}\dfrac{d\phi(\ret)}{d\xe} \nonumber \\
+                      &=&\frac{1}{\rs}\dfrac{\ret}{r}\rs\al(r^\eta)
+\end{eqnarray}
+Here, we had used the Eq.~(\ref{rda}) again. Evaluating at the Einstein Radius we have
+\begin{equation}
+f_1(\te)=\dfrac{\ren}{\re}\al(\ren)-\al(\re).
+\label{nfwf_1}
+\end{equation}
+Note that the functions defined at Eqs.~(\ref{nfwdf0dt_b}) and (\ref{nfwf_1}) are $\te$ dependent trough $\ren$.
+
+\section{\label{sec_caust} Tangential Caustic}
+
+When we are interested in obtain the tangential caustic, we need of other quantity (the second derivative of the perturbed potential in relation to $\te$). To find it, we will use the Eq.~(\ref{nfwdf0dt_b}) (don't forget replace $\re$ by $r$ adequately). Then
+\begin{equation}
+\dfrac{d f_0}{d\te}=\frac{\re}{2}\al(r^\eta)\left(\dfrac{r}{r^\eta}\right)\ma(\eta)\sin{2\te},
+\label{nfwdf0dt_c}
+\end{equation}
+From Eqs.~(\ref{nfwsdb}), (\ref{xepol}) and (\ref{dxedte}) is straightforward to verify that
+
+\begin{eqnarray}
+\dfrac{d\al(r^\eta)}{d\te}&=&\dfrac{d\al(r^\eta)}{dr^\eta}\dfrac{dr^\eta}{d\xe}\dfrac{d\xe}{d\te} \nonumber \\
+                          &=&\frac{r}{2}\left[ 2\kappa(r^\eta)-\frac{\al(r^\eta)}{r^\eta}\right]\left( \frac{r}{r^\eta} \right)\ma(\eta)\sin{2\te}.\\
+\dfrac{d}{d\te}\left( \frac{r}{r^\eta} \right)&=&-\frac{1}{2}\left( \frac{r}{r^\eta} \right)^3\ma(\eta)\sin{2\te}
+\end{eqnarray}
+
+Then, performing the derivative of Eq.~(\ref{nfwdf0dt_c}) and evaluating the Einstein radius we have
+\begin{equation}
+\dfrac{d^2 f_0}{d\te^2}=\re\al(\ree)\left( \frac{\re}{\ree} \right)\ma(\eta)\cos{2\te}+%
+\frac{\re^2}{2}\left\{\ma(\eta)\left(\frac{\re}{\ree}\right) \sin{2\te}  \right\}^2\left[\kappa(\ree)-\dfrac{\al(\ree)}{\ree}\right]
+\label{d2f0dte}
+\end{equation}
+
+
+Besides, if we follow the Eqs. (7) from Golse \& Kneib 2002 and Miralda-Escud\'e 1991, the meaning of the last term (in the bracket) is the shear, 
+i.e we can define
+\begin{equation}\gamma(\ree)=\dfrac{\al(\ree)}{\ree}-\kappa(\ree)\end{equation}.
+
+With this, alternatively, we can write the Eq.~(\ref{d2f0dte}) as
+
+\begin{equation}
+\dfrac{d^2 f_0}{d\te^2}=\mathcal{G}(\eta,\te,\re)\kappa(\ree)+\mathcal{H}(\eta,\te,\re)\gamma(\ree)
+\end{equation}
+
+where
+
+\begin{eqnarray}
+\mathcal{G}(\eta,\te,\re)&=& \ma(\eta)\re^2\cos{2\te}\\
+\mathcal{H}(\eta,\te,\re)&=& \mathcal{G}(\eta,\te,\re)-\frac{\re^2}{2}\left\{\ma(\eta)\left(\frac{\re}{\ree}\right) \sin{2\te}  \right\}^2
+\end{eqnarray}
+
+In summary, we saw that there is a strong connection of the Perturbative Approach with the classical theory of the Strong Gravitational Lensing. Also,
+the expressions given here are useful if we want considerer other kind of density profile, because the mainly quantities are dependent of the basic lensing functions like the angle deflection, convergence and shear.
+
+\begin{appendix}
+
+\section{Alternative expressions for the Lensing Functions of the NFW lens model}
+Since the programming languages don't offers calculation of imaginary argument for the trigonometric and inverse trigonometric 
+(hyperbolic and inverse hyperbolic) functions, will be useful obtain alternative expressions for the lensing functions of the 
+NFW lens model. For this sake, we use the following relations
+\begin{eqnarray}
+\atanh(\imath z)&=&\imath\atan(z)\\
+\atanh(x)&=&\acos{\dfrac{1}{\sqrt{1+x^2}}}\\
+\atan(x)&=&\acos{\dfrac{1}{\sqrt{1-x^2}}}\\
+\acosh(z)&=&\log{(z+\sqrt{z^2-1})}
+\end{eqnarray}  
+
+With this expressions is straightforward to verify that the lensing potential can be write as $\po(r)=2\ks\rs^2h(x)$, where
+\begin{equation*}
+h(x)=\left\{\begin{array}{lc}
+\log^2{\dfrac{x}{2}}-\acosh^2{\dfrac{1}{x}} & (x<1)\\
+\\
+\log^2{\dfrac{x}{2}}+\acos^2{\dfrac{1}{x}} & (x<1)
+\end{array}\right.
+\end{equation*}
+
+The convergence can be write as $\kappa(r)=2\ks F(x)$, where
+\begin{equation*}
+F(x)=\left\{\begin{array}{lc}
+\dfrac{1}{x^2-1}\left(1-\dfrac{1}{\sqrt{1-x^2}}\acosh{\dfrac{1}{x}}\right) & (x<1)\\
+\\
+\dfrac{1}{3} & (x=1)\\
+\\
+\dfrac{1}{x^2-1}\left(1-\dfrac{1}{\sqrt{x^2-1}}\acos{\dfrac{1}{x}}\right) & (x>1)
+\end{array}\right.
+\end{equation*}
+
+The angle deflection can be expressed as $\al(r)=4\ks\rs\dfrac{g(x)}{x}$ where
+\begin{equation*}
+g(x)=\left\{\begin{array}{lc}
+\log{\dfrac{x}{2}}-\dfrac{1}{\sqrt{1-x^2}}\acosh{\dfrac{1}{x}} & (x<1)\\
+\\
+1+\log{\dfrac{1}{2}} & (x=1)\\
+\\
+\log{\dfrac{x}{2}}-\dfrac{1}{\sqrt{x^2-1}}\acos{\dfrac{1}{x}} & (x>1)
+\end{array}\right.
+\end{equation*}
+
+And finally, the shear can be expressed as $$\gamma(r)=2\ks\left(\dfrac{2g(x)}{x^2}-F(x)\right)$$.
+
+
+\end{appendix}
+
+
+\end{document}
+
