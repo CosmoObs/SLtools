@@ -1,5 +1,7 @@
 #include <cstdio>
 #include <cmath> 
+#include <cstdlib>
+#include <iostream>
 
 #include "perturbative_method.h"
 
@@ -48,7 +50,7 @@ double Df0Dtheta_TEST(double theta, double pot_params[]){
 /*********************************************************************************************************************/
 
 
-void print_arcs_SIS(elliptical_source source_in, int npts=200){
+void print_arcs_SIS(elliptical_source source_in, int npts=20){
   
   double theta = 0.0;
   double r_p = 0.0;
@@ -68,7 +70,7 @@ void print_arcs_SIS(elliptical_source source_in, int npts=200){
 }
 
 
-void print_arcs_TEST(elliptical_source source_in, int npts=200){
+void print_arcs_TEST(elliptical_source source_in, int npts=20){
   
   double theta = 0.0;
   double r_p = 0.0;
@@ -92,16 +94,44 @@ void print_arcs_TEST(elliptical_source source_in, int npts=200){
 
 }
 
-int main(){
+int main(int argc, char *argv[]){
+
+  int npts;
+
   elliptical_source source;
-  source.x0 = 0.2;
-  source.y0 = 0.0;
-  source.R0 = 0.0252;
-  source.eta0 = 0.0;
-  source.theta0 =  0.0;
+
+  if (argc < 2) {
+    // printf("No input args, using defaults; To input, use this format: \n ");
+    // printf("Num pts   Source parameters: x0   y0  R0 (size)  eta (ellip)   theta (ang. position)\n");
+
+    npts = 100;
+    
+    source.x0 = 1;
+    source.y0 = 0.0;
+    source.R0 = 0.9;
+    source.eta0 = 0.0;
+    source.theta0 =  0.0;
+    
+  }
+  else{
+    npts = atoi(argv[1]);
+
+    source.x0 = atof(argv[2]);
+    source.y0 = atof(argv[3]);
+    source.R0 = atof(argv[4]);
+    source.eta0 = atof(argv[5]);
+    source.theta0 =  atof(argv[6]);
+
+  }
+
+  /*   printf(" Using: npts %i  \n", npts);
+   printf(" x0,y0 = (%f,%f) \n", source.x0,source.y0);
+   printf(" R0, eta0, theta0 = (%f,%f,%f) \n",source.R0, source.eta0, source.theta0 );
+  */
+
+  print_arcs_TEST(source, npts);
 
 
-  print_arcs_TEST(source, 1000);
 
   return 0;
 }

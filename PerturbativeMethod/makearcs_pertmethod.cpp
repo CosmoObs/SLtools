@@ -81,7 +81,8 @@ int nsteps = 500;
 int main(){
 
   // Define some numbers, same as what MM has in his code
-  double x_0 = 1.0/10.0, y_0 = 0 ; 
+  double x_0 = 1;
+  double y_0 = 0 ; 
   double R_0 = 1.0/15.0;
 
   // We'll need this
@@ -113,7 +114,7 @@ int main(){
 // Outputting just the values of the Einstein radius 
   printf("\n\n");
   theta = 0.0;
-  for(int i=0;i<=100;i++){
+  for(int i=0;i<=nsteps;i++){
     printf("%E %E\n",R_E*cos(theta), R_E*sin(theta));
     theta += 2*3.1415/100.0;
   }
