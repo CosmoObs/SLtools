@@ -19,6 +19,7 @@ the same directory for now,
 ---- Recent code added by Gabriel, to do modifications of actually
      perturbed potential (changed versions of above):
 
+simple_example_old.cpp*
 simple_example.cpp*
 perturbative_method.h*
 test.cpp*
