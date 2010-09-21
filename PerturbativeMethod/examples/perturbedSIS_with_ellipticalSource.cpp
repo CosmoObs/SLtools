@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "perturbative_method.h"
+#include "../perturbative_method.h"
 
 //to compile: g++ -Wall simple_example.cpp
 

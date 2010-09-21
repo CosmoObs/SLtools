@@ -17,6 +17,8 @@
 
 #include <cmath> 
 
+double _r_e = 1.0;
+
 /*********************************************************************************************************************/
 /** \brief \f$ \phi(r) \f$ type function 
 *
@@ -91,7 +93,7 @@ double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pe
 *  \sa f_type, elliptical_source
 */
 double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pert_params[]){
-  return Df0Dtheta_in(theta, pert_params) - source_in.x0*sin(theta) +  source_in.y0*cos(theta);
+  return Df0Dtheta_in(theta, pert_params) + (source_in.y0*cos(theta) - source_in.x0*sin(theta))*_r_e ;
 }
 
 
@@ -107,7 +109,7 @@ double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double th
 *  \sa f_type, elliptical_source
 */
 double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pot_params[]){
-  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params);
+  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
   double theta_bar = theta - source_in.theta0;
   double S = 1.0 - source_in.eta0*cos(2.0*theta_bar);
@@ -133,7 +135,7 @@ double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, 
 *  \sa f_type, elliptical_source
 */
 double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[]){
-  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params);
+  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
 
   double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pot_params);
@@ -167,7 +169,7 @@ double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sour
 *  \sa f_type, elliptical_source
 */
 double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[]){
-  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params);
+  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
 
   double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pot_params);
