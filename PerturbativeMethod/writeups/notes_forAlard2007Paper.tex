@@ -56,6 +56,15 @@
 \def \pa {\partial}
 \def \prre {\left( \rre\right)}
 
+\def \re {r_{\mathrm{E}}}
+\def \al {\alpha}
+\def \te {\theta}
+\def \tep {\theta_p}
+\def \kt {\kappa_2}
+\def \scriptf {\mathcal{F}}
+\def \scriptg {\mathcal{G}}
+\def \pa {\partial}
+
 %%%%%%%%%%%%%%%%%%% Setting margins
 %%%%% Command                              %%%%% Defaults
 \setlength{\textwidth}{19 cm}                 % 16.8 cm
@@ -283,7 +292,7 @@ Replacing $r_s$ by \eqref{eq:rsexpanded}), we obtain:
 
 
 Note that $\vec{r}_{0} = (x_0,y_0)$ lies in the source plane, but we
-can write it in terms of the cylindrical unit vectors 
+can write it in terms of the polar unit vectors 
 
 \bea
 \label{eq:unitvs}
@@ -470,24 +479,68 @@ which is our form of Alard eq. 29b.
 
 \section{Caustics in the Perturbative Approach}
 
-Going from Alard eq.29' (Jacobian) to A. eq.30:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Habib
 
-\be
-x =  {1 \over \kappa_2 } \lp \fbar + \dsqfdt \rp
-\ee
+We will now obtain the equations of the critical curves in the lens
+plane (corresponding to the caustic curves in the source plane).
 
-seemed fairly nontrivial to me, when i started the calculation.
+First write \eqref{eq:rsexpanded}) in Cartesian coordinates (expanding
+the unit polar vectors, \eqref{eq:unitvs}) ), changing notation
+slightly, and taking $\vec{y}=(y_1,y_2)$ in the source plane and
+$\vec{r}=(r,\te)$ in the lens plane:
+%Note that as we have not considered the position of the source, 
+%we have $\bar{f}_i=f_i$ and therefore
+\begin{eqnarray}
+y_1 &=& [\kt x - f_1]\cos{\te}+\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te} \label{y_1}\\
+y_2 &=& [\kt x - f_1]\sin{\te}-\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te} \label{y_2},
+\end{eqnarray}
 
-But then getting eq.31 was not so bad, starting from A. eq. 13:
+The Jacobian of the transformation from polar to Cartesian coordinates is given by
 
-\bea
-x_s = (\kappa_2 x - \fbar) \cos\theta + \dfdt \sin \theta \\
-y_s = (\kappa_2 x - \fbar) \sin\theta - \dfdt \cos \theta 
-\eea
+\begin{equation}
+J=\frac{\pa y_1}{\pa r}\frac{\pa y_2}{\pa \te}-\frac{\pa y_1}{\pa \te}\frac{\pa y_2}{\pa r}.
+\label{jacob}
+\end{equation}
 
-And simply sticking in A.eq.30 in for x, pretty straight.
+The critical lines are defined by the condition $J=0$. 
 
-Getting A.eq 33 from 31 is straight, and then I got most of the way to
+Now, we may easily verify that
+\begin{eqnarray}
+\frac{\pa y_1}{\pa r}&=& \frac{\kt}{\epsilon} \cos{\te}\label{dy1dx}   \\
+\frac{\pa y_2}{\pa r}&=& \frac{\kt}{\epsilon} \sin{\te}\\
+\frac{\pa y_1}{\pa \te}&=& \scriptf(\te)\sin{\te}+\scriptg(\te)\cos{\te}\\
+\frac{\pa y_2}{\pa \te}&=& -\scriptf(\te)\cos{\te}+\scriptg(\te)\sin{\te}\label{dy2dte}
+\end{eqnarray}
+
+using \eqref{eq:rsexpanded}), ${\pa \over \pa r} ={ 1 \over \epsilon}
+{\pa \over \pa x}$ (from \eqref{eq:rpert})) and defining the functions
+$\scriptf$ and $\scriptg$ as
+
+\begin{equation}
+\scriptf(\te)=\frac{1}{\re}\frac{d^2f_0}{d\te^2}-(\kt x -f_1) \quad \textrm{and} \quad %
+\scriptg(\te)=\frac{1}{\re}\frac{df_0}{d\te}-\frac{df_1}{d\te}
+\end{equation}
+
+Substituting eqs.~(\ref{dy1dx}-\ref{dy2dte}) into eq.~(\ref{jacob}), it is straightforward to verify that $J=-{\kt \over \eps} \scriptf(\te)$ and therefore on the critical curves where $J = 0$
+
+\begin{equation}
+x=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right] \label{xte}.
+\end{equation}
+
+This is Alard eq. 30. Now, substituting this last equation into eqs.~(\ref{y_1})
+and (\ref{y_2}) we obtain
+
+\begin{eqnarray*}
+y_1 &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\cos{\te}+\frac{1}{\re}\frac{df_0}{d\te}\sin{\te}\\
+y_2 &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\sin{\te}-\frac{1}{\re}\frac{df_0}{d\te}\cos{\te}\\
+\end{eqnarray*}
+
+These last equations are Alard eqs.31.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  From before
+
+
+Getting Alard eq.33 from 31 is straight, and then I (MSSG) got most of the way to
 A.eq.34 from 33 and 32, with some small hiccups..
 
 \end{document}
