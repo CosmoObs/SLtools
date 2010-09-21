@@ -2,8 +2,8 @@
 #include <cstdio>
 
 #include "../perturbative_method.h"
-#include "../nfw_model.h"
-
+#include "../pnfw_model.h"
+#include "../theta_find.h"
 
 void print_arcs_nfw(elliptical_source source_in, int npts=200){
 
@@ -12,7 +12,7 @@ void print_arcs_nfw(elliptical_source source_in, int npts=200){
   double r_m = 0.0;
 
 //pot_paramas[0]=r_s, pot_params[1]=ks,pot_params[2]=elipticity,
-  double pot_params[] = {0.9,1.0,0.1};
+  double pot_params[] = {0.9,1.0,0.2};
 
     for(int i=0;i<=npts;i++){
 
@@ -29,7 +29,7 @@ void print_arcs_nfw(elliptical_source source_in, int npts=200){
 
 int main(){
 
-  int npts = 1000;
+  //int npts = 1000;
 
   elliptical_source source;
 
@@ -40,10 +40,15 @@ int main(){
   source.theta0 =  0.0;
   _r_e = 1.1172980994467465;
 
+  double pot_params[] = {0.,0.5,0.2};
 
-  print_arcs_nfw(source,npts);
+  //print_arcs_nfw(source,npts);
+  theta_find(Df0Dtheta_nfw, source,pot_params );
+  //for(int i=0;i<=1000;i++) printf("%E %E\n",0.9+0.5*double(i)/1000.0, lambda_t(0.9+0.5*double(i)/1000.0,pot_params));
 
 
+  intervalo_teste( lambda_t, pot_params, 2.0);
 
+  root_find(alpha_nfw, conv_nfw, pot_params, 0.552000, 0.552000);
 
 }

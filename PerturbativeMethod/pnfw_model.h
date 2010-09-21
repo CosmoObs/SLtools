@@ -49,7 +49,7 @@ double Df0Dtheta_nfw( double theta, double pot_params[]){
 // pot_paramas[0]=r_s, pot_params[1]=ks,pot_params[2]=elipticity, pot_params[3]
 
 double kappa2_nfw(double pot_params[]){
-  double k2,X=_r_e/pot_params[0];
+  double k2,X=_r_e;
 
   k2=2-2*conv_nfw(X,pot_params);
 
@@ -105,16 +105,60 @@ double conv_nfw(double X, double pot_params[])
 }
 
 
-double alpha_nfw(double r, double pot_params[])
+double alpha_nfw(double X, double pot_params[])
 {
-    double X = r/pot_params[0];
+    //double X = r/pot_params[0];
     double alpha;
     //X=r_e/pot_params[0]
 
-      alpha = 4*pot_params[0]*pot_params[1]*(log(X/2)+F(X))/X;
+      alpha = 4*pot_params[1]*(log(X/2)+F(X))/X;
 
       return alpha;
 }
+
+double lambda_t(double X, double pot_params[]) {return 1.0 - alpha_nfw(X, pot_params)/X;}
+
+double intervalo_teste(double f(double X, double params[]), double params[], double z=1E-4, double dz=0.001){
+  double z_min = 0.0;
+  double z_max = 0.0;
+
+
+  if(f(z, params) < 0){
+    while( f(z, params) < 0){
+      z += dz;
+    }
+    z_min = z-dz;
+    z_max = z;
+  } else {
+    while(f(z, params) > 0){
+      z -= dz;
+    }
+    z_min = z;
+    z_max = z+dz;
+  }
+
+  printf("%f %f\n",z_min, f(z_min, params));
+  printf("%f %f\n",z_max, f(z_max, params));
+
+  return 0.0;
+}
+
+double root_find(double alpha(double X, double params[]), double conv(double X, double params[]), double params[], double z_min, double z_max){
+
+  double z0 = (z_min + z_max)/2.0;
+
+  double z1 = z0 + (z0 - alpha(z0,params))/(2.0*conv(z0,params));
+
+  while( fabs(z0-z1) > 1E-5 && (1.0 - alpha_nfw(z1, params)/z1) > 1E-7 ){
+    z0=z1;
+    z1 = z0 + (z0 - alpha(z0,params))/(2.0*conv(z0,params));
+  }
+  printf("%f %E\n",z1,1.0 - alpha_nfw(z1, params)/z1);
+
+
+  return 0.0;
+}
+
 
 
 

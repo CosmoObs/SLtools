@@ -18,14 +18,14 @@
 
 #include "perturbative_method.h"
 
-void theta_find(f_type Df0Dtheta_in, elliptical_source source_in,int N=1000){
+void theta_find(f_type Df0Dtheta_in, elliptical_source source_in,  double pert_params[], int N=1000){
 
   double theta[N];
   double arg[N];
   int N_pair=0;
 
   for(int i=0;i<N;i++) theta[i] = double(i)*2.0*3.141592654/double(N);
-  for(int i=0;i<N;i++) arg[i] = arg_sqrt(Df0Dtheta_in, source_in, theta[i], NULL);
+  for(int i=0;i<N;i++) arg[i] = arg_sqrt(Df0Dtheta_in, source_in, theta[i], pert_params);
 
 
   for(int i=0;i<N;i++){
@@ -46,7 +46,7 @@ void theta_find(f_type Df0Dtheta_in, elliptical_source source_in,int N=1000){
   theta_N[N_pair] =  theta_N[0];
   
   double test = 0;
-  test=arg_sqrt(Df0Dtheta_in, source_in, (theta_N[0]+theta_N[1])/2.0, NULL);
+  test=arg_sqrt(Df0Dtheta_in, source_in, (theta_N[0]+theta_N[1])/2.0, pert_params);
 
 
   
