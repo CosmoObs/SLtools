@@ -43,6 +43,16 @@ double Df0Dtheta_SIS(double theta, double pert_params[]){
 //pot_params[0] = mp
 //pot_params[1] = rp
 //pot_params[2] = thetap
+/**  \f$ f_1(\theta) \f$ for SIS as a perturbation
+*
+*  \param theta angular coordinate in the lens plane
+*  \pot_params[0] = mp
+*  \pot_params[1] = rp
+*  \pot_params[2] = thetap
+*  \return \f$ f_1(\theta) \f$
+
+*  \sa Df0Dtheta_pert_SIS, f_type
+*/
 double f1_pert_SIS(double theta, double pot_params[]){
   double tmp1 = pot_params[0] * (1.0 - pot_params[1]*cos(theta-pot_params[2]) );
   double tmp2 = sqrt ( 1.0 - 2.0*pot_params[1]*cos(theta-pot_params[2]) + pot_params[1]*pot_params[1]);
@@ -50,6 +60,16 @@ double f1_pert_SIS(double theta, double pot_params[]){
   return tmp1/tmp2 ;
 }
 
+/**  \f$ \frac{d f_0(\theta)}{d \theta} \f$ for SIS as a perturbation
+*
+*  \param theta angular coordinate in the lens plane
+*  \pot_params[0] = mp
+*  \pot_params[1] = rp
+*  \pot_params[2] = thetap
+*  \return \f$ \frac{d f_0(\theta)}{d \theta} \f$
+
+*  \sa f1_pert_SIS, f_type
+*/
 double Df0Dtheta_pert_SIS(double theta, double pot_params[]){
   double tmp1 = pot_params[0] * (pot_params[1]*sin(theta-pot_params[2]) );
   double tmp2 = sqrt ( 1.0 - 2.0*pot_params[1]*cos(theta-pot_params[2]) + pot_params[1]*pot_params[1]);

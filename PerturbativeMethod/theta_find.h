@@ -10,8 +10,8 @@
 *
 */
 
-#ifndef THETA_H
-#define THETA_H
+#ifndef THETA_FIND_H
+#define THETA_FIND_H
 
 #include <cstdio>
 #include <cstdlib>
