@@ -2,7 +2,7 @@
 * Example of doxygen documentation for C functions FIXME. 
 */
 
-/** @package theta
+/** @package theta_find
 *  Short description FIXME 
 *   
 *
@@ -18,7 +18,7 @@
 
 #include "perturbative_method.h"
 
-void theta(f_type Df0Dtheta_in, elliptical_source source_in,int N=1000){
+void theta_find(f_type Df0Dtheta_in, elliptical_source source_in,int N=1000){
 
   double theta[N];
   double arg[N];

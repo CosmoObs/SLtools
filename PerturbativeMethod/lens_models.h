@@ -1,12 +1,40 @@
+/** @file
+* Example of doxygen documentation for C functions FIXME. 
+*/
+
+/** @package lens_models
+*  Package to compute quantities related to several lens models, perturbations and radial simetric models.
+*
+*  Detailed descrition FIXME
+*
+*/
+
+
+
 #ifndef LENSMODELS_H
 #define LENSMODELS_H
 
+/**  \f$ f_1(\theta) \f$ for SIS model
+*
+*  \param theta angular coordinate in the lens plane
+*  \param pert_params[] a NULL vector
+*  \return 0.0
 
-double f1_SIS(double theta, double pot_params[]){
+*  \sa Df0Dtheta_SIS, f_type
+*/
+double f1_SIS(double theta, double pert_params[]){
   return 0.0;
 }
 
-double Df0Dtheta_SIS(double theta, double pot_params[]){
+/**  \f$ \frac{d f_0(\theta)}{d \theta} \f$ for SIS model
+*
+*  \param theta angular coordinate in the lens plane
+*  \param pert_params[] a NULL vector
+*  \return 0.0
+
+*  \sa f1_SIS, f_type
+*/
+double Df0Dtheta_SIS(double theta, double pert_params[]){
   return 0.0;
 }
 
