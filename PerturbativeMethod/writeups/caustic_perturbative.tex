@@ -1,0 +1,80 @@
+\documentclass[a4paper,twoside,prd]{revtex4}
+\usepackage{latexsym}
+\usepackage[pdftex]{color,graphicx}
+\usepackage{latexsym}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{ccaption}
+\usepackage{natbib}
+\usepackage{amssymb}
+\usepackage[brazilian]{babel}
+\usepackage[latin1]{inputenc}
+\def \re {r_{\mathrm{E}}}
+\def \al {\alpha}
+\def \te {\theta}
+\def \tep {\theta_p}
+\def \kt {\kappa_2}
+\def \mf {\mathcal{F}}
+\def \mg {\mathcal{G}}
+\def \pa {\partial}
+\begin{document}
+\title{Caustic in the perturbative approach \\ Verification of the Sect. 4 from Alard큦 Paper 2007}
+%
+\author{Habib S. Dumet-Montoya}
+% email{hdumetm@cbpf.br}
+\affiliation{ICRA-CBPF}
+% \author{Mart\'in Makler}
+% \email{martin@cbpf.br}
+% \affiliation{Instituto de Cosmologia, Relatividade e Astrof\'{\i}sica,
+% Centro Brasileiro  de Pesquisas F\'{\i}sicas.\\
+% Rua Dr. Xavier Sigaud 150, Cep 22290-180, Urca, Rio de Janeiro, RJ,
+% Brasil.}
+\begin{abstract}
+Follow in this letter, the verification of the expressions given in Sect. 4 from
+the Alard큦 Paper 2007. I pointed out, again, that we must be include the Einstein Radius adequately
+in the Eqs. (30) and (31) from the paper mentioned above.
+\end{abstract}
+\date{\today}
+\maketitle
+I큞l keep the notation of the Alard큦 Notes (Filling in Details of Alard 2007 MNRAS Paper).
+Writing the Eq.~(20) in cartesian coordinates( the unitary polar vectors), considering $\vec{y}=(y_1,y_2)$ at the source plane
+and $\vec{r}=(r,\te)$ at the lens plane. Don큧 forget that as we have no considerer the position of the source, 
+we have that $\bar{f}_i=f_i$ and therefore
+\begin{eqnarray}
+y_1 &=& [\kt x - f_1]\cos{\te}+\dfrac{1}{\re}\dfrac{d f_0}{d\te}\sin{\te} \label{y_1}\\
+y_2 &=& [\kt x - f_1]\sin{\te}-\dfrac{1}{\re}\dfrac{d f_0}{d\te}\sin{\te} \label{y_2},
+\end{eqnarray}
+and the Jacobian of the transformation is given by
+\begin{equation}
+J=\dfrac{\pa y_1}{\pa r}\dfrac{\pa y_2}{\pa \te}-\dfrac{\pa y_1}{\pa \te}\dfrac{\pa y_2}{\pa r}.
+\label{jacob}
+\end{equation}
+
+The critical lines are defined at the points where $J=0$. Now, is easily to verify that
+\begin{eqnarray}
+\dfrac{\pa y_1}{\pa r}&=& \dfrac{\kt}{\epsilon} \cos{\te}\label{dy1dx}   \\
+\dfrac{\pa y_2}{\pa r}&=& \dfrac{\kt}{\epsilon} \sin{\te}\\
+\dfrac{\pa y_1}{\pa \te}&=& \mf(\te)\sin{\te}+\mg(\te)\cos{\te}\\
+\dfrac{\pa y_2}{\pa \te}&=& -\mf(\te)\cos{\te}+\mg(\te)\sin{\te}\label{dy2dte}
+\end{eqnarray}
+here, we had used the Eq. (8) of Alard큦 Notes , $\pa /\pa r=(1/\epsilon)(\pa /\pa x)$ and the functions $\mf$ and $\mg$ are
+\begin{equation}
+\mf(\te)=\dfrac{1}{\re}\dfrac{d^2f_0}{d\te^2}-(\kt x -f_1) \quad \textrm{and} \quad %
+\mg(\te)=\dfrac{1}{\re}\dfrac{df_0}{d\te}-\dfrac{df_1}{d\te}
+\end{equation}
+
+Substituting the Eqs.~(\ref{dy1dx}-\ref{dy2dte}) in Eq.~(\ref{jacob}) is straightforward to verify that $J=-\mf(\te)=0$ and therefore
+\begin{equation}
+x=\dfrac{1}{\kt}\left[f_1+\dfrac{1}{\re}\dfrac{d^2f_0}{d\te^2}\right] \label{xte}.
+\end{equation}
+This is Eq. (30) of Alard큦 Paper. Now, substituting this last equation in Eqs.~(\ref{y_1})
+and (\ref{y_2}) is very easy to get to
+
+\begin{eqnarray*}
+y_1 &=& \dfrac{1}{\re}\dfrac{d^2f_0}{d\te^2}\cos{\te}+\dfrac{1}{\re}\dfrac{df_0}{d\te}\sin{\te}\\
+y_2 &=& \dfrac{1}{\re}\dfrac{d^2f_0}{d\te^2}\sin{\te}-\dfrac{1}{\re}\dfrac{df_0}{d\te}\cos{\te}\\
+\end{eqnarray*}
+These last equations are the Eqs.~(31) of Alard큦 Paper 2007
+
+
+\end{document} 
