@@ -1,0 +1,74 @@
+\documentclass[a4paper,twoside]{article}
+\usepackage{latexsym}
+% \usepackage[pdftex]{color,graphicx}
+\usepackage{latexsym}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{ccaption}
+\usepackage{natbib}
+\usepackage{amssymb}
+% \usepackage[brazilian]{babel}
+\usepackage[latin1]{inputenc}
+\def \re {r_{\mathrm{E}}}
+\def \al {\alpha}
+\def \te {\theta}
+\def \tep {\theta_p}
+\def \prtl {\partial}
+
+\begin{document}
+\title{Field perturbation induced by substructures: \\ Verification of Eq.~9 from Alard 2008}
+%
+\author{Habib S. Dumet-Montoya}
+% email{hdumetm@cbpf.br}
+% \affiliation{ICRA-CBPF}
+% \author{Mart\'in Makler}
+% \email{martin@cbpf.br}
+% \affiliation{Instituto de Cosmologia, Relatividade e Astrof\'{\i}sica,
+% Centro Brasileiro  de Pesquisas F\'{\i}sicas.\\
+% Rua Dr. Xavier Sigaud 150, Cep 22290-180, Urca, Rio de Janeiro, RJ,
+% Brasil.}
+\begin{abstract}
+In this letter I shall verify the Eq. (9) from Alard 2008 (Sec. 2.1). As we will
+see at the end of this letter, the expression given in Eq. (9) must
+include the expression for the Angle Deflection.
+\end{abstract}
+
+\date{\today}
+\maketitle
+We can consider the perturbation as
+\begin{equation}
+\psi(r)=m_p r^\prime
+\end{equation}
+where $m_p$ is the mass contained within the Einstein radius. From Figure 3 of Alard 2008, we may express
+\begin{eqnarray}
+\vec{r}_p&=&r_p\cos{\tep}\hat{\imath} + r_p\sin{\tep}\hat{\jmath}\\
+\vec{r}&=&r\cos{\te}\hat{\imath} + r\sin{\te}\hat{\jmath}\\
+r^\prime&=&\vec{r}_p-\vec{r}
+\end{eqnarray}
+Taking the modulus of $r^\prime$, it is straightforward to verify that
+the perturbed field is given by
+\begin{equation}
+\psi(r)=m_p\sqrt{r^2-2r r_p\cos{(\te-\tep)}+r^2_p}.
+\end{equation} 
+Now, we apply the definitions of the perturbed functions $f_0$ and $f_1$. Then,
+\begin{equation}
+f_0=\psi(\re)=m_p \sqrt{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p}.
+\end{equation}
+Taking the derivative of this with respect to $\te$, we obtain
+\begin{equation}
+\frac{1}{\re}\frac{d f_0}{d\te}=\frac{m_p r_p \sin{(\te -\tep)}}{\sqrt{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p}}.
+\end{equation}
+
+Taking the derivative of $\psi(r)$ with respect to $r$ we have
+\begin{equation*}
+\frac{\prtl  \psi(r)}{\prtl r}=\frac{m_p[r-r_p\cos{(\te-\tep)}]}{\sqrt{r^2-2r r_p\cos{(\te-\tep)}+r^2_p}},
+\end{equation*}
+and finally, evaluating this expression at the Einstein Radius, we have
+\begin{equation}
+f_1=\frac{m_p[\re-r_p\cos{(\te-\tep)}]}{\sqrt{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p}}.
+\end{equation}
+
+Conclusion: The expression in Eq. (9) of Alard 2008, must include the expression for the Einstein Radius.
+
+
+\end{document}
