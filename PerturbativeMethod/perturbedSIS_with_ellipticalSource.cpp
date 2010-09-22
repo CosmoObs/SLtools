@@ -9,6 +9,10 @@
 *
 */
 
+// Orig by G. Caminha
+// Sept 2010
+// Modifications and comments by MSS Gill
+
 #include <cstdio>
 #include <cmath> 
 #include <cstdlib>
@@ -44,6 +48,7 @@ double f1_SIS(double theta, double pot_params[]){
   double denr = sqrt ( 1.0 - 2.0*pot_params[1]*cos(theta-pot_params[2]) + pot_params[1]*pot_params[1]);
   return numr/denr; 
 }
+
 
 double Df0Dtheta_SIS(double theta, double pot_params[]){
   double numr = pot_params[0] * (pot_params[1]*sin(theta-pot_params[2]) );
