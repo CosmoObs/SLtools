@@ -3,7 +3,7 @@
 
 set pointsize 0.5
 
- set terminal postscript color
+# set terminal postscript color
 
 set out 'arcs1.ps'
 plot [-3:3][-3:3] 'arcdata/arcs1.txt' u 1:2
