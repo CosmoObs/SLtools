@@ -116,9 +116,9 @@ double alpha_nfw(double X, double pot_params[])
       return alpha;
 }
 
-double lambda_t(double X, double pot_params[]) {return 1.0 - alpha_nfw(X, pot_params)/X;}
+double lambda_t_nfw(double X, double pot_params[]) {return 1.0 - alpha_nfw(X, pot_params)/X;}
 
-double intervalo_teste(double f(double X, double params[]), double params[], double z=1E-4, double dz=0.001){
+double bracketing_lambda_t(double f(double X, double params[]), double params[], double out[], double z=1.0, double dz=0.001){
   double z_min = 0.0;
   double z_max = 0.0;
 
@@ -137,8 +137,10 @@ double intervalo_teste(double f(double X, double params[]), double params[], dou
     z_max = z+dz;
   }
 
-  printf("%f %f\n",z_min, f(z_min, params));
-  printf("%f %f\n",z_max, f(z_max, params));
+  out[0] = z_min;
+  out[1] = z_max;
+  //printf("%f %f\n",z_min, f(z_min, params));
+  //printf("%f %f\n",z_max, f(z_max, params));
 
   return 0.0;
 }
@@ -147,19 +149,25 @@ double root_find(double alpha(double X, double params[]), double conv(double X, 
 
   double z0 = (z_min + z_max)/2.0;
 
-  double z1 = z0 + (z0 - alpha(z0,params))/(2.0*conv(z0,params));
+  double z1 = z0 - (z0 - alpha(z0,params))/(2.0*conv(z0,params));
 
-  while( fabs(z0-z1) > 1E-5 && (1.0 - alpha_nfw(z1, params)/z1) > 1E-7 ){
+  while( fabs(z0-z1) > 1E-6 || fabs((1.0 - alpha_nfw(z1, params)/z1)) > 1E-7 ){
     z0=z1;
-    z1 = z0 + (z0 - alpha(z0,params))/(2.0*conv(z0,params));
+    z1 = z0 - (z0 - alpha(z0,params))/(2.0*conv(z0,params));
   }
-  printf("%f %E\n",z1,1.0 - alpha_nfw(z1, params)/z1);
+  //printf("%.10f %E\n",z1,1.0 - alpha_nfw(z1, params)/z1);
 
 
-  return 0.0;
+  return z1*params[0];
 }
 
+double r_e_nfw(double pot_params[]){
 
+  double *out = (double*)malloc(2.0*sizeof(double));
+  bracketing_lambda_t( lambda_t_nfw, pot_params, out);
+
+  return root_find(alpha_nfw, conv_nfw, pot_params,out[0] ,out[1]);
+}
 
 
 

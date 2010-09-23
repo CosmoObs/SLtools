@@ -1,4 +1,8 @@
-#include "theta.h"
+#include "../theta_find.h"
+#include  "../perturbative_method.h" 
+
+#include <cstdio>
+#include <cstdlib>
 
 
 double f1_SIS(double theta, double pot_params[]){
@@ -37,7 +41,7 @@ int main(){
   source.eta0   = 0.0;
   source.theta0 = 0.0;
 
-  theta(Df0Dtheta_SIS,source,2000);
+  theta_find(Df0Dtheta_SIS,source,NULL,2000);
 
   print_arcs_SIS(source,2000);
 
