@@ -20,4 +20,7 @@ echo $i $ivar
 #                      npts  x0  y0 R0  eta   theta_s    mp  rp theta_p
  ./make.arcdata.output 1000  0.2   0  0.05 0.1  0           0.5 $ivar  0    > arcdata/arcs$i.txt 
 
+
+# should work!
+
 done
