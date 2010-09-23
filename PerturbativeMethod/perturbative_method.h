@@ -81,8 +81,8 @@ double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pe
 }
 
 
-
-/**  \f$ \overline{\frac{d f_1(\theta)}{d \theta}} \equiv \frac{d f_0(\theta)}{d \theta} - x0\sin(\theta) + y0\cos(\theta) \f$
+// Note for Gabriel: In the original version you wrote \overline{\frac{d f_1(\theta)}{d \theta}}, but the correct is d f_0 (\theta)
+/**  \f$ \overline{\frac{d f_0(\theta)}{d \theta}} \equiv \frac{d f_0(\theta)}{d \theta} - x0\sin(\theta) + y0\cos(\theta) \f$
 *
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param source_in a struct that define elliptical sources
@@ -187,5 +187,67 @@ double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
 
   return 1.0/kappa2 * (f1_bar_tmp + quant_tmp - sqrt(sqrt_arg)/S);
 }
+
+/**  Radius of the Tangential Critical Curve (r_crit)
+*
+*  To plot the tangential critical curve, use  polar coordinates i.e.\f$ x_{c_1}=r_{\mathrm{crit}}*\cos{\theta},x_{c_2}=r_{\mathrm{crit}}*\sin{\theta}\f$  
+*  \param D2f0Dtheta2_in function related to the perturbed potential (second derivative)
+*  \param f1_in function related to the perturbed potential
+*  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
+*  \param theta angular coordinate in the lens plane.
+*  \return \f$ r_{\mathrm{crit}}= r_{\mathrm{E}} +\frac{1}{\kappa_2}\left[f_1+\frac{1}{r_{\mathrm{E}}}\frac{d^2 f_0}{d \theta^2}\right]\f$
+**/
+
+double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pot_params[]){
+
+  double f1_temp=f1_in(theta,pot_params);
+  double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params)/_r_e;
+  double r_t=_r_e+(1.0/kappa2)*(f1_temp+D2f0Dtheta2_temp);
+  return r_t;
+}
+
+/** Tangential Caustic Line (First Component)
+* 
+*  \param D2f0Dtheta2_in function related to the perturbed potential (second derivative)
+*  \param f1_in function related to the perturbed potential
+*  \param theta angular coordinate in the lens plane 
+*   This caustic line, in polar coordinates, is defined by :
+*   \return \f$ y_1=\frac{1}{r_{\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\cos{\theta}+\frac{1}{r_{\mathrm{E}}}\sin{\theta}\f$
+**/
+
+double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[]){
+    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params)/_r_e;
+    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params)/_r_e;
+    double y1_c=(1.0/_r_e)*D2f0Dtheta2_temp*cos(theta)+(1.0/_r_e)*Df0Dtheta_tmp*sin(theta);
+    return y1_c;
+}
+/** Tangential Caustic Line (Second Component)
+*  \param D2f0Dtheta2_in function related to the perturbed potential (second derivative)
+*  \param f1_in function related to the perturbed potential
+*  \param theta angular coordinate in the lens plane 
+*   This caustic line, in polar coordinates, is defined by :
+*   \return \f$ y_2=\frac{1}{r_{\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\sin{\theta}+\frac{1}{r_{\mathrm{E}}}\cos{\theta}\f$
+**/
+
+double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[]){
+    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params)/_r_e;
+    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params)/_r_e;
+    double y2_c=(1.0/_r_e)*D2f0Dtheta2_temp*sin(theta)-(1.0/_r_e)*Df0Dtheta_tmp*cos(theta);
+    return y2_c;
+}
+// Plotting a circular source
+
+double y1_src(elliptical_source source_in, double theta){
+      double theta_bar = theta - source_in.theta0;  
+      return source_in.R0*cos(theta_bar)/sqrt(1.-source_in.eta0) + source_in.x0;
+}
+
+
+double y2_src(elliptical_source source_in, double theta){
+      double theta_bar = theta - source_in.theta0;  
+      return source_in.R0*sin(theta_bar)/sqrt(1.+source_in.eta0) + source_in.y0;
+}
+
+
 
 #endif
