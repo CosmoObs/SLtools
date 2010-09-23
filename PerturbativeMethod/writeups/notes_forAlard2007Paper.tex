@@ -1,5 +1,5 @@
 % Alard 2007 notes
-% by MSSG, Gabriel, Habib, and Martin, started Aug 2010
+% by MSSG, Gabriel, Habib, Marcos Lima and Martin, started Aug 2010
 % Current: Sept 21, 2010
 
 \documentclass{article}
@@ -9,6 +9,7 @@
 
 \author{Collective Brazil DES-SL group}
 
+\usepackage{color}
 %\usepackage[pdftex]{color,graphicx}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Some command macros commonly used
@@ -64,6 +65,9 @@
 \def \scriptf {\mathcal{F}}
 \def \scriptg {\mathcal{G}}
 \def \pa {\partial}
+
+
+\newcommand{\ML}[1]{\textcolor{blue}{[#1]}}
 
 %%%%%%%%%%%%%%%%%%% Setting margins
 %%%%% Command                              %%%%% Defaults
@@ -420,6 +424,101 @@ taking the partial derivatives of Eq.~(\ref{key1}), it is straightforward to ver
 \end{eqnarray}
 
 (Alard eq.19).
+
+
+\subsubsection{Errors on arcs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Marcos
+
+Recall that $\phi=\phi_0+\eps\psi$ and expand only $\psi$:
+
+\bea
+\phi=\phi_0+\eps\sum_{n=0}^{\infty}f_n(\theta)(r-r_E)^n
+\eea
+
+Differentiating we obtain
+
+\bea
+\frac{\partial \phi}{\partial r }&=&\phi_0^\prime+\eps\sum_{n=1}^{\infty}f_n(\theta)n(r-r_E)^{n-1} \\
+\frac{\partial \phi}{\partial \theta}&=&\eps\sum_{n=0}^{\infty} \frac{\partial f_n}{\partial \theta}(r-r_E)^n
+\eea
+
+Evaluating at the Einstein radius $r=r_{\mathrm{E}}$, we have
+
+\bea
+\frac{\partial \phi}{\partial r }&=&\phi_0^\prime+f_1(\theta) \\
+\frac{\partial \phi}{\partial \theta}&=&\eps \frac{\partial f_0}{\partial \theta}
+\eea
+
+On the other hand, evaluating Eqs. 19 in Alard at $r=r_E$, and using Eq. 16 in Alard $\phi_0^\prime=1+2C_2(r-r_{\mathrm{E}}+...$ 
+
+\bea
+\frac{\pa \phi}{\pa r}&=& \phi_0^\prime -%
+  \eps g(\te)\left[\phi_0^\prime+ \phi_0^{\prime \prime}\right]=\phi_0^\prime-\eps g(\te)(1+C_2)\\
+\frac{\pa \phi}{\pa \te}&=&-\eps\phi_0^\prime \frac{dg(\te)}{d\te}
+\eea
+
+Comparing these equations, we have a relation between the $f_n(\te)$ and $g(\te)$ functions:
+
+\bea
+f_1&=&-(1+2C_2)g \\
+\frac{df_0}{d\theta}&=&-\frac{dg}{d\theta}
+\eea
+
+Eq. (30) in Alard (to be derived later) is
+
+\bea
+dr=\frac{1}{\kappa_2}\left[ f_1+\frac{d^2f_0}{d\theta^2} \right]
+\eea
+
+and in this case we have
+
+\bea
+dr=\frac{1}{\kappa_2}\left[ -(1+2C_2)g+\frac{d^2g}{d\theta^2} \right]
+\eea
+
+Not sure what the effective parameter $dr_c$  in Eq 22 is and how to get it.
+Assuming it's correct, i.e.
+\bea
+dr_c\sim -\frac{d^2g}{d\te^2}-2g
+\eea
+we have that for e.g. the NFW profile with ellipticity (as in Eq. 28 of Alard)
+
+\bea
+\phi_0(q)&=&\frac{1}{2}\log^2\left(\frac{q}{2}\right)-2\arctan^2\left(\sqrt{\frac{1-q}{1+q}}\right) \\
+q&=&u_0r\sqrt{1-\eta\cos(\theta)}\approx u_0 r \left[1-\frac{\eta}{2}\cos(2\theta)\right]
+\eea
+
+So in this case we have (notice $\eta/2$ plays the role of $\eps$ here, so only expect expansion to work 
+for small ellipticities)
+
+\bea
+g(\te)&=&\frac{\eta}{2}\cos(2\theta) \\
+\frac{d^2g(\te)}{d\te^2}&=&-2\eta\cos(\theta)=-4g
+\eea
+
+so that $dr_c=\eta\cos(\theta)$. Not sure if this is true for any elliptical potential or if it's specific to NFW.
+In any case the deviation is maximum for $\te=0,\pi$
+
+If the Taylor expansion converges, truncating it at some order has a maximum error given by the next order 
+term. In this case the maximum error due to the non-linearity of the gradient of the potential is 
+
+\bea
+D=3C_3\max[dr_c^2]=3C_3\eta^2
+\eea
+
+Notice it increases with the ellipticity squared. For a general potential of the form
+
+\bea
+\phi=\frac{1}{\alpha}r^{\alpha[1+\beta(r-1)]}
+\eea
+
+we have
+
+\bea
+C_3=\frac{d^3\phi}{dr^3}|_{r=1}=-\frac{(\alpha-1)}{6}+\frac{\beta}{2}
+\eea
+
+and $D^2$ follows. 
 
 \subsection{Numerical Testing}
 

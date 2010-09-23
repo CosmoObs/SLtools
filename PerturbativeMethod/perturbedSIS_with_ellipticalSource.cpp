@@ -38,7 +38,7 @@
 
 double twopi = 6.283185308;
 
-/////// Now define the two f(perturber) functions we'll need to calculate the arc properties -- eq. 9 in Alard08
+/////// Now define the two perturber functions we'll need to calculate the arc properties, f1 and df0/dtheta -- see eq. 9 in Alard08
 
 //pot_params[0] = mp in units of central potential mass
 //pot_params[1] = rp distance to perturber in units of r_E
