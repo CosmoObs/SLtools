@@ -16,6 +16,8 @@
 
 double conv_nfw(double X, double pot_params[]);
 double alpha_nfw(double X, double pot_params[]);
+// Added by Habib Dumet
+double shear_nfw(double X, double pot_params[]);
 
 //to compile: g++ -Wall nfw_pert.cpp
 /*********************************************************************************************************************/
@@ -29,7 +31,8 @@ double alpha_nfw(double X, double pot_params[]);
 */
 double f1_nfw(double theta, double pot_params[]){
     double eta=pot_params[2];
-    double a_eta1=1-eta,a_eta2=1/(1-eta);
+    double a_eta1=1.0-eta,a_eta2=1.0/(1.0-eta);
+//     double a_eta1=1.0-eta,a_eta2=1.0+eta;
     double reta=_r_e*sqrt(a_eta1*cos(theta)*cos(theta)+a_eta2*sin(theta)*sin(theta));
     double f1=(reta/_r_e)*alpha_nfw(reta,pot_params)-alpha_nfw(_r_e,pot_params);
     return f1;
@@ -37,14 +40,28 @@ double f1_nfw(double theta, double pot_params[]){
 
 double Df0Dtheta_nfw( double theta, double pot_params[]){
     double eta=pot_params[2];
-    double a_eta1=1-eta,a_eta2=1/(1-eta);
+    double a_eta1=1.0-eta,a_eta2=1.0/(1.0-eta);
+//     double a_eta1=1.0-eta,a_eta2=1.0+eta;
     double A_eta=a_eta2-a_eta1;
     double reta=_r_e*sqrt(a_eta1*cos(theta)*cos(theta)+a_eta2*sin(theta)*sin(theta));
 
    double df0dte=(_r_e/2)*alpha_nfw(reta,pot_params)*(_r_e/reta)*A_eta*sin(2*theta);
-   return (df0dte/_r_e);
+//    return (df0dte/_r_e);
+   return df0dte; 
 }
 
+double D2f0Dtheta2_nfw( double theta, double pot_params[]){
+    double eta=pot_params[2];
+    double a_eta1=1.0-eta,a_eta2=1.0/(1.0-eta);
+//     double a_eta1=1.0-eta,a_eta2=1.0+eta;
+    double A_eta=a_eta2-a_eta1;
+    double reta=_r_e*sqrt(a_eta1*cos(theta)*cos(theta)+a_eta2*sin(theta)*sin(theta));
+    double cal_g=A_eta*pow(_r_e,2)*cos(2.0*theta);
+    double cal_h=cal_g-(pow(_r_e,2)/2.0)*pow(A_eta*(_r_e/reta)*sin(2.0*theta),2);
+    
+    double d2f0dte2=cal_g*conv_nfw(reta,pot_params)+cal_h*shear_nfw(reta,pot_params);
+    return d2f0dte2;
+}
 
 // pot_paramas[0]=r_s, pot_params[1]=ks,pot_params[2]=elipticity, pot_params[3]
 
@@ -116,6 +133,15 @@ double alpha_nfw(double X, double pot_params[])
       return alpha;
 }
 
+// Added by Habib Dumet-Montoya
+double shear_nfw(double X, double pot_params[]){
+      double gamma;
+
+      gamma=alpha_nfw(X, pot_params)/X-conv_nfw(X, pot_params);
+
+      return gamma;
+}
+
 double lambda_t_nfw(double X, double pot_params[]) {return 1.0 - alpha_nfw(X, pot_params)/X;}
 
 double bracketing_lambda_t(double f(double X, double params[]), double params[], double out[], double z=1.0, double dz=0.001){
@@ -145,15 +171,16 @@ double bracketing_lambda_t(double f(double X, double params[]), double params[],
   return 0.0;
 }
 
-double root_find(double alpha(double X, double params[]), double conv(double X, double params[]), double params[], double z_min, double z_max){
+// Corrected by Habib Dumet, (I change conv by shear)
+double root_find(double alpha(double X, double params[]), double gamma(double X, double params[]), double params[], double z_min, double z_max){
 
   double z0 = (z_min + z_max)/2.0;
 
-  double z1 = z0 - (z0 - alpha(z0,params))/(2.0*conv(z0,params));
+  double z1 = z0 - (z0 - alpha(z0,params))/(2.0*gamma(z0,params));
 
   while( fabs(z0-z1) > 1E-6 || fabs((1.0 - alpha_nfw(z1, params)/z1)) > 1E-7 ){
     z0=z1;
-    z1 = z0 - (z0 - alpha(z0,params))/(2.0*conv(z0,params));
+    z1 = z0 - (z0 - alpha(z0,params))/(2.0*gamma(z0,params));
   }
   //printf("%.10f %E\n",z1,1.0 - alpha_nfw(z1, params)/z1);
 
