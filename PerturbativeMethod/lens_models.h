@@ -79,6 +79,15 @@ double Df0Dtheta_pert_SIS(double theta, double pot_params[]){
 }
 /**********************************************************************************************************************/
 
+double D2f0Dtheta2_pert_SIS(double theta, double pot_params[]){
+double mp=pot_params[0],rp=pot_params[1],thetap=pot_params[2];
+double bar_theta=theta-thetap;
+double Rsq=1.0-2.0*rp*cos(bar_theta)+pow(rp,2);
+return (mp*rp/sqrt(Rsq))*(cos(bar_theta)-rp*(pow(sin(bar_theta),2))/Rsq);
+}
 
 
+double kappa_2_SIS(double pot_params[]){
+return 1.0;
+}
 #endif
