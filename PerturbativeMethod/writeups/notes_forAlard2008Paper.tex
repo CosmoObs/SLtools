@@ -16,9 +16,10 @@
 \def \prtl {\partial}
 
 \begin{document}
-\title{Field perturbation induced by substructures: \\ Verification of Eq.~9 from Alard 2008}
+\title{Filling in Details of Alard 2008 MNRAS Paper}
+%Field perturbation induced by substructures: \\ Verification of Eq.~9 from Alar% d 2008}
 %
-\author{Habib S. Dumet-Montoya}
+\author{Collective Brazil DES-SL group}
 % email{hdumetm@cbpf.br}
 % \affiliation{ICRA-CBPF}
 % \author{Mart\'in Makler}
@@ -27,35 +28,50 @@
 % Centro Brasileiro  de Pesquisas F\'{\i}sicas.\\
 % Rua Dr. Xavier Sigaud 150, Cep 22290-180, Urca, Rio de Janeiro, RJ,
 % Brasil.}
-\begin{abstract}
-In this letter I shall verify the Eq. (9) from Alard 2008 (Sec. 2.1). As we will
-see at the end of this letter, the expression given in Eq. (9) must
-include the expression for the Angle Deflection.
-\end{abstract}
+
+%\begin{abstract}
+%In this letter I shall verify the Eq. (9) from Alard 2008 (Sec. 2.1). As we will
+%see at the end of this letter, the expression given in Eq. (9) must
+%include the expression for the Angle Deflection.
+%\end{abstract}
 
 \date{\today}
 \maketitle
-We can consider the perturbation as
+
+\section{Intro}
+\subsection{The Pert Approach in SL}
+
+We derived these eq's carefully in our Alard 2007 writeup
+
+\section{Pert Description of the Effects of Substructure on Arcs}
+
+\section{Field Perts Induced by Substructures}
+
+Let us take a perturbation to the central potential with the following properties:
+
 \begin{equation}
 \psi(r)=m_p r^\prime
 \end{equation}
-where $m_p$ is the mass contained within the Einstein radius. From Figure 3 of Alard 2008, we may express
+where $m_p$ is the mass contained within the Einstein radius. From Figure 3 of Alard 2008 (which is one of the worse hand-drawn figures seen in recent times in a published paper -- note how badly the arrowheads are situated), we may express
 \begin{eqnarray}
 \vec{r}_p&=&r_p\cos{\tep}\hat{\imath} + r_p\sin{\tep}\hat{\jmath}\\
-\vec{r}&=&r\cos{\te}\hat{\imath} + r\sin{\te}\hat{\jmath}\\
-r^\prime&=&\vec{r}_p-\vec{r}
+\vec{r}&=&r\cos{\te} \; \hat{\imath} + r\sin{\te}\; \hat{\jmath}\\
+\vec{r}^\prime&=&\vec{r}_p-\vec{r}
 \end{eqnarray}
-Taking the modulus of $r^\prime$, it is straightforward to verify that
+where $r$ is the distance to the unit circle (unlabeled by Alard), and $r'$ is the distance from the center of the perturber to the unit circle (what Alard denotes $dr$).
+Taking the modulus of $\vec{r}^\prime$, it is straightforward to verify that
 the perturbed field is given by
 \begin{equation}
 \psi(r)=m_p\sqrt{r^2-2r r_p\cos{(\te-\tep)}+r^2_p}.
 \end{equation} 
-Now, we apply the definitions of the perturbed functions $f_0$ and $f_1$. Then,
+
+Now, we apply the definitions of the perturbed functions $f_0$ and $f_1$. From Alard07 eq.7:
 \begin{equation}
 f_0=\psi(\re)=m_p \sqrt{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p}.
 \end{equation}
 Taking the derivative of this with respect to $\te$, we obtain
 \begin{equation}
+\label{eq:df0dt}
 \frac{1}{\re}\frac{d f_0}{d\te}=\frac{m_p r_p \sin{(\te -\tep)}}{\sqrt{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p}}.
 \end{equation}
 
@@ -63,12 +79,13 @@ Taking the derivative of $\psi(r)$ with respect to $r$ we have
 \begin{equation*}
 \frac{\prtl  \psi(r)}{\prtl r}=\frac{m_p[r-r_p\cos{(\te-\tep)}]}{\sqrt{r^2-2r r_p\cos{(\te-\tep)}+r^2_p}},
 \end{equation*}
-and finally, evaluating this expression at the Einstein Radius, we have
+and finally, evaluating this expression at the Einstein Radius, we have again using the definition in Alard07 eq.7:
 \begin{equation}
+\label{eq:f1}
 f_1=\frac{m_p[\re-r_p\cos{(\te-\tep)}]}{\sqrt{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p}}.
 \end{equation}
 
-Conclusion: The expression in Eq. (9) of Alard 2008, must include the expression for the Einstein Radius.
+The expressions in eq.(\ref{eq:df0dt}) and eq.(\ref{eq:f1}) yield Alard 2008 eq.9, generalized for the expression for the Einstein Radius not being set to unity.
 
 
 \end{document}
