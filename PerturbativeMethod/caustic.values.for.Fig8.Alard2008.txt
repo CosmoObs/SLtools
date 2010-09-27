@@ -1,0 +1,32 @@
+# Sept 27, 2010
+# MSSG
+
+########## Caustic values for Fig 8, Alard 2008
+
+## For the ellip central pot, no perturber, i get:
+
+theta = 0 ,    x,y = (0.2, 0)
+theta = pi/2 , x,y = (0, -0.2)
+theta = pi ,   x,y = (-0.2, 0)
+theta = 3pi/2, x,y = (0, 0.2)
+
+## For the one with perturber at thetap = 0, and other params as Alard, i get
+
+0     0.33, 0
+
+pi/2  0.0237787, -0.211492
+
+pi    -0.183043, 0
+
+3pi/2  0.0237787, 0.211492
+
+
+## For the one with perturber at thetap = Pi/10, and other params as Alard, i get
+
+0      0.231767, 0.0258562
+
+pi/2   0.0270045, -0.208923
+
+pi     -0.183263, 0.00530404
+
+3pi/2   0.0198447, 0.213471
