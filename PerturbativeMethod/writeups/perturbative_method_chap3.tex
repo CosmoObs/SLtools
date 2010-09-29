@@ -92,15 +92,43 @@ any circular model
 
 Then, using these relationships and as $r$ is a dummy variable, we have for the main fields
 \bea
-\dfrac{df_0}{d\te}&=& \frac{1}{2}\dfrac{\alpha(\xer)}{\xer}\scriptg(\eta,\te)\\
-f_1(\te)&=&\dfrac{\xer}{\re}\alpha(\xer)-\alpha(\re)
+\dfrac{df_0}{d\te}&=& \frac{1}{2}\dfrac{\alpha(\xer)}{\xer}\scriptg(\eta,\te) \label{df0_pe2}\\
+f_1(\te)&=&\dfrac{\xer}{\re}\alpha(\xer)-\alpha(\re) \label{f1_pe2}
 \eea
 and also, we have
 \beq
-\dfrac{d^2f_0}{d\te^2}=\frac{1}{2}\scriptg_\te(\eta,\te)\dfrac{\alpha(\xer)}{\xer}-\frac{\gamma(\xer)}{2}\left[ \dfrac{\scriptg(\eta,\te)}{\xer}\right]^2
+\label{ddf0_pe2}
+\dfrac{d^2f_0}{d\te^2}=\frac{1}{2}\scriptg_\te(\eta,\te)\dfrac{\alpha(\xer)}{\xer}-%
+\frac{\gamma(\xer)}{2}\left[ \dfrac{\scriptg(\eta,\te)}{\xer}\right]^2 
 \eeq
 
-%\pagebreak
+\subsection{Expression for small values of the ellipticity}
+
+Now, we will expand the analytical expressions for the main fields 
+Eqs.(\ref{df0_pe2}, \ref{f1_pe2}) in Taylor Series around $\eta=0$. 
+Is straightforward verify that
+
+\bea
+\dfrac{df_0}{d\te}& \approx & \eta\alpha(\re)\re\sin{(2\te)} \label{df0_pe_appr}\\
+f_1(\te)&\approx&-\eta \kappa(\re)\re\cos{(2\te)} \label{f1_pe_appr}
+\eea
+
+And from the  Eq.~(\ref{df0_pe_appr}), or making the Taylor Series in the Eq.~(\ref{ddf0_pe2}), we get
+to
+\beq
+\dfrac{d^2f_0}{d\te^2}=2\eta\alpha(\re)\re\cos{(2\te)} \label{ddf0_pe_appr}
+\eeq
+
+For example, if we considerer and Pseudo-Elliptical SIS (setting $\re=1$) we get to the
+Eqs.(17) of Alard's Paper 2008 (without considering the contribution of substructures), i.e,
+\begin{eqnarray*}
+ f_1(\te)&\approx&-\frac{\eta}{2}\cos{(2\te)}\\
+ \dfrac{df_0}{d\te}& \approx & \eta\sin{(2\te)} 
+\end{eqnarray*}
+ 
+
+
+\pagebreak
 
 \section{Elliptical Models (Gabriel)}
 
@@ -160,6 +188,7 @@ the perturbative approach as function of the angle deflection and convergence, i
 f_1&=&\al_{\xie}\dfrac{[\re-r_p\cos{(\te-\tep)}]}{\xie},
 \end{eqnarray}
 
+\subsection{SIS model as substructure}
 
 As application of these analytical expression, we will considerer the case of the Singular Isothermal Sphere, for
 which $\psi(r,\te,\pi_p)=m_p\zeta$, where $m_p$ is the mass contained at the critical radius.
@@ -181,15 +210,16 @@ Conclusions: Now, we are able to considerer another kind of substructure that co
 
 
 \section{External Shear + Continuous Matter}
+
 Objects near the main lens galaxy or along the line of sight often perturb the lensing potential.
 In the case that we are considering the contribution of the mass distribution external to the lens,
 we can work with the potential coming from the external mass + external shear.
 \beq
-\phi(r)=\phi_0(r)+\frac{r^2}{2}\left[ \kex-\gex\cos{(\te-\te_\gamma)}\right].
+\phi(r)=\phi_0(r)+\frac{r^2}{2}\left[ \kex-\gex\cos{2(\te-\te_\gamma)}\right].
 \eeq
 where the perturbative potential, in this case is
 \beq
-\psi_{_{\mathrm{EX}}}(r)=\frac{r^2}{2}\left[ \kappa_{_{\mathrm{EX}}}-\gamma_{_{\mathrm{EX}}}\cos{(\te-\te_\gamma)}\right]
+\psi_{_{\mathrm{EX}}}(r)=\frac{r^2}{2}\left[ \kappa_{_{\mathrm{EX}}}-\gamma_{_{\mathrm{EX}}}\cos{2(\te-\te_\gamma)}\right]
 \eeq
 From the expression above, is easy get to
 \bea
