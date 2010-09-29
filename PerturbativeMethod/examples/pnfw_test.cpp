@@ -1,8 +1,11 @@
 #include <cstdlib>
 #include <cstdio>
+#include <fstream>        //funcoes de entrada e saida para arquivos
+//#include <cstdio>
+#include <iostream>
 
 #include "../perturbative_method.h"
-#include "../PNFW_model.h"
+#include "../pnfw_model.h"
 #include "../theta_find.h"
 
 void print_arcs_nfw(elliptical_source source_in, double pot_params[],  int npts=200){
@@ -29,8 +32,10 @@ FILE *outsrc = fopen ("src_plot.dat" , "w");
     for(int i=0;i<=npts;i++){
 
       if(arg_sqrt(Df0Dtheta_nfw, source_in, theta, pot_params)>0.0){
-      r_p = _r_e+pot_params[0]*dr_plus(f1_nfw, Df0Dtheta_nfw, kappa2_nfw(pot_params), source_in, theta, pot_params);
-      r_m = _r_e+pot_params[0]*dr_minus(f1_nfw, Df0Dtheta_nfw,kappa2_nfw(pot_params), source_in, theta, pot_params);
+//       r_p = _r_e+pot_params[0]*dr_plus(f1_nfw, Df0Dtheta_nfw, kappa2_nfw(pot_params), source_in, theta, pot_params);
+//       r_m = _r_e+pot_params[0]*dr_minus(f1_nfw, Df0Dtheta_nfw,kappa2_nfw(pot_params), source_in, theta, pot_params);
+      r_p = _r_e+dr_plus(f1_nfw, Df0Dtheta_nfw, kappa2_nfw(pot_params), source_in, theta, pot_params);
+      r_m = _r_e+dr_minus(f1_nfw, Df0Dtheta_nfw,kappa2_nfw(pot_params), source_in, theta, pot_params);
 //       printf("%E %E\n",r_p*cos(theta),r_p*sin(theta));
 //       printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));
       fprintf(outarc,"%E %E\n",r_p*cos(theta),r_p*sin(theta)); // printing to a file
@@ -58,12 +63,24 @@ FILE *outsrc = fopen ("src_plot.dat" , "w");
 int main(){
 
 // Added by Habib Dumet-Montoya
+//   FILE *input_lens = fopen("input_lens_par.txt","r");
+//   FILE *input_src = fopen("input_src.txt","r");
   FILE *outls = fopen ("lensing_data.dat" , "w");  
+  
+
 
   int npts = 1000;
 
   double twpi= 6.283185308;  
-  double pot_params[] = {1.5,0.4,0.2};
+  double pot_params[] = {0.5,0.65,0.0};
+
+  double *out = (double*)malloc(2.0*sizeof(double));
+  bracketing_lambda_t( lambda_t_nfw, pot_params, out);
+  printf("# Range of the root = %E  %E\n",out[0], out[1] );
+  double z_out=  root_find(alpha_nfw, shear_nfw, pot_params,out[0] ,out[1]);
+  fprintf(outls, "Einstein Radius= %f\n",z_out);
+   _r_e = z_out;
+
 
   elliptical_source source;
 /*
@@ -73,15 +90,25 @@ int main(){
   source.eta0 = 0.0;
   source.theta0 = 0.0;
 */
-  source.x0 = (r_e_nfw(pot_params)/10);
+  source.x0 = (_r_e/10.);
   source.y0 = 0.0;
-  source.R0 = (sqrt(2.0)/50.0)*r_e_nfw(pot_params);
+  printf(" Source Position %f %f\n",source.x0,source.y0);
+  source.R0 = (sqrt(2.0)/50.0)*_r_e;
   source.eta0 = 0.0;
   source.theta0 = 0.0;
 
-  //_r_e = 1.1172980994467465;
 
+//   double *out = (double*)malloc(2.0*sizeof(double));
+//   bracketing_lambda_t( lambda_t_nfw, pot_params, out);
+//   printf("# Range of the root = %E  %E\n",out[0], out[1] );
+//   double z_out=  root_find(alpha_nfw, shear_nfw, pot_params,out[0] ,out[1]);
+//   fprintf(outls, "Einstein Radius= %f\n",z_out);
+//    _r_e = z_out;
+//   _r_e=r_e_nfw(pot_params);
+  theta_find(Df0Dtheta_nfw, source,pot_params );
+  print_arcs_nfw(source,pot_params,npts);
   
+
 // Added by Habib Dumet-Montoya
   fprintf(outls," PNFW Model Parameters: \n");  
   fprintf(outls," Scale Radius = %f\n",pot_params[0]);
@@ -91,19 +118,4 @@ int main(){
   fprintf(outls," Source Position %f %f\n",source.x0,source.y0);
   fprintf(outls," Source Radius %f\n",source.R0);
   fprintf(outls," Source Ellipticity and Inclination %f %f\n\n",source.eta0,source.theta0);
-
-  //print_arcs_nfw(source,npts);
-
-  //for(int i=0;i<=1000;i++) printf("%E %E\n",0.9+0.5*double(i)/1000.0, lambda_t(0.9+0.5*double(i)/1000.0,pot_params));
-
-  double *out = (double*)malloc(2.0*sizeof(double));
-  bracketing_lambda_t( lambda_t_nfw, pot_params, out);
-  printf("# Range of the root = %E  %E\n",out[0], out[1] );
-  double z_out=  root_find(alpha_nfw, shear_nfw, pot_params,out[0] ,out[1]);
-  fprintf(outls," Einstein Radius = %E\n",z_out);
-  _r_e = z_out;
-//   _r_e=r_e_nfw(pot_params);
-  //   fprintf(outls, "Einstein Radius= %f\n",r_e_nfw(pot_params));
-  theta_find(Df0Dtheta_nfw, source,pot_params );
-  print_arcs_nfw(source,pot_params,npts);
 }
