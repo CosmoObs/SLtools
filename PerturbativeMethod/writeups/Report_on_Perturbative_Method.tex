@@ -1,0 +1,157 @@
+% Inicio do texto da tese
+% Por: Habib S. D. Montoya
+% Doutorado em Fisica
+% Orientador: Martín Makler
+% CBPF - Centro Brasileiro de Pesquisas Fisicas
+% Atualizado:26/10/2007
+\documentclass[a4paper,12pt,twoside]{report}
+\linespread{1.5}
+% putting the package to be used
+\usepackage[pdftex]{color,graphicx}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage[x11names]{xcolor}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{ccaption}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{dcolumn}
+\usepackage{subfigure}%{ccaption}
+\usepackage{longtable}
+\usepackage[thinspace,amssymb]{SIunits}
+\usepackage{subeqnarray}
+% defining new commands
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+% \newcommand{\sen}[×][×]{×}
+%adding SI units.
+\addunit{\parsec}{pc}
+\addunit{\asec}{\arcsecond}
+\addunit{\am}{\arcminute}
+% \addunit{\ergios}{ergs}
+% \addunit{\anho}{yr}
+% \addunit{\edad}{\giga\anho}
+% defining some abbreviations
+
+%%%%%%%%%%%%%%%%%%% Mandeep's Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\prtl{\partial}
+\def \scriptf {\mathcal{F}}
+\def \scriptg {\mathcal{G}}
+\def\vecrz{\vec{r}_{0}}
+\def\hatr{\hat{r}}
+\def\hatth{\hat{\theta}}
+\def\dfdt{{d \overline{f}_0(\theta) \over d \theta}}
+\def\fbar{\overline{f}_1}
+
+%%%%%%%%%%%%%%%%%%%%% Habib's Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def \eps {\epsilon}
+\def \al {\alpha}
+\def \re {R_{\mathrm{E}}}
+\def \rre{\dfrac{r}{\re}}
+\def \prre {\left( \rre\right)}
+\def \te {\theta}
+\def \tep {\theta_p}
+\def \kt {\kappa_2}
+\def \kex {\kappa_{_{\mathrm{EX}}}}
+\def \gex {\gamma_{_{\mathrm{EX}}}}
+\def \xie {\zeta_{_{\mathrm{E}}}}
+\def \xer {\xi_{_{\mathrm{E}}}}
+\def \ae {a_{1\eta}}
+\def \be {a_{2\eta}}
+
+
+%%%%%%%%%%%%%%%%%%%%% Gabriel's Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%% Another Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def \beq {\begin{equation}}
+\def \eeq {\end{equation}}
+\def \beqn {\begin{equation*}}
+\def \eeqn {\end{equation*}}
+\def\bea{\begin{eqnarray}}
+\def\eea{\end{eqnarray}}
+
+% reference to journal (see Astronomy and Astrophysics)
+\def \etal {\emph{et al.}}
+\def \aap {A\&A}
+\def \mnras {MNRAS}
+\def \apj  {ApJ}
+%% Definiendo as cores a usar
+% \DefineNamedColor{algo}{hnamei}{hmodel-listi}{hspec-listi}
+%
+%_____________________________Formata??o da p\'agina_____________________________________%
+% \usepackage{layout}
+% % Vertical
+% \setlength{\voffset}{-2.50 cm}
+% \setlength{\topmargin}{0.6 cm}
+% \setlength{\headheight}{0.5 cm}
+% \setlength{\headsep}{1.5 cm}
+% \setlength{\topskip}{0.3in}
+% \setlength{\textheight}{25 cm}
+% % Horizontal
+% \setlength{\hoffset}{0.0cm}
+% \setlength{\evensidemargin}{0.4 cm}
+% \setlength{\oddsidemargin}{0.4 cm}
+% \setlength{\textwidth}{16 cm}
+% \setlength{\marginparsep}{0.25 cm}
+% \setlength{\marginparwidth}{2.54 cm}
+\usepackage[margin=2.cm,asymmetric]{geometry}
+\bibliographystyle{unsrt}
+%_________________________________________________________________________________%
+
+\begin{document}
+%_______________________Paginas Iniciais_______________________________________________%
+\pagenumbering{roman}\setcounter{page}{2}\pagestyle{plain}
+\include{title}
+%\include{abstract}
+\tableofcontents
+\listoffigures %\addcontentsline{toc}{section}{List of Figures}
+% \listoftables  %\addcontentsline{toc}{section}{Lista de Tabelas}
+
+
+%________________________Corpo de Texto________________________________________________%
+%
+% Now set up the main body of the paper:
+\newpage\pagenumbering{arabic}\setcounter{page}{1}%\pagestyle{plain}
+\setlength{\headheight}{30pt}
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{#1}{}}
+%
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\textbf{\textit{\nouppercase{\leftmark}}}}
+\fancyhead[LO]{\textit{\nouppercase{\rightmark}}}
+%
+\fancypagestyle{plain}{ %
+\fancyhf{} % remove everything
+\renewcommand{\headrulewidth}{0.4pt} % remove lines as well
+\renewcommand{\footrulewidth}{0.4pt}}
+%
+\include{introduction}
+\include{perturbative_method_chap2}
+\include{perturbative_method_chap3}
+
+\addcontentsline{toc}{chapter}{References}
+%\input{bibliografia}
+%\input{biblio-modi}
+\end{document}
+
+% \begin{center}
+% \fboxrule6pt
+% \fcolorbox
+% {red!70!green}% outer frame
+% {yellow!30!blue}% outer background
+% {\fcolorbox
+% {-yellow!30!blue}% inner frame
+% {-red!70!green}% inner background
+% {\begin{minipage}{10cm}
+% {\it
+% texto
+% }
+%  \end{minipage}
+% }}
+% \end{center}
