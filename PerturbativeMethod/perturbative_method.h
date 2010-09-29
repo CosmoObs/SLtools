@@ -271,8 +271,8 @@ void plot_arcs(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_in, d
   for(int i=0;i<=npts;i++){
 
     if(arg_sqrt(Df0Dtheta_in, source_in, theta, pert_params)>0.0){
-      r_p = 1.0+dr_plus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params);
-      r_m = 1.0+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params);
+      r_p = _r_e+dr_plus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params);
+      r_m = _r_e+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params);
       if(file_in==NULL){
         printf("%E %E\n",r_p*cos(theta),r_p*sin(theta));
         printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));

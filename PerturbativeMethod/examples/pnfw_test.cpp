@@ -2,7 +2,7 @@
 #include <cstdio>
 
 #include "../perturbative_method.h"
-#include "../pnfw_model.h"
+#include "../PNFW_model.h"
 #include "../theta_find.h"
 
 void print_arcs_nfw(elliptical_source source_in, double pot_params[],  int npts=200){
@@ -63,7 +63,7 @@ int main(){
   int npts = 1000;
 
   double twpi= 6.283185308;  
-  double pot_params[] = {1.0,1.,0.1};
+  double pot_params[] = {1.5,0.4,0.2};
 
   elliptical_source source;
 /*
