@@ -1,5 +1,16 @@
 # Sept 27, 2010
 
+---------------------------- Code contents of this dir:
+
+
+
+---- perturbedSIS_with_ellipticalSource.cpp* -- Doxygenated -- this
+     incorporates an off-axis perturber, and takes 9 arguments in the
+     command line corresponding to source and perturber properties
+     (start: 9/2010)
+
+---------------------------- How to run things:
+
 --- To make caustic curves of Fig 8, do:
 
    ./a.out 5000 0 0 0 0 0 0 0 0 0.1

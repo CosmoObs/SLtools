@@ -5,7 +5,7 @@
 first generate Doxyfile with doxygen -g in the dir, then run doxygen
 in the dir]
 
----- The below is a copy of this page:
+---- The below is also stored on this page:
 
 http://twiki.on.br/bin/save/StrongLensing/PerturbativeArcContoursv01
 
@@ -27,29 +27,6 @@ To get this to work and show the arcs, compile with g++, run
 executable and dump values to a text output file, then plot these
 (without connecting lines is best) in either e.g. Grace or Gnuplot.
 
----- perturbedSIS_with_ellipticalSource.cpp* -- Doxygenated -- this
-     incorporates an off-axis perturber, and takes 9 arguments in the
-     command line corresponding to source and perturber properties
-     (start: 9/2010)
-
-This is driven by vary_arc_params.sh* , a shellscript which will
-output a bunch (20 by default) of ascii files with differing input
-params, then you can load these one by one into gnuplot, with the
-script plotarcs.gp (e.g. just run from command line: gnuplot
-plotarcs.gp)
-
-
---------------------- Comparing to Gravlens
-
----- compare_gravlensTOpertarcs.sh - compiles:
-
- configfile_maker_gravlens.cpp -- Doxygenated -- which makes the config file for gravlens
-
- makearcs_pertmethod.cpp -- code that makes arcs in pert method, as discussed above
-
-Then runs these, then loads the output files into Grace.  Needs
-gravlens installed in the same directory for now, though this is not
-committed to the repo (start: 8/2010)
 
 ------------------------ Modularized code
 
@@ -90,3 +67,10 @@ Tex notes for Alard 2007 and 2008 papers, and a note for PNFW models.
 ---------------------- Examples subdir:
 
 Codes that make use of the more general codes in the above dir to make arcs 
+
+---------------------- Gnuplot Scripts  subdir:
+
+---------------------- Mathematica Code Scripts  subdir:
+
+---------------------- Shell Scripts  subdir:
+
