@@ -10,7 +10,6 @@
 */
 
 
-
 #ifndef PERTURBATIVEMETHOD_H
 #define PERTURBATIVEMETHOD_H
 
@@ -26,12 +25,12 @@ double _r_e = 1.0;
 *
 */
 typedef double (*phi_type) (double r, double pot_params[]);
+
 /** \brief \f$ \psi(r,\theta) \f$ type function 
 *
 * \f$ r \f$ and \f$ \theta \f$ are the radial and angular coordinate, pert_params[] is a vector that contains all the perturbation parameters
 *
 */
-
 typedef double (*psi_type) (double r, double theta, double pert_params[]);
 
 /** \brief \f$ f_{n}(\theta)\equiv \frac{1}{n!} \left[\frac{\partial^n\psi(r,\theta)}{\partial r^{n}}\right]_{r=r_e} \f$ type function 
@@ -97,7 +96,6 @@ double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double th
 }
 
 
-
 /**  Argument of square root: \f$ R_{0}^2(1-\eta_0\cos(\theta - \theta_0))-(1-\eta_0^2) \overline{\frac{d f_1(\theta)}{d \theta}}^2 \f$ 
 *
 *  \param Df0Dtheta_in function related to the perturbed potential
@@ -119,7 +117,6 @@ double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, 
 
   return R0_tmp2*S - (1.0-eta0_tmp2)*Df0Dtheta_bar_tmp2;
 }
-
 
 
 /**  
@@ -155,8 +152,7 @@ double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sour
 }
 
 
-
-/**  
+/**
 *
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param f1_in function related to the perturbed potential
@@ -188,6 +184,7 @@ double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
   return 1.0/kappa2 * (f1_bar_tmp + quant_tmp - sqrt(sqrt_arg)/S);
 }
 
+
 /**  Radius of the Tangential Critical Curve (r_crit)
 *
 *  To plot the tangential critical curve, use  polar coordinates i.e.\f$ x_{c_1}=r_{\mathrm{crit}}*\cos{\theta},x_{c_2}=r_{\mathrm{crit}}*\sin{\theta}\f$  
@@ -198,6 +195,7 @@ double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
 *  \return \f$ r_{\mathrm{crit}}= r_{\mathrm{E}} +\frac{1}{\kappa_2}\left[f_1+\frac{1}{r_{\mathrm{E}}}\frac{d^2 f_0}{d \theta^2}\right]\f$
 **/
 
+
 double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pot_params[]){
 
   double f1_temp=f1_in(theta,pot_params);
@@ -205,6 +203,7 @@ double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, 
   double r_t=_r_e+(1.0/kappa2)*(f1_temp+D2f0Dtheta2_temp);
   return r_t;
 }
+
 
 /** Tangential Caustic Line (First Component)
 * 
@@ -214,13 +213,14 @@ double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, 
 *   This caustic line, in polar coordinates, is defined by :
 *   \return \f$ y_1=\frac{1}{r_{\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\cos{\theta}+\frac{1}{r_{\mathrm{E}}}\sin{\theta}\f$
 **/
-
 double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[]){
     double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params)/_r_e;
     double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params)/_r_e;
     double y1_c=(1.0/_r_e)*D2f0Dtheta2_temp*cos(theta)+(1.0/_r_e)*Df0Dtheta_tmp*sin(theta);
     return y1_c;
 }
+
+
 /** Tangential Caustic Line (Second Component)
 *  \param D2f0Dtheta2_in function related to the perturbed potential (second derivative)
 *  \param f1_in function related to the perturbed potential
@@ -228,7 +228,6 @@ double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, doub
 *   This caustic line, in polar coordinates, is defined by :
 *   \return \f$ y_2=\frac{1}{r_{\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\sin{\theta}+\frac{1}{r_{\mathrm{E}}}\cos{\theta}\f$
 **/
-
 double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[]){
     double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params)/_r_e;
     double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params)/_r_e;
@@ -247,6 +246,48 @@ double y2_src(elliptical_source source_in, double theta){
       double theta_bar = theta - source_in.theta0;  
       return source_in.R0*sin(theta_bar)/sqrt(1.+source_in.eta0) + source_in.y0;
 }
+
+
+
+/** A functions to print the arcs
+*
+*  \param source_in a struct that define elliptical sources
+*  \param Df0Dtheta_in function related to the perturbed potential
+*  \param f1_in function related to the perturbed potential
+*  \param Df0Dtheta_in function related to the perturbed potential
+*  \param pert_params[] a vector that contains all the perturbation parameters
+*  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
+*  \param npts number of theta divisions 
+*  \param file_in a file to write the arc's contours
+*  \return nothing
+*
+*  \sa f_type, dr_plus, dr_minus
+*/
+void plot_arcs(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_in, double pert_params[], double kappa2, int npts=500, FILE *file_in=NULL){
+  double theta = 0.0;
+  double r_p = 0.0;
+  double r_m = 0.0;
+
+  for(int i=0;i<=npts;i++){
+
+    if(arg_sqrt(Df0Dtheta_in, source_in, theta, pert_params)>0.0){
+      r_p = 1.0+dr_plus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params);
+      r_m = 1.0+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params);
+      if(file_in==NULL){
+        printf("%E %E\n",r_p*cos(theta),r_p*sin(theta));
+        printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));
+      } else {
+        fprintf(file_in,"%E %E\n",r_p*cos(theta),r_p*sin(theta));
+        fprintf(file_in,"%E %E\n",r_m*cos(theta),r_m*sin(theta));
+      }
+    }
+    theta+= 6.283185308/npts;
+  }
+
+}
+
+
+
 
 
 
