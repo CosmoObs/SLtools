@@ -63,7 +63,7 @@ int main(){
   int npts = 1000;
 
   double twpi= 6.283185308;  
-  double pot_params[] = {1.0,0.8,0.1};
+  double pot_params[] = {1.0,1.,0.1};
 
   elliptical_source source;
 /*

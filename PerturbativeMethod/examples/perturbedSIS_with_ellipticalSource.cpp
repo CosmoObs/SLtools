@@ -199,6 +199,8 @@ int main(int argc, char *argv[]){
 
   print_arcs_TEST(source, npts, mp,rp,thetap, central_eta);
 
+  double pot_params[] = {0.03, 1.3, 0.0};
+  printf("%f\n",f1_TEST(3.14159/2, pot_params));
   return 0;
 
 }
