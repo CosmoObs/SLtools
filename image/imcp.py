@@ -439,9 +439,9 @@ if __name__ == "__main__" :
 #	parser.add_option('--relative_increase', action='store_true',
 #			  dest='rel_incr', default=False,
 #			  help='Turn on the multiplicative factor for increase image.');
-	parser.add_option('--header', action='store_true',
-			  dest='use_header', default=False,
-			  help="Use image header for WCS adjustment(?)");
+	parser.add_option('--no-header', action='store_false',
+			  dest='use_header', default=True,
+			  help="Do not use existing image header.");
 
 
 	(opts,args) = parser.parse_args();
