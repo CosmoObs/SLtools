@@ -9,6 +9,8 @@
      command line corresponding to source and perturber properties
      (start: 9/2010)
 
+
+
 ---------------------------- How to run things:
 
 --- To make caustic curves of Fig 8, do:
