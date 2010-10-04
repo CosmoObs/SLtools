@@ -67,7 +67,7 @@ double root_find(double f_in(double,void*), void *pot_params, double *est_err_ou
         if(v) printf ("%5d [%.7f, %.7f] %.7f %.7f\n",iter, x_lo, x_hi, r, x_hi - x_lo);
   }while (status == GSL_CONTINUE && iter < max_iter);
 
-  *est_err_out = x_hi - x_lo;
+  if(est_err_out != NULL) *est_err_out = x_hi - x_lo;
 
   return r;
 }
