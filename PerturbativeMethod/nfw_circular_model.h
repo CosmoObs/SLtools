@@ -134,12 +134,20 @@ double kappa2_nfw(double pot_params[]){
 double lambda_t_nfw_circ(double r, double pot_params[]) {return 1.0 - alpha_nfw_circ(r, pot_params)/r;}
 
 
+//pot_params[0] = rs
+//pot_params[1] = kappas
+double re_find_func_nfw(double r, void *p){
 
+  double *params = (double *)p;
 
+  double rs = params[0];//(params->rs);
+  double ks = params[1];//(params->ks);
+  //printf("%E %E\n",rs,ks);
+  double X = r/rs;
 
+  return r - 4.0*ks*rs/X * ( F(X) + log(X/2.0) );
 
-
-
+}
 
 
 

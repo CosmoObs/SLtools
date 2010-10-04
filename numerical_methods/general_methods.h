@@ -21,7 +21,7 @@
 
 //!  Root finder that use the gsl library, (brent method)
 //!
-//!  For a detailed description see: http://www.gnu.org/software/gsl/manual/html_node/One-dimensional-Root_002dFinding.html
+//!  For a detailed description see: http://www.gnu.org/software/gsl/manual/html_node/One-dimensional-Root_002dFinding.html. To compile: g++ -Wall  main.cpp `pkg-config gsl --cflags --libs`
 /*!
   \param f_in function in which the root will be found
   \param pot_params function parameters
@@ -67,7 +67,7 @@ double root_find(double f_in(double,void*), void *pot_params, double *est_err_ou
         if(v) printf ("%5d [%.7f, %.7f] %.7f %.7f\n",iter, x_lo, x_hi, r, x_hi - x_lo);
   }while (status == GSL_CONTINUE && iter < max_iter);
 
-  *est_err_out = x_hi - x_lo;
+  if(est_err_out != NULL) *est_err_out = x_hi - x_lo;
 
   return r;
 }
