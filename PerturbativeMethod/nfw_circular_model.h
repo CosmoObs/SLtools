@@ -12,6 +12,9 @@
 #define NFW_CIRCULAR_MODEL_H
 
 #include <math.h>
+#include <cstdlib>
+
+#include "../numerical_methods/general_methods.h"
 
 double _r_e_nfw = 1.0;
 
@@ -150,8 +153,16 @@ double re_find_func_nfw(double r, void *p){
 }
 
 
+//pot_params[0] = rs
+//pot_params[1] = kappas
+double r_e_nfw_find(double pot_params[], double *est_err_out=NULL, double x_lo = 1E-4, double x_hi = 10.0, int max_iter = 100, double relative_error = 1E-4, int v=0){
+  double *params = (double*) malloc(2.0*sizeof(double));
+  params[0] = pot_params[0];
+  params[1] = pot_params[1];
 
-
+  double re = root_find(re_find_func_nfw, params,est_err_out, x_lo,x_hi,max_iter,relative_error,v);
+  return re;
+}
 
 
 
