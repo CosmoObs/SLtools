@@ -18,7 +18,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "perturbative_method_functions.h"  // This is needed to define the elliptical_source structure, and get the arg of the sqrt for the arc point solns
+#include "../perturbative_method.h"  // This is needed to define the elliptical_source structure, and get the arg of the sqrt for the arc point solns
 
 //To compile: g++ -Wall perturbedSIS_with_ellipticalSource.cpp
 
@@ -81,8 +81,8 @@ void print_arc_points(elliptical_source source_in, int npts,  double mp, double 
   for(int i=0;i<=npts;i++){
 
     if(arg_sqrt(Df0Dtheta_SIS, source_in, theta, pot_params)>0.0){ // Df0Dtheta_SIS is defined in  perturbative_method_functions.h (pmf.h)
-      r_p = 1.0+x_plus(f1_SIS, Df0Dtheta_SIS, kappa2, source_in, theta, pot_params); // Outer arc edge value (x_plus is defined in pmf.h too)
-      r_m = 1.0+x_minus(f1_SIS, Df0Dtheta_SIS, kappa2, source_in, theta, pot_params);// Inner arc edge value (x_minus is defined in pmf.h too)
+      r_p = 1.0+dr_plus(f1_SIS, Df0Dtheta_SIS, kappa2, source_in, theta, pot_params); // Outer arc edge value (x_plus is defined in pmf.h too)
+      r_m = 1.0+dr_minus(f1_SIS, Df0Dtheta_SIS, kappa2, source_in, theta, pot_params);// Inner arc edge value (x_minus is defined in pmf.h too)
       printf("%E %E\n",r_p*cos(theta),r_p*sin(theta)); // Print outer arc edge value in Cartesian coords
       printf("%E %E\n",r_m*cos(theta),r_m*sin(theta)); // Print inner arc edge value in Cartesian coords
     }
