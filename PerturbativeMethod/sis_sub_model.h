@@ -2,8 +2,8 @@
 * Example of doxygen documentation for C functions FIXME. 
 */
 
-/** @package lens_models
-*  Package to compute quantities related to several lens models, perturbations and radial simetric models.
+/** @package sis_sub_model
+*  SIS as a substructure
 *
 *  Detailed descrition FIXME
 *
@@ -11,41 +11,15 @@
 
 
 
-#ifndef LENSMODELS_H
-#define LENSMODELS_H
-
-/**********************************************************************************************************************/
-/**  \f$ f_1(\theta) \f$ for SIS model
-*
-*  \param theta angular coordinate in the lens plane
-*  \param pert_params[] a NULL vector
-*  \return 0.0
-
-*  \sa Df0Dtheta_SIS, f_type
-*/
-double f1_SIS(double theta, double pert_params[]){
-  return 0.0;
-}
-
-/**  \f$ \frac{d f_0(\theta)}{d \theta} \f$ for SIS model
-*
-*  \param theta angular coordinate in the lens plane
-*  \param pert_params[] a NULL vector
-*  \return 0.0
-
-*  \sa f1_SIS, f_type
-*/
-double Df0Dtheta_SIS(double theta, double pert_params[]){
-  return 0.0;
-}
-/**********************************************************************************************************************/
+#ifndef SIS_SUB_MODEL_H
+#define SIS_SUB_MODEL_H
 
 
-/**********************************************************************************************************************/
+
 //pot_params[0] = mp
 //pot_params[1] = rp
 //pot_params[2] = thetap
-/**  \f$ f_1(\theta) \f$ for SIS as a perturbation
+/**  \f$ f_1(\theta) \f$ for SIS as a substructure
 *
 *  \param theta angular coordinate in the lens plane
 *  \param pot_params[0] = mp
@@ -62,7 +36,7 @@ double f1_pert_SIS(double theta, double pot_params[]){
   return tmp1/tmp2 ;
 }
 
-/**  \f$ \frac{d f_0(\theta)}{d \theta} \f$ for SIS as a perturbation
+/**  \f$ \frac{d f_0(\theta)}{d \theta} \f$ for SIS as a substructure
 *
 *  \param theta angular coordinate in the lens plane
 *  \param pot_params[0] = mp
