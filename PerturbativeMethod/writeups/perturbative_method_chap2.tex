@@ -480,8 +480,14 @@ Here, I or we will put the analytical expression for the Length and Width or arc
 
 \section{Inverse Modelling}
 
-To get Alard eq.29, take Alard eq. 12:
+`` The perturbative method has the advantage of offering a linear non-parametric
+approach for gravitational lensing''. The key point is the reconstruction of the
+fields $f_0(\te)$ and $f_1(\te)$.  
 
+
+For a circular source contour, a radial line of direction $\te$ intersects
+the contours at two point, $r_i=\re+x_i$ and $r_o=\re+x_o$ (the inner part and
+the outer part). Now, taking the Alard's Eq. 12 
 
 \beq
 x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\; 
@@ -502,17 +508,17 @@ x_o = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) + \sqrt{R_0^2 - %
 Take 
 
 \beq
-x_o + x_i = {2 \over \kappa_2} \fbar 
+x_o + x_i = {2 \over \kappa_2} \fbar -2\re
 \eeq
 
 And solve for $\fbar$:
 
 
 \beq
-\fbar = {\kappa_2 \over 2} (x_o+x_i)
+\fbar = {\kappa_2 \over 2} (x_o+x_i) -2\kappa_2 \re
 \eeq
 
-which is exactly Alard eq. 29a, without his additional constant (whose provenance I don't get at the moment).
+which is exactly Alard eq. 29a, with his additional constant ($C=-\kt\re$).
 
 Now take 
 
