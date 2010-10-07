@@ -66,7 +66,7 @@ GenDoxygenDoc()
 	)
 
 	(
-	    cd ../latex &> /dev/null
+        cd doc/latex &> /dev/null
 	    namespace2module tex
 
 	    if [ "$mode" != "--no-pdf" ]; then
