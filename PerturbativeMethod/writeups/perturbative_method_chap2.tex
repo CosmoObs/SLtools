@@ -457,8 +457,12 @@ lensed elliptical sources (with orientation $\te_0$), and is given by the Eq.(\r
 adequately, i.e
 
 \bea
-x &=& \frac{1}{\kappa_2} \left\{\bar{f}_{1}(\theta) + \frac{\eta_s\sin(2\tilde{\theta})}{S}\left(\frac{1}{\re}\dfrac{\partial \bar{f}_0(\theta)}{\partial \theta}\right) \pm \frac{1}{S}\sqrt{SR_{0}^2 - (1-\eta_s^2)\left[ \frac{1}{\re}\frac{\partial \bar{f}_0(\theta)}{\partial \theta}\right]^2}  \right\}.\label{elliptical_contour2}\\
-S&\equiv& 1-\eta_s\cos{(2\tilde{\te})}
+x &=& \frac{1}{\kappa_2} \left\{\bar{f}_{1}(\theta) +%
+\frac{\eta_s\sin(2\tilde{\theta})}{S}\left(\frac{1}{\re}\dfrac{\partial%
+\bar{f}_0(\theta)}{\partial \theta}\right) \pm \frac{1}{S}\sqrt{SR_{0}^2 -%
+(1-\eta_s^2)\left[ \frac{1}{\re}\frac{\partial \bar{f}_0(\theta)}{\partial
+\theta}\right]^2}  \right\}.\label{elliptical_contour2}\\
+S&\equiv& 1-\eta_s\cos{(2\tilde{\te})}\nonumber
 \eea
 This is the Eq. (28) of Pierani et al. 2008 (remember again, they set $\re=1$ and $\eta_s=\sqrt{2\eta_0}$)
 
@@ -476,21 +480,173 @@ And therefore, the number of images is given by the quantity of times that the e
 
 \section{Measurements of the arc properties}
 
-Here, I or we will put the analytical expression for the Length and Width or arcs.
+One of the great advantages of the Perturbative Method is that allow us to know
+the analytical expressions for the images contours coming from lensed sources.
+
+\begin{figure*}[!htp]
+\resizebox{\hsize}{!}{
+\subfigure{\includegraphics{graphics/measure_arc2.png}}
+\hspace{3.cm}
+\subfigure{\includegraphics{graphics/measure_arc_w.pdf}}}
+\caption{\label{measure_arcs} Method used to measure the length
+and width of the images. Left Panel: Schematic representation for the
+measurement of the length. Right Panel: Schematic representation for the
+measurement of the width}
+\end{figure*}
+
+
+Following the Pedro's ideas, showed in his Master Degree Thesis, we will give
+the expression for the measurements of the Length, Width and area of the
+arc-images. Basically, Pedro shows three methods for measure the length of
+the arcs (called $L_1$, $L_2$ and $L_3$)  and two methods for measure the width
+of the arcs (called $W$ and $W_q$). In this report, we will adapt these method
+in the framework of the Perturbative Method.
+
+
+In the Perturbative Method, the inner and outer radial vector of an arc
+is given by
+
+\bea
+\vec{r}_{+}&=&(\re + x_{+})\cos{\te}\hat{\imath}+(\re
++x_{+})\sin{\te}\hat{\jmath}\label{rplus}\\
+\vec{r}_{-}&=&(\re + x_{-})\cos{\te}\hat{\imath}+(\re
++x_{-})\sin{\te}\hat{\jmath}\label{rminus}
+\eea
+where $x_{\pm}$ are given by the Eq.(\ref{elliptical_contour2}). Therefore, we
+can define a mean value or the radial coordinate (at some angle $\te$)
+
+\bea
+\bar{r}(\te)&=&\dfrac{r_{+}+r_{-}}{2}=\re+\left(\dfrac{x_{+}+x_{-}}{2}
+\right) \nonumber \\
+       &=& \re +\dfrac{1}{\kt}\left\{ \bar{f}_{1}(\theta) +%
+\frac{\eta_s\sin(2\tilde{\theta})}{S}\left(\frac{1}{\re}\dfrac{\partial%
+\bar{f}_0(\theta)}{\partial \theta}\right) \right\},\label{r_mean}
+\eea
+and the width
+\beq
+W(\te)=\dfrac{2}{\kt\,S}\sqrt{SR_{0}^2 -(1-\eta_s^2)\left[ \frac{1}{\re}\frac{\partial \bar{f}_0(\theta)}{\partial \theta}\right]^2}
+\label{w_arc}
+\eeq
+
+\subsection{Measurement of the Length}
+
+The first method corresponds to the distance between the points of the
+extreme of the arc and is represented by the straight line segment joining the points
+$P_1$ and $P_2$ (see Left Panel in Fig.~\ref{measure_arcs}). In fact, by the
+condition of the formation of images, we will be able to know the angles in
+which the image is formed. We call these angles as $\te_{i}$ and $\te_{f}$, and
+we define the points $P_1$, $P_2$ as the mean radial vector in these angles,
+i.e,
+
+\beq
+P_1=(\bar{r}_i\cos{\te_i},\bar{r}_{i}\sin{\te_i}), \quad
+P_2=(\bar{r}_f\cos{\te_f},\bar{r}_{f}\sin{\te_f})
+\eeq
+where $\bar{r}_i\equiv \bar{r}(\te_i)$ and $\bar{r}_f\equiv \bar{r}(\te_f)$.
+Then, the first measure for the length $L_1$ is
+\beq
+L_1=\sqrt{\bar{r}_i^2+\bar{r}_f^2-2\bar{r}_i\bar{r}_f\cos{(\te_f-\te_i)}}.
+\eeq
+
+
+The second methods consist in calculate the distance resulting of the summation
+of the straight line segments joining the points $P_1$ and $P_G$ ($L_{1G}$) and $P_G$
+and $P_2$ ($L_{2G}$). Where the Point $P_G$ correspond to the barycenter of the image,
+defined by
+\beq
+P_G=(x_{1G},x_{2G})=\left(\frac{1}{N}\sum_{k=1}^N\bar{r}_k\cos{\te_k},\frac{1}{N
+} \sum_ { k=1 } ^N\bar { r } _k\sin{\te_k} \right)
+\eeq
+where $N$ corresponds to the number the point in which the range $[\te_i,\te_f]$
+is divided. Note that, the barycenter not necessarily lies inside of the image,
+could be lie outside.
+
+Whit the expression above, we have
+\bea
+L_{1G}&=&\sqrt{x_{1G}^2+x_{2G}^2+\bar{r}^2_i-2\bar{r}_i\left[x_{1G}\cos{\te_i}
++x_{2G}\sin{\te_i} \right]}\\
+L_{2G}&=&\sqrt{x_{1G}^2+x_{2G}^2+\bar{r}^2_f-2\bar{r}_f\left[x_{1G}\cos{\te_f}
++x_{2G}\sin{\te_f} \right]}\\
+L_2&=&L_{1G}+L_{2G}
+\eea
+
+
+And the third method, corresponds to a more accurate way to measure the
+length (corresponding to the length of an arc of circumference  passing
+through the points $P_1$ and $P_2$), see dashed line at the Left Panel of the
+Fig.~\ref{measure_arcs}, and is given by
+
+\beq
+L_3=\int_{\te_i}^{\te_f}\bar{r}(\te)d\te.
+\eeq
+
+As a particular case, for the elliptical source contours, we can obtain
+an analytic expression for the length of the arcs. For an angle $\te$, we
+can define
+\beq
+\mathcal{L}(\te)=\re\te+\mathcal{L}_s(\te)+\mathcal{L}_{\psi}(\te),
+\eeq
+where
+\bea
+\mathcal{L}_s&=&\frac{1}{\kt}\sqrt{\dfrac{1-\eta_s}{2\eta_s}}\left\{%
+x_0\tan^{-1}{\left[\dfrac{\sqrt{2\eta_s}\sin{\te}}{\sqrt{1-\eta_s}}\right]}-%
+y_0\tanh^{-1}{\left[\dfrac{\sqrt{2\eta_s}\cos{\te}}{\sqrt{1+\eta_s}}\right]}
+\right\}\label{L_s}\\
+\mathcal{L}_{\psi}&=&\frac{1}{\kt}\int\left\{f_{1}(\theta) +%
+\frac{\eta_s\sin(2\theta)}{S}\left(\frac{1}{\re}\dfrac{\partial%
+f_0(\theta)}{\partial \theta}\right)\right\} \label{L_psi}.
+\eea
+
+
+
+Then, using the expressions above we have
+$L_3=\mathcal{L}(\te_f)-\mathcal{L}(\te_i)$.
+
+
+Note, that for a circular source, $\mathcal{L}_s$ becomes
+
+\beq
+\mathcal{L}_s=\frac{x_0}{\kt}\sin{\te}-\frac{y_0}{\kt}\cos{\te}.
+\eeq
+
+\subsection{Measurement of the Width}
+
+The fist method considerer the width of the arcs, as the measurement of the width 
+at the angle $\te_m$. This angle defines the orientation of the mediatrix
+of the segment $P_1P_2$, and is given by
+\beq
+\te_m=\tan^{-1}{\left[\dfrac{\bar{r}_i\sin{\te_i}+\bar{r}_f\sin{\te_f}}{\bar{r}_i\cos{\te_i}+\bar{r}_f\cos{\te_f}}\right]},
+\eeq
+and the width of the arc is given by the Eq.~(\ref{w_arc}) evaluated at $\te_m$, i.e, $W_q \equiv W(\te_m)$.
+
+The second method consists in to find the area of the image. This area is given by
+\bea
+\mathcal{A}&=&\int_{\te_i}^{\te_f}\int_{r_{-}(\te)}^{r_{+}(\te)}rdrd\te \nonumber\\
+           &=&\int_{\te_i}^{\te_f}W(\te)\bar{r}(\te)d\te.
+\eea
+where, $\bar{r}(\te)$ and $W(\te)$ are given by the Eqs. (\ref{r_mean}) and (\ref{w_arc}) respectively.
+
+Here, we suppose that the area of an arc is the area of a distorted ellipse. Whit this supposition the
+width of an arcs is given by
+\beq
+W_k=\dfrac{4\mathcal{A}}{\pi L_k}
+\eeq
+ where $L_k$ corresponds to the measurement of the length of the arcs $k=1,2$ or $3$. 
+
 
 \section{Inverse Modelling}
 
 `` The perturbative method has the advantage of offering a linear non-parametric
 approach for gravitational lensing''. The key point is the reconstruction of the
-fields $f_0(\te)$ and $f_1(\te)$.  
+fields $f_0(\te)$ and $f_1(\te)$.
 
 
 For a circular source contour, a radial line of direction $\te$ intersects
 the contours at two point, $r_i=\re+x_i$ and $r_o=\re+x_o$ (the inner part and
-the outer part). Now, taking the Alard's Eq. 12 
+the outer part). Now, taking the Alard's Eq. 12
 
 \beq
-x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\; 
+x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;
 \eeq
 
 And separate the two solutions for the inner and outer edge of the arc:
@@ -501,11 +657,11 @@ And separate the two solutions for the inner and outer edge of the arc:
 x_i = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) - \sqrt{R_0^2 -%
 \left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;  \\
 x_o = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) + \sqrt{R_0^2 - %
-\left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;  
+\left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;
 \eea
 
 
-Take 
+Take
 
 \beq
 x_o + x_i = {2 \over \kappa_2} \fbar -2\re
@@ -520,7 +676,7 @@ And solve for $\fbar$:
 
 which is exactly Alard eq. 29a, with his additional constant ($C=-\kt\re$).
 
-Now take 
+Now take
 
 \beq
 x_o - x_i = {1 \over \kappa_2} \left(2 \sqrt{R_0^2 - {\left( {1 \over \re} \dfdt \right)}^2 }\right)
@@ -557,7 +713,7 @@ Evaluating at the Einstein radius $r=r_{\mathrm{E}}$, we have
 \frac{\partial \phi}{\partial \theta}&=&\eps \frac{\partial f_0}{\partial \theta}
 \eea
 
-On the other hand, evaluating Eqs. 19 in Alard at $r=\re$, and using Eq. 16 in Alard $\phi_0^\prime=1+2C_2(r-r_{\mathrm{E}}+...$ 
+On the other hand, evaluating Eqs. 19 in Alard at $r=\re$, and using Eq. 16 in Alard $\phi_0^\prime=1+2C_2(r-r_{\mathrm{E}}+...$
 
 \bea
 \frac{\prtl \phi}{\prtl r}&=& \phi_0^\prime -%
@@ -596,7 +752,7 @@ we have that for e.g. the NFW profile with ellipticity (as in Eq. 28 of Alard)
 q&=&u_0r\sqrt{1-\eta\cos(\theta)}\approx u_0 r \left[1-\frac{\eta}{2}\cos(2\theta)\right]
 \eea
 
-So in this case we have (notice $\eta/2$ plays the role of $\eps$ here, so only expect expansion to work 
+So in this case we have (notice $\eta/2$ plays the role of $\eps$ here, so only expect expansion to work
 for small ellipticities)
 
 \bea
@@ -607,8 +763,8 @@ g(\te)&=&\frac{\eta}{2}\cos(2\theta) \\
 so that $dr_c=\eta\cos(\theta)$. Not sure if this is true for any elliptical potential or if it's specific to NFW.
 In any case the deviation is maximum for $\te=0,\pi$
 
-If the Taylor expansion converges, truncating it at some order has a maximum error given by the next order 
-term. In this case the maximum error due to the non-linearity of the gradient of the potential is 
+If the Taylor expansion converges, truncating it at some order has a maximum error given by the next order
+term. In this case the maximum error due to the non-linearity of the gradient of the potential is
 
 \beq
 D=3C_3\max[dr_c^2]=3C_3\eta^2
@@ -626,7 +782,7 @@ we have
 C_3=\frac{d^3\phi}{dr^3}|_{r=1}=-\frac{(\alpha-1)}{6}+\frac{\beta}{2}
 \eeq
 
-and $D^2$ follows. 
+and $D^2$ follows.
 
 
 
