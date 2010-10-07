@@ -2,7 +2,7 @@
  * Code to compute arc points for SIS central potential and perturber, with an elliptical source
 */
 
-/** @package perturbedSIS_with_ellipticalSource 
+/** @package perturbedSIE_with_ellipticalSource 
 *  Code to compute quantities related to the Perturbative Method discussed in  http://adsabs.harvard.edu/abs/2007MNRAS.382L..58A and further works 
 *
 *  Detailed description FIXME
@@ -21,12 +21,12 @@
 #include "../perturbative_method.h"
 #include "../sis_sub_model.h" 
 
-//To compile: g++ -Wall perturbedSIS_with_ellipticalSource.cpp
+//To compile: g++ -Wall perturbedSIE_with_ellipticalSource.cpp
 
 
 //Quantities related to the potential
 /*********************************************************************************************************************/
-//!  Function defined in http://arxiv.org/abs/0804.4277, for SIS lens model
+//!  Function defined in http://arxiv.org/abs/0804.4277, for SIE lens model
 //!
 //!  \f$ f_{n}(\theta) \equiv \frac{1}{n!} \left[\frac{\partial\psi(r,\theta)}{\partial r}\right]_{r=1} \f$
 /*!
