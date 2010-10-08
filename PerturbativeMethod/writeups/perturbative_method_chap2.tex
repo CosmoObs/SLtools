@@ -499,10 +499,10 @@ Following the Pedro's ideas, showed in his Master Degree Thesis, we will give
 the expression for the measurements of the Length, Width and area of the
 arc-images. Basically, Pedro shows three methods for measure the length of
 the arcs (called $L_1$, $L_2$ and $L_3$)  and two methods for measure the width
-of the arcs (called $W$ and $W_q$).  The first method is not properly, for this
-in this report we will adapt the second and third methods in the framework of the 
-Perturbative Method and also to propose a method similar to Clecio's Method (I forget 
-the name) to measure the length.
+of the arcs (called $W$ and $W_q$).  The first method is not properly and will
+n,ot be consider in this report. We will adapt the second and third
+methods in the framework of the  Perturbative Method and also to propose a
+method similar to Clecio's Method (I forget the name) to measure the length.
 
 
 In the Perturbative Method, the inner and outer radial vector of an arc
@@ -555,7 +555,7 @@ This method is deprecated in this report.
 The second methods consist in calculate the distance resulting of the summation
 of the straight line segments joining the points $P_1$ and $P_G$ ($L_{1G}$) and $P_G$
 and $P_2$ ($L_{2G}$). Where the Point $P_G$ correspond to the barycenter of the image,
-defined by radial vector at the angle $\te_m=(\te_i+\te_f)/2$.
+defined by radial vector at the angle $\te_G=(\te_i+\te_f)/2$.
 
 \beq
 P_G=(x_{1G},x_{2G})=(\bar{r}(\te_G)\cos{\te_G}+\bar{r}(\te_G)\sin{\te_G})
@@ -569,8 +569,6 @@ L_{2G}&=&\sqrt{x_{1G}^2+x_{2G}^2+\bar{r}^2_f-2\bar{r}_f\left[x_{1G}\cos{\te_f}
 +x_{2G}\sin{\te_f} \right]}\\
 L_2&=&L_{1G}+L_{2G}
 \eea
-
-
 
 
 Our proposal to measure the length, maybe corresponds to a more accurate 
@@ -617,7 +615,7 @@ The fist method considerer the width of the arcs, as the measurement of the widt
 at the angle $\te_m$. This angle defines the orientation of the mediatrix
 of the segment $P_1P_2$, and is given by
 \beq
-\te_m=\tan^{-1}{\left[\dfrac{\bar{r}_i\sin{\te_i}+\bar{r}_f\sin{\te_f}}{\bar{r}_i\cos{\te_i}+\bar{r}_f\cos{\te_f}}\right]},
+\te_m= \dfrac{\te_i+\te_f}{2},
 \eeq
 and the width of the arc is given by the Eq.~(\ref{w_arc}) evaluated at $\te_m$, i.e, $W_q \equiv W(\te_m)$.
 
@@ -633,7 +631,8 @@ width of an arcs is given by
 \beq
 W_k=\dfrac{4\mathcal{A}}{\pi L_k}
 \eeq
- where $L_k$ corresponds to the measurement of the length of the arcs $k=1,2$ or $3$. 
+where $L_k$ corresponds to the measurement of the length of the arcs $k=2,3$ or
+$4$. 
 
 
 \section{Inverse Modelling}
