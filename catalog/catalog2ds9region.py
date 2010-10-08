@@ -3,7 +3,7 @@
 
 """Module to create SAO DS9 region files from DES Data Challenge FITS catalogs"""
 
-#@package catalog2ds9region
+##@package catalog2ds9region
 #
 #
 # Executable package: YES
