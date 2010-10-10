@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
-"""@file
-
-gauss_convolution module
-
-"""
+"""gauss_convolution convolves images witha a gaussian kernel"""
 
 
 """@package gauss_convolution

@@ -143,6 +143,8 @@ then
     echo "Building $opt1 v$version..."
     $1 $folder
 
+    find $folder -name "*.pyc" -delete
+
     if [ "$mode" != "--no-doc" ]; then
 	# compile documentation
 	echo "Generating Doxygen documentation..."
