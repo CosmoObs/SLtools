@@ -60,7 +60,7 @@ After all is set up, just type:
 $ ./install.sh
 
 You will be propted to especify a instalation directory and then to add some lines to your login file (.login, .bashrc or equivalent).
-Now if you can import sltools in the Pyton console:
+Now you can import sltools in the Pyton console:
 
 $ import sltools
 
