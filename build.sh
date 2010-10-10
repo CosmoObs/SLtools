@@ -117,7 +117,7 @@ sltools()
         cp -r string $folder
         cp -r image $folder
         cp -r coordinate $folder
-        cp -r bin $folder
+        cp -r -p bin $folder
 	cp -r etc/install.sh $folder
 	cp -r etc/INSTALL $folder
 	cp -r etc/README $folder

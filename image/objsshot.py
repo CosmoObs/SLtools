@@ -30,8 +30,10 @@ import string;
 import numpy as np;
 import pyfits;
 
+import sltools;
 from sltools.io import *;
-
+from sltools.image import *;
+from sltools.string import *;
 
 #---------------------
 def _valid_line(wort):
@@ -76,11 +78,60 @@ def _check_config(cfg_file):
 # ---
 
 # ===========================================================================
-def run(fits_image, params=[], args={}, header=False, increase=0, custom=''):
+def _file_2_imgs(fits_image, header, params, args, preset):
+    """ SExtract the Image and read the outputs to array"""
+    
+    # Now we set some Sextractor arguments for this script purposes..
+    #
+    rootname = string.split( string.replace( fits_image,".fits","" ), sep="/" )[-1];
+
+    objimgname = rootname+'_obj.fits';
+    segimgname = rootname+'_seg.fits';
+    catalog = rootname+'_cat.fit';
+
+    # And update given arguments (via 'args.dic') with necessary parameters..
+    #
+    args.update( {'checkimage_type' : 'OBJECTS,SEGMENTATION', 'checkimage_name' : objimgname+','+segimgname, 'catalog_type' : 'FITS_1.0', 'catalog_name' : catalog} );
+
+    # Run sextractor module; output catalogues to "catalog" files..
+    #
+    out = segment.run_sex(fits_image, params, args, custom=preset);
+
+    # Check if Sextractor ran OK. It is suppose to output an dictionary with fits filenames if all OK,
+    # otherwise, if not, return False:
+    #
+    if (out == False):
+        print >> sys.stderr, "Error: Sextractor raised and error coded during segmentation. Finishing run."
+        return (False);
+
+    # Read fresh images just created by sex run..
+    #
+    objimg = pyfits.getdata( objimgname );
+    segimg = pyfits.getdata( segimgname );
+
+    # ASCII version: CATALOG_TYPE = ASCII_HEAD
+    #    cat = np.loadtxt( catalog, comments="#" );
+    # FITS version: CATALOG_TYPE = FITS_1.0
+    cat = pyfits.open(catalog)[1].data;
+
+    # If 'header' argument not False/None, read it..
+    #
+    if (header):
+        header = pyfits.getheader( fits_image );
+    else:
+        header = None;
+
+
+    return (objimg, segimg, header, cat);
+
+# ---
+
+# ===========================================================================
+def readout_objs(fits_image, params=[], args={}, header=False, increase=0, preset=''):
     """
     Function to run SExtractor for objects segmentation and poststamp creation
 
-    objsshot.run( image.fits [,...] )
+    readout_objs( image.fits [,...] )
 
     Function receives a FITS image, and possibly a list of SEx output params,
     a dictionary with SEx command-line(/config) arguments. It can be chosen to
@@ -96,6 +147,7 @@ def run(fits_image, params=[], args={}, header=False, increase=0, custom=''):
     custom : 'HST'
              'DC4'
              'DC5'
+             'CFHT'
     Notice that this custom choices do not disable other parameters.
 
     Input:
@@ -104,7 +156,7 @@ def run(fits_image, params=[], args={}, header=False, increase=0, custom=''):
      - config     : dictionary with [default] section contents.
      - header     : Whether or not to use (and update) header info.
      - increase   : multiplicative factor for poststamp sizing
-     - custom     : HST, DC4, DC5
+     - custom     : HST, DC4, DC5, CFHT
 
     Output:
      - (dic) : dictionary structure with the keys 'objIDs', 'images' and 'headers'.
@@ -112,67 +164,97 @@ def run(fits_image, params=[], args={}, header=False, increase=0, custom=''):
 
     """
 
-
-    # Now we set some Sextractor arguments for this script purposes..
-    #
-    rootname = string.split( string.replace( fits_image,".fits","" ), sep="/" )[-1];
-
-    objname = rootname+'_obj.fits';
-    segname = rootname+'_seg.fits';
-    catalog = rootname+'_cat.fit';
-
-    # And update given arguments (via 'args.dic') with necessary parameters..
-    #
-    args.update( {'checkimage_type' : 'OBJECTS,SEGMENTATION', 'checkimage_name' : objname+','+segname, 'catalog_type' : 'FITS_1.0', 'catalog_name' : catalog} );
-
-
-    # Run sextractor module; output catalogues to "catalog" files..
-    #
-    out = segment.run_sex(fits_image, params, args, custom);
-
-    # Check if Sextractor ran OK. It is suppose to output an dictionary with fits filenames if all OK,
-    # otherwise, if not, return False:
-    #
-    if (out == False):
-        print >> sys.stderr, "Error: Sextractor raised and error coded during segmentation. Finishing run."
-        return (False);
-
-
-    # Read fresh images just created by sex run..
-    #
-    obj = pyfits.getdata( objname );
-    seg = pyfits.getdata( segname );
-
-
-    # If 'header' argument not False/None, read it..
-    #
-    if (header):
-        header = pyfits.getheader( fits_image );
-    else:
-        header = None;
-
+    params.append('NUMBER');
+    
+    # Deal with fits files and SExtracting the image..
+    objimg, segimg, header, cat = _file_2_imgs(fits_image, header, params, args, preset);
 
     # Open "segmentation" output catalog from SE. Notice that object IDs are supposed to lie on 1st column..
-    #
-# ASCII version: CATALOG_TYPE = ASCII_HEAD
-#    cat = np.loadtxt( catalog, comments="#" );
-#    try:
-#        objIDs = list( cat[:,0].astype(np.int32) );
-#    except:
-#        objIDs = list( cat.astype(np.int32) );
-#
-# FITS version: CATALOG_TYPE = FITS_1.0
-    cat = pyfits.open(catalog)[1].data;
+    # -
+    # ASCII:
+    #    try:
+    #        objIDs = list( cat[:,0].astype(np.int32) );
+    #    except:
+    #        objIDs = list( cat.astype(np.int32) );
+    # -
+    # FITS:
     objIDs = cat.field('NUMBER');
+
+    ## objects_IDfy return a list of arrays; result from the objIDs objects located in seg image merged with obj image.
+    # So, each object in objIDs is returned (also inside a/the list) as array with their corresponding pixels..
+    #
+    objs, hdrs = imcp.sextamp( segimg, objimg, header, increase=increase, relative_increase=True, objIDs=objIDs );
+
+
+    return ({'IDs' : objIDs, 'images' : objs, 'headers' : hdrs});
+
+#----------------------------------------------------------------------------
+def run(fits_image, params=[], args={}, header=False, increase=0, custom=''):
+    return ( readout_objs( cwd+fits_image, params, config['default'], header=use_header, increase=float(increase), preset=custom ));
+
+# ---
+
+# ===========================================================================
+def pickout_obj(fits_image, xo=0, yo=0, params=[], args={}, header=True, increase=0, preset=''):
+    """
+    Function to run SExtractor for objects segmentation and poststamp creation
+
+    pickout_obj( image.fits [,...] )
+
+    Function receives a FITS image, and possibly a list of SEx output params,
+    a dictionary with SEx command-line(/config) arguments. It can be chosen to
+    update header (sky coordinates info).
+
+    'increase' is used for dimensioning the output poststamp of identified
+    objects. It is a multiplicative factor for resizing poststamp relative to
+    object dimensions. (Notice that 0 < increase < 1 is possible and will
+    return a poststamp with part of the object)
+
+    Custom SExtractor configuration parameters can be used, chosen to be *good*
+    extraction parameters for different telescopes.
+    custom : 'HST'
+             'DC4'
+             'DC5'
+             'CFHT'
+    Notice that this custom choices do not disable other parameters.
+
+    Input:
+     - fits_image : FITs image file containing objects to be identified
+     - xo         : X object position
+     - yo         : Y object position
+     - params     : list of parameters to output on sextractor catalogues
+     - config     : dictionary with [default] section contents
+     - header     : Whether or not to use (and update) header info
+     - increase   : multiplicative factor for poststamp sizing
+     - custom     : HST, DC4, DC5, CFHT
+
+    Output:
+     - (dic) : dictionary structure with the keys 'objIDs', 'images' and 'headers'.
+               Each of them is a list with corresponding information.
+
+    """
+
+    # Deal with fits files and SExtracting the image..
+    objimg, segimg, header, cat = _file_2_imgs(fits_image, header, params, args, preset);
+
+    # Is there an identified object on given (xo,yo) point?..
+    objid = segimg[yo,xo];
+    if ( objid != 0 ):
+        pass;
+    else:
+        print >> sys.stdout, "Oops. No objects where identified on given (line=%s,column=%s) position." % (yo,xo);
+        return (None);
 
 
     ## objects_IDfy return a list of arrays; result from the objIDs objects located in seg image merged with obj image.
     # So, each object in objIDs is returned (also inside a/the list) as array with their corresponding pixels..
     #
-    objs, hdrs = imcp.sextamp( seg, obj, header, increase=increase, relative_increase=True, objIDs=objIDs );
+    objs, hdrs = imcp.sextamp( segimg, objimg, header, increase=increase, relative_increase=True, objIDs=[objid] );
+    #objout = objs[0];
+    #hdrout = hdrs[0];
 
 
-    return ({'IDs' : objIDs, 'images' : objs, 'headers' : hdrs});
+    return ({'IDs' : [objid], 'images' : objs, 'headers' : hdrs});
 
 # ---
 
@@ -180,7 +262,6 @@ def run(fits_image, params=[], args={}, header=False, increase=0, custom=''):
 # =======================================================================================================
 
 if __name__ == "__main__" :
-
 
     # Checking dependencies..
     stat = check_dependencies( { 'binaries':['sex'] } );
@@ -192,27 +273,33 @@ if __name__ == "__main__" :
     usage="Usage:  %prog [options] <objects_image.fits>";
     parser = OptionParser(usage=usage);
 
-    parser.add_option('-p', '--params',
+    parser.add_option('-p',
                       dest='params', default='default.param',
-                      help="File with parameters to output [default.param]");
-    parser.add_option('--config',
+                      help="File with parameters to output (SE's default.param)");
+    parser.add_option('-c',
                       dest='config', default=None,
                       help="Config file for (S)extraction");
-    parser.add_option('--header', action='store_true',
-                      dest='use_header', default=False,
-                      help="Use image header for WCS adjustment(?)");
-    parser.add_option('--increase',
-                      dest='incr', default=0,
-                      help="Multiplicative factor (relative to image size) for image border");
-    parser.add_option('--instrument',
-                      dest='telesc', default='',
-                      help="DC$/DC5/HST");
-    parser.add_option('--outdir',
-                      dest='dir_name', default='out_stamps',
-                      help="Directory name to put output images");
-    parser.add_option('--outname',
+    parser.add_option('-o',
                       dest='file_name', default='pstamp_',
                       help="Name component for output images, before '#id.fits'");
+    parser.add_option('--increase',
+                      dest='incr', default=0,
+                      help="Multiplicative factor (relative to object size) for image border");
+    parser.add_option('--no-header', action='store_false',
+                      dest='use_header', default=True,
+                      help="Do not use existing image header.");
+    parser.add_option('--xo',
+                      dest='xo', default=0,
+                      help="Postion (X) to search for an identified object");
+    parser.add_option('--yo',
+                      dest='yo', default=0,
+                      help="Postion (Y) to search for an identified object");
+    parser.add_option('--preset',
+                      dest='preset', default='',
+                      help="DC4/DC5/HST/CFHT");
+    parser.add_option('--outdir',
+                      dest='dir_name', default='out_objsshot',
+                      help="Directory name to put output images");
 
     (opts,args) = parser.parse_args();
 
@@ -224,20 +311,11 @@ if __name__ == "__main__" :
     paramsfile = opts.params;
     use_header = opts.use_header;
     increase   = opts.incr;
+    xc = opts.xo;
+    yc = opts.yo;
     dir_name   = opts.dir_name;
     out_name   = opts.file_name;
-    instrument = opts.telesc;
-
-
-    # Check if params file was given..
-    #
-    if ( paramsfile == None ):
-        parser.error("No params file was given. Try option '--help' for usage and help messages.\n");
-
-    # Read parameters from given file..
-    #
-    params = open( paramsfile ).readlines();
-    params = regexp.line_filter( params, comments="#" );
+    instrument = opts.preset;
 
 
     # Check if config file and then ewad it..
@@ -266,6 +344,15 @@ if __name__ == "__main__" :
         config = {'default' : {}};
 
 
+    # Read parameters from given file..
+    #
+    try:
+        params = open( paramsfile ).readlines();
+        params = regexp.line_filter( params, comments="#" );
+    except:
+        print >> sys.stderr, "Error: No SE's parameters file (.param). Use -p option to pass the filename.";
+        sys.exit(1);
+
     # ===================================================================================
 
 
@@ -277,13 +364,17 @@ if __name__ == "__main__" :
     except OSError:
         pass;
 
+    owd = os.getcwd()+"/";
     os.chdir( dir_name );
 
 
     # Run ObjSShot main function. It passes fits filename and read params and config settings.
     # The output is a list of image arrays (numpy) with identified objects on them.
     #
-    outdic = run( "../"+fits_image, params, config['default'], header=use_header, increase=float(increase), custom=instrument );
+    if ( xc != 0 and yc != 0 ):
+        outdic = pickout_obj( owd+fits_image, xo=xc, yo=yc, params=params, args=config['default'], header=use_header, increase=float(increase), preset=instrument );
+    else:
+        outdic = readout_objs( owd+fits_image, params, config['default'], header=use_header, increase=float(increase), preset=instrument );
 
     objIDs = outdic['IDs'];
     objs_list = outdic['images'];
@@ -294,11 +385,14 @@ if __name__ == "__main__" :
     #
     for i in xrange( len(objIDs) ):
 
-        outname = out_name+"%03d.fits" % (i);
+        print >> sys.stdout, "Writing object (id:) %s image..." % (objIDs[i]);
+        outname = out_name+"%03d.fits" % (i+1);
         os.system( 'rm %s &> /dev/null' % (outname) );
         pyfits.writeto( outname, objs_list[i], hdrs_list[i] );
 
 
+    print >> sys.stdout, "Done.";
+    os.chdir( owd );
     sys.exit(0);
 
 # \endcond
