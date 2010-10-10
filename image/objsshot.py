@@ -190,7 +190,7 @@ def readout_objs(fits_image, params=[], args={}, header=False, increase=0, prese
 
 #----------------------------------------------------------------------------
 def run(fits_image, params=[], args={}, header=False, increase=0, custom=''):
-    return ( readout_objs( cwd+fits_image, params, config['default'], header=use_header, increase=float(increase), preset=custom ));
+    return ( readout_objs( fits_image, params, args, header, increase, preset=custom ));
 
 # ---
 
