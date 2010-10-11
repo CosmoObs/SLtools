@@ -1,4 +1,4 @@
-# Sept 27, 2010
+# Start:   Sept 27, 2010
 # Current: Oct 11, 2010
 # MSSG
 
@@ -59,15 +59,16 @@
 -plotarcsandcaustics.gp* - Gnuplot macro to plot up the various created files
 
 
---------------------------- To use:  
+--------------------------- To use the code:  
 
 
 -------------- perturbed.PE_SIS_with_ellipticalSource.cpp
 
 ------- Compile with:  g++ perturbed.PE_SIS_with_ellipticalSource.cpp -o arcmaker
 
+--- For multiple files, see  vary_arc_params.sh* in shellscripts subdir
 
---- Then to make caustic curves of Alard 2008, Fig 8, use these params
+--- Specifically, to make caustic curves of Alard 2008, Fig 8, use these params:
 
  First is num of pts, next 5 are source params: x0   y0  R0 (size)  eta_s (ellip)   theta_s (ang. position)
  Next 3 are perturber properties:               mp   rp  theta_p
@@ -83,35 +84,17 @@
   ./arcmaker 5000    0 0 0 0 0    0.03 1.3 .31415 0.1
   mv tang_caust.dat tang_caustic.EllipCentralLens.PerturberWithTheta_pEqualsPiOverTen.dat
 
-
-Then run the correct line of  plotarcsandcaustics.gp*
-
 --- To make arcs of Fig 9 do:
-
 
 ./arcmaker 5000 0.15 0 0.025 0 0 0.03 1.3 0 0.1
 	
 mv arcs_sis.dat arcs.EllipCentralLens.PerturberWithTheta_pEqualsZero.SourceWith.Xeq0.15.Yeq0.R_Seq0.025.SourceEllipEqZero.dat
 
---- See also  vary_arc_params.sh* in shellscripts subdir
-
+Then comment in the correct line of  plotarcsandcaustics.gp* and run it
 
 ------------------ makearcs_pertmethod.cpp 
-
-
 
 To get this to work and show the arcs, compile with g++, run
 executable and dump values to a text output file, then plot these
 (without connecting lines is best) in either e.g. Grace or Gnuplot.
-
----- perturbedSIS_with_ellipticalSource.cpp* -- Doxygenated -- this
-     incorporates an off-axis perturber, and takes 9 arguments in the
-     command line corresponding to source and perturber properties
-     (start: 9/2010)
-
-This is driven by vary_arc_params.sh* , a shellscript which will
-output a bunch (20 by default) of ascii files with differing input
-params, then you can load these one by one into gnuplot, with the
-script plotarcs.gp (e.g. just run from command line: gnuplot
-plotarcs.gp)
 

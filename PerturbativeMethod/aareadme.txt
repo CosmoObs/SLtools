@@ -27,23 +27,25 @@ To use any of the below, go to examples subdir, and look at readme there.
 
 --------------- Models:
 
----- sis_sub_model.h* -- Doxygenated -- Needed functions for SIS potential
+---- sis_sub_model.h* -- Doxygenated -- This gives needed functions for SIS potential
 
 ---- pnfw_model.cpp* --  Doxygenated  --values of shear, conv, and needed deriv values
      in the PNFW model
 
 ---- pnfw_model_old.h* -- deprecated version of above
 
----- nfw_circular_model.h*
+---- nfw_circular_model.h* - Doxygenated  --values of shear, conv, and needed deriv values
+     in the axisymmetric NFW model
 
----- external_shear_model.h*
+---- external_shear_model.h* - Doxygenated  --values of shear, conv, and needed deriv values
+     in an externally applied shear model 
 
 
 
 
 ------------- Utilities:
 
----- generate_arcs.h*
+---- generate_arcs.h* - Doxygenated  -- writes out the values of an arc into an external file
 
 ---- theta_find.h* -- unDoxygenated yet -- code to find the extrema of
      arcs by checking for sign changes of the radicand in the x
