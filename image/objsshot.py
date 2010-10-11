@@ -159,7 +159,7 @@ def readout_objs(fits_image, params=[], args={}, header=False, increase=0, prese
      - custom     : HST, DC4, DC5, CFHT
 
     Output:
-     - (dic) : dictionary structure with the keys 'objIDs', 'images' and 'headers'.
+     - (dic) : dictionary structure with the keys 'IDs', 'images' and 'headers'.
                Each of them is a list with corresponding information.
 
     """
