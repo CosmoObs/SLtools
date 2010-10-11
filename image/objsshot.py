@@ -32,7 +32,7 @@ import pyfits;
 
 import sltools;
 from sltools.io import *;
-from sltools.image import *;
+from sltools.image import segment,imcp;
 from sltools.string import *;
 
 #---------------------
@@ -131,7 +131,7 @@ def readout_objs(fits_image, params=[], args={}, header=False, increase=0, prese
     """
     Function to run SExtractor for objects segmentation and poststamp creation
 
-    readout_objs( image.fits [,...] )
+    dic = readout_objs( image.fits [,...] )
 
     Function receives a FITS image, and possibly a list of SEx output params,
     a dictionary with SEx command-line(/config) arguments. It can be chosen to
@@ -199,7 +199,7 @@ def pickout_obj(fits_image, xo=0, yo=0, params=[], args={}, header=True, increas
     """
     Function to run SExtractor for objects segmentation and poststamp creation
 
-    pickout_obj( image.fits [,...] )
+    dic = pickout_obj( image.fits [,...] )
 
     Function receives a FITS image, and possibly a list of SEx output params,
     a dictionary with SEx command-line(/config) arguments. It can be chosen to
@@ -242,7 +242,7 @@ def pickout_obj(fits_image, xo=0, yo=0, params=[], args={}, header=True, increas
     if ( objid != 0 ):
         pass;
     else:
-        print >> sys.stdout, "Oops. No objects where identified on given (line=%s,column=%s) position." % (yo,xo);
+        print >> sys.stdout, "No objects were identified on given (line=%s,column=%s) position." % (yo,xo);
         return (None);
 
 
@@ -376,6 +376,10 @@ if __name__ == "__main__" :
     else:
         outdic = readout_objs( owd+fits_image, params, config['default'], header=use_header, increase=float(increase), preset=instrument );
 
+    if ( outdic == None ):
+        print >> sys.stdout,"Finished.";
+        sys.exit(0);
+        
     objIDs = outdic['IDs'];
     objs_list = outdic['images'];
     hdrs_list = outdic['headers'];
@@ -386,7 +390,7 @@ if __name__ == "__main__" :
     for i in xrange( len(objIDs) ):
 
         print >> sys.stdout, "Writing object (id:) %s image..." % (objIDs[i]);
-        outname = out_name+"%03d.fits" % (i+1);
+        outname = out_name+"%04d.fits" % (objIDs[i]);
         os.system( 'rm %s &> /dev/null' % (outname) );
         pyfits.writeto( outname, objs_list[i], hdrs_list[i] );
 
