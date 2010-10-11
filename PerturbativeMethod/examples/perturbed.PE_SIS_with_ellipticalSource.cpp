@@ -2,16 +2,15 @@
  * Code to compute arc points for SIS central potential and perturber, with an elliptical source
 */
 
-/** @package perturbedSIE_with_ellipticalSource 
+/** @package perturbed.PE_SIS_with_ellipticalSource 
 *  Code to compute quantities related to the Perturbative Method discussed in  http://adsabs.harvard.edu/abs/2007MNRAS.382L..58A and further works 
 *
 *  Detailed description FIXME
 *
 */
 
-// Orig by G. Caminha
-// Sept 2010
-// Modifications and comments by MSSG
+// Start: Sept 2010
+// By: GBC, MSSG
 
 #include <cstdio>
 #include <cmath> 
@@ -21,7 +20,7 @@
 #include "../perturbative_method.h"
 #include "../sis_sub_model.h" 
 
-//To compile: g++ -Wall perturbedSIE_with_ellipticalSource.cpp
+//To compile: g++ -Wall perturbed.PE_SIS_with_ellipticalSource.cpp
 
 
 //Quantities related to the potential
