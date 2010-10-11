@@ -1,14 +1,14 @@
 # MSSG
 # Sept 2010
 
- set terminal postscript color
+# set terminal postscript color
 set pointsize 0.4
 
 ##### Alard 2008, Fig 8, Caustics:
 
- set out 'arcs.forAn.EllipCentralLens.and.OnePerturber.ps'
+# set out 'arcs.forAn.EllipCentralLens.and.OnePerturber.ps'
 
-plot 'arcs.EllipCentralLens.PerturberWithTheta_pEqualsZero.SourceWith.Xeq0.15.Yeq0.R_Seq0.025.SourceEllipEqZero.dat' u 1:2
+# plot 'arcs.EllipCentralLens.PerturberWithTheta_pEqualsZero.SourceWith.Xeq0.15.Yeq0.R_Seq0.025.SourceEllipEqZero.dat' u 1:2
 
 pause -1
 

@@ -1,6 +1,7 @@
 # Contents of sltools/PerturbativeMethod dir
-# Started by MSSG, Sept 8, 2010
+# Started: Sep 8, 2010
 # Current: Oct 11, 2010
+# Contributors: MSSG
 
 [For making Doxygen files in the html and latex subdirs, remember to
 first generate Doxyfile with doxygen -g in the dir, then run doxygen
@@ -17,12 +18,31 @@ http://twiki.on.br/bin/save/StrongLensing/PerturbativeArcContoursv01
 
 --------------------- Pert Method code in dir: .../repositories/sltools/PerturbativeMethod
 
------------------------- Modularized code
 
------ Based on our initial codes, we began modularizing pieces
-      as we expanded.  
+----------------------------------------- Dir Contains:
 
-To use any of the below, go to examples subdir, and look at readme there.
+----- Subdirs
+examples/
+mathematicaCode/
+shellscripts/
+writeups/
+
+----- Models
+-external_shear_model.h*
+-generate_arcs.h*
+-lens_model_old.h*
+-nfw_circular_model.h*
+-pnfw_model.h*
+-pnfw_model_old.h*
+-sis_sub_model.h*
+
+----- Utilities
+-perturbative_method.h*
+-theta_find.h*
+
+------------------------------------------ Code Purposes and function
+
+[To use any of the below, go to examples subdir, and look at readme there.]
 
 
 --------------- Models:
@@ -40,7 +60,8 @@ To use any of the below, go to examples subdir, and look at readme there.
 ---- external_shear_model.h* - Doxygenated  --values of shear, conv, and needed deriv values
      in an externally applied shear model 
 
-
+---- lens_models_old.h* -- Doxygenated, deprecated -- This takes out the f1,df0dt
+     functions so they can be accessed directly from any code here
 
 
 ------------- Utilities:
@@ -68,8 +89,7 @@ To use any of the below, go to examples subdir, and look at readme there.
  - Cartesian coords for source 
 
 
----- lens_models_old.h* -- Doxygenated, deprecated -- This takes out the f1,df0dt
-     functions so they can be accessed directly from any code here
+
 
 
 

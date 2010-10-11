@@ -1,3 +1,4 @@
+# Contents of sltools/PerturbativeMethod dir
 # Start:   Sept 27, 2010
 # Current: Oct 11, 2010
 # MSSG
@@ -6,7 +7,7 @@
             caustics, crit curves in the forward direction for now,
             from all the primary code in the main dir
 
-------------- Subdir Contains:
+------------------------------------------------------ Subdir Contains:
 
 -external_shear_teste.cpp*
 -makearcs_pertmethod.cpp*
@@ -22,7 +23,7 @@
 
 
 
-------------- Code Purposes:
+------------------------------------------------------- Code Purposes and function
 
 -- perturbed.PE_SIS_with_ellipticalSource.cpp - Deprecated, partly Doxygenated - To make
             arcs, caustics, crit curves for the following config:
@@ -59,21 +60,23 @@
 -plotarcsandcaustics.gp* - Gnuplot macro to plot up the various created files
 
 
---------------------------- To use the code:  
+------------------------------------------------------------ To use the code:  
 
 
 -------------- perturbed.PE_SIS_with_ellipticalSource.cpp
 
 ------- Compile with:  g++ perturbed.PE_SIS_with_ellipticalSource.cpp -o arcmaker
 
---- For multiple files, see  vary_arc_params.sh* in shellscripts subdir
+--- For multiple file output, see vary_arc_params.sh* in shellscripts
+    subdir
 
 --- Specifically, to make caustic curves of Alard 2008, Fig 8, use these params:
 
  First is num of pts, next 5 are source params: x0   y0  R0 (size)  eta_s (ellip)   theta_s (ang. position)
  Next 3 are perturber properties:               mp   rp  theta_p
- Last is central lens ellip:                    eta 
+ Last is central lens ellip:                    eta_central 
 
+---- Some examples:
 
    ./arcmaker 5000   0 0 0 0 0   0 0 0 0.1
    mv tang_caust.dat tang_caustic.EllipCentralLens.NoPerturber.dat
@@ -96,5 +99,6 @@ Then comment in the correct line of  plotarcsandcaustics.gp* and run it
 
 To get this to work and show the arcs, compile with g++, run
 executable and dump values to a text output file, then plot these
-(without connecting lines is best) in either e.g. Grace or Gnuplot.
+(without connecting lines is best) in either e.g. Grace or Gnuplot
+(see shellscripts subdir)
 
