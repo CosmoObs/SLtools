@@ -232,8 +232,8 @@ def pickout_obj(fits_image, xo=0, yo=0, params=[], args={}, header=True, increas
 
     Input:
      - fits_image : FITs image file containing objects to be identified
-     - xo         : X object position
-     - yo         : Y object position
+     - xo         : X object position in pixels
+     - yo         : Y object position in pixels
      - params     : list of parameters to output on sextractor catalogues
      - config     : dictionary with [default] section contents
      - header     : Whether or not to use (and update) header info
@@ -245,6 +245,8 @@ def pickout_obj(fits_image, xo=0, yo=0, params=[], args={}, header=True, increas
                Each of them is a list with corresponding information.
 
     """
+
+    params.append('NUMBER');
 
     # Deal with fits files and SExtracting the image..
     out = _file_2_imgs(fits_image, header, params, args, preset);
