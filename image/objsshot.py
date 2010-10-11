@@ -167,8 +167,15 @@ def readout_objs(fits_image, params=[], args={}, header=False, increase=0, prese
     params.append('NUMBER');
     
     # Deal with fits files and SExtracting the image..
-    objimg, segimg, header, cat = _file_2_imgs(fits_image, header, params, args, preset);
+    out = _file_2_imgs(fits_image, header, params, args, preset);
 
+    if not out:
+        print >> sys.stderr, "Error: An error occured while running SE and extracting FITS files.";
+        return (False);
+
+    objimg, segimg, header, cat = out[0], out[1], out[2], out[3];
+
+    
     # Open "segmentation" output catalog from SE. Notice that object IDs are supposed to lie on 1st column..
     # -
     # ASCII:
@@ -179,6 +186,11 @@ def readout_objs(fits_image, params=[], args={}, header=False, increase=0, prese
     # -
     # FITS:
     objIDs = cat.field('NUMBER');
+
+    if ( len(objIDs) == 0 ):
+        print >> sys.stdout, "No objects were identified on given image.";
+        return (None);
+
 
     ## objects_IDfy return a list of arrays; result from the objIDs objects located in seg image merged with obj image.
     # So, each object in objIDs is returned (also inside a/the list) as array with their corresponding pixels..
@@ -235,7 +247,14 @@ def pickout_obj(fits_image, xo=0, yo=0, params=[], args={}, header=True, increas
     """
 
     # Deal with fits files and SExtracting the image..
-    objimg, segimg, header, cat = _file_2_imgs(fits_image, header, params, args, preset);
+    out = _file_2_imgs(fits_image, header, params, args, preset);
+
+    if not out:
+        print >> sys.stderr, "Error: An error occured while running SE and extracting FITS files.";
+        return (False);
+
+    objimg, segimg, header, cat = out[0], out[1], out[2], out[3];
+
 
     # Is there an identified object on given (xo,yo) point?..
     objid = segimg[yo,xo];
@@ -376,10 +395,13 @@ if __name__ == "__main__" :
     else:
         outdic = readout_objs( owd+fits_image, params, config['default'], header=use_header, increase=float(increase), preset=instrument );
 
+    if ( outdic == False ):
+        print >> sys.stderr,"Finished.";
+        sys.exit(1);
     if ( outdic == None ):
         print >> sys.stdout,"Finished.";
         sys.exit(0);
-        
+
     objIDs = outdic['IDs'];
     objs_list = outdic['images'];
     hdrs_list = outdic['headers'];
