@@ -97,3 +97,13 @@ def circ_3pts(p1, p2, p3):
 	return R, x0, y0
 
 
+## length_arc_circ
+# given the properties of the object, this function decides if the object is an arc or not
+#
+#@param  L1 (greater distance between 2 points)
+#@param R (radius of the circunference)
+#@return length of the arc of cincunference that crosses the 2 furthest points of the arc plus a 3rd one (defined implicitly on R)
+def get_length_arc_circ(L1,R):
+	L3 = arccos(1 - (L1**2)/(2*(R**2)) )*R # this formula is directly shown with the "cosine law" (lei dos cossenos)
+	return L3
+
