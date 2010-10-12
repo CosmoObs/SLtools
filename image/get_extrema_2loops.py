@@ -36,8 +36,8 @@ def get_extrema_2loops( ximg, yimg, ref_position ):
 
 
 	# define the reference point coordinates
-	x_ref = ximg(ref_position) 
-	y_ref = yimg(ref_position) 
+	x_ref = ximg[ref_position] 
+	y_ref = yimg[ref_position] 
 
 	# find the furthest point from the reference point (1st extreme)
 	furthest_pt1 = 0
