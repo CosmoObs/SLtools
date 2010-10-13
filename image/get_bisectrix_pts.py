@@ -64,3 +64,46 @@ def get_bisectrix_pts( ximg, yimg, ref_position_1, ref_position_2 ):
 
 	return xlq, ylq
 
+
+# given 3 points on a plane, returns circunference radius and center
+# see http://en.wikipedia.org/wiki/Circumcircle
+def circ_3pts(p1, p2, p3):
+
+	x1, y1 = p1
+	x2, y2 = p2
+	x3, y3 = p3
+
+	# definitions
+	P1_P2 = ( (x1 - x2)**2 + (y1 - y2)**2 )**0.5
+	P2_P3 = ( (x2 - x3)**2 + (y2 - y3)**2 )**0.5
+	P3_P1 = ( (x3 - x1)**2 + (y3 - y1)**2 )**0.5
+	P1_P2_vec_P2_P3 = abs( (x1 - x2)*(y2 - y3) - (x2 - x3)*(y1 - y2) )
+	# ==================================================================
+	# radius
+
+	R = (P1_P2 * P2_P3 * P3_P1)/( 2*P1_P2_vec_P2_P3 )
+
+	# definitions
+	alpha = ( P2_P3**2 * ( ( (x1 - x2)* (x1 - x3) ) + ( (y1 - y2)* (y1 - y3) ) ) )/ (2*P1_P2_vec_P2_P3**2)
+	beta  = ( P3_P1**2 * ( ( (x2 - x1)* (x2 - x3) ) + ( (y2 - y1)* (y2 - y3) ) ) )/ (2*P1_P2_vec_P2_P3**2)
+	gamma = ( P1_P2**2 * ( ( (x3 - x1)* (x3 - x2) ) + ( (y3 - y1)* (y3 - y2) ) ) )/ (2*P1_P2_vec_P2_P3**2)
+	# ==================================================================
+	# center (x0, y0)
+
+	x0 = alpha*x1 + beta*x2 + gamma*x3
+	y0 = alpha*y1 + beta*y2 + gamma*y3
+
+
+	return R, x0, y0
+
+
+## length_arc_circ
+# given the properties of the object, this function decides if the object is an arc or not
+#
+#@param  L1 (greater distance between 2 points)
+#@param R (radius of the circunference)
+#@return length of the arc of cincunference that crosses the 2 furthest points of the arc plus a 3rd one (defined implicitly on R)
+def get_length_arc_circ(L1,R):
+	L3 = arccos(1 - (L1**2)/(2*(R**2)) )*R # this formula is directly shown with the "cosine law" (lei dos cossenos)
+	return L3
+
