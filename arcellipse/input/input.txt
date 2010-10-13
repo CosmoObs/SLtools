@@ -1,0 +1,7 @@
+# This is an example of input file for PaintArcs. It is called "input.txt", but
+# you can change that and set the new filename in AddArcs config file.
+#
+#image_name l_w_ratio  sersic_index  r_e (arcsec)  r_c (arcsec)   theta_0 (deg)   mag  seeing(arcsec)  dim_x (pix)  dim_y (pix)
+#
+#image    lw   n   r_e  rc       t      mag  seeing
+DES2217-3939_i_cut.fits 7.  1.  0.6  20.  45.  22.  0.6
