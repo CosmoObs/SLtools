@@ -132,7 +132,7 @@ def _cstm_args(telescope):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
-    elif telescope == 'HST':
+    elif telescope == 'CFHT':
         _dic = {
             'DETECT_TYPE' : 'CCD',
             'DETECT_MINAREA' : '3',
@@ -197,6 +197,7 @@ def run_sex(fits_image, params=[], args={}, custom=''):
     custom : 'HST'
              'DC4'
              'DC5'
+             'CFHT'
     Notice that this custom choices do not disable other parameters.
 
     Input:
@@ -205,7 +206,7 @@ def run_sex(fits_image, params=[], args={}, custom=''):
      - args       : Dictionary with sextractor line arguments. If not given,
                     'sex -dd' will be used as default options.
      - cats_name  : Root name used for genereated catalogue names. ["catalog"]
-     - custom     : 'HST', 'DC4', 'DC5' or 'CFHTLS'
+     - custom     : 'HST', 'DC4', 'DC5' or 'CFHT'
 
     Output:
      * Two ascii files (catalogues) and two fits images. See above paragraph.
@@ -242,6 +243,7 @@ def run_sex(fits_image, params=[], args={}, custom=''):
 
     cargs = _cstm_args( custom );
     cargs.update( args );
+
 
     # Build up sextractor command line..
     #

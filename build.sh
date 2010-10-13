@@ -66,7 +66,7 @@ GenDoxygenDoc()
 	)
 
 	(
-	    cd ../latex &> /dev/null
+        cd doc/latex &> /dev/null
 	    namespace2module tex
 
 	    if [ "$mode" != "--no-pdf" ]; then
@@ -117,7 +117,7 @@ sltools()
         cp -r string $folder
         cp -r image $folder
         cp -r coordinate $folder
-        cp -r bin $folder
+        cp -r -p bin $folder
 	cp -r etc/install.sh $folder
 	cp -r etc/INSTALL $folder
 	cp -r etc/README $folder
@@ -143,13 +143,17 @@ then
     echo "Building $opt1 v$version..."
     $1 $folder
 
+    find $folder -name "*.pyc" -delete
+
     if [ "$mode" != "--no-doc" ]; then
 	# compile documentation
 	echo "Generating Doxygen documentation..."
 	GenDoxygenDoc $opt1 $version $mode
     fi
 
-    sed -i "s/%VERSION%/$version/" $folder/install.sh
+    sed "s/%VERSION%/$version/" $folder/install.sh > $folder/install.tmp
+    mv $folder/install.tmp $folder/install.sh
+    chmod +x $folder/install.sh
 
     echo "Compressing $folder..."
     tar cvzf $folder.tgz $folder &> /dev/null

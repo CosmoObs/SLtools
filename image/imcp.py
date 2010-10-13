@@ -53,12 +53,16 @@ def _hdr_dimpix( hdr ):
 	except:
 		print >> sys.stderr, "Warning: Unable to find 'CUNIT[1|2]' parameters in header instance for image coordinates unit.";
 		print >> sys.stderr, "         Degrees ('deg') is being used as default value.";
-		print >> sys.stderr, "         Take a look inside image header parameters for coordinate units and email us so we can improve the code.";
 		CUNIT1 = 'deg';
 		CUNIT2 = 'deg';
 
-	CD1_1 = float(hdr['CD1_1']);
-	CD2_2 = float(hdr['CD2_2']);
+	try:
+		CD1_1 = float(hdr['CD1_1']);
+		CD1_2 = float(hdr['CD1_2']);
+		CD2_1 = float(hdr['CD2_1']);
+		CD2_2 = float(hdr['CD2_2']);
+	except:
+		CD1_1 = CD1_2 = CD2_1 = CD2_2 = 1;
 
 	# Convertion from degrees to arcsec units..
 	#
@@ -87,12 +91,18 @@ def _hdr_update(hdr, x_ini, y_ini):
 	NAXIS1 = int(hdr['NAXIS1']);
 	NAXIS2 = int(hdr['NAXIS2']);
 
-	CRPIX1 = float(hdr['CRPIX1']);
-	CRPIX2 = float(hdr['CRPIX2']);
+	try:
+		CRPIX1 = float(hdr['CRPIX1']);
+		CRPIX2 = float(hdr['CRPIX2']);
 
-	CD1_1 = float(hdr['CD1_1']);
-	CD2_2 = float(hdr['CD2_2']);
-
+		CD1_1 = float(hdr['CD1_1']);
+		CD1_2 = float(hdr['CD1_2']);
+		CD2_1 = float(hdr['CD2_1']);
+		CD2_2 = float(hdr['CD2_2']);
+	except:
+		CRPIX1 = CRPIX2 = 1.0;
+		CD1_1 = CD1_2 = CD2_1 = CD2_2 = 1.0;
+		
 	# Check the edges and update header keyworks for new image..
 	#
 #	if ( x_ini >= 0  and  y_ini >= 0 ):
@@ -147,9 +157,8 @@ def _hdr_update(hdr, x_ini, y_ini):
 # ---
 # \endcond
 
-
 # =============================================================================================================================
-def cutout( image, header=None, coord_unit='pixel', xo=None, yo=None, size_unit='pixel', x_size=None, y_size=None, mask=None ):
+def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_size=0, y_size=0, mask=None ):
 	"""
 	Do a snapshot from given fits image.
 
@@ -164,8 +173,8 @@ def cutout( image, header=None, coord_unit='pixel', xo=None, yo=None, size_unit=
 	expected to be a numpy.where like structure (i.e, mask=numpy.where()). If given, returned image will
 	have all pixels null except the ones listed in 'mask' parameter.
 
-	If 'xo=None' and 'yo=None', given image (input_file) central pixel will be chosen as (xo,yo).
-	If 'x_size=None' and 'y_size=None', half length of each side will be used for output dimensions.
+	If 'xo=0' and 'yo=0', given image (input_file) central pixel will be chosen as (xo,yo).
+	If 'x_size=0' and 'y_size=0', half length of each side will be used for output dimensions.
 
 	Input:
 	 - image      : Image (numpy ndarray)
@@ -202,32 +211,23 @@ def cutout( image, header=None, coord_unit='pixel', xo=None, yo=None, size_unit=
 	y_img_size, x_img_size = imagem.shape;
 
 
-	# Verify the type of 'size_unit' param..
+	# Get the side sides (at least, 1!) and transform for the size_unit if necessary..
 	#
-	if ( size_unit == 'pixel' ):
-		if ( x_size != None ):
-			x_cut_size = int(x_size);
-		if ( y_size != None ):
-			y_cut_size = int(y_size);
+	x_cut_size = max( 1, int(float(x_size)) );
+	y_cut_size = max( 1, int(float(y_size)) );
 
-	elif ( size_unit == 'degrees' ):
-		if ( x_size != None ):
-			x_cut_size = int(float(x_size)/x_arcsec_to_pixel);
-		if ( y_size != None ):
-			y_cut_size = int(float(y_size)/y_arcsec_to_pixel);
-
-	else:
-		print >> sys.stderr, "Error: Side sizes type (unit = degrees|pixel) not correctly defined."
-		return (False,False);
+	if ( size_unit == 'degrees' ):
+		x_cut_size = int(float(x_cut_size)/x_arcsec_to_pixel);
+		y_cut_size = int(float(y_cut_size)/y_arcsec_to_pixel);
 
 
 	# And if no side size was given, define a default value correspondig to half of original image..
 	#
-	if ( x_size == None ):
+	if not ( x_size ):
 		x_cut_size = int(x_img_size/2);
 		print >> sys.stdout, "Warning: 'x_size' not given. Using half of image x side(%d)" % (x_cut_size);
 
-	if ( y_size == None ):
+	if not ( y_size ):
 		y_cut_size = int(y_img_size/2);
 		print >> sys.stdout, "Warning: 'y_size' not given. Using half of image y side(%d)" % (x_cut_size);
 
@@ -241,17 +241,17 @@ def cutout( image, header=None, coord_unit='pixel', xo=None, yo=None, size_unit=
 
 	# Verify central coordinates values..
 	#
-	if ( coord_unit == 'pixel' and (xo != None and yo != None) ):
+	if ( coord_unit == 'pixel' and (xo != 0 and yo != 0) ):
 		x_halo = int(xo);
 		y_halo = int(yo);
 
-	elif ( coord_unit == 'degrees' and (xo != None and yo != None) ):
+	elif ( coord_unit == 'degrees' and (xo != 0 and yo != 0) ):
 		_out = commands.getoutput( 'sky2xy %s %s %s' % (input_file, xo, yo) );
 		_out = string.split(_out);
 		x_halo = int(_out[-2])-1;
 		y_halo = int(_out[-1])-1;
 
-	elif ( xo == None and yo == None ):
+	elif ( xo == 0 and yo == 0 ):
 		x_halo = int(x_img_size/2);
 		y_halo = int(y_img_size/2);
 		print >> sys.stdout, "Warning: No central coordinates were given for snapshot.";
@@ -357,7 +357,7 @@ def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, 
     for id in objIDs:
 
         ind = np.where(seg_img == id);
-
+	
 	y_min = min( ind[0] );
 	x_min = min( ind[1] );
 
@@ -419,19 +419,19 @@ if __name__ == "__main__" :
 			  dest='coord_unit', default='pixel',
 			  help='Coordinate units, for xo & yo [pixel]');
 	parser.add_option('--xo',
-			  dest='xo', default=None,
+			  dest='xo', default=0,
 			  help='X centre');
 	parser.add_option('--yo',
-			  dest='yo', default=None,
+			  dest='yo', default=0,
 			  help='Y centre');
 	parser.add_option('--size',
 			  dest='size_unit', default='pixel',
 			  help='Side length untis, for x_size & y_size [pixel]');
 	parser.add_option('--x_size',
-			  dest='x_size', default=None,
+			  dest='x_size', default=0,
 			  help='Size of x side on output');
 	parser.add_option('--y_size',
-			  dest='y_size', default=None,
+			  dest='y_size', default=0,
 			  help='Size of y side on output');
 #	parser.add_option('--increase',
 #			  dest='incr', default=0,
@@ -439,9 +439,12 @@ if __name__ == "__main__" :
 #	parser.add_option('--relative_increase', action='store_true',
 #			  dest='rel_incr', default=False,
 #			  help='Turn on the multiplicative factor for increase image.');
-	parser.add_option('--header', action='store_true',
-			  dest='use_header', default=False,
-			  help="Use image header for WCS adjustment(?)");
+	parser.add_option('--no-header', action='store_false',
+			  dest='use_header', default=True,
+			  help="Do not use existing image header.");
+	parser.add_option('--outdir',
+			  dest='dir_name', default='out_imcp',
+			  help="Directory name to put output images");
 
 
 	(opts,args) = parser.parse_args();
@@ -456,6 +459,7 @@ if __name__ == "__main__" :
 #	incr = opts.incr;
 #	rel_incr = opts.rel_incr;
 	use_header = opts.use_header;
+	dir_name = opts.dir_name;
 
 	if ( len(args) != 1 ):
 		parser.error("Wrong number of arguments. Try option '--help' for usage and help messages.")
@@ -468,17 +472,26 @@ if __name__ == "__main__" :
 		image = pyfits.getdata(infits, header=False);
 		hdr = None;
 
-#	if (incr == 0):
-#		imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
-#	else:
-#		imgcut, hdr = poststamp( image, header=hdr, increase=incr, relative_increase=rel_incr )
+	#	if (incr == 0):
+	#		imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
+	#	else:
+	#		imgcut, hdr = poststamp( image, header=hdr, increase=incr, relative_increase=rel_incr )
 
+	try:
+		os.mkdir( dir_name );
+	except OSError:
+		pass;
+
+	owd = os.getcwd()+"/";
+	os.chdir( dir_name );
+	
 	imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
 
 	os.system('[ -f %s ] && rm %s' % (outfits,outfits));
 	pyfits.writeto( outfits, imgcut, hdr );
 
-
+	print >> sys.stdout, "Done.";
+	os.chdir( owd );
 	sys.exit(0);
 
 # ------------------
