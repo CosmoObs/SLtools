@@ -16,8 +16,6 @@
 
 #include <cmath> 
 
-double _r_e = 1.0;
-
 /*********************************************************************************************************************/
 /** \brief \f$ \phi(r) \f$ type function 
 *
@@ -38,7 +36,9 @@ typedef double (*psi_type) (double r, double theta, double pert_params[]);
 * \f$ \theta \f$ is the angular coordinate, pert_params[] is a vector that contains all the perturbation parameters
 *
 */
-typedef double (*f_type)   (double theta, double pert_params[]);
+// typedef double (*f_type)   (double theta, double pert_params[]);
+typedef double (*f_type)   (double theta, double pert_params[],double _r_e); 
+//(Gabriel this is correct?)
 /*********************************************************************************************************************/
 
 
@@ -65,7 +65,7 @@ typedef struct {
 
 
 
-/**  \f$ \overline{f_1}(\theta) = f_1(\theta) + x0\cos(\theta) + y0\sin(\theta) \f$
+/**  \f$ \overline{f}_1(\theta) = f_1(\theta) + x0\cos(\theta) + y0\sin(\theta) \f$
 *
 *  \param f1_in function related to the perturbed potential 
 *  \param source_in a struct that define elliptical sources
@@ -75,39 +75,38 @@ typedef struct {
 *
 *  \sa f_type, elliptical_source
 */
-double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pert_params[]){
-  return f1_in(theta, pert_params) + source_in.x0*cos(theta) + source_in.y0*sin(theta);
+double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pert_params[], double _r_e=1.0){
+  return f1_in(theta, pert_params,_r_e) + source_in.x0*cos(theta) + source_in.y0*sin(theta);
 }
 
-
-// Note for Gabriel: In the original version you wrote \overline{\frac{d f_1(\theta)}{d \theta}}, but the correct is d f_0 (\theta)
-/**  \f$ \overline{\frac{d f_0(\theta)}{d \theta}} \equiv \frac{d f_0(\theta)}{d \theta} - x0\sin(\theta) + y0\cos(\theta) \f$
+/**  \f$ \frac{d \bar{f}_0(\theta)}{d \theta} \equiv \frac{d f_0(\theta)}{d \theta} - (x0\sin(\theta) - y0\cos(\theta))R_{_{\mathrm{E}}} \f$
 *
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param source_in a struct that define elliptical sources
 *  \param theta angular coordinate in the lens plane 
 *  \param pert_params[] a vector that contains all the perturbation parameters
-*  \return \f$ \frac{d f_0(\theta)}{d \theta} - x0\sin(\theta) + y0\cos(\theta) \f$
+*   \param _r_e is the einstein radius (If is not write, the code assumes \f$ R_{_{\mathrm{E}}}=1 \f$ )
+*  \return \f$ \frac{d f_0(\theta)}{d \theta} - (x0\sin(\theta) - y0\cos(\theta))R_{_{\mathrm{E}}} \f$
 *
 *  \sa f_type, elliptical_source
 */
-double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pert_params[]){
-  return Df0Dtheta_in(theta, pert_params) + (source_in.y0*cos(theta) - source_in.x0*sin(theta))*_r_e ;
+double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pert_params[], double _r_e=1.0){
+  return Df0Dtheta_in(theta, pert_params,_r_e) + (source_in.y0*cos(theta) - source_in.x0*sin(theta))*_r_e ;
 }
 
-
-/**  Argument of square root: \f$ R_{0}^2(1-\eta_0\cos(\theta - \theta_0))-(1-\eta_0^2) \overline{\frac{d f_1(\theta)}{d \theta}}^2 \f$ 
+/**  Argument of square root: \f$ \Delta(\eta_0,\theta) = R_{0}^2(1-\eta_0\cos{2(\theta - \theta_0)})-(1-\eta_0^2)\left[\frac{1}{R_{_{\mathrm{E}}}}\dfrac{d\bar{f}_0}{d \theta} \right]^2 \f$ 
 *
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param source_in a struct that define elliptical sources
 *  \param theta angular coordinate in the lens plane 
 *  \param pert_params[] a vector that contains all the perturbation parameters
-*  \return \f$ R_{0}^2(1-\eta_0\cos(2\theta - 2\theta_0))-(1-\eta_0^2) \overline{\frac{d f_1(\theta)}{d \theta}}^2 \f$
+*  \param _r_e a Einstein Radius (If is not write, the code assumes \f$ R_{_{\mathrm{E}}}=1 \f$)
+*  \return \f$  S\,R_{0}^2-(1-\eta_0^2)\left[\frac{1}{R_{_{\mathrm{E}}}}\dfrac{d\bar{f}_0}{d \theta} \right]^2,\qquad S=1-\eta_0\cos{2\tilde{\theta}},\quad \tilde{\theta}=\theta-\theta_0  \f$
 *
 *  \sa f_type, elliptical_source
 */
-double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pot_params[]){
-  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params)/_r_e;
+double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pot_params[], double _r_e=1.0){
+  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params,_r_e)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
   double theta_bar = theta - source_in.theta0;
   double S = 1.0 - source_in.eta0*cos(2.0*theta_bar);
@@ -127,15 +126,14 @@ double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, 
 *  \param source_in a struct that define elliptical sources
 *  \param theta angular coordinate in the lens plane 
 *  \param pert_params[] a vector that contains all the perturbation parameters
-*  \return \f$ \frac{1}{\kappa_2}\left\{ \overline{f_1}(\theta) + \sin(2\theta - 2\theta_0)\frac{\eta_0}{1-\eta_0\cos(2\theta - 2\theta_0)}\frac{d\overline{f_0}(\theta)}{d\theta} + \frac{\sqrt{R_{0}^2(1-\eta_0\cos(2\theta - 2\theta_0))-(1-\eta_0^2) \overline{\frac{d f_1(\theta)}{d \theta}}^2}}{1-\eta_0\cos(2\theta - 2\theta_0)} \right\}\f$
-*
+\return \f$ \frac{1}{\kappa_2}\left\{ \overline{f}_1(\theta) + \dfrac{\eta_0\sin{2\tilde{\theta}}}{S}\left(\dfrac{1}{R_{_\mathrm{E}}}\dfrac{\bar{f}_0(\theta)}{d\theta}\right)+\dfrac{1}{S}\sqrt{\Delta(\eta_0,\theta)}\right\}\f$*
 *  \sa f_type, elliptical_source
 */
-double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[]){
-  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params)/_r_e;
+double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[],double _r_e=1.0){
+  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params,_r_e)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
 
-  double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pot_params);
+  double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pot_params,_r_e);
 
   double theta_bar = theta - source_in.theta0;
   double S = 1.0 - source_in.eta0*cos(2.0*theta_bar);
@@ -152,7 +150,7 @@ double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sour
 }
 
 
-/**
+/**   
 *
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param f1_in function related to the perturbed potential
@@ -160,15 +158,16 @@ double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sour
 *  \param source_in a struct that define elliptical sources
 *  \param theta angular coordinate in the lens plane 
 *  \param pert_params[] a vector that contains all the perturbation parameters
-*  \return \f$ \frac{1}{\kappa_2}\left\{ \overline{f_1}(\theta) + \sin(2\theta - 2\theta_0)\frac{\eta_0}{1-\eta_0\cos(2\theta - 2\theta_0)}\frac{d\overline{f_0}(\theta)}{d\theta} - \frac{\sqrt{R_{0}^2(1-\eta_0\cos(2\theta - 2\theta_0))-(1-\eta_0^2) \overline{\frac{d f_1(\theta)}{d \theta}}^2}}{1-\eta_0\cos(2\theta - 2\theta_0)} \right\}\f$
+*
+*  \return \f$ \frac{1}{\kappa_2}\left\{ \overline{f}_1(\theta) + \dfrac{\eta_0\sin{2\tilde{\theta}}}{S}\left(\dfrac{1}{R_{_\mathrm{E}}}\dfrac{\bar{f}_0(\theta)}{d\theta}\right)-\dfrac{1}{S}\sqrt{\Delta(\eta_0,\theta)}\right\}\f$
 *
 *  \sa f_type, elliptical_source
 */
-double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[]){
-  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params)/_r_e;
+double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[],double _r_e=1.0){
+  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params,_r_e)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
 
-  double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pot_params);
+  double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pot_params, _r_e);
 
   double theta_bar = theta - source_in.theta0;
   double S = 1.0 - source_in.eta0*cos(2.0*theta_bar);
@@ -192,14 +191,14 @@ double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
 *  \param f1_in function related to the perturbed potential
 *  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
 *  \param theta angular coordinate in the lens plane.
-*  \return \f$ r_{\mathrm{crit}}= r_{\mathrm{E}} +\frac{1}{\kappa_2}\left[f_1+\frac{1}{r_{\mathrm{E}}}\frac{d^2 f_0}{d \theta^2}\right]\f$
+*  \return \f$ R_{\mathrm{crit}}= R_{_\mathrm{E}} +\dfrac{1}{\kappa_2}\left[f_1+\dfrac{1}{R_{_\mathrm{E}}}\dfrac{d^2 f_0}{d \theta^2}\right]\f$
 **/
 
 
-double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pot_params[]){
+double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pot_params[],double _r_e=1.0){
 
-  double f1_temp=f1_in(theta,pot_params);
-  double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params)/_r_e;
+  double f1_temp=f1_in(theta,pot_params,_r_e);
+  double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params,_r_e)/_r_e;
   double r_t=_r_e+(1.0/kappa2)*(f1_temp+D2f0Dtheta2_temp);
   return r_t;
 }
@@ -211,11 +210,11 @@ double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, 
 *  \param f1_in function related to the perturbed potential
 *  \param theta angular coordinate in the lens plane 
 *   This caustic line, in polar coordinates, is defined by :
-*   \return \f$ y_1=\frac{1}{r_{\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\cos{\theta}+\frac{1}{r_{\mathrm{E}}}\sin{\theta}\f$
+*   \return \f$ y_1=\dfrac{1}{R_{_{\mathrm{E}}}}\frac{d^2f_0}{d \theta^2}\cos{\theta}+\dfrac{1}{R_{_{\mathrm{E}}}}\frac{df_0}{d \theta}\sin{\theta}\f$
 **/
-double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[]){
-    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params)/_r_e;
-    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params)/_r_e;
+double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[],double _r_e=1.0){
+    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params,_r_e)/_r_e;
+    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params,_r_e)/_r_e;
     double y1_c=(1.0/_r_e)*D2f0Dtheta2_temp*cos(theta)+(1.0/_r_e)*Df0Dtheta_tmp*sin(theta);
     return y1_c;
 }
@@ -226,25 +225,54 @@ double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, doub
 *  \param f1_in function related to the perturbed potential
 *  \param theta angular coordinate in the lens plane 
 *   This caustic line, in polar coordinates, is defined by :
-*   \return \f$ y_2=\frac{1}{r_{\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\sin{\theta}+\frac{1}{r_{\mathrm{E}}}\cos{\theta}\f$
+*   \return \f$ y_2=\dfrac{1}{R_{_\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\sin{\theta}-\frac{1}{R_{_\mathrm{E}}}\frac{df_0}{d \theta}\cos{\theta}\f$
 **/
-double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[]){
-    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params)/_r_e;
-    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params)/_r_e;
+double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[],double _r_e=1.0){
+    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params,_r_e)/_r_e;
+    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params,_r_e)/_r_e;
     double y2_c=(1.0/_r_e)*D2f0Dtheta2_temp*sin(theta)-(1.0/_r_e)*Df0Dtheta_tmp*cos(theta);
     return y2_c;
 }
-// Plotting a circular source
+
+
+/** First component of the parametric equation for the elliptical souce not allignet to main axis
+*   This caustic line, in polar coordinates, is defined by :
+*
+*  \f$ y_{1s}= \dfrac{R_s}{\sqrt{1-\eta_s}}\cos{\theta},\qquad y_{2s}= \dfrac{R_s}{\sqrt{1+\eta_s}}\sin{\theta} \f$
+*
+*  \param elliptical_source source parameters 
+*  \param theta angular coordinate in the source plane 
+*
+*   \return \f$ y^{\prime}_{1,src}= x_0+y_{1s}\cos{\theta_s}-y_{2s}\sin{\theta_s} \f$ 
+**/
+
 
 double y1_src(elliptical_source source_in, double theta){
-      double theta_bar = theta - source_in.theta0;  
-      return source_in.R0*cos(theta_bar)/sqrt(1.-source_in.eta0) + source_in.x0;
+      double theta_0 = source_in.theta0;  
+      double y1s=source_in.R0*cos(theta)/sqrt(1.-source_in.eta0);
+      double y2s=source_in.R0*sin(theta)/sqrt(1.+source_in.eta0);
+      double y1_linha_src=y1s*cos(theta_0)-y2s*sin(theta_0)+source_in.x0;
+      return y1_linha_src;
 }
 
 
+/** Second component of the parametric equation for the elliptical souce not allignet to main axis
+*   This caustic line, in polar coordinates, is defined by :
+*
+*  \f$ y_{1s}= \dfrac{R_s}{\sqrt{1-\eta_s}}\cos{\theta},\qquad y_{2s}= \dfrac{R_s}{\sqrt{1+\eta_s}}\sin{\theta} \f$
+*  \param elliptical_source source parameters 
+*  \param theta  angular coordinate in the source plane 
+*   \return \f$ y^{\prime}_{2,src}= y_0+y_{1s}\sin{\theta_s}+y_{2s}\cos{\theta_s} \f$ 
+**/
+
+
+
 double y2_src(elliptical_source source_in, double theta){
-      double theta_bar = theta - source_in.theta0;  
-      return source_in.R0*sin(theta_bar)/sqrt(1.+source_in.eta0) + source_in.y0;
+      double theta_0 = source_in.theta0;  
+      double y1s=source_in.R0*cos(theta)/sqrt(1.-source_in.eta0);
+      double y2s=source_in.R0*sin(theta)/sqrt(1.+source_in.eta0);
+      double y2_linha_src=y1s*sin(theta_0)+y2s*cos(theta_0)+source_in.y0 ;
+      return y2_linha_src;
 }
 
 #endif

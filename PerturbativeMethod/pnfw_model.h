@@ -26,10 +26,11 @@
   \param pot_params[] : PNFW lens parameters
   \return \f$ f_1(\theta)\f$
 */
-double f1_pnfw(double theta, double pot_params[]){
+double f1_pnfw(double theta, double pot_params[],double _r_e_nfw){
     double eta=pot_params[2];
-    double a_eta1=1.0-eta,a_eta2=1.0/(1.0-eta); // If you want work with the standar parameterization
+//     double a_eta1=1.0-eta,a_eta2=1.0/(1.0-eta); // If you want work with the standar parameterization
 //     double a_eta1=1.0-eta,a_eta2=1.0+eta;   // If you want work with the Angle Deflection Method
+    double a_eta1=1.0,a_eta2=1.0/pow((1.0-eta),2); // If you want work with the Keeton's parameterization
     double xie=_r_e_nfw*sqrt(a_eta1*pow(cos(theta),2)+a_eta2*pow(sin(theta),2));
     double f1=(xie/_r_e_nfw)*alpha_nfw_circ(xie,pot_params)-alpha_nfw_circ(_r_e_nfw,pot_params);
     return f1;
@@ -51,10 +52,11 @@ double f1_pnfw(double theta, double pot_params[]){
   \param pot_params[] : PNFW lens parameters
   \return \f$ \dfrac{df_0}{d\theta}\f$ */
 
-double Df0Dtheta_pnfw( double theta, double pot_params[]){
+double Df0Dtheta_pnfw( double theta, double pot_params[],double _r_e_nfw){
     double eta=pot_params[2];
-    double a_eta1=1.0-eta,a_eta2=1.0/(1.0-eta); // If you want work with the standar parameterization
+//     double a_eta1=1.0-eta,a_eta2=1.0/(1.0-eta); // If you want work with the standar parameterization
 //     double a_eta1=1.0-eta,a_eta2=1.0+eta;    // // If you want work with the Angle Deflection Method
+    double a_eta1=1.0,a_eta2=1.0/pow((1.0-eta),2); // If you want work with the Keeton's parameterization
     double A_eta=a_eta2-a_eta1;
     double xie=_r_e_nfw*sqrt(a_eta1*pow(cos(theta),2)+a_eta2*pow(sin(theta),2));
     double cal_g=pow(_r_e_nfw,2)*A_eta*sin(2*theta);
@@ -85,10 +87,11 @@ double Df0Dtheta_pnfw( double theta, double pot_params[]){
   \return \f$ \dfrac{d^2f_0}{d\theta^2}\f$
 */
 
-double D2f0Dtheta2_pnfw( double theta, double pot_params[]){
+double D2f0Dtheta2_pnfw( double theta, double pot_params[],double _r_e_nfw){
     double eta=pot_params[2];
-    double a_eta1=1.0-eta,a_eta2=1.0/(1.0-eta); // If you are interested in work with the standard parametrization
+//     double a_eta1=1.0-eta,a_eta2=1.0/(1.0-eta); // If you are interested in work with the standard parametrization
 //     double a_eta1=1.0-eta,a_eta2=1.0+eta;    // If you are interested in work with the Angle Deflection Model
+    double a_eta1=1.0,a_eta2=1.0/pow((1.0-eta),2); // If you want work with the Keeton's parameterization
     double A_eta=a_eta2-a_eta1;
     double xie=_r_e_nfw*sqrt(a_eta1*pow(cos(theta),2)+a_eta2*pow(sin(theta),2));
     double cal_g=pow(_r_e_nfw,2)*A_eta*sin(2*theta);
