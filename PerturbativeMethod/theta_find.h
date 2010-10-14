@@ -67,7 +67,7 @@ void theta_find(f_type Df0Dtheta_in, elliptical_source source_in,  double pert_p
 
 }
 
-void theta_find(f_type Df0Dtheta_in, elliptical_source source_in,  double pert_params[], double out[2][10], int N=1000){
+void theta_find(f_type Df0Dtheta_in, elliptical_source source_in,  double pert_params[], double out[10][2], int N=1000){
 
   double theta[N];
   double arg[N];
