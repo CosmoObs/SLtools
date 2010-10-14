@@ -1,0 +1,9 @@
+ellip=0.857143, n=1.000000, r_e=2.222222, r_c=74.074074, theta=0.785398, mag=22.000000, seeing=2.222222 
+x_arc=62.378280, y_arc=62.378280 
+Signal total= 2542.400703, I_0= 32.974346 
+epsilon= 0.500000 
+Derivative= -4.649079 
+n=1/pix_size= 1.000000 
+Signal_distributed= 2538.378977 
+error 0.001582 
+ 
