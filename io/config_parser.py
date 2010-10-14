@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
-"""Package to read/write config (ini) files"""
+"""Package to read/write config (ini) files
+
+This module carries functions to read config-like files.
+INI files and a simple version of XML are treated on the
+following functions.
+"""
 
 ##@ config_parser
 #
@@ -27,9 +32,9 @@ import sys;
 
 
 #=====================================
-# Read config file to structure:
+# Read config file (INI) to structure:
 # 
-def read_config( config_file, *args ):
+def read_ini( config_file, *args ):
     """
     Function to read ".ini"-lyke config files into a python structure.
     (About INI files: http://en.wikipedia.org/wiki/INI_file)
@@ -110,11 +115,13 @@ def read_config( config_file, *args ):
     return config_sections;
 
 # ---
+read_config = read_ini;
+# ---
 
 #====================================================
 # Write config structure to .ini file:
 # 
-def write_config( config_sections, output_filename ):
+def write_ini( config_sections, output_filename ):
     """
     Function to write '.ini' structured (config-like) files.
     (About INI files: http://en.wikipedia.org/wiki/INI_file)
@@ -157,28 +164,71 @@ def write_config( config_sections, output_filename ):
     return;
 
 # ---
+write_config = write_ini;
+# ---
+
+#=====================================
+# Read config file (XML) to structure:
+# 
+def read_xml( config_file, _section='section', _key='scalar', _value='default' ):
+    """Reads a config.xml file into a dictionary with "section"->"key":"value"."""
+    import xml.dom.minidom as xom;
+
+    doc = xom.parse(config_file);
+
+    map = {};
+    for node in doc.getElementsByTagName( _section ):
+        d_sec = {};
+        secao = str(node.getAttribute("id"));
+        for node2 in node.getElementsByTagName( _key ):
+            id = str(node2.getAttribute("id"));
+            dflt = str(node2.getAttribute( _value ));
+            d_sec['%s'%(id)] = dflt;
+#            print " : ", secao, id, dflt;
+
+        map['%s'%(secao)] = d_sec;
+
+    return map;
+
+# ---
 
 ###########################
 if __name__ == "__main__" :
     import optparse;
 
     parser = optparse.OptionParser();
-    parser.add_option('--config',
+    parser.add_option('-t',
+                      dest='configtype', default='ini',
+                      help='Type of config file. Options are "ini" or "xml"',
+                      metavar='FILE');
+    parser.add_option('-f',
                       dest='configfile', default=None,
                       help='Config file to be read',
                       metavar='FILE');
     (options,args) = parser.parse_args();
 
+    configtype = options.configtype
     configfile = options.configfile;
 
     if configfile == None:
         parser.print_help();
-        sys.exit();
+        sys.exit(1);
 
-#    config = read_config(configfile,'input','path','run_flags');
-    config = read_config(configfile);
+    if not (configtype == 'ini'  or  configtype == 'xml'):
+        print >> sys.stderr, "Wrong config type (%s) given." % (configtype);
+        parser.print_help();
+        sys.exit(1);
+        
+    #    config = read_config(configfile,'input','path','run_flags');
+    if ( configtype == 'ini' ):
+        config = read_ini(configfile);
+    else:
+        config = read_xml(configfile);
 
+    print "-";
     while config:
         dic_sect = config.popitem();
-        print "%s : \n"%(dic_sect[0]),dic_sect[1],"\n";
+        print "%s : \n"%(dic_sect[0]),dic_sect[1];
+    print "-";
 
+    sys.exit(0);

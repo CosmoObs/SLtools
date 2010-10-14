@@ -22,20 +22,58 @@ def run_SE_on_frames(input_image_names, sextractor_params):
 	os.system('echo "X2_IMAGE" >> default.param')
 	os.system('echo "Y2_IMAGE" >> default.param')
 	os.system('echo "XY_IMAGE" >> default.param')
+
 	#---------------------------------------------------------------------------------
 	# get SE variables from the config file
-	DEBLEND_MINCONT_merger = float(sextractor_params['deblend_mincont_merger']);
-	DETECT_MINAREA = float(sextractor_params['detect_minarea']);
-	THRESH_TYPE = sextractor_params['thresh_type'];
-	DETECT_THRESH = float(sextractor_params['detect_thresh']);
-	ANALYSIS_THRESH = float(sextractor_params['analysis_thresh']);
-	PIXEL_SCALE = float(sextractor_params['pixel_scale']);
-	SEEING_FWHM = float(sextractor_params['seeing_fwhm']);
-	BACK_TYPE = sextractor_params['back_type'];
-	BACK_VALUE = sextractor_params['back_value'];
-	MEMORY_OBJSTACK = float(sextractor_params['memory_objstack']);
-	MEMORY_PIXSTACK = float(sextractor_params['memory_pixstack']);
-	MEMORY_BUFSIZE = float(sextractor_params['memory_bufsize']);
+	try:
+		DEBLEND_MINCONT_merger = float(sextractor_params['deblend_mincont_merger']);
+	except KeyError:
+		DEBLEND_MINCONT_merger = float(sextractor_params['DEBLEND_MINCONT_merger']);
+	try:
+		DETECT_MINAREA = float(sextractor_params['detect_minarea']);
+	except KeyError:
+		DETECT_MINAREA = float(sextractor_params['DETECT_MINAREA']);
+	try:
+		THRESH_TYPE = sextractor_params['thresh_type'];
+	except KeyError:
+		THRESH_TYPE = sextractor_params['THRESH_TYPE'];
+	try:
+		DETECT_THRESH = float(sextractor_params['detect_thresh']);
+	except KeyError:
+		DETECT_THRESH = float(sextractor_params['DETECT_THRESH']);
+	try:
+		ANALYSIS_THRESH = float(sextractor_params['analysis_thresh']);
+	except KeyError:
+		ANALYSIS_THRESH = float(sextractor_params['ANALYSIS_THRESH']);
+	try:
+		PIXEL_SCALE = float(sextractor_params['pixel_scale']);
+	except KeyError:
+		PIXEL_SCALE = float(sextractor_params['PIXEL_SCALE']);
+	try:
+		SEEING_FWHM = float(sextractor_params['seeing_fwhm']);
+	except KeyError:
+		SEEING_FWHM = float(sextractor_params['SEEING_FWHM']);
+	try:
+		BACK_TYPE = sextractor_params['back_type'];
+	except KeyError:
+		BACK_TYPE = sextractor_params['BACK_TYPE'];
+	try:
+		BACK_VALUE = sextractor_params['back_value'];
+	except KeyError:
+		BACK_VALUE = sextractor_params['BACK_VALUE'];
+	try:
+		MEMORY_OBJSTACK = float(sextractor_params['memory_objstack']);
+	except KeyError:
+		MEMORY_OBJSTACK = float(sextractor_params['MEMORY_OBJSTACK']);
+	try:
+		MEMORY_PIXSTACK = float(sextractor_params['memory_pixstack']);
+	except KeyError:
+		MEMORY_PIXSTACK = float(sextractor_params['MEMORY_PIXSTACK']);
+	try:
+		MEMORY_BUFSIZE = float(sextractor_params['memory_bufsize']);
+	except KeyError:
+		MEMORY_BUFSIZE = float(sextractor_params['MEMORY_BUFSIZE']);
+
 	#----------------------------------------------
 	# now we run SE on the images. The list 'SEstatus' will tell if the run was OK
 	img_list = [] # list that contains the images properly generated and SExtracted 
