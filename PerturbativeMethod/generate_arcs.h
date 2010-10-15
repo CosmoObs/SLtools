@@ -29,7 +29,7 @@
 *
 *  \sa f_type, dr_plus, dr_minus
 */
-void plot_arcs(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_in, double pert_params[], double kappa2, double _r_e=1.0, int npts=500, FILE *file_in=NULL){
+void plot_arcs(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_in, double pert_params[], double kappa2, double _r_e, int npts=500, FILE *file_in=NULL){
   double theta = 0.0;
   double r_p = 0.0;
   double r_m = 0.0;

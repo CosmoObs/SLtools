@@ -6,10 +6,11 @@
 
 #include "../perturbative_method.h"
 #include "../pnfw_model.h"
-#include "../theta_find.h"
+// #include "../theta_find.h"
 #include "../generate_arcs.h"
 #include "../generate_curves.h"
-#include "../arc_properties.h"
+#include "../../numerical_methods/general_methods.h" 
+// #include "../arc_properties.h"
 
 #define TAM_MAX 20
 
@@ -61,14 +62,12 @@ int main(){
 
   
 //   theta_find(Df0Dtheta_pnfw, source,pot_params,_r_e_nfw, theta_in, theta_sup);
-  theta_find(Df0Dtheta_pnfw, source,pot_params,_r_e_nfw);
+//   theta_find(Df0Dtheta_pnfw, source,pot_params,_r_e_nfw);
 //   printf("algun angle\%f\t\%f\n", theta_in[0],theta_sup[0])
   
 
 // 
   plot_arcs(source, f1_pnfw, Df0Dtheta_pnfw, pot_params, kappa2_nfw(pot_params,_r_e_nfw),_r_e_nfw,npts, outarc);
   plot_curves(source, f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pot_params, kappa2_nfw(pot_params,_r_e_nfw),_r_e_nfw, npts, outtc, outcau, outsrc);
-}
-
 
 }

@@ -32,7 +32,7 @@
 *  \sa f_type, r_crit, caustic_y1, caustic_y2, y1_src,y2_src
 */
 
-void plot_curves(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double pert_params[], double kappa2, double _r_e=1.0, int npts=1000, FILE *file_in1=NULL, FILE *file_in2=NULL, FILE *file_in3=NULL){
+void plot_curves(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double pert_params[], double kappa2, double _r_e, int npts=1000, FILE *file_in1=NULL, FILE *file_in2=NULL, FILE *file_in3=NULL){
   
   double theta = 0.0;
   double r_tcrit=0.0;
