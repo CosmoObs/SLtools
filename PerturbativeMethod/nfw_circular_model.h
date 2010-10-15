@@ -14,9 +14,8 @@
 #include <math.h>
 #include <cstdlib>
 
-#include "../numerical_methods/general_methods.h"
-
-double _r_e_nfw = 1.0;
+// #include "../sltools/numerical_methods/general_methods.h"
+#include "general_methods.h"
 
 //! Function useful to define the convergence and angle deflection of the NFW model.
 //!
@@ -100,10 +99,8 @@ double alpha_nfw_circ(double r, double pot_params[])
 //!  where \f$ \alpha(r) \f$ is angle deflection and \f$ \kappa(r) \f$ is the convergence.
 //!
 /*!   \param r : radial distance,   \param pot_params[] : NFW lens parameters, \return \f$ \gamma(r)\f$ */
-double shear_nfw_circ(double r, double pot_params[]){
+      double shear_nfw_circ(double r, double pot_params[]){
       double gamma;
-      //double rs=pot_params[0];
-      //double X=r/rs;
       gamma=alpha_nfw_circ(r, pot_params)/r-conv_nfw_circ(r, pot_params);
       return gamma;
 }
@@ -116,7 +113,7 @@ double shear_nfw_circ(double r, double pot_params[]){
 //! where \f$ \kappa(R_{\mathrm{E}})\f$ is the convergence for evaluated at the Einstein Radius
 //!
 /*!   \param r_e : Einstein Radius, \param pot_params[] : NFW lens parameters,\return \f$ \kappa_2 \f$ */
-double kappa2_nfw(double pot_params[]){
+double kappa2_nfw(double pot_params[],double _r_e_nfw){
   double k2,r=_r_e_nfw;
 
   k2=2.0-2.0*conv_nfw_circ(r,pot_params);

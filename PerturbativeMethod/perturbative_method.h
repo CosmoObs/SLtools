@@ -75,7 +75,7 @@ typedef struct {
 *
 *  \sa f_type, elliptical_source
 */
-double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pert_params[], double _r_e=1.0){
+double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pert_params[], double _r_e){
   return f1_in(theta, pert_params,_r_e) + source_in.x0*cos(theta) + source_in.y0*sin(theta);
 }
 
@@ -90,7 +90,7 @@ double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pe
 *
 *  \sa f_type, elliptical_source
 */
-double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pert_params[], double _r_e=1.0){
+double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pert_params[], double _r_e){
   return Df0Dtheta_in(theta, pert_params,_r_e) + (source_in.y0*cos(theta) - source_in.x0*sin(theta))*_r_e ;
 }
 
@@ -105,7 +105,7 @@ double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double th
 *
 *  \sa f_type, elliptical_source
 */
-double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pot_params[], double _r_e=1.0){
+double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pot_params[], double _r_e){
   double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params,_r_e)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
   double theta_bar = theta - source_in.theta0;
@@ -129,7 +129,7 @@ double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, 
 \return \f$ \frac{1}{\kappa_2}\left\{ \overline{f}_1(\theta) + \dfrac{\eta_0\sin{2\tilde{\theta}}}{S}\left(\dfrac{1}{R_{_\mathrm{E}}}\dfrac{\bar{f}_0(\theta)}{d\theta}\right)+\dfrac{1}{S}\sqrt{\Delta(\eta_0,\theta)}\right\}\f$*
 *  \sa f_type, elliptical_source
 */
-double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[],double _r_e=1.0){
+double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[],double _r_e){
   double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params,_r_e)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
 
@@ -163,7 +163,7 @@ double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sour
 *
 *  \sa f_type, elliptical_source
 */
-double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[],double _r_e=1.0){
+double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[],double _r_e){
   double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params,_r_e)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
 
@@ -195,7 +195,7 @@ double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
 **/
 
 
-double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pot_params[],double _r_e=1.0){
+double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pot_params[],double _r_e){
 
   double f1_temp=f1_in(theta,pot_params,_r_e);
   double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params,_r_e)/_r_e;
@@ -212,10 +212,10 @@ double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, 
 *   This caustic line, in polar coordinates, is defined by :
 *   \return \f$ y_1=\dfrac{1}{R_{_{\mathrm{E}}}}\frac{d^2f_0}{d \theta^2}\cos{\theta}+\dfrac{1}{R_{_{\mathrm{E}}}}\frac{df_0}{d \theta}\sin{\theta}\f$
 **/
-double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[],double _r_e=1.0){
+double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[],double _r_e){
     double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params,_r_e)/_r_e;
     double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params,_r_e)/_r_e;
-    double y1_c=(1.0/_r_e)*D2f0Dtheta2_temp*cos(theta)+(1.0/_r_e)*Df0Dtheta_tmp*sin(theta);
+    double y1_c=D2f0Dtheta2_temp*cos(theta)+Df0Dtheta_tmp*sin(theta);
     return y1_c;
 }
 
@@ -227,10 +227,10 @@ double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, doub
 *   This caustic line, in polar coordinates, is defined by :
 *   \return \f$ y_2=\dfrac{1}{R_{_\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\sin{\theta}-\frac{1}{R_{_\mathrm{E}}}\frac{df_0}{d \theta}\cos{\theta}\f$
 **/
-double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[],double _r_e=1.0){
+double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[],double _r_e){
     double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params,_r_e)/_r_e;
     double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params,_r_e)/_r_e;
-    double y2_c=(1.0/_r_e)*D2f0Dtheta2_temp*sin(theta)-(1.0/_r_e)*Df0Dtheta_tmp*cos(theta);
+    double y2_c=D2f0Dtheta2_temp*sin(theta)-Df0Dtheta_tmp*cos(theta);
     return y2_c;
 }
 
@@ -264,8 +264,6 @@ double y1_src(elliptical_source source_in, double theta){
 *  \param theta  angular coordinate in the source plane 
 *   \return \f$ y^{\prime}_{2,src}= y_0+y_{1s}\sin{\theta_s}+y_{2s}\cos{\theta_s} \f$ 
 **/
-
-
 
 double y2_src(elliptical_source source_in, double theta){
       double theta_0 = source_in.theta0;  
