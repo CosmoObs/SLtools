@@ -14,8 +14,8 @@
 #include <math.h>
 #include <cstdlib>
 
-// #include "../sltools/numerical_methods/general_methods.h"
-#include "general_methods.h"
+ #include "../numerical_methods/general_methods.h"
+//#include "general_methods.h"
 
 //! Function useful to define the convergence and angle deflection of the NFW model.
 //!
@@ -114,8 +114,7 @@ double alpha_nfw_circ(double r, double pot_params[])
 //!
 /*!   \param r_e : Einstein Radius, \param pot_params[] : NFW lens parameters,\return \f$ \kappa_2 \f$ */
 double kappa2_nfw(double pot_params[],double _r_e_nfw){
-  double k2,r=_r_e_nfw;
-
+  double k2, r=_r_e_nfw;
   k2=2.0-2.0*conv_nfw_circ(r,pot_params);
 
   return k2;
