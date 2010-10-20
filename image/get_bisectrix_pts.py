@@ -104,6 +104,6 @@ def circ_3pts(p1, p2, p3):
 #@param R (radius of the circunference)
 #@return length of the arc of cincunference that crosses the 2 furthest points of the arc plus a 3rd one (defined implicitly on R)
 def get_length_arc_circ(L1,R):
-	L3 = arccos(1 - (L1**2)/(2*(R**2)) )*R # this formula is directly shown with the "cosine law" (lei dos cossenos)
+	L3 = np.arccos(1 - (L1**2)/(2*(R**2)) )*R # this formula is directly shown with the "cosine law" (lei dos cossenos)
 	return L3
 
