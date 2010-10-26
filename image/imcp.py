@@ -356,6 +356,7 @@ def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, 
     #
     for id in objIDs:
 
+	# 'ind' will be used (also) as the 'mask' information on "cutout" function
         ind = np.where(seg_img == id);
 	
 	y_min = min( ind[0] );
@@ -372,7 +373,7 @@ def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, 
 	xo = x_size/2 + x_min;
 
 	if ( increase != 0 ):
-
+		
 		if (relative_increase == True):
 
 			x_size = x_size*increase;

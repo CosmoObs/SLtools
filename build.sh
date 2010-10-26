@@ -109,15 +109,8 @@ sltools()
 	echo "Copying files..."
 
 	cp __init__.py $folder
-        cp -r catalog $folder  
-        cp -r gravlens $folder  
-        cp -r io $folder	
-        cp -r lens $folder
-        cp -r plot $folder
-        cp -r string $folder
-        cp -r image $folder
-        cp -r coordinate $folder
-        cp -r -p bin $folder
+	cp -r `grep -v "^#" DIRECTORIES_TO_INCLUDE_IN_BUILD` $folder  
+	cp -r -p bin $folder
 	cp -r etc/install.sh $folder
 	cp -r etc/INSTALL $folder
 	cp -r etc/README $folder
