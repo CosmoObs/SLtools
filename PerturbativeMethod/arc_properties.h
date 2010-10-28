@@ -18,7 +18,7 @@ double integrator(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_s
   for (int i=1; i<=npts;i++){
       x[i]=x_lim[0]+(i-1)*dx;
       if(iflag==1){
-        ftemp[i]=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, x[i], pert_params, _r_e);
+        ftemp[i]=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, x[i], pert_params, _r_e);
         }else{
         ftemp[i]=wr_theta(f1_in,Df0Dtheta_in, kappa2, source_in, x[i], pert_params, _r_e);}
       }
@@ -42,26 +42,26 @@ double integrator(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_s
 double method_L2(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta_lim1, double theta_lim2, double pert_params[],double _r_e){
   double theta_1=theta_lim1,theta_2=theta_lim2;
   double theta_g=0.5*(theta_1+theta_2);
-  double bar_r1=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, theta_1, pert_params, _r_e);
-  double bar_rg=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, theta_g, pert_params, _r_e);
-  double bar_r2=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, theta_2, pert_params, _r_e);
-//   printf("some results %f %f %f %f %f %f\n",theta_1,bar_r1,theta_g,bar_rg,theta_2,bar_r2);
-  double l1g=sqrt(pow(bar_r1,2)+pow(bar_rg,2)-2*bar_r1*bar_rg*cos(theta_g-theta_1));
-  double l2g=sqrt(pow(bar_r2,2)+pow(bar_rg,2)-2*bar_r2*bar_rg*cos(theta_2-theta_g));
+  double r_mean1=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta_1, pert_params, _r_e);
+  double r_meang=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta_g, pert_params, _r_e);
+  double r_mean2=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta_2, pert_params, _r_e);
+//   printf("some results %f %f %f %f %f %f\n",theta_1,r_mean1,theta_g,r_meang,theta_2,r_mean2);
+  double l1g=sqrt(pow(r_mean1,2)+pow(r_meang,2)-2*r_mean1*r_meang*cos(theta_g-theta_1));
+  double l2g=sqrt(pow(r_mean2,2)+pow(r_meang,2)-2*r_mean2*r_meang*cos(theta_2-theta_g));
   return l1g+l2g;
 }
 
 double method_L3(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta_lim1, double theta_lim2, double pert_params[],double _r_e){
   double theta_1=theta_lim1,theta_2=theta_lim2;
   double theta_g=0.5*(theta_1+theta_2);
-  double bar_r1=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, theta_1, pert_params, _r_e);
-  double bar_rg=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, theta_g, pert_params, _r_e);
-  double bar_r2=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, theta_2, pert_params, _r_e);
+  double r_mean1=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta_1, pert_params, _r_e);
+  double r_meang=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta_g, pert_params, _r_e);
+  double r_mean2=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta_2, pert_params, _r_e);
   double A[3][3];
   double B[3],X[3];
-  A[0][0]=bar_r1*cos(theta_1), A[0][1]=bar_r1*sin(theta_1), A[0][2]=1.0, B[0]=-pow(bar_r1,2);
-  A[1][0]=bar_rg*cos(theta_g), A[1][1]=bar_rg*sin(theta_g), A[1][2]=1.0, B[1]=-pow(bar_rg,2);
-  A[2][0]=bar_r2*cos(theta_2), A[2][1]=bar_r2*sin(theta_2), A[2][2]=1.0, B[2]=-pow(bar_r2,2);
+  A[0][0]=r_mean1*cos(theta_1), A[0][1]=r_mean1*sin(theta_1), A[0][2]=1.0, B[0]=-pow(r_mean1,2);
+  A[1][0]=r_meang*cos(theta_g), A[1][1]=r_meang*sin(theta_g), A[1][2]=1.0, B[1]=-pow(r_meang,2);
+  A[2][0]=r_mean2*cos(theta_2), A[2][1]=r_mean2*sin(theta_2), A[2][2]=1.0, B[2]=-pow(r_mean2,2);
   solving_system(A,B,X);
   double x_c=-0.5*X[0], y_c=-0.5*X[1], r_c=sqrt(pow(x_c,2)+pow(y_c,2)-X[2]);
 //   double l3=r_c*fabs(theta_2-theta_1); 
@@ -75,12 +75,12 @@ double method_L3(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_so
 double method_L3b(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta_lim1, double theta_lim2, double pert_params[],double _r_e){
   double theta_1=theta_lim1,theta_2=theta_lim2;
   double theta_g=0.5*(theta_1+theta_2);
-  double bar_r1=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, theta_1, pert_params, _r_e);
-  double bar_rg=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, theta_g, pert_params, _r_e);
-  double bar_r2=bar_r(f1_in, Df0Dtheta_in, kappa2, source_in, theta_2, pert_params, _r_e);
-  double x1=bar_r1*cos(theta_1), y1=bar_r1*sin(theta_1);
-  double x2=bar_r2*cos(theta_2), y2=bar_r2*sin(theta_2);
-  double x3=bar_rg*cos(theta_g), y3=bar_rg*sin(theta_g);
+  double r_mean1=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta_1, pert_params, _r_e);
+  double r_meang=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta_g, pert_params, _r_e);
+  double r_mean2=r_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta_2, pert_params, _r_e);
+  double x1=r_mean1*cos(theta_1), y1=r_mean1*sin(theta_1);
+  double x2=r_mean2*cos(theta_2), y2=r_mean2*sin(theta_2);
+  double x3=r_meang*cos(theta_g), y3=r_meang*sin(theta_g);
   double d12=sqrt(pow(x1-x2,2)+pow(y1-y2,2));
   double d23=sqrt(pow(x2-x3,2)+pow(y2-y3,2));  
   double d13=sqrt(pow(x3-x1,2)+pow(y3-y1,2));

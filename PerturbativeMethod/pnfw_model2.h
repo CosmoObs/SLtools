@@ -25,7 +25,7 @@
 //!  \f$ f_{1}(\theta) \equiv \left[\dfrac{\partial\psi_E(r,\theta)}{\partial r}\right]_{r=R_{E}} = \dfrac{\xi_{\mathrm{E}}}{R_{\mathrm{E}}}\alpha(\xi_{\mathrm{E}})-\alpha(R_{\mathrm{E}})\f$
 /*!
   \param theta : angular coordinate in the lens plane,
-  \param pot_params[] : PNFW lens parameters
+  \param pot_params[]: PNFW lens parameters
   \return \f$ f_1(\theta)\f$
 */
 double f1_pnfw(double theta, double pert_params[],double _r_e_nfw){
