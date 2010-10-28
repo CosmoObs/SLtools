@@ -19,10 +19,10 @@
 /*********************************************************************************************************************/
 /** \brief \f$ \phi(r) \f$ type function 
 *
-* \f$ r \f$ is the radial coordinate and pot_params[] is a vector that contains all the potential parameters (ex: \f$ \kappa_s \f$ and \f$ \rho_s \f$ from NFW profile)
+* \f$ r \f$ is the radial coordinate and pert_params[] is a vector that contains all the potential parameters (ex: \f$ \kappa_s \f$ and \f$ \rho_s \f$ from NFW profile)
 *
 */
-typedef double (*phi_type) (double r, double pot_params[]);
+typedef double (*phi_type) (double r, double pert_params[]);
 
 /** \brief \f$ \psi(r,\theta) \f$ type function 
 *
@@ -105,8 +105,8 @@ double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double th
 *
 *  \sa f_type, elliptical_source
 */
-double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pot_params[], double _r_e){
-  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params,_r_e)/_r_e;
+double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, double pert_params[], double _r_e){
+  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pert_params,_r_e)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
   double theta_bar = theta - source_in.theta0;
   double S = 1.0 - source_in.eta0*cos(2.0*theta_bar);
@@ -129,11 +129,11 @@ double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, 
 \return \f$ \frac{1}{\kappa_2}\left\{ \overline{f}_1(\theta) + \dfrac{\eta_0\sin{2\tilde{\theta}}}{S}\left(\dfrac{1}{R_{_\mathrm{E}}}\dfrac{\bar{f}_0(\theta)}{d\theta}\right)+\dfrac{1}{S}\sqrt{\Delta(\eta_0,\theta)}\right\}\f$*
 *  \sa f_type, elliptical_source
 */
-double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[],double _r_e){
-  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params,_r_e)/_r_e;
+double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pert_params[],double _r_e){
+  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pert_params,_r_e)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
 
-  double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pot_params,_r_e);
+  double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pert_params,_r_e);
 
   double theta_bar = theta - source_in.theta0;
   double S = 1.0 - source_in.eta0*cos(2.0*theta_bar);
@@ -163,11 +163,11 @@ double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sour
 *
 *  \sa f_type, elliptical_source
 */
-double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pot_params[],double _r_e){
-  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pot_params,_r_e)/_r_e;
+double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pert_params[],double _r_e){
+  double Df0Dtheta_bar_tmp = Df0Dtheta_bar(Df0Dtheta_in, source_in, theta, pert_params,_r_e)/_r_e;
   double Df0Dtheta_bar_tmp2 = Df0Dtheta_bar_tmp*Df0Dtheta_bar_tmp;
 
-  double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pot_params, _r_e);
+  double f1_bar_tmp = f1_bar(f1_in, source_in, theta, pert_params, _r_e);
 
   double theta_bar = theta - source_in.theta0;
   double S = 1.0 - source_in.eta0*cos(2.0*theta_bar);
@@ -195,10 +195,10 @@ double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
 **/
 
 
-double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pot_params[],double _r_e){
+double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pert_params[],double _r_e){
 
-  double f1_temp=f1_in(theta,pot_params,_r_e);
-  double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params,_r_e)/_r_e;
+  double f1_temp=f1_in(theta,pert_params,_r_e);
+  double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pert_params,_r_e)/_r_e;
   double r_t=_r_e+(1.0/kappa2)*(f1_temp+D2f0Dtheta2_temp);
   return r_t;
 }
@@ -212,9 +212,9 @@ double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, 
 *   This caustic line, in polar coordinates, is defined by :
 *   \return \f$ y_1=\dfrac{1}{R_{_{\mathrm{E}}}}\frac{d^2f_0}{d \theta^2}\cos{\theta}+\dfrac{1}{R_{_{\mathrm{E}}}}\frac{df_0}{d \theta}\sin{\theta}\f$
 **/
-double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[],double _r_e){
-    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params,_r_e)/_r_e;
-    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params,_r_e)/_r_e;
+double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pert_params[],double _r_e){
+    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pert_params,_r_e)/_r_e;
+    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pert_params,_r_e)/_r_e;
     double y1_c=D2f0Dtheta2_temp*cos(theta)+Df0Dtheta_tmp*sin(theta);
     return y1_c;
 }
@@ -227,9 +227,9 @@ double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, doub
 *   This caustic line, in polar coordinates, is defined by :
 *   \return \f$ y_2=\dfrac{1}{R_{_\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\sin{\theta}-\frac{1}{R_{_\mathrm{E}}}\frac{df_0}{d \theta}\cos{\theta}\f$
 **/
-double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pot_params[],double _r_e){
-    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pot_params,_r_e)/_r_e;
-    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pot_params,_r_e)/_r_e;
+double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pert_params[],double _r_e){
+    double Df0Dtheta_tmp = Df0Dtheta_in(theta,pert_params,_r_e)/_r_e;
+    double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pert_params,_r_e)/_r_e;
     double y2_c=D2f0Dtheta2_temp*sin(theta)-Df0Dtheta_tmp*cos(theta);
     return y2_c;
 }
@@ -273,4 +273,36 @@ double y2_src(elliptical_source source_in, double theta){
       return y2_linha_src;
 }
 
+/** Mean value of the radial distance of the arcs (Eq. 2.68 of the Report) 
+*   This function must be documented well
+*  \param elliptical_source (source parameters)
+*  \param theta  angular coordinate in the source plane 
+*   \return \f$ \bar{r}(\theta) \f$ 
+**/
+
+double bar_r(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pert_params[],double _r_e){
+  return _r_e+(dr_plus(f1_in,Df0Dtheta_in, kappa2, source_in,theta, pert_params,_r_e)+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in,theta, pert_params, _r_e))/2.0;
+}
+
+/** Width of the image (Eq. 2.69 of the Repor)
+*
+*  \param elliptical_source (source parameters)
+*  \param theta  angular coordinate in the source plane 
+*   \return \f$ W(\theta) \f$ 
+**/
+
+double w_mean(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pert_params[],double _r_e){
+  return (dr_plus(f1_in,Df0Dtheta_in, kappa2, source_in, theta, pert_params, _r_e)-dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in,theta, pert_params, _r_e));
+}
+
+/** Unitary area of the image, i.e, \f$ W(\theta)\bar{r}(\theta)\f$ (see Eq. 2.87 of the Report)
+*
+*  \param elliptical_source (source parameters)
+*  \param theta  angular coordinate in the source plane 
+*   \return \f$ W(\theta) \f$ 
+**/
+double wr_theta(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pert_params[],double _r_e){
+  double wr_temp=bar_r(f1_in,Df0Dtheta_in, kappa2, source_in,theta, pert_params,_r_e)*w_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params, _r_e);
+  return wr_temp;  
+}
 #endif
