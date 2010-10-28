@@ -70,7 +70,7 @@ typedef struct {
 *  \param f1_in function related to the perturbed potential 
 *  \param source_in a struct that define elliptical sources
 *  \param theta angular coordinate in the lens plane 
-*  \param pert_params[] a vector that contains all the perturbation parameters
+*  \param pert_params[] a vector containing all the perturbation parameters
 *  \return \f$ f_1(\theta) + x0\cos(\theta) + y0\sin(\theta) \f$
 *
 *  \sa f_type, elliptical_source
@@ -84,8 +84,8 @@ double f1_bar(f_type f1_in, elliptical_source source_in, double theta, double pe
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param source_in a struct that define elliptical sources
 *  \param theta angular coordinate in the lens plane 
-*  \param pert_params[] a vector that contains all the perturbation parameters
-*   \param _r_e is the einstein radius (If is not write, the code assumes \f$ R_{_{\mathrm{E}}}=1 \f$ )
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ )
 *  \return \f$ \frac{d f_0(\theta)}{d \theta} - (x0\sin(\theta) - y0\cos(\theta))R_{_{\mathrm{E}}} \f$
 *
 *  \sa f_type, elliptical_source
@@ -99,8 +99,8 @@ double Df0Dtheta_bar(f_type Df0Dtheta_in, elliptical_source source_in, double th
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param source_in a struct that define elliptical sources
 *  \param theta angular coordinate in the lens plane 
-*  \param pert_params[] a vector that contains all the perturbation parameters
-*  \param _r_e a Einstein Radius (If is not write, the code assumes \f$ R_{_{\mathrm{E}}}=1 \f$)
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ )
 *  \return \f$  S\,R_{0}^2-(1-\eta_0^2)\left[\frac{1}{R_{_{\mathrm{E}}}}\dfrac{d\bar{f}_0}{d \theta} \right]^2,\qquad S=1-\eta_0\cos{2\tilde{\theta}},\quad \tilde{\theta}=\theta-\theta_0  \f$
 *
 *  \sa f_type, elliptical_source
@@ -125,7 +125,8 @@ double arg_sqrt(f_type Df0Dtheta_in, elliptical_source source_in, double theta, 
 *  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
 *  \param source_in a struct that define elliptical sources
 *  \param theta angular coordinate in the lens plane 
-*  \param pert_params[] a vector that contains all the perturbation parameters
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ )
 \return \f$ \frac{1}{\kappa_2}\left\{ \overline{f}_1(\theta) + \dfrac{\eta_0\sin{2\tilde{\theta}}}{S}\left(\dfrac{1}{R_{_\mathrm{E}}}\dfrac{\bar{f}_0(\theta)}{d\theta}\right)+\dfrac{1}{S}\sqrt{\Delta(\eta_0,\theta)}\right\}\f$*
 *  \sa f_type, elliptical_source
 */
@@ -157,7 +158,8 @@ double dr_plus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sour
 *  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
 *  \param source_in a struct that define elliptical sources
 *  \param theta angular coordinate in the lens plane 
-*  \param pert_params[] a vector that contains all the perturbation parameters
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ )
 *
 *  \return \f$ \frac{1}{\kappa_2}\left\{ \overline{f}_1(\theta) + \dfrac{\eta_0\sin{2\tilde{\theta}}}{S}\left(\dfrac{1}{R_{_\mathrm{E}}}\dfrac{\bar{f}_0(\theta)}{d\theta}\right)-\dfrac{1}{S}\sqrt{\Delta(\eta_0,\theta)}\right\}\f$
 *
@@ -191,10 +193,11 @@ double dr_minus(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
 *  \param f1_in function related to the perturbed potential
 *  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
 *  \param theta angular coordinate in the lens plane.
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ ) of the circular model
 *  \return \f$ R_{\mathrm{crit}}= R_{_\mathrm{E}} +\dfrac{1}{\kappa_2}\left[f_1+\dfrac{1}{R_{_\mathrm{E}}}\dfrac{d^2 f_0}{d \theta^2}\right]\f$
-**/
-
-
+* \sa f_type
+*/
 double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pert_params[],double _r_e){
 
   double f1_temp=f1_in(theta,pert_params,_r_e);
@@ -209,9 +212,12 @@ double r_crit(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, 
 *  \param D2f0Dtheta2_in function related to the perturbed potential (second derivative)
 *  \param f1_in function related to the perturbed potential
 *  \param theta angular coordinate in the lens plane 
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ ) of the circular model
 *   This caustic line, in polar coordinates, is defined by :
 *   \return \f$ y_1=\dfrac{1}{R_{_{\mathrm{E}}}}\frac{d^2f_0}{d \theta^2}\cos{\theta}+\dfrac{1}{R_{_{\mathrm{E}}}}\frac{df_0}{d \theta}\sin{\theta}\f$
-**/
+* \sa f_type
+*/
 double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pert_params[],double _r_e){
     double Df0Dtheta_tmp = Df0Dtheta_in(theta,pert_params,_r_e)/_r_e;
     double D2f0Dtheta2_temp= D2f0Dtheta2_in(theta,pert_params,_r_e)/_r_e;
@@ -221,9 +227,11 @@ double caustic_y1(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, doub
 
 
 /** Tangential Caustic Line (Second Component)
-*  \param D2f0Dtheta2_in function related to the perturbed potential (second derivative)
+*  \param D2f0Dtheta2_in function related to the perturbed potential (second derivative in relation to \f$ theta \f$)
 *  \param f1_in function related to the perturbed potential
 *  \param theta angular coordinate in the lens plane 
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ ) of the circular model
 *   This caustic line, in polar coordinates, is defined by :
 *   \return \f$ y_2=\dfrac{1}{R_{_\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\sin{\theta}-\frac{1}{R_{_\mathrm{E}}}\frac{df_0}{d \theta}\cos{\theta}\f$
 **/
@@ -236,7 +244,6 @@ double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, doub
 
 
 /** First component of the parametric equation for the elliptical souce not allignet to main axis
-*   This caustic line, in polar coordinates, is defined by :
 *
 *  \f$ y_{1s}= \dfrac{R_s}{\sqrt{1-\eta_s}}\cos{\theta},\qquad y_{2s}= \dfrac{R_s}{\sqrt{1+\eta_s}}\sin{\theta} \f$
 *
@@ -244,8 +251,8 @@ double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, doub
 *  \param theta angular coordinate in the source plane 
 *
 *   \return \f$ y^{\prime}_{1,src}= x_0+y_{1s}\cos{\theta_s}-y_{2s}\sin{\theta_s} \f$ 
-**/
-
+*  \sa elliptical_source
+*/
 
 double y1_src(elliptical_source source_in, double theta){
       double theta_0 = source_in.theta0;  
@@ -263,7 +270,8 @@ double y1_src(elliptical_source source_in, double theta){
 *  \param elliptical_source source parameters 
 *  \param theta  angular coordinate in the source plane 
 *   \return \f$ y^{\prime}_{2,src}= y_0+y_{1s}\sin{\theta_s}+y_{2s}\cos{\theta_s} \f$ 
-**/
+* \sa elliptical_source
+*/
 
 double y2_src(elliptical_source source_in, double theta){
       double theta_0 = source_in.theta0;  
@@ -274,35 +282,52 @@ double y2_src(elliptical_source source_in, double theta){
 }
 
 /** Mean value of the radial distance of the arcs (Eq. 2.68 of the Report) 
-*   This function must be documented well
+*
+*  \param f_1in: function related to the first derivative of the perturbed potential
+*  \param Df0Dtheta_in: function related to the perturbative potential (first derivative in relation to \f$ theta \f$)
 *  \param elliptical_source (source parameters)
 *  \param theta  angular coordinate in the source plane 
-*   \return \f$ \bar{r}(\theta) \f$ 
-**/
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ ) of the circular model
+*   \return \f$ \bar{r}(\theta) = R_{_\mathrm{E}}+\left(\frac{x_{+}(\theta)+x_{-}(\theta)}{2}\right)\f$ 
+*   \sa f_type, elliptical_source,  
+*/
 
-double bar_r(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pert_params[],double _r_e){
+double r_mean(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pert_params[],double _r_e){
   return _r_e+(dr_plus(f1_in,Df0Dtheta_in, kappa2, source_in,theta, pert_params,_r_e)+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in,theta, pert_params, _r_e))/2.0;
 }
 
-/** Width of the image (Eq. 2.69 of the Repor)
+/** Mean width of the image at some angular position  (Eq. 2.69 of the Repor)
 *
+*  \param f_1in: function related to the first derivative of the perturbed potential
+*  \param Df0Dtheta_in: function related to the perturbative potential (first derivative in relation to \f$ theta \f$)
+*   \param kappa2: corresponds to \f$ \kappa_2 \f$
 *  \param elliptical_source (source parameters)
 *  \param theta  angular coordinate in the source plane 
-*   \return \f$ W(\theta) \f$ 
-**/
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{\rm E}\f$ ) of the circular model
+*   \return \f$ W(\theta)=x_{+}(\theta)-x_{-}(\theta) \f$ 
+*   \sa f_type, elliptical_source, r_mean, w_mean 
+*
+*/
 
 double w_mean(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pert_params[],double _r_e){
   return (dr_plus(f1_in,Df0Dtheta_in, kappa2, source_in, theta, pert_params, _r_e)-dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in,theta, pert_params, _r_e));
 }
 
-/** Unitary area of the image, i.e, \f$ W(\theta)\bar{r}(\theta)\f$ (see Eq. 2.87 of the Report)
-*
+/** Unitary area of the image, i.e, is the argument of the integral \f$ W(\theta)\bar{r}(\theta)\f$ (see Eq. 2.87 of the Report)
+*  \param f_1in: function related to the first derivative of the perturbed potential
+*  \param Df0Dtheta_in: function related to the perturbative potential (first derivative in relation to \f$ theta \f$)
+*   \param kappa2: corresponds to \f$ \kappa_2 \f$
 *  \param elliptical_source (source parameters)
 *  \param theta  angular coordinate in the source plane 
-*   \return \f$ W(\theta) \f$ 
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{\rm E}\f$ ) of the circular model
+*   \return \f$ W(\theta)\bar{r}(\theta) \f$ 
+*   \sa f_type, elliptical_source, r_mean, w_mean
 **/
 double wr_theta(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double theta, double pert_params[],double _r_e){
-  double wr_temp=bar_r(f1_in,Df0Dtheta_in, kappa2, source_in,theta, pert_params,_r_e)*w_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params, _r_e);
+  double wr_temp=r_mean(f1_in,Df0Dtheta_in, kappa2, source_in,theta, pert_params,_r_e)*w_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params, _r_e);
   return wr_temp;  
 }
 #endif
