@@ -6,81 +6,34 @@
 
 #include "../perturbative_method.h"
 #include "../pnfw_model.h"
-#include "../theta_find.h"
+// #include "../theta_find.h"
+#include "../generate_arcs.h"
+#include "../generate_curves.h"
+#include "../../numerical_methods/general_methods.h" 
+// #include "../arc_properties.h"
 
-void print_arcs_nfw(elliptical_source source_in, double pot_params[],  int npts=200){
+#define TAM_MAX 20
 
-  double theta = 0.0;
-  double r_p = 0.0;
-  double r_m = 0.0;
-// Added by Habib Dumet-Montoya
-  double r_tcrit=0.0;
-  double y1_caust=0.0;
-  double y2_caust=0.0;
-  double src_y1=0.0;
-  double src_y2=0.0;
-
-//pot_paramas[0]=r_s, pot_params[1]=ks,pot_params[2]=elipticity,
-  //double pot_params[] = {0.9,1.0,0.2};
-// Added by Habib Dumet-Montoya
-FILE *outarc = fopen ("arcs_pnfw.dat" , "w");
-FILE *oute = fopen ("einstein_circle.dat" , "w");
-FILE *outtc = fopen ("tang_crit.dat" , "w");
-FILE *outcau = fopen ("tang_caust.dat" , "w");
-FILE *outsrc = fopen ("src_plot.dat" , "w");
-
-    for(int i=0;i<=npts;i++){
-
-      if(arg_sqrt(Df0Dtheta_nfw, source_in, theta, pot_params)>0.0){
-//       r_p = _r_e+pot_params[0]*dr_plus(f1_nfw, Df0Dtheta_nfw, kappa2_nfw(pot_params), source_in, theta, pot_params);
-//       r_m = _r_e+pot_params[0]*dr_minus(f1_nfw, Df0Dtheta_nfw,kappa2_nfw(pot_params), source_in, theta, pot_params);
-      r_p = _r_e+dr_plus(f1_nfw, Df0Dtheta_nfw, kappa2_nfw(pot_params), source_in, theta, pot_params);
-      r_m = _r_e+dr_minus(f1_nfw, Df0Dtheta_nfw,kappa2_nfw(pot_params), source_in, theta, pot_params);
-//       printf("%E %E\n",r_p*cos(theta),r_p*sin(theta));
-//       printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));
-      fprintf(outarc,"%E %E\n",r_p*cos(theta),r_p*sin(theta)); // printing to a file
-      fprintf(outarc,"%E %E\n",r_m*cos(theta),r_m*sin(theta)); // printing to a file
-    }
-// Added by Habib: The tangential Critical Curve.
-// Printing the Einstein Ring to a File
-     fprintf(oute,"%E %E\n",_r_e*cos(theta),_r_e*sin(theta)); 
-//  Defining the tangential critical radius
-     r_tcrit= r_crit(f1_nfw,D2f0Dtheta2_nfw,kappa2_nfw(pot_params),theta,pot_params); 
-// Writing in a file the tangential critical curve
-     fprintf(outtc,"%E %E\n",r_tcrit*cos(theta),r_tcrit*sin(theta));   
-//  Defining the polar equation of the tangential caustic
-     y1_caust=caustic_y1(Df0Dtheta_nfw,D2f0Dtheta2_nfw,theta,pot_params);
-     y2_caust=caustic_y2(Df0Dtheta_nfw,D2f0Dtheta2_nfw,theta,pot_params);
-//   Writing in a file the tangential caustic line
-     fprintf(outcau,"%E %E\n",y1_caust,y2_caust); 
-//   Writing the source in a file 
-     fprintf(outsrc,"%E %E\n",y1_src(source_in, theta),y2_src(source_in, theta));  
-//
-    theta+= 6.283185308/npts;
-  }
-}
+// to compile make: g++ -Wall pnfw_test.cpp `pkg-config gsl --cflags --libs`
 
 int main(){
 
-// Added by Habib Dumet-Montoya
-//   FILE *input_lens = fopen("input_lens_par.txt","r");
-//   FILE *input_src = fopen("input_src.txt","r");
+  FILE *outarc = fopen ("arcs_pnfw.dat" , "w");
   FILE *outls = fopen ("lensing_data.dat" , "w");  
-  
+  FILE *outtc = fopen ("tang_crit.dat" , "w");
+  FILE *outcau = fopen ("tang_caust.dat" , "w");
+  FILE *outsrc = fopen ("src_plot.dat" , "w");
+ 
 
-
-  int npts = 1000;
+  int npts = 4000;
 
   double twpi= 6.283185308;  
-  double pot_params[] = {0.5,0.65,0.0};
+  double pot_params[] = {1.5,0.65,0.25};
+//   double theta_in[TAM_MAX];
+//   double theta_sup[TAM_MAX];
 
-  double *out = (double*)malloc(2.0*sizeof(double));
-  bracketing_lambda_t( lambda_t_nfw, pot_params, out);
-  printf("# Range of the root = %E  %E\n",out[0], out[1] );
-  double z_out=  root_find(alpha_nfw, shear_nfw, pot_params,out[0] ,out[1]);
-  fprintf(outls, "Einstein Radius= %f\n",z_out);
-   _r_e = z_out;
-
+  double _r_e_nfw= r_e_nfw_find(pot_params);
+  printf("Einstein Radius = %f\n",_r_e_nfw);
 
   elliptical_source source;
 /*
@@ -90,26 +43,14 @@ int main(){
   source.eta0 = 0.0;
   source.theta0 = 0.0;
 */
-  source.x0 = (_r_e/10.);
-  source.y0 = 0.0;
+  source.x0 = (_r_e_nfw/4.);
+  source.y0 = source.x0;
   printf(" Source Position %f %f\n",source.x0,source.y0);
-  source.R0 = (sqrt(2.0)/50.0)*_r_e;
-  source.eta0 = 0.0;
-  source.theta0 = 0.0;
+  source.R0 = (sqrt(2.0)/25.0)*_r_e_nfw;
+  source.eta0 = 0.8;
+  source.theta0 = twpi/10.0;
+//   source.theta0 = 0.0;
 
-
-//   double *out = (double*)malloc(2.0*sizeof(double));
-//   bracketing_lambda_t( lambda_t_nfw, pot_params, out);
-//   printf("# Range of the root = %E  %E\n",out[0], out[1] );
-//   double z_out=  root_find(alpha_nfw, shear_nfw, pot_params,out[0] ,out[1]);
-//   fprintf(outls, "Einstein Radius= %f\n",z_out);
-//    _r_e = z_out;
-//   _r_e=r_e_nfw(pot_params);
-  theta_find(Df0Dtheta_nfw, source,pot_params );
-  print_arcs_nfw(source,pot_params,npts);
-  
-
-// Added by Habib Dumet-Montoya
   fprintf(outls," PNFW Model Parameters: \n");  
   fprintf(outls," Scale Radius = %f\n",pot_params[0]);
   fprintf(outls," Characteristic Convergence = %f\n",pot_params[1]);
@@ -118,4 +59,15 @@ int main(){
   fprintf(outls," Source Position %f %f\n",source.x0,source.y0);
   fprintf(outls," Source Radius %f\n",source.R0);
   fprintf(outls," Source Ellipticity and Inclination %f %f\n\n",source.eta0,source.theta0);
+
+  
+//   theta_find(Df0Dtheta_pnfw, source,pot_params,_r_e_nfw, theta_in, theta_sup);
+//   theta_find(Df0Dtheta_pnfw, source,pot_params,_r_e_nfw);
+//   printf("algun angle\%f\t\%f\n", theta_in[0],theta_sup[0])
+  
+
+// 
+  plot_arcs(source, f1_pnfw, Df0Dtheta_pnfw, pot_params, kappa2_nfw(pot_params,_r_e_nfw),_r_e_nfw,npts, outarc);
+  plot_curves(source, f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pot_params, kappa2_nfw(pot_params,_r_e_nfw),_r_e_nfw, npts, outtc, outcau, outsrc);
+
 }

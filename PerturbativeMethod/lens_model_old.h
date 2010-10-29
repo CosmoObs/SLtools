@@ -45,7 +45,7 @@ double Df0Dtheta_SIS(double theta, double pert_params[]){
 //pot_params[0] = mp
 //pot_params[1] = rp
 //pot_params[2] = thetap
-/**  \f$ f_1(\theta) \f$ for SIS as a perturbation
+/**  \f$ f_1(\theta) \f$ for SIS as a substructure
 *
 *  \param theta angular coordinate in the lens plane
 *  \param pot_params[0] = mp
@@ -62,7 +62,7 @@ double f1_pert_SIS(double theta, double pot_params[]){
   return tmp1/tmp2 ;
 }
 
-/**  \f$ \frac{d f_0(\theta)}{d \theta} \f$ for SIS as a perturbation
+/**  \f$ \frac{d f_0(\theta)}{d \theta} \f$ for SIS as a substructure
 *
 *  \param theta angular coordinate in the lens plane
 *  \param pot_params[0] = mp

@@ -81,7 +81,7 @@ int nsteps = 500;
 int main(){
 
   // Define some numbers, same as what MM has in his code
-  double x_0 = 1;
+  double x_0 = 0.1;
   double y_0 = 0 ; 
   double R_0 = 1.0/15.0;
 

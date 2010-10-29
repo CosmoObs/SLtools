@@ -87,7 +87,7 @@ any circular model
 \bea
 \phi^\prime &\equiv& \dfrac{d\phi(r)}{d r}=\alpha(r) \label{dphi}\\
 \phi^{\prime\prime}&\equiv& \dfrac{d^2\phi(r)}{d r^2}=2\kappa(r)-\dfrac{\alpha(r)}{r}\label{ddphi}\\
-\gamma(r)&=&\dfrac{\alpha(r)}{r}-\kappa(r)
+\gamma(r)&=&\dfrac{\alpha(r)}{r}-\kappa(r) \label{shear_gen}
 \eea
 
 Then, using these relationships and as $r$ is a dummy variable, we have for the main fields
@@ -178,14 +178,17 @@ and using the relations above we have.
 \dfrac{\prtl \psi_{ss}}{\prtl r}&=&[r-r_p\cos{(\te-\tep)}]\dfrac{\varphi^\prime_\zeta}{\zeta}\label{f1}
 \end{eqnarray}
 
-Using the Eqs.~(\ref{dphi},\ref{ddphi}) and as $r$ is dummy variable, we can define $\al_\zeta=\al(\zeta)=\varphi^\prime_\zeta$ and $\kappa_\zeta=\kappa(\zeta)$. From the
-Eqs.(\ref{xirte}, \ref{df0}-\ref{f1}) (evaluated at $r=\re$), we get to the analytical expression for the main fields of
+Using the Eqs.~(\ref{dphi},\ref{ddphi} and \ref{shear_gen}) and as $r$ is dummy variable, we can define 
+$\al_\zeta=\al(\zeta)=\varphi^\prime_\zeta$, $\kappa_\zeta=\kappa(\zeta)$ and $\gamma_\zeta=\al_\zeta/\zeta-\kappa_\zeta$. 
+From the Eqs.(\ref{xirte}, \ref{df0}-\ref{f1}) (evaluated at $r=\re$), we get to the analytical expression for the main fields of
 the perturbative approach as function of the angle deflection and convergence, i.e.
 \begin{eqnarray}
 \dfrac{df_0}{d\te}&=&\al_{\xie}\dfrac{\Omega(\xie)}{\xie}\\
-\dfrac{d^2f_0}{d\te^2}&=&2\left[\kappa_{\xie}-\dfrac{\al_{\xie}}{\xie}\right]%
-\left(\dfrac{\Omega(\xie)}{\xie}\right)^2+\al_{\xie}\dfrac{[\re r_p\cos{(\te-\tep)}]}{\xie}\\
-f_1&=&\al_{\xie}\dfrac{[\re-r_p\cos{(\te-\tep)}]}{\xie},
+% \dfrac{d^2f_0}{d\te^2}&=&2\left[\kappa_{\xie}-\dfrac{\al_{\xie}}{\xie}\right]%
+% \left(\dfrac{\Omega(\xie)}{\xie}\right)^2+\al_{\xie}\dfrac{[\re r_p\cos{(\te-\tep)}]}{\xie}\\
+\dfrac{d^2f_0}{d\te^2}&=& \al_{\xie}\dfrac{[\re r_p\cos{(\te-\tep)}]}{\xie}% 
+- 2\gamma_{\xie} \left(\dfrac{\Omega(\xie)}{\xie}\right)^2\\
+f_1(\te)&=&\al_{\xie}\dfrac{[\re-r_p\cos{(\te-\tep)}]}{\xie},
 \end{eqnarray}
 
 \subsection{SIS model as substructure}
