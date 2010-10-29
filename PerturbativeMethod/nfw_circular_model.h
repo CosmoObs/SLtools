@@ -1,5 +1,12 @@
 /** @file
-* Example of doxygen documentation for C functions FIXME. 
+* Package useful to calculate some function related to the NFW lensing model
+*
+* Lensing Function (Angle Deflection, Convergence, Shear)
+*
+* Einstein Radius (Use bracketing_lambda_t and gsl functions)
+*
+* Function useful to the Perturbative Approach \f$ \kappa_2 \f$
+*
 */
 
 /** @package nfw_circular_model
@@ -14,7 +21,7 @@
 #include <math.h>
 #include <cstdlib>
 
- #include "../numerical_methods/general_methods.h"
+#include "../numerical_methods/general_methods.h"
 //#include "general_methods.h"
 
 //! Function useful to define the convergence and angle deflection of the NFW model.
@@ -51,7 +58,8 @@ double F(double X)
 }
 
 
-
+//pot_params[0] = kappas
+//pot_params[1] = rs
 //! Convergence of the NFW model.
 //!
 //! \f$ \kappa(r)=2\,\kappa_s\dfrac{(1-\mathcal{F}(x))}{x^2-1}\f$, 
@@ -60,8 +68,8 @@ double F(double X)
 /*!   \param r : radial distance,   \param pot_params[] : NFW lens parameters,   \return \f$ \kappa(r)\f$ */
 double conv_nfw_circ(double r, double pot_params[])
 {
-    double K, ks=pot_params[1];
-    double rs=pot_params[0],X=r/rs;
+    double K, ks=pot_params[0];
+    double rs=pot_params[1],X=r/rs;
     
     if(X == 1.0)
     {
@@ -74,7 +82,8 @@ double conv_nfw_circ(double r, double pot_params[])
     }    
 }
 
-
+//pot_params[0] = kappas
+//pot_params[1] = rs
 //! Angle deflection of the NFW model.
 //!
 //! \f$ \alpha(r)=   2\,\kappa_s r_s \dfrac{\log{x/2}+\mathcal{F}(x)}{x}\f$, 
@@ -85,13 +94,14 @@ double conv_nfw_circ(double r, double pot_params[])
 */
 double alpha_nfw_circ(double r, double pot_params[])
 {
-    double alpha,rs=pot_params[0],ks=pot_params[1];
+    double alpha,rs=pot_params[1],ks=pot_params[0];
     double X=r/rs;
       alpha = 4.0*ks*rs*(log(X/2.0)+F(X))/X;
       return alpha;
 }
 
-
+//pot_params[0] = kappas
+//pot_params[1] = rs
 //! Shear of the NFW model.
 //!
 //! \f$ \gamma(r)= \dfrac{\alpha(r)}{r}-\kappa(r) \f$, 
@@ -106,6 +116,8 @@ double alpha_nfw_circ(double r, double pot_params[])
 }
 
 
+//pot_params[0] = kappas
+//pot_params[1] = rs
 //! Solution for the Circular NFW Lens 
 //!
 //! \f$ \kappa_2=2-2\kappa(R_{\mathrm{E}}) \f$,
@@ -114,7 +126,8 @@ double alpha_nfw_circ(double r, double pot_params[])
 //!
 /*!   \param r_e : Einstein Radius, \param pot_params[] : NFW lens parameters,\return \f$ \kappa_2 \f$ */
 double kappa2_nfw(double pot_params[],double _r_e_nfw){
-  double k2, r=_r_e_nfw;
+  double k2,r=_r_e_nfw;
+
   k2=2.0-2.0*conv_nfw_circ(r,pot_params);
 
   return k2;
@@ -127,36 +140,86 @@ double kappa2_nfw(double pot_params[],double _r_e_nfw){
 //!
 /*!
   \param r : radial distance
-  \param pot_params[] : PNFW lens parameters
+  \param pot_params[] : NFW lens parameters
   \return \f$ f(r)\f$
 */
 double lambda_t_nfw_circ(double r, double pot_params[]) {return 1.0 - alpha_nfw_circ(r, pot_params)/r;}
 
 
-//pot_params[0] = rs
-//pot_params[1] = kappas
+
+//pot_params[0] = kappas
+//pot_params[1] = rs
 double re_find_func_nfw(double r, void *p){
 
   double *params = (double *)p;
 
-  double rs = params[0];//(params->rs);
-  double ks = params[1];//(params->ks);
+  double rs = params[1];//(params->rs);
+  double ks = params[0];//(params->ks);
   //printf("%E %E\n",rs,ks);
   double X = r/rs;
 
   return r - 4.0*ks*rs/X * ( F(X) + log(X/2.0) );
+}
+double re_find_func_nfw(double r, double params[]){
 
+  double rs = params[1];//(params->rs);
+  double ks = params[0];//(params->ks);
+  //printf("%E %E\n",rs,ks);
+  double X = r/rs;
+
+  return r - 4.0*ks*rs/X * ( F(X) + log(X/2.0) );
+}
+
+/*********************************************************************************************************************/
+//!  Function useful to find the range  \f$ z_{\mathrm{min}} < R_{\mathrm{E}} < z_{\mathrm{max}}  \f$
+//!
+/*!
+  \param f : function defining in lambda_t_nfw(double r, double pot_params[])
+  \param pot_params[] : PNFW lens parameters
+  \return \f$ z_{\mathrm{min}},z_{\mathrm{min}}\f$
+*/
+
+double bracketing_lambda_t(double f(double r, double params[]), double params[], double out[], double z=1.0, double dz=0.001){
+  double z_min = 0.0;
+  double z_max = 0.0;
+
+
+  if(f(z, params) < 0){
+    while( f(z, params) < 0){
+      z += dz;
+    }
+    z_min = z-dz;
+    z_max = z;
+  } else {
+    while(f(z, params) > 0){
+      z -= dz;
+    }
+    z_min = z;
+    z_max = z+dz;
+  }
+
+  out[0] = z_min;
+  out[1] = z_max;
+
+  return 0.0;
 }
 
 
-//pot_params[0] = rs
-//pot_params[1] = kappas
+
+
+//pot_params[0] = kappas
+//pot_params[1] = rs
 double r_e_nfw_find(double pot_params[], double *est_err_out=NULL, double x_lo = 1E-4, double x_hi = 10.0, int max_iter = 100, double relative_error = 1E-4, int v=1){
   double *params = (double*) malloc(2.0*sizeof(double));
   params[0] = pot_params[0];
   params[1] = pot_params[1];
-
-  double re = root_find(re_find_func_nfw, params,est_err_out, x_lo,x_hi,max_iter,relative_error,v);
+  
+  double out[2];
+  
+  bracketing_lambda_t(re_find_func_nfw, params, out);
+  
+  
+  double re = root_find(re_find_func_nfw, params,est_err_out, out[0],out[1],max_iter,relative_error,v);
   return re;
 }
 

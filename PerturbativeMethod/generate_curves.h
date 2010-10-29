@@ -1,5 +1,11 @@
 /** @file
-* Example of doxygem documentation for C functions FIXME
+* Package to generate the curves useful to the perturbative approach, as
+* 
+*  Tangential Critical Curve 
+*
+*  Tangential Caustic 
+*
+*  Source contour plotting
 */
 
 /** @package perturbative_method

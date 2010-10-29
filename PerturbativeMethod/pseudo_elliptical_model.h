@@ -11,7 +11,7 @@
 //
 // For pert_params[1]=3, Is used \f$ a_{1\eta}=1, a_{2\eta}=1/(1-\eta)^2 \f$, i.e Keeton's Parameterization
 //
-// example: for the PNFW model, usefull for comparison with gravlens, we must define pert_params[]={\f$ \eta \f$ ,3, \f$ \kappa_s \f$, \f$ r_s \f$}
+// example: for the PNFW model, useful for comparison with gravlens, we must define pert_params[]={\f$ \eta \f$ ,3, \f$ \kappa_s \f$, \f$ r_s \f$}
 */
 
 /** @package pseudo_elliptical_models
