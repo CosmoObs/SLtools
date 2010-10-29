@@ -1,5 +1,17 @@
 /** @file
-* Example of doxygem documentation for C functions FIXME
+* Function to calculate the main perturbative fields related with Pseudo-Elliptical Models (valid for any radial profile)
+*
+// Note: (pert_params[0],pert_params[1], pert_params[2]....) must be (ellipticity, flag control, mass and so on..)  
+//
+// The three kind of parameterization accepted in this functions are:
+//
+// For pert_params[1]=1, Is used \f$ a_{1\eta}=1-\eta, a_{2\eta}=1+\eta \f$, i.e Angle Deflection Model
+// 
+// For pert_params[1]=2, Is used \f$ a_{1\eta}=1-\eta, a_{2\eta}=1/(1-\eta) \f$, i.e Standard Parameterization
+//
+// For pert_params[1]=3, Is used \f$ a_{1\eta}=1, a_{2\eta}=1/(1-\eta)^2 \f$, i.e Keeton's Parameterization
+//
+// example: for the PNFW model, usefull for comparison with gravlens, we must define pert_params[]={\f$ \eta \f$ ,3, \f$ \kappa_s \f$, \f$ r_s \f$}
 */
 
 /** @package pseudo_elliptical_models
@@ -27,8 +39,7 @@ typedef double (*f_type2)   (double r, double pert_params[]);
 \param alpha_in : angle deflection of the circular potential
 \param R_E: Einstein Radius
 \param theta : angular coordinate in the lens plane,
- \param pert_params[] : PE lens parameters (pert_params[0] must be the ellipticity and pert_params[1] must be the flag choissing the parameterization)
-\param iflag: flag control to choice the parameterization for the ellipticity (1,2,3) correspond to (G & K,Standard,Keeton's parameterizations)
+ \param pert_params[] : Pseudo-Elliptical parameters 
   \return \f$ f_{1}(\theta) = \dfrac{\xi_{\mathrm{E}}}{R_{\mathrm{E}}}\alpha(\xi_{\mathrm{E}})-\alpha(R_{\mathrm{E}}) \f$
 */
 
@@ -69,13 +80,11 @@ return f1_tmp;
 //!
 //!  \f$ \dfrac{df_0}{d\theta}:= \left[\dfrac{d \psi_E(r,\theta)}{d\theta}\right]_{r=R_{\mathrm{E}}} \f$
 //!
-/*!
-  \param alpha_in : angle deflection for the circular model
-  \param R_E: Einstein Radius corresponding to the circular model
-  \param theta : angular coordinate in the lens plane
-  \param pert_params[] : PNFW lens parameters, (pert_params[0] must be the ellipticity and pert_params[1] must be the flag choissing the parameterization)
-  \param iflag: flag control to choice the parameterization for the ellipticity (1,2,3) correspond to (G & K,Standard,Keeton's parameterizations)
-  \return \f$ \dfrac{df_0}{d\theta}= \frac{1}{2}\dfrac{\alpha(\xi_{\mathrm{E}})}{\xi_{\mathrm{E}}}\mathcal{G}(\eta,\theta) \f$ */
+//!  \param alpha_in : angle deflection for the circular model
+//!  \param R_E: Einstein Radius corresponding to the circular model
+//!  \param theta : angular coordinate in the lens plane
+//!  \param pert_params[] : Pseudo-Elliptical parameters
+//!  \return \f$ \dfrac{df_0}{d\theta}= \frac{1}{2}\dfrac{\alpha(\xi_{\mathrm{E}})}{\xi_{\mathrm{E}}}\mathcal{G}(\eta,\theta) \f$ */
 
 double df0dtheta_pe(f_type2 alpha_in,double R_E, double theta, double pert_params[]){
 double pot_params[]={pert_params[2],pert_params[3]};
@@ -125,8 +134,7 @@ return df0dte_pe;
   \param gamma_in : shear of the circular potential
   \param R_E: Einstein Radius of the circular potential
   \param theta : angular coordinate in the lens plane
-  \param pert_params[] : PNFW lens parameters, (pert_params[0] must be the ellipticity and pert_params[1] must be the flag choissing the parameterization)
-  \param iflag: flag control to choice the parameterization for the ellipticity (1,2,3) correspond to (G & K,Standard,Keeton's parameterizations)
+   \param pert_params[] : Pseudo-Elliptical parameters
   \return \f$ \dfrac{d^2f_0}{d\theta^2}\f$
 */
 
