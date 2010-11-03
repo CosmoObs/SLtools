@@ -172,11 +172,11 @@ def _cstm_args(telescope):
 # ---
 
 #=======================================================================
-def run_sex(fits_image, params=[], args={}, custom=''):
+def run_sex(fits_image, params=[], args={}, preset=''):
     """
     Run Sextractor on given (fits) image, with optional parameters
 
-    run_sex( 'image.fits' [ [...],{...} ] )
+    run_sex( fits_image )
 
     Function runs Sextractor on a given FITS image (fits_image) to generate 
     sex's "OBJECTS" and "SEGMENTATION" outputs. Output parameters (catalogs) 
@@ -201,16 +201,15 @@ def run_sex(fits_image, params=[], args={}, custom=''):
     Notice that this custom choices do not disable other parameters.
 
     Input:
-     - fits_image : FITS image filename
-     - params     : List of parameters to output on catalogues
-     - args       : Dictionary with sextractor line arguments. If not given,
-                    'sex -dd' will be used as default options.
-     - cats_name  : Root name used for genereated catalogue names. ["catalog"]
-     - custom     : 'HST', 'DC4', 'DC5' or 'CFHT'
+     - fits_image  <FITS> : FITS image filename
+     - params      <list> : List of parameters to output on catalogues
+     - args        <dict> : Dictionary with sextractor line arguments. If not given,
+                            'sex -dd' will be used as default options.
+     - preset       <str> : 'HST', 'DC4', 'DC5' or 'CFHT'
 
     Output:
-     * Two ascii files (catalogues) and two fits images. See above paragraph.
-
+     - <bool> : True/False
+    
     """
 
 
@@ -241,9 +240,10 @@ def run_sex(fits_image, params=[], args={}, custom=''):
     # ==========================================================================
 
 
-    cargs = _cstm_args( custom );
+    # Update the SE's config(command-line) arguments..
+    #
+    cargs = _cstm_args( preset );
     cargs.update( args );
-
 
     # Build up sextractor command line..
     #
@@ -254,7 +254,8 @@ def run_sex(fits_image, params=[], args={}, custom=''):
     # Run sex..
     #
     status = os.system( 'sex %s %s' % (fits_image,cmd_line));
-    if ( status != 0 ): print >> sys.stdout, "Warning: Sextractor raised an error code '%s' during Sextractor run. Continuing." % (status);
+    if ( status != 0 ):
+        print >> sys.stderr, "Error: Sextractor raised an error code '%s' during Sextractor run." % (status);
 
 
     if (status):
@@ -280,12 +281,12 @@ def objects_IDfy(objIDs, seg_img, obj_img):
     object, is returned.
 
     Input:
-     - objIDs  : a list with (int) numbers that identify the objects in seg_img
-     - seg_img : image with segmented objects, with pixels values in objIDs
-     - obj_img : image with objects (observed pixel values)
+     - objIDs  <list:int> : a list with (int) numbers that identify the objects in seg_img
+     - seg_img  <ndarray> : SEGMENTATION image array (pixels values correspond to with in objIDs)
+     - obj_img  <ndarray> : OBJECTS image array
 
     Output:
-     - objs_list : a list with arrays containing each identified object
+     - <list:ndarray> : a list with arrays containing each identified object
 
     """
 
@@ -317,57 +318,6 @@ def objects_IDfy(objIDs, seg_img, obj_img):
 
 # ---
 
-#==========================================================================================================================
-def images_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
-    """
-    Identify objects on given images by their IDs on catalog and write object images
-
-    image_IDfy(catalog.txt, seg_image.fits, obj_image.fits, out_rootname.string, relative_size.bool, force_relative.bool)
-
-    Identifies the pixels of each ID(int) in catalog (1st column) on segmentation
-    image - seg_image. These identified pixels (their intensities) are copied 
-    from object image, obj_image, to a new blank image with same shape as given ones.
-    (BTW, it is clear that seg_image and obj_image have the same dimensions)
-
-    For each object in catalog an image with corresponding object pixels will be created.
-    The name of new (output) images will be composed by "out_rootname"+"ID"+".fits".
-
-    Input:
-     - catalog        : ASCII catalog. The first column should the ID of objects in seg_image
-     - seg_image      : FITS image with segmented objects, with pixels values in catalog
-     - obj_image      : FITS image with objects (observed pixel values)
-     - out_rootname   : Basename for output images naming, plus the object ID (FITS file)
-
-    Output:
-    * Depending on the size of catalog, fits images will be created
-
-    """
-
-
-    # Read input images and the ascii catalog (header read from obj image)..
-    #
-    obj, hdr = pyfits.getdata(obj_image, header=True);
-    seg = pyfits.getdata(seg_image);
-    cat = np.loadtxt(catalog, comments="'");
-
-
-    # Object IDs
-    objIDs = list(cat[:,0]);   # Notice that I'm supposing that the object IDs
-                               # are placed in the first column of given catalog
-
-    objIDs = [ int(id) for id in objIDs ];
-    imgs_list = objects_IDfy(objIDs, seg, obj);
-
-    # Write down each returned fits image..
-    #
-    for i in range(len(imgs_list)):
-
-        _id = objIDs[i];
-        pyfits.writeto( out_rootname+str(_id)+'.fits', imgs_list[i], hdr );
-
-
-    return (True);
-
 # ---
 # I'll leave it here as a good record of basic necessary reg-exp use.
 # It was used before the (only!) numpy line above.
@@ -384,47 +334,3 @@ def images_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
 #    fp_cat.close();
 # ---
 
-"""
-# \cond
-#==========================
-if __name__ == "__main__" :
-
-	from optparse import OptionParser;
-
-	usage="Usage: %prog [options] <image_fits_file>"
-
-	parser = OptionParser(usage=usage);
-
-	parser.add_option('--run_sex', action='store_true',
-			  dest='run_sex', default=True,
-			  help='Run sextractor on given FITS image');
-        parser.add_option('--params_file',
-                          dest='params', default='default.param',
-                          help='Sextractor params file [default.param]');
-        parser.add_option('--config_file',
-                          dest='config', default='default.sex',
-                          help='Sextractor config file [default.sex]');
-
-	(opts,args) = parser.parse_args();
-
-        run_sex = opts.run_sex;
-        params_file = opts.params;
-        config_file = opts.config;
-
-	if ( len(args) != 1 ):
-		parser.error("Wrong number of arguments. Try option '--help' for usage and help messages.")
-
-	infits = args[0];
-
-	if ( run_sex ):
-
-            fp_params = open(params_file);
-            params = [ line.rstrip("\n")   for line in fp_params.readlines() ]
-            config = config_parser(config_file);
-
-
-	sys.exit(0);
-
-# ------------------
-# \endcond
-"""
