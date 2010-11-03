@@ -12,13 +12,14 @@ We will change location later
 
 --- shr.pl - legacy perl code that is now superceded by shearprofile.py 
 
-
 ############# G10
 
 --- pipeline_forG10_files.py - to run Imcat all the way up and through
-    psfcorrect
+    shapest
 
 --- move_all_done_files.py - if interrupted, this moves all fully proc'd files to donefiles subdir.
 
+
+--- doCleancattifyingAndPsfprocessing.py - makes cleancats, runs psfcorrect, and then makes redd files --> final step
 
 
