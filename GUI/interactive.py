@@ -62,25 +62,6 @@ def click(image,hdr):
 def fits_2_img(fits_image, preset=''):
     """Run Sextractor and read images to arrays"""
 
-    if preset=='none':
-        preset='';
-    _dic = SE.run_segobj(fits_image, preset=preset);
-
-    if not _dic:
-        return False;
-    
-    objname = _dic['OBJECTS_file'];
-    segname = _dic['SEGMENTATION_file'];
-    catalog = _dic['CATALOG_file'];
-    
-    # Read FITS images and catalog..
-    #
-    objimg = pyfits.getdata( objname );
-    segimg = pyfits.getdata( segname );
-    cat = pyfits.open(catalog)[1].data;
-
-
-    return (segimg,objimg,cat);
 
 # ---
 
@@ -123,7 +104,76 @@ def select_objects(segimg, objimg, centroids, header=None):
 
 # ---
 
+def write_results(images=[], headers=[], IDs=[], out_rootname='out_'):
+
+    for i in range( len(IDs) ):
+
+        outname = out_rootname+"%03d.fits" % (IDs[i]);
+        print >> sys.stdout, "Writing object (id: %s) image:  %s ..." % (IDs[i],outname);
+        os.system( 'rm %s &> /dev/null' % (outname) );
+        pyfits.writeto( outname, images[i], headers[i] );
+
+# ---
+
+def generate_catalogues(fits_image, objects=[], headers=[], objIDs=[], cat_dir=''):
+    """Generates catalogues for poststamps from given image"""
+    import string;
+
+    def csv(cat_name, *keys, **key_lists):
+        """Write a CSV catalog"""
+        catFile = open(cat_name,'w');
+        catObj = csv.writer(catFile, delimiter=',', quotechar='\"');
+
+
+    # Check basic stuff for catalogues creation..
+    #
+    if (objects==[]):
+        return None;
+    if (len(objects) != len(headers)  or  len(objects) != len(objIDs)):
+        return False;
+
+    img_rootname = string.join( string.split(fits_image, sep=".")[:-1], sep="." );
+    
+    # Set the output directory based on given image name if not('') was given..
+    #
+    if (cat_dir==''):
+        cat_dir = img_rootname;
+    try:
+        os.system('mkdir %s' % (cat_dir))
+    except:
+        pass;
+
+    cat_name = "Catobjs_"+img_rootname+".dat";
+#    fp = open(cat_name,'w');
+#    fp.write("ID,filename,source_image,x,y,ra,dec")
+#    for _i in range(len(objects)):
+#        _name = "obj_%03d" % ();
+#        fp.write("%s," % (objIDs[_i],))
+    
+# ---
+
 def run(fits_image, preset='', use_header=True):
+    """Present image for interactive choice of the object to segment
+
+    dic = run( fits_image )
+
+    Given FITS image is presented on an interacive window where the
+    user can click on objects for selection. A segmentation algorithm
+    will run on the image and selected points will be cutout if they
+    correspond to a segmented object. 'preset' argument can be used
+    to use pre-set Sextractor(SE) configuration (see sltools.Package.sextractor
+    for more information). If we don't want to use image's header info
+    'use_header' argument can be set to "False"; default is "True"
+
+    Input:
+     - fits_image   <str> : FITS file containg the image to use
+     - preset       <str> : SE's pre-set configuration
+     - use_header  <bool> : whether to use (or not) image's header
+
+    Output:
+     - {'IDs', 'images', 'headers'}
+     
+    """
 
     # Open given image..
     #
@@ -135,51 +185,54 @@ def run(fits_image, preset='', use_header=True):
 
     # Show the image and make "clickable" for objects selection..
     #
-    dic = click(img, header);
-    x = dic['x'];
-    y = dic['y'];
-    ra = dic['ra'];
-    dec = dic['dec'];
+    _dic = click(img, header);
+    x = _dic['x'];
+    y = _dic['y'];
+    ra = _dic['ra'];
+    dec = _dic['dec'];
+    del _dic;
     
-    print "%s:" % (fits_image);
-    print "%s  X     :  Y     :  RA       :  DEC" % (len(fits_image)*' ');
-    if (header):
-        for i in range(len(x)):
-            print "%s %4.2f : %4.2f : %3.5f : %2.5f" % (len(fits_image)*' ',x[i],y[i],ra[i],dec[i]);
-    else:
-        for i in range(len(x)):
-            print "%s %.2f : %.2f : --- : ---" % (len(fits_image)*' ',x[i],y[i]);
-
-    # Segment image? : Yes
-    #
-    _out = fits_2_img(fits_image, preset);
-    if not _out:
-        return False;
-    segimg, objimg, cat = _out[0], _out[1], _out[2];
-
     centroids = zip(x,y);
     
-    dic = select_objects(segimg, objimg, centroids, header);
-    if not dic:
+    # Segment image with Sextractor..
+    #
+    if preset=='none':
+        preset='';
+    _dic = SE.run_segobj(fits_image, preset=preset);
+    if not _dic:
         return False;
-    objIDs = dic['IDs'];
-    objs = dic['images'];
-    hdrs = dic['headers'];
+
+    objimg = pyfits.getdata( _dic['OBJECTS_file'] );
+    segimg = pyfits.getdata( _dic['SEGMENTATION_file'] );
+    cat = pyfits.open( _dic['CATALOG_file'] )[1].data;
+    del _dic;
+
+
+#    # Print out selected points..
+#    #
+#    print "%s:" % (fits_image);
+#    print "%s  X     :  Y     :  RA       :  DEC" % (len(fits_image)*' ');
+#    if (header):
+#        for i in range(len(x)):
+#            print "%s %4.2f : %4.2f : %3.5f : %2.5f" % (len(fits_image)*' ',x[i],y[i],ra[i],dec[i]);
+#    else:
+#        for i in range(len(x)):
+#            print "%s %.2f : %.2f : --- : ---" % (len(fits_image)*' ',x[i],y[i]);
+
+
+    _dic = select_objects(segimg, objimg, centroids, header);
+    if not _dic:
+        return False;
     
-    imshow(objs[0]);
-    show()
+#    objIDs = _dic['IDs'];
+#    objs = _dic['images'];
+#    hdrs = _dic['headers'];
+
+#    imshow(objs[0]);
+#    show()
     
-    for i in range( len(objIDs) ):
 
-        outname = "out_segmented_%02d.fits" % (objIDs[i]);
-        print >> sys.stdout, "Writing object (id: %s) image:  %s ..." % (objIDs[i],outname);
-        os.system( 'rm %s &> /dev/null' % (outname) );
-        pyfits.writeto( outname, objs[0], hdrs[0] );
-#        pyfits.writeto( outname, objs[i] );
-
-    print >> sys.stdout, "Done.";
-
-    return (dic);
+    return (_dic);
 
 # ---
 
@@ -189,4 +242,8 @@ if __name__ == "__main__" :
         print "Usage: \n   %s  <fits_image_file>  {HST,DC4,DC5,CFHT,none}" % (sys.argv[0]);
         sys.exit(1);
 
-    run(sys.argv[1],sys.argv[2]);
+    out = run(sys.argv[1],sys.argv[2]);
+
+    write_results(images=out['images'], headers=out['headers'], IDs=out['IDs']);
+    
+    print >> sys.stdout, "Done.";

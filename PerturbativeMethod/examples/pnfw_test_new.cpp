@@ -10,8 +10,9 @@
 #include "../generate_arcs.h"
 #include "../generate_curves.h"
 #include "../arc_properties.h"
+//#include "gof_per_method.h"
 
-#define TAM_MAX 20
+#define TAM_MAX1 20
 
 // to compile make: g++ -Wall -o exec_name pnfw_test_new.cpp `pkg-config gsl --cflags --libs`
 
@@ -20,13 +21,13 @@ int main(){
 //   double pert_params[4];
   FILE *entrada1;
   entrada1=fopen("input_lens.txt","r");
-  float lens_par[TAM_MAX]; 
+  float lens_par[TAM_MAX1]; 
   int i=0;
   
   if (entrada1== NULL) 
     {
       printf("Nao foi possivel abrir o arquivo.\n");
-      lens_par[1]=0.5,lens_par[2]=1.5,lens_par[3]=0.3 ;
+      lens_par[1]=0.8,lens_par[2]=1.5,lens_par[3]=0. ;
 //       break;
 //        exit();
      }else{
@@ -40,7 +41,7 @@ int main(){
   
   int npts = 4001;
 //   double twpi= 6.283185308;  
-  double pert_params[]={lens_par[3],3,lens_par[1],lens_par[2]};
+  double pert_params[]={lens_par[3],1,lens_par[1],lens_par[2]};
   double pot_params[] = {pert_params[2],pert_params[3]};
   
   double _r_e_nfw= r_e_nfw_find(pot_params);
@@ -91,4 +92,11 @@ int main(){
   fprintf(outls2, "%f\n", source.R0);
   fprintf(outls2, "%i\n", step);
   fprintf(outls2, "%i\n", nang);
+
+ // double gof_crit= gof_per_method(f1_pnfw, Df0Dtheta_pnfw,D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw, 1);
+ // printf(" The value of the gof, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],gof_crit);
+  
+ // double gof_caust= gof_per_method(f1_pnfw, Df0Dtheta_pnfw,D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw, 2);
+ // printf(" The value of the gof, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],gof_caust);  
+
 }

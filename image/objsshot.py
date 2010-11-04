@@ -153,39 +153,39 @@ def _file_2_imgs(fits_image, use_header, params, args, preset):
 # =======================================================================================
 def readout_objs(fits_image, params=[], args={}, use_header=True, increase=0, preset=''):
     """
-    | Function to run SExtractor for objects identification and creates poststamp images.
-    |
-    | The function receives a FITS image filename and optionally some other arguments.
-    | The output are the identified object image arrays, headers and IDs from segmentation step.
-    | SExtractor's command-line arguments can be passed through a dictionary [args]
-    | {
-    | 'key_argument' : 'value_option',
-    | ...
-    | }
-    | , and features to output (See SE's default.param file) at catalog through a list [params].
-    | 
-    | To have borders around the identified object use [increase] to define the size of them.
-    | The output image will have "increase" times the extracted object size.
-    | (Notice that 0 < increase < 1 is possible and will return a poststamp with part of the object)
-    | 
-    | Preset SE's configuration parameters, for different telescope images, are available. The [preset]
-    | parameters are chosen to be *good* parameters for those instruments: 'HST','DC4','DC5','CFHT'
-    | Notice that this preset choices do not disable other parameters.
-    | 
-    | The flag [use_header]  gives the option to use or not the header instance information.
-    | 
-    | Input:
-    |  - fits_image  <str> : FITs image filename
-    |  - params <list str> : list of parameters to output on sextractor catalogue
-    |  - args        <dic> : dictionary with sextractor command-line arguments
-    |  - use_header <bool> : Whether or not to use (and update) header info
-    |  - increase  <float> : multiplicative factor for poststamp sizing
-    |  - preset      <str> : HST, DC4, DC5, CFHT
-    |
-    | Output:
-    |  - <dic> : dictionary structure with the keys 'objIDs', 'images' and 'headers'.
-    |            Each of them is a list with corresponding information.
-    |
+    Function to run SExtractor for objects identification and creates poststamp images.
+    
+    The function receives a FITS image filename and optionally some other arguments.
+    The output are the identified object image arrays, headers and IDs from segmentation step.
+    SExtractor's command-line arguments can be passed through a dictionary [args]
+    {
+    'key_argument' : 'value_option',
+    ...
+    }
+    , and features to output (See SE's default.param file) at catalog through a list [params].
+    
+    To have borders around the identified object use [increase] to define the size of them.
+    The output image will have "increase" times the extracted object size.
+    (Notice that 0 < increase < 1 is possible and will return a poststamp with part of the object)
+    
+    Preset SE's configuration parameters, for different telescope images, are available. The [preset]
+    parameters are chosen to be *good* parameters for those instruments: 'HST','DC4','DC5','CFHT'
+    Notice that this preset choices do not disable other parameters.
+    
+    The flag [use_header]  gives the option to use or not the header instance information.
+    
+    Input:
+     - fits_image  <str> : FITs image filename
+     - params <list str> : list of parameters to output on sextractor catalogue
+     - args        <dic> : dictionary with sextractor command-line arguments
+     - use_header <bool> : Whether or not to use (and update) header info
+     - increase  <float> : multiplicative factor for poststamp sizing
+     - preset      <str> : HST, DC4, DC5, CFHT
+    
+    Output:
+     - <dic> : dictionary structure with the keys 'objIDs', 'images' and 'headers'.
+               Each of them is a list with corresponding information.
+    
     """
 
     params.append('NUMBER');
@@ -224,7 +224,7 @@ def readout_objs(fits_image, params=[], args={}, use_header=True, increase=0, pr
 
     return ({'IDs' : objIDs, 'images' : objs, 'headers' : hdrs});
 
-#----------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 def run(fits_image, params=[], args={}, use_header=True, increase=0, custom=''):
     """This is just an alias for function 'readout_objs', use it instead of run."""
     return ( readout_objs( fits_image, params, args, use_header, increase, preset=custom ));
@@ -234,42 +234,42 @@ def run(fits_image, params=[], args={}, use_header=True, increase=0, custom=''):
 # ==============================================================================================
 def pickout_obj(fits_image, xo, yo, params=[], args={}, use_header=True, increase=0, preset=''):
     """
-    | Function to run SExtractor for objects segmentation and poststamp creation of a given image.
-    | A reference (e.g, a object centroid) point is expected.
-    | 
-    | The function receives a FITS image and a pair of coordinates [xo,yo] matching a object.
-    | The output is the matching object image array, header and ID from segmentation step.
-    | SExtractor's command-line arguments can be passed through a dictionary [args]
-    | {
-    | 'key_argument' : 'value_option',
-    | ...
-    | }
-    | , and features to output (See SE's default.param file) at catalog through a list [params].
-    | 
-    | To have borders around the identified object use [increase] to define the size of them.
-    | The output image will have "increase" times the extracted object size.
-    | (Notice that 0 < increase < 1 is possible and will return a poststamp with part of the object)
-    | 
-    | Preset SE's configuration parameters, for different telescope images, are available. The [preset]
-    | parameters are chosen to be *good* parameters for those instruments: 'HST','DC4','DC5','CFHT'
-    | Notice that this preset choices do not disable other parameters.
-    | 
-    | The flag [use_header]  gives the option to use or not the header instance information.
-    | 
-    | Input:
-    |  - fits_image  <str> : FITs image filename
-    |  - xo          <int> : X object position in pixels
-    |  - yo          <int> : Y object position in pixels
-    |  - params <list str> : list of parameters to output on sextractor catalogue
-    |  - args        <dic> : dictionary with sextractor command-line arguments
-    |  - use_header <bool> : Whether or not to use (and update) header info
-    |  - increase  <float> : multiplicative factor for poststamp sizing
-    |  - preset      <str> : HST, DC4, DC5, CFHT
-    | 
-    | Output:
-    |  - <dic> : dictionary structure with the keys 'objIDs', 'images' and 'headers'.
-    |            Each of them is a list with corresponding information.
-    |
+    Function to run SExtractor for objects segmentation and poststamp creation of a given image.
+    A reference (e.g, a object centroid) point is expected.
+    
+    The function receives a FITS image and a pair of coordinates [xo,yo] matching a object.
+    The output is the matching object image array, header and ID from segmentation step.
+    SExtractor's command-line arguments can be passed through a dictionary [args]
+    {
+    'key_argument' : 'value_option',
+    ...
+    }
+    , and features to output (See SE's default.param file) at catalog through a list [params].
+    
+    To have borders around the identified object use [increase] to define the size of them.
+    The output image will have "increase" times the extracted object size.
+    (Notice that 0 < increase < 1 is possible and will return a poststamp with part of the object)
+    
+    Preset SE's configuration parameters, for different telescope images, are available. The [preset]
+    parameters are chosen to be *good* parameters for those instruments: 'HST','DC4','DC5','CFHT'
+    Notice that this preset choices do not disable other parameters.
+    
+    The flag [use_header]  gives the option to use or not the header instance information.
+    
+    Input:
+     - fits_image  <str> : FITs image filename
+     - xo          <int> : X object position in pixels
+     - yo          <int> : Y object position in pixels
+     - params <list str> : list of parameters to output on sextractor catalogue
+     - args        <dic> : dictionary with sextractor command-line arguments
+     - use_header <bool> : Whether or not to use (and update) header info
+     - increase  <float> : multiplicative factor for poststamp sizing
+     - preset      <str> : HST, DC4, DC5, CFHT
+    
+    Output:
+     - <dic> : dictionary structure with the keys 'objIDs', 'images' and 'headers'.
+               Each of them is a list with corresponding information.
+    
     """
 
     params.append('NUMBER');

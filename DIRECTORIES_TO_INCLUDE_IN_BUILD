@@ -1,4 +1,4 @@
-#exclude: bin doc etc
+# Mandatory: bin doc etc
 catalog
 coordinate
 gravlens
