@@ -22,7 +22,6 @@
 
 /** A functions to print the curves model (tangential critical curve,tangential caustic curves and source )
 *
-*  \param source_in a struct that define elliptical sources
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param f1_in function related to the perturbed potential
 *  \param D2f0Dtheta2_in function related to the perturbed potential
@@ -32,7 +31,6 @@
 *  \param _r_e Einstein Radius (If not indicated, the code assumes \f$ R_{_{\mathrm{E}}}=1  \f$ )
 *  \param file_in1 a file to write tangential critical curve
 *  \param file_in2 a file to write tangential caustic
-*  \param file_in3 a file to write the source contour
 *  \return nothing
 *
 *  \sa f_type, r_crit, caustic_y1, caustic_y2, y1_src,y2_src
@@ -66,6 +64,14 @@ void plot_curves(f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, doubl
 }
 
 }
+
+/** A functions to print the source contour (the plot in the source plane...)
+*
+*  \param source_in a struct that define elliptical sources
+*  \param npts number of theta divisions (If itsn't given, the code assumes npts=1000)
+*  \param file_in a file to write the source contour
+*  \return nothing
+*/
 
 
 void plot_sources(elliptical_source source_in, int npts=1000, FILE *file_in=NULL){
