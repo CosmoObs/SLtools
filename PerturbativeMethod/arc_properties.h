@@ -279,8 +279,8 @@ void arc_measures(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_s
   double theta_inf[N_img];
   double theta_sup[N_img]; 
 //
-  double len_1,len_2, len_2b, len_3;  
-  double w_q, lw_1,lw_2, lw_2b, lw_3; 
+  double len_1,len_2, len_3;  
+  double w_q, lw_1,lw_2,lw_3; 
   double x_lim[2];
 
   if(file_in==NULL){
