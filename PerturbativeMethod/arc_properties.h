@@ -280,7 +280,7 @@ void arc_measures(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_s
   int N_img=arcs[0][0];   
   double theta_inf[N_img];
   double theta_sup[N_img];
-  double theta_center,x_center,y_center;
+//   double theta_center,x_center,y_center;
 //
   double len_1,len_2, len_3;  
   double w_q, lw_1,lw_2,lw_3; 
@@ -301,8 +301,7 @@ void arc_measures(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_s
     theta_inf[i]=arcs[i][0], theta_sup[i]=arcs[i][1];
     if( (theta_inf[i]> ((3./4.)*twpi)) && (theta_inf[i]< twpi) &&  (theta_sup[i]< (twpi/4.))){theta_sup[i]=theta_sup[i]+twpi;}
     x_lim[0]=theta_inf[i], x_lim[1]=theta_sup[i];  
-    theta_center=(x_lim[0]+x_lim[1])/2.;
-    
+//  theta_center=(x_lim[0]+x_lim[1])/2.;
 // Computing the first measurement for the length, using the method L2 of the Report
     len_1= method_L2(f1_in,Df0Dtheta_in, kappa2, source_in, x_lim, pert_params,_r_e);
 // Computing the first measurement for the length, using the method L3 of the Report
