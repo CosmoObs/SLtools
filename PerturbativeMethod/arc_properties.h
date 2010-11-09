@@ -138,7 +138,9 @@ double method_L3(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_so
   A[2][0]=r_mean2*cos(theta_2), A[2][1]=r_mean2*sin(theta_2), A[2][2]=1.0, B[2]=-pow(r_mean2,2);
   solving_system(A,B,X);
   double x_c=-0.5*X[0], y_c=-0.5*X[1], r_c=sqrt(pow(x_c,2)+pow(y_c,2)-X[2]);
+  double x_center=r_meang*cos(theta_g),y_center=r_meang*sin(theta_g);
   circ_par[0]=x_c, circ_par[1]=y_c, circ_par[2]=r_c;
+  circ_par[3]=x_center, circ_par[4]=y_center;
   double d12=sqrt(pow(A[0][0]-A[2][0],2)+pow(A[0][1]-A[2][1],2));
   double arg_acos=1.0-(pow(d12,2)/(2.0*pow(r_c,2)));
   double  l3= r_c*acos(arg_acos) ;
@@ -236,7 +238,7 @@ double width_q(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sour
 double lw_k(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source source_in, double pert_params[], double _r_e, double x_lim[2], int iflag_k, int npts=2001){
   double length_temp;
   double twpi= 6.283185308, cte=twpi/8.; 
-  double circ_par[3];
+  double circ_par[5];
   if(iflag_k == 2){length_temp=method_L2(f1_in, Df0Dtheta_in, kappa2, source_in, x_lim, pert_params, _r_e);}
   if(iflag_k == 3){length_temp=method_L3(f1_in, Df0Dtheta_in, kappa2, source_in, x_lim, pert_params, circ_par, _r_e);}
   if(iflag_k == 4){length_temp=method_L4(f1_in, Df0Dtheta_in, kappa2, source_in, pert_params, _r_e, x_lim,npts);}
@@ -251,7 +253,7 @@ double lw_k(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_source 
 *
 * Width_q (\f$ W_q \f$)
 *
-* Length-to-width ratio using \f$W_q (we shall call as \f$ R_q \f$) \f$, i.,e \f$ R_{q,i}=L_i/W_q \f$ (\f$ i=2,3,4 \f$)  
+* Length-to-width ratio using \f$ W_q \f$  (we shall call as \f$ R_q \f$), i.,e \f$ R_{q,i}=L_i/W_q \f$ (\f$ i=2,3,4 \f$)  
 *
 * Length-to-width ratio using the area of the image (we shall call as \f$ R_k \f$) where \f$ R_k=\left(\dfrac{L}{W} \right)_k \f$ for (\f$ i=2,3,4 \f$) )
 * 
@@ -272,15 +274,16 @@ void arc_measures(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_s
   FILE *outcir = fopen ("circle_img.dat","w"); 
   double twpi= 6.283185308; 
   double arcs[10][2];
-  double circ_par[3];
+  double circ_par[5];
   double xarg_min,xarg_sup;
   theta_find(Df0Dtheta_in, source_in, pert_params,_r_e, arcs);
   int N_img=arcs[0][0];   
   double theta_inf[N_img];
-  double theta_sup[N_img]; 
+  double theta_sup[N_img];
+//   double theta_center,x_center,y_center;
 //
-  double len_1,len_2, len_2b, len_3;  
-  double w_q, lw_1,lw_2, lw_2b, lw_3; 
+  double len_1,len_2, len_3;  
+  double w_q, lw_1,lw_2,lw_3; 
   double x_lim[2];
 
   if(file_in==NULL){
@@ -295,9 +298,10 @@ void arc_measures(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_s
   for(int i=1;i<=arcs[0][0];i++){
     xarg_min= arg_sqrt(Df0Dtheta_in, source_in, arcs[i][0], pert_params,_r_e);
     xarg_sup= arg_sqrt(Df0Dtheta_in, source_in, arcs[i][1], pert_params,_r_e);
-    theta_inf[i]=arcs[i][0], theta_sup[i]=arcs[i][1]; 
+    theta_inf[i]=arcs[i][0], theta_sup[i]=arcs[i][1];
     if( (theta_inf[i]> ((3./4.)*twpi)) && (theta_inf[i]< twpi) &&  (theta_sup[i]< (twpi/4.))){theta_sup[i]=theta_sup[i]+twpi;}
     x_lim[0]=theta_inf[i], x_lim[1]=theta_sup[i];  
+//  theta_center=(x_lim[0]+x_lim[1])/2.;
 // Computing the first measurement for the length, using the method L2 of the Report
     len_1= method_L2(f1_in,Df0Dtheta_in, kappa2, source_in, x_lim, pert_params,_r_e);
 // Computing the first measurement for the length, using the method L3 of the Report
@@ -324,7 +328,7 @@ void arc_measures(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_s
     if(file_in==NULL){
         printf("image ID: %i\n",i);
         printf("angle_inf %f arg_sqrt_inf:  %f angle_sup:  %f arg_sqrt_sup: %f\n",theta_inf[i],xarg_min,theta_sup[i],xarg_sup);
-	printf("image center coordinates (x0,y0): (%f, %f) curvature radius: %f\n",circ_par[0],circ_par[1],circ_par[2]);
+	printf("image center coordinates (x0,y0): (%f, %f) curvature radius: %f\n",circ_par[3],circ_par[4],circ_par[2]);
 	printf("length_1: %f, length_2: %f, length_3: %f\n",len_1,len_2,len_3 );
         printf("width_q: %f, width_1: %f, width_2: %f, width_3 %f\n",w_q,w1,w2,w3);
         printf("LW_q1: %f, LW_q2: %f, LW_q3 %f\n",len_1/w_q,len_2/w_q,len_3/w_q);
@@ -333,7 +337,7 @@ void arc_measures(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_s
     else {
         fprintf(file_in,"image ID: %i\n",i);
         fprintf(file_in,"angle_inf %f arg_sqrt_inf:  %f angle_sup:  %f arg_sqrt_sup: %f\n",theta_inf[i],xarg_min,theta_sup[i],xarg_sup);  
-	fprintf(file_in,"image center coordinates (x0,y0): (%f, %f), curvature radius: %f\n",circ_par[0],circ_par[1],circ_par[2]);
+	fprintf(file_in,"image center coordinates (x0,y0): (%f, %f), curvature radius: %f\n",circ_par[3],circ_par[4],circ_par[2]);
         fprintf(file_in,"length_1: %f, length_2: %f, length_3: %f\n",len_1,len_2,len_3 );
         fprintf(file_in,"width_q: %f, width_1: %f, width_2: %f, width_3 %f\n",w_q,w1,w2,w3);
         fprintf(file_in,"LW_q1: %f, LW_q2: %f, LW_q3 %f\n",len_1/w_q,len_2/w_q,len_3/w_q);

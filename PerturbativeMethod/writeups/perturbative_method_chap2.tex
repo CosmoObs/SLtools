@@ -584,6 +584,7 @@ where $\bar{r}_i\equiv \bar{r}(\te_i)$ and $\bar{r}_f\equiv \bar{r}(\te_f)$.
 Then, the first measure for the length $L_1$ is
 \beq
 L_1=\sqrt{\bar{r}_i^2+\bar{r}_f^2-2\bar{r}_i\bar{r}_f\cos{(\te_f-\te_i)}}.
+\label{first_length_def}
 \eeq
 
 This overly simplistic method will not be further discussed in this report.
@@ -642,9 +643,9 @@ where
 
 Then, the length of the image is defined by
 \beq
-L_3=R_c(\te_f-\te_i).
+L_3=R_c\arccos{\left(1-\dfrac{L_1^2}{2R_c^2}  \right)}
 \eeq
-
+where $L_1$ was given in Eq.~(\ref{first_length_def}).
 
 Another proposal to measure the length corresponds perhaps to a more
 accurate way of obtaining it (corresponding to the length of an arc of
