@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <cstdio>
-#include <fstream>        //funcoes de entrada e saida para arquivos
+#include <fstream>        // Functions for input and output files
 //#include <cstdio>
 #include <iostream>
 
