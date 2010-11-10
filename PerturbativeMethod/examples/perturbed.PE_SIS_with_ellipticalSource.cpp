@@ -48,7 +48,7 @@
 //pot_params[0] = mp
 //pot_params[1] = rp
 //pot_params[2] = thetap
-double f1_SIE(double theta, double pot_params[],double _re){
+double f1_SIE(double theta, double pot_params[],double re){
   double mp=pot_params[0],rp=pot_params[1],thetap=pot_params[2], eta=pot_params[3];
   double bar_theta=theta-thetap;
   double Rsq=1.0-2.0*rp*cos(bar_theta)+pow(rp,2);
@@ -57,7 +57,7 @@ double f1_SIE(double theta, double pot_params[],double _re){
   return -(eta/2)*cos(2.0*theta)+numr/denr; 
 }
 
-double Df0Dtheta_SIE(double theta, double pot_params[],double _re){
+double Df0Dtheta_SIE(double theta, double pot_params[],double re){
   double mp=pot_params[0],rp=pot_params[1],thetap=pot_params[2], eta=pot_params[3];
   double bar_theta=theta-thetap;
   double Rsq=1.0-2.0*rp*cos(bar_theta)+pow(rp,2);
@@ -67,7 +67,7 @@ double Df0Dtheta_SIE(double theta, double pot_params[],double _re){
 }
 
 
-double D2f0Dtheta2_SIE(double theta, double pot_params[],double _re){
+double D2f0Dtheta2_SIE(double theta, double pot_params[],double re){
 double mp=pot_params[0],rp=pot_params[1],thetap=pot_params[2], eta=pot_params[3];
 double bar_theta=theta-thetap;
 double Rsq=1.0-2.0*rp*cos(bar_theta)+pow(rp,2);

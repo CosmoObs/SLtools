@@ -40,7 +40,7 @@ int main(){
 //       int nlp = i++;
   
   int npts = 4001;
-//   double twpi= 6.283185308;  
+   double twpi= 6.283185308;  
   double pert_params[]={lens_par[3],1,lens_par[1],lens_par[2]};
   double pot_params[] = {pert_params[2],pert_params[3]};
   
@@ -56,9 +56,9 @@ int main(){
 //   source.y0 = 0.0;
   printf(" Source Position %f %f\n",source.x0, source.y0);
   source.R0 = (sqrt(2.0)/60.0)*_r_e_nfw;
-  source.eta0 = 0.0;
-//   source.theta0 = twpi/8.0;
-  source.theta0 = 0.0;
+  source.eta0 = 0.5;
+   source.theta0 = twpi/8.0;
+  //source.theta0 = 0.0;
 
   FILE *outarc = fopen ("arcs_pnfw.dat" , "w");
   FILE *outls = fopen ("lensing_data.txt" , "w");  
