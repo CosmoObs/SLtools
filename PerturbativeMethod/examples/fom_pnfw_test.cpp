@@ -21,10 +21,10 @@ int main(){
 
   system(" echo  compiling the fortran code, please wait...  ");
 //   system(" g77-3.4 -Wall -o c_pnfw   fortran_srcs/*.f ");
-  system(" gfortran-4.3 -o c_pnfw   fortran_srcs/*.f ");  
+  system(" gfortran-4.4 -o c_pnfw   fortran_srcs/*.f ");  
   system(" echo  ending the compilation  ");
 
-  double ks=0.1, rs=2.0;
+  double ks=1.0, rs=2.0;
   int npt=251;
 //   double elp=0.1;
   double elp=0.0;
@@ -68,7 +68,7 @@ int main(){
       
       
 
-      plot_curves(source, f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npt, outtc, outcau, outsrc);
+      plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npt, outtc, outcau, outsrc);
       printf(" terminei as curvas");
       
       double gof_crit= gof_per_method(f1_pnfw, Df0Dtheta_pnfw,D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw, 1);

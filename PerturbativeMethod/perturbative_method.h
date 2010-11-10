@@ -244,7 +244,7 @@ double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, doub
 
 double r_caust(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pert_params[],double _r_e){
     double y1_temp=caustic_y1( Df0Dtheta_in, D2f0Dtheta2_in, theta, pert_params, _r_e);  
-    double y2_temp=caustic_y1( Df0Dtheta_in, D2f0Dtheta2_in, theta, pert_params, _r_e);  
+    double y2_temp=caustic_y2( Df0Dtheta_in, D2f0Dtheta2_in, theta, pert_params, _r_e);  
     double y2_c=sqrt(pow(y1_temp,2)+pow(y2_temp,2));
     return y2_c;
 }
