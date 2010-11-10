@@ -48,7 +48,7 @@
 //pot_params[0] = mp
 //pot_params[1] = rp
 //pot_params[2] = thetap
-double f1_SIE(double theta, double pot_params[]){
+double f1_SIE(double theta, double pot_params[],double _re){
   double mp=pot_params[0],rp=pot_params[1],thetap=pot_params[2], eta=pot_params[3];
   double bar_theta=theta-thetap;
   double Rsq=1.0-2.0*rp*cos(bar_theta)+pow(rp,2);
@@ -57,7 +57,7 @@ double f1_SIE(double theta, double pot_params[]){
   return -(eta/2)*cos(2.0*theta)+numr/denr; 
 }
 
-double Df0Dtheta_SIE(double theta, double pot_params[]){
+double Df0Dtheta_SIE(double theta, double pot_params[],double _re){
   double mp=pot_params[0],rp=pot_params[1],thetap=pot_params[2], eta=pot_params[3];
   double bar_theta=theta-thetap;
   double Rsq=1.0-2.0*rp*cos(bar_theta)+pow(rp,2);
@@ -67,7 +67,7 @@ double Df0Dtheta_SIE(double theta, double pot_params[]){
 }
 
 
-double D2f0Dtheta2_SIE(double theta, double pot_params[]){
+double D2f0Dtheta2_SIE(double theta, double pot_params[],double _re){
 double mp=pot_params[0],rp=pot_params[1],thetap=pot_params[2], eta=pot_params[3];
 double bar_theta=theta-thetap;
 double Rsq=1.0-2.0*rp*cos(bar_theta)+pow(rp,2);
@@ -111,9 +111,9 @@ FILE *outsrcfile = fopen ("src_plot.dat" , "w");
 
   for(int i=0;i<=npts;i++){
 
-    if(arg_sqrt(Df0Dtheta_SIE, source_in, theta, pot_params)>0.0){
-      r_p = 1.0+dr_plus(f1_SIE, Df0Dtheta_SIE, 1.0, source_in, theta, pot_params);
-      r_m = 1.0+dr_minus(f1_SIE, Df0Dtheta_SIE, 1.0, source_in, theta, pot_params);
+    if(arg_sqrt(Df0Dtheta_SIE, source_in, theta, pot_params,1.0)>0.0){
+      r_p = 1.0+dr_plus(f1_SIE, Df0Dtheta_SIE, 1.0, source_in, theta, pot_params,1.0);
+      r_m = 1.0+dr_minus(f1_SIE, Df0Dtheta_SIE, 1.0, source_in, theta, pot_params,1.0);
 //      printf("%E %E\n",r_p*cos(theta),r_p*sin(theta));
 //      printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));
 
@@ -123,12 +123,12 @@ FILE *outsrcfile = fopen ("src_plot.dat" , "w");
 
 // Delete later..
 //  Defining the tangential critical radius
-     r_tcrit= r_crit(f1_SIE,D2f0Dtheta2_SIE,1.0,theta,pot_params); 
+     r_tcrit= r_crit(f1_SIE,D2f0Dtheta2_SIE,1.0,theta,pot_params,1.0); 
 // Writing in a file the tangential critical curve
      fprintf(outcritcurvefile,"%E %E\n",r_tcrit*cos(theta),r_tcrit*sin(theta));   
 //  Defining the polar equation of the tangential caustic
-     y1_caust=caustic_y1(Df0Dtheta_SIE,D2f0Dtheta2_SIE,theta,pot_params);
-     y2_caust=caustic_y2(Df0Dtheta_SIE,D2f0Dtheta2_SIE,theta,pot_params);
+     y1_caust=caustic_y1(Df0Dtheta_SIE,D2f0Dtheta2_SIE,theta,pot_params,1.0);
+     y2_caust=caustic_y2(Df0Dtheta_SIE,D2f0Dtheta2_SIE,theta,pot_params,1.0);
 //   Writing in a file the tangential caustic line
      fprintf(outcausticfile,"%E %E\n",y1_caust,y2_caust); 
 //   Writing the source in a file 
