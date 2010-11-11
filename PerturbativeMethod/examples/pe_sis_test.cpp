@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <cstdio>
-#include <fstream>        //  Translated comment to English.
+#include <fstream>        // Functions for input and output files
 //#include <cstdio>
 #include <iostream>
 
@@ -56,6 +56,6 @@ int main(){
   fprintf(outls," Source Ellipticity and Inclination %f %f\n\n",source.eta0,source.theta0);
 
   plot_arcs(source, f1_psis, Df0Dtheta_psis, pert_params, kappa_2,_r_e_sis,npts, outarc);
-  plot_curves(source, f1_psis, Df0Dtheta_psis, D2f0Dtheta2_psis, pert_params, kappa_2,_r_e_sis, npts, outtc, outcau, outsrc);
+  plot_curves(f1_psis, Df0Dtheta_psis, D2f0Dtheta2_psis, pert_params, kappa_2,_r_e_sis, npts, outtc, outcau);
   arc_measures(f1_psis, Df0Dtheta_psis, kappa_2, source, pert_params, _r_e_sis, npts,outls);   
 }

@@ -5,6 +5,7 @@ Commented and small changes by MSSG
 
 // Needed headers, in the g++ vs. gcc style
 #include <cstdio>
+#include <cstdlib>
 #include <cmath> 
 #include <ctime>
 #include <iostream>
@@ -61,7 +62,10 @@ double x_plus(double theta, double x_0, double y_0, double R0){
   double DfbDt = Df0_bar_Dtheta(theta, x_0, y_0);
   double sqrtarg = R0*R0 - DfbDt*DfbDt;
   
-  if (R0==0){sqrtarg=DfbDt;}
+  if (R0==0){sqrtarg=(DfbDt);}
+  if (R0==0 && DfbDt<0 ){sqrtarg=(-DfbDt);}
+
+    printf("x_plus  sqrtarg = %f \n", sqrtarg);
   if (sqrtarg < 0.0) return 0.0;
 
   return 1.0/k2() * ( f1_bar(theta,x_0,y_0) +  sqrt(sqrtarg) );
@@ -72,22 +76,45 @@ double x_minus(double theta, double x_0, double y_0, double R0){
   double DfbDt = Df0_bar_Dtheta(theta, x_0, y_0);
   double sqrtarg = R0*R0 - DfbDt*DfbDt;
 
-  if (R0==0){sqrtarg=DfbDt;}  
+    printf("x_minus DfbDt = %f \n", DfbDt);
+    printf("x_minus R0 = %f \n", R0);
+  if (R0==0){sqrtarg=abs(DfbDt);}  
+  if (R0==0 && DfbDt<0 ){sqrtarg=(-DfbDt);}
+
+    printf("x_minus  sqrtarg = %f \n", sqrtarg);
   if (sqrtarg < 0.0) return 0.0;
+
 
   return 1.0/k2() * ( f1_bar(theta,x_0,y_0) -  sqrt(sqrtarg) );
 }
 
-// How many steps to break the circle up into
-int nsteps = 500;
+  int nsteps;
 
 /**********************************  Begin main code ******************************/
-int main(){
+int main(int argc, char *argv[]){
 
-  // Define some numbers, same as what MM has in his code
-  double x_0 = -0.01;
-  double y_0 = 0.0; 
-  double R_0 = 0.0;
+
+  double x_0 ;
+  double y_0 ; 
+  double R_0 ;
+
+  if (argc < 2) {
+
+    nsteps  = 100; // How many steps to break the circle up into
+    x_0 = 0.1;
+    y_0 = 0.0; 
+    R_0 = 0.0;
+
+
+  }
+  else{
+    nsteps = atoi(argv[1]);
+    R_0 = atof(argv[2]);
+    x_0 = atof(argv[3]);
+    y_0 = atof(argv[4]);
+  }
+
+  printf("nsteps, R_0, x0,y0 = %i, %f,%f,%f \n",nsteps,R_0,x_0,y_0);
 
   // We'll need this
   double theta = 0.0;
@@ -98,9 +125,13 @@ int main(){
 // Outputting inner radius values in Cartesian coords
   for(int i=0;i<=nsteps;i++){
     //if( x_minus(theta , x_0, y_0, R_0) > 0.0 ){
-      printf("%E %E\n",(x_minus(theta , x_0, y_0, R_0)+1)*cos(theta), (x_minus(theta , x_0, y_0, R_0)+1)*sin(theta));
+      printf("%E %E\n",(x_minus(theta , x_0, y_0, R_0)+1)*cos(theta), (x_minus(theta , x_0, y_0, R_0)+R_E)*sin(theta));
+    printf("x_minus x = %E , y = %E\n",(x_minus(theta , x_0, y_0, R_0)+1)*cos(theta), (x_minus(theta , x_0, y_0, R_0)+R_E)*sin(theta));
+
     //}
+      printf(" theta = %f degrees \n ", theta*180/3.1415);
       theta += 2*3.1415/nsteps ;
+
   }
 
 // Run over entire all theta values in image plane, in nsteps steps
@@ -109,9 +140,12 @@ int main(){
   theta = 0.0;
   for(int i=0;i<=nsteps;i++){
     //if( x_plus(theta , x_0, y_0, R_0) > 0.0 ){
-      printf("%E %E\n",(x_plus(theta , x_0, y_0, R_0)+1)*cos(theta), (x_plus(theta , x_0, y_0, R_0)+1)*sin(theta));
+      printf("%E %E\n",(x_plus(theta , x_0, y_0, R_0)+1)*cos(theta), (x_plus(theta , x_0, y_0, R_0)+R_E)*sin(theta));
+      printf("x_plus x = %E, y = %E\n",(x_plus(theta , x_0, y_0, R_0)+1)*cos(theta), (x_plus(theta , x_0, y_0, R_0)+R_E)*sin(theta));
     //}
+      printf(" theta = %f degrees \n ", theta*180/3.1415);
       theta += 2*3.1415/nsteps ;
+
   }
 
 // Run over entire all theta values in image plane, in nsteps steps
@@ -120,7 +154,9 @@ int main(){
   theta = 0.0;
   for(int i=0;i<=nsteps;i++){
     printf("%E %E\n",R_E*cos(theta), R_E*sin(theta));
-    theta += 2*3.1415/100.0;
+    printf("R_e  x = %E , y = %E\n",R_E*cos(theta), R_E*sin(theta));
+      printf(" theta = %f degrees \n ", theta*180/3.1415);
+    theta += 2*3.1415/nsteps;
   }
 
   // End code
