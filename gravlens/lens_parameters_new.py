@@ -6,7 +6,7 @@ def set_gravlens_default():
 
 	The default configurations is:
 
-	gridhi1 : 15 # the grid size in the image plane
+	gridhi1 : 150 # the grid size in the image plane
 	xtol    : 1e-10 # Tolerance on image positions in numerical root finding
 	crittol : 1e-6 # Tolerance for finding critical curves
 	inttol  : 1e-6 # Tolerance for numerical integrals
