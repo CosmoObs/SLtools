@@ -11,7 +11,7 @@ from lens_parameters_new import lens_parameters_new
 #
 #@param inputlens (the base text a input file of gravlens must have, "set gridhi1 = #", "setlens 1 1", etc)
 #@return File "crit.txt" with the critical curves positions
-def critcurves(gravinput, filename):
+def critcurves_new(gravinput, filename):
 	fmag = open('gravlens_CC_input.txt', 'w')
 	fmag.write(gravinput)
 	fmag.write('plotcrit %s\n' % filename )
@@ -71,7 +71,7 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 	#--------------------------------------
 
 	#-----------------------------
-	critcurves(inputlens, filename) # gets the critical curves (crit.txt file)
+	critcurves_new(inputlens, filename) # gets the critical curves (crit.txt file)
 	logging.debug('Got the critical curves (%s file) with function \"critcurves\"' % filename)
 	#-----------------------------
 
@@ -83,7 +83,7 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 		lens_par_out = lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 
 		inputlens, setlens, gravlens_params_updated = lens_par_out
-		critcurves(inputlens, filename) # gets the critical curves (crit.txt file)
+		critcurves_new(inputlens, filename) # gets the critical curves (crit.txt file)
 		counter += 1
 	logging.debug( '(Number of iterations on gridhi1 = %d)' % (counter) )
 
@@ -96,7 +96,7 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 		lens_par_out = lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		inputlens, setlens, gravlens_params_updated = lens_par_out
 
-		critcurves(inputlens, filename) # gets the critical curves (crit.txt file)
+		critcurves_new(inputlens, filename) # gets the critical curves (crit.txt file)
 	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
 
 

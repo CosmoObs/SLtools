@@ -8,4 +8,7 @@ The gravlens package has modules that use gravlens
 from lens_finite_sources import *
 from lens_parameters import *
 from select_source_positions import *
+from find_CC_new import *
+from lens_parameters_new import *
+
 
