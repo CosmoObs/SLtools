@@ -41,6 +41,30 @@ def get_CC_from_file(filename):
 #@param gravlens_params
 #@return "inputlens" and "setlens": two strins that are used to compose gravlens' input files
 def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, filename='crit.txt'):
+	""" Determines the caustics and critical curves of a given lens model
+
+	Input:
+	 - lens                   <str> : Lens name (see gravlens manual table 3.1)
+	 - mass_scale           <float> : Mass scale of the lens - "parameter 1"
+	 - model_param_8        <float> : Vertical size (in pixels) of output image
+	 - model_param_9        <float> : Vertical size (in pixels) of output image
+	 - model_param_10       <float> : Vertical size (in pixels) of output image
+	 - galaxy_position <list float> : [x,y] position of the lens
+	 - e_L                  <float> : Horizontal central position for output (cut) image
+	 - theta_L              <float> : Vertical central position for output (cut) image
+	 - shear                <float> : 'pixel' or 'degrees' for size (x_size,y_size) values
+	 - theta_shear          <float> : Horizontal size (in pixels) of output image
+	 - gravlens_params        <dic> : Contains the keys and values of the gravlens configuration (see default 
+				          parameters at function set_gravlens_default (inside lens_parameters_new)
+	 - filename               <str> : name of the output file with the castic and CC positions
+
+	Output:
+	 - <list>     : [x_caustic, ycaustic], with x_caustic and ycaustic being the lists with the caustic coordinates
+	 - <list>     : [x_CC, y_CC], with x_CC and y_CC being the lists with the CC coordinates
+	 - <file>     : file named 'filename' with the caustic and CC positions
+
+	"""
+
 
 	inputlens, setlens, gravlens_params_updated = lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)	# setlens is the gravlens input line that concerns the lens (ex: nfw 1 0 ...)
 	logging.debug('Determined the strings that defines the mass model in gravlens through the \'lensparameter\' function')
