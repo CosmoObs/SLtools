@@ -1,0 +1,123 @@
+% CBPF - Centro Brasileiro de Pesquisas Fisicas
+% \documentclass[12pt,twoside]{paper}
+
+\documentclass[useAMS,usenatbib]{mn2e}
+
+\linespread{1.5}
+% putting the package to be used
+\usepackage[pdftex]{color,graphicx}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage[x11names]{xcolor}
+\usepackage{float}
+\usepackage{wrapfig}
+% \usepackage{ccaption}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{dcolumn}
+\usepackage{subfigure}%{ccaption}
+\usepackage{longtable}
+\usepackage[thinspace,amssymb]{SIunits}
+\usepackage{subeqnarray}
+% defining new commands
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+% \newcommand{\sen}[×][×]{×}
+%adding SI units.
+\addunit{\parsec}{pc}
+\addunit{\asec}{\arcsecond}
+\addunit{\am}{\arcminute}
+% \addunit{\ergios}{ergs}
+% \addunit{\anho}{yr}
+% \addunit{\edad}{\giga\anho}
+% defining some abbreviations
+
+\RequirePackage{epsfig}
+\RequirePackage{subfigure}
+
+%%%%%%%%%%%%%%%%%%% Mandeep's Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\prtl{\partial}
+\def \scriptf {\mathcal{F}}
+\def \scriptg {\mathcal{G}}
+\def\vecrz{\vec{r}_{0}}
+\def\hatr{\hat{r}}
+\def\hatth{\hat{\theta}}
+\def\dfdt{{d \overline{f}_0(\theta) \over d \theta}}
+\def\fbar{\overline{f}_1}
+\def\wrt{with respect to}
+
+%%%%%%%%%%%%%%%%%%%%% Habib's Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def \eps {\epsilon}
+\def \al {\alpha}
+\def \re {R_{\mathrm{E}}}
+\def \rre{\dfrac{r}{\re}}
+\def \prre {\left( \rre\right)}
+\def \te {\theta}
+\def \tep {\theta_p}
+\def \kt {\kappa_2}
+\def \kex {\kappa_{_{\mathrm{EX}}}}
+\def \gex {\gamma_{_{\mathrm{EX}}}}
+\def \xie {\zeta_{_{\mathrm{E}}}}
+\def \xer {\xi_{_{\mathrm{E}}}}
+\def \ae {a_{1\eta}}
+\def \be {a_{2\eta}}
+
+
+%%%%%%%%%%%%%%%%%%%%% Gabriel's Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%% Another Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def \beq {\begin{equation}}
+\def \eeq {\end{equation}}
+\def \beqn {\begin{equation*}}
+\def \eeqn {\end{equation*}}
+\def\bea{\begin{eqnarray}}
+\def\eea{\end{eqnarray}}
+
+% reference to journal (see Astronomy and Astrophysics)
+\def \etal {\emph{et al.}}
+\def \aap {A\&A}
+\def \mnras {MNRAS}
+\def \apj  {ApJ}
+%% Definiendo as cores a usar
+% \DefineNamedColor{algo}{hnamei}{hmodel-listi}{hspec-listi}
+%
+%_____________________________Formata??o da p\'agina_____________________________________%
+% \usepackage{layout}
+% % Vertical
+% \setlength{\voffset}{-2.50 cm}
+% \setlength{\topmargin}{0.6 cm}
+% \setlength{\headheight}{0.5 cm}
+% \setlength{\headsep}{1.5 cm}
+% \setlength{\topskip}{0.3in}
+% \setlength{\textheight}{25 cm}
+% % Horizontal
+% \setlength{\hoffset}{0.0cm}
+% \setlength{\evensidemargin}{0.4 cm}
+% \setlength{\oddsidemargin}{0.4 cm}
+% \setlength{\textwidth}{16 cm}
+% \setlength{\marginparsep}{0.25 cm}
+% \setlength{\marginparwidth}{2.54 cm}
+% \usepackage[margin=2.cm,asymmetric]{geometry}
+\bibliographystyle{unsrt}
+%_________________________________________________________________________________%
+
+\title{Creating Simulated Arcs in the Strong Gravitational Lensing Perturbative Approach }
+
+\author{By: The Usual Suspects}
+
+\begin{document}
+\maketitle
+
+%_______________________Paginas Iniciais_______________________________________________%
+\pagenumbering{roman}\setcounter{page}{2}\pagestyle{plain}
+
+%
+\input{secs/1.introduction.tex}
+\input{secs/2.slpm_detail.tex}
+\input{secs/3.results.tex}
+
+\end{document}
+
