@@ -69,15 +69,37 @@ def FindKeydots (p1,p2,image_pixels,image,keydots,Area, method="medium",alpha=1,
 
 	return keydots
 
+def Mediatrix_Decomposition(image, method="medium",alpha=1,nearDistance=(sqrt(2)/2)):
+   """
+    Function to perform the mediatrix decomposition method on a given object. 
+    
+    Input:
+     - image   <array> : the image with a single object
+     - method   <string> : 'medium' if you want to pick as Mediatrix Point the point at same distance from the two most distant points near the bisector. Or 'brightest' if you want to pick as Mediatrix Point the brightest point near the bisector. DEFAULT 'medium'
+     - alpha      <float> : the factor alpha=l_i/w to stop the bisection, w is the estimated width and l_i the distance from two neighbours keydots. if l_i<alpha*w the function will not bisect to next Mediatrix level. DEFAULT 1
+     - nearDistance      <list> : the hightest distance to consider a point near to the perpendicular bisector. DEFAULT sqrt(2)/2
+     
+    Output:
+     - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'modulus' for vector modulus
+         
+    """
+	pixels=numpy.where(image>0)
+	E1,E2=get_extrema_2loops( pixels[0], pixels[1], 0 )
+	Area=len(pixels[1])
+	p1=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+	p2=[pixels[0][E2],pixels[1][E2]]
+	keydots=[p1,p2]
+	keydots=FindKeydots(p1,p2,pixels,image,keydots,Area, method="brightest",alpha=1,nearDistance)
+	mediatrix_vectors=Find_Mediatrix_vectors(keydots)
+	return mediatrix_vectors
 
-def LenghtMediatrix(p1,p2,image, method="medium",alpha=1,nearDistance=(sqrt(2)/2)):
+
+def LenghtMediatrix(image, method="medium",alpha=1,nearDistance=(sqrt(2)/2)):
 
    """
     Function to calculate lenght of an object using the Mediatrix Decomposition.
     
     Input:
-     - p1      <list> : coordinates (x,y) of the first extreme point
-     - p2      <list> : coordinates (x,y) of the second extreme point
      - image   <array> : the image with a single object
      - method   <string> : 'medium' if you want to pick as Mediatrix Point the point at same distance from the two most distant points near the bisector. Or 'brightest' if you want to pick as Mediatrix Point the brightest point near the bisector. DEFAULT 'medium'
      - alpha      <float> : the factor alpha=l_i/w to stop the bisection, w is the estimated width and l_i the distance from two neighbours keydots. if l_i<alpha*w the function will not bisect to next Mediatrix level. DEFAULT 1
@@ -94,10 +116,44 @@ def LenghtMediatrix(p1,p2,image, method="medium",alpha=1,nearDistance=(sqrt(2)/2
 	p2=[pixels[0][E2],pixels[1][E2]]
 	keypoints=[p1,p2]
 	keypoints=FindKeydots(p1,p2,pixels,image,keypoints,Area, method="brightest",alpha=1,nearDistance)
-	print keypoints
 	L_f=lenght(keypoints)
 	
 	return L_f
+
+def Find_Mediatrix_vectors(keydots): 
+"""
+    From a given set of points, this function returns the mediatrix decomposition vector between those points.
+    
+    Input:
+     - p1      <list> : list  with the keydots points
+     - p2      <list> : coordinates (x,y) of the second extreme point
+     - image_pixels   <list> : list of points coordidates fitting the object
+     - image   <array> : the image with a single object
+     - keydots  <list> : list with the two extreme points e.g. [p_1,p_2]. And p_i=[p_i_x,p_i_y]
+     - Area  <list> : number of points belonging to the object
+     - method   <string> : 'medium' if you want to pick as Mediatrix Point the point at same distance from the two most distant points near the bisector. Or 'brightest' if you want to pick as Mediatrix Point the brightest point near the bisector. DEFAULT 'medium'
+     - alpha      <float> : the factor alpha=l_i/w to stop the bisection, w is the estimated width and l_i the distance from two neighbours keydots. if l_i<alpha*w the function will not bisect to next Mediatrix level. DEFAULT 1
+     - nearDistance      <list> : the hightest distance to consider a point near to the perpendicular bisector. DEFAULT sqrt(2)/2
+     
+    Output:
+     - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'modulus' for vector modulus  
+     
+    """
+	vectors=[]
+	t=0
+	for t in range(0,len(p)-1):
+		coefficients=Perpendicular_Bisector(p[t],p[t+1])
+		origin_x=float(p[t][0]+p[t+1][0])/2
+		origin_y=float(p[t][1]+p[t+1][1])/2
+		origin=[origin_x,origin_y]
+		modulus=(p[t][0] - p[t+1][0])**2 + (p[t][1] - p[t+1][1])**2
+		modulus=sqrt(modulus)
+		mediatrix_vector = {'theta': coefficients[0], 'linear_coefficient': coefficients[1], 'origin': origin, 'modulus': modulus }
+		vectors.append(mediatrix_vector)
+				
+		
+	return vectors
+
 
 
 def ChooseNearPoint(theta,c,pixels,image,method,maxDistance): 
