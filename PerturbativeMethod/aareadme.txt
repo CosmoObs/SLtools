@@ -3,6 +3,25 @@
 # Current: Oct 11, 2010
 # Contributors: MSSG
 
+----------- New code
+
+arcdifferencemeasure.h*
+arc_properties.h*
+
+generate_curves.h*
+gof_per_method.h*
+
+pnfw_model2.h*
+pnfw_model.h*
+pnfw_model_old.h*
+pseudo_elliptical_model.h*
+psis_model.h*
+
+sis_model.h*
+
+
+
+
 [For making Doxygen files in the html and latex subdirs, remember to
 first generate Doxyfile with doxygen -g in the dir, then run doxygen
 in the dir]

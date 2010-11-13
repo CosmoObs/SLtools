@@ -3,6 +3,7 @@
 # Current: Oct 11, 2010
 # MSSG
 
+
 ----------- This is the examples subdir, for code to make arcs,
             caustics, crit curves in the forward direction for now,
             from all the primary code in the main dir
@@ -10,15 +11,21 @@
 ------------------------------------------------------ Subdir Contains:
 
 -external_shear_teste.cpp*
+-external_shear_teste2.cpp*
+
 -makearcs_pertmethod.cpp*
 -pnfw_test.cpp*
+-pnfw_test_new.cpp*
 -simple_example_old.cpp*
 -theta_example.cpp*
+- hausdorff.cpp*
 
 -configfile_maker_gravlens.cpp*
 -perturbed.PE_SIS_with_ellipticalSource.cpp*
+-pe_sis_test.cpp*
 
 -plotarcsandcaustics.gp*
+
 
 
 

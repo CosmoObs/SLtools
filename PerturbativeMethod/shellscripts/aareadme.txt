@@ -1,6 +1,12 @@
 # Sept 29,2010
 # Last changes: MSSG
 
+New code:
+
+arcs.agr*
+arquivosparacomparaocomogravlens.zip*
+gracefile.cfg*
+reading_gl.cpp*
 
 ------------------ Making arcs 
 
@@ -8,6 +14,12 @@
 by default) of ascii files with differing input params, then you can
 load these one by one into gnuplot, with the script plotarcs.gp
 (e.g. just run from command line: gnuplot plotarcs.gp)
+
+Other gnuplot scripts:
+
+plotarcsandcaustics.gp*
+plotcaustic.gp*
+plotcritcurves.gp*
 
 
 --------------------- Comparing to Gravlens

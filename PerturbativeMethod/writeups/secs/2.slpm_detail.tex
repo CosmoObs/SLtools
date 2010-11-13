@@ -1,6 +1,17 @@
-\chapter{Perturbative Approach in Strong Lensing}
+% \chapter{Perturbative Approach in Strong Lensing}
 \section{Basic Ideas}
 
+{\bf \Large We'll give some intro comments first, a modified version of these:}
+
+The SLPM lets us analyze images without assuming a model.
+
+Much faster for forward simlns.
+
+Nice analytic formulae for lens curves and arcs.
+
+Works well in many regimes.
+
+And some part of this:
 
 Let us assume that the two-dimensional projected density $\Sigma$ of a
 strong gravitational lens system is axially symmetric and centered at
@@ -17,68 +28,9 @@ the point source in the source plane (see fig. in Narayan and
 Bartelmann for this [get proper ref for this fig]), $\vec{r} = r
 \hat{r} $ is the angular position of the point source in the image
 plane, and $\vec{\alpha}$ is the deflection angle, which is equal to
-the radial gradient of the 2D projected potential $\phi$, which in
-polar coordinates is
+the radial gradient of the 2D projected potential $\phi$...
 
-\beq
-\nabla_r \phi = \dfrac{\prtl  \phi}{\prtl r} \hat{r} + \dfrac{1}{r} \dfrac{\prtl  \phi}{\prtl \theta} \hat{\theta}.
-\eeq
-
-(also, we use $ \hat{r}, \hat{\theta}$ in place of Alard's $\hat{u_r}, \hat{u_\theta}$).
-
-Thus
-\bea
-\vec{r}_s & = & r \hat{r} - \left( \dfrac{\prtl  \phi}{\prtl r} \hat{r} + {1 \over r} \dfrac{\prtl  \phi }{ \prtl \theta} \hat{\theta} \right) \label{eq:rs} \\
-& = & \left( r -  \dfrac{\prtl \phi}{\prtl r} \right) \hat{r} -  \dfrac{1}{r} \dfrac{\prtl \phi }{\prtl \theta} \hat{\theta}
-\eea
-
-Now let us go to the simplest case of an on-axis point source with
-perfectly axially symmetric potential $\phi = \phi_0$.  In this case
-$r_s = 0, {\prtl \phi_0 \over \prtl \theta} = 0$ since there is no
-angular variation of the potential.
-
-Thus, eq.(\ref{eq:rs}) reduces to
-
-\beq
-0 =  r -  {\prtl  \phi \over \prtl r}
-\eeq
-
-or
-
-\beq
-\label{eq:einsteinradius}
-  r =  \left. {\prtl  \phi \over \prtl r} \right|_{\re} = \re
-\eeq
-
-Where the derivative of the potential is to be evaluated at the Einstein radius, $ \re$.
-
-This indicates the point source is spread into a circle of radius $ \re $ in the image plane.
-
-We now take the first step of perturbing the situation:
-
-\bea
-\label{eq:rspert}
-r_s & = & \eps y \\
-\phi & = & \phi_0 + \eps \psi
-\eea
-
-which imply we have moved the source off-axis, and added a non-axially
-symmetric potential, both to the exact same order $\eps$ by
-assumption.  Note that the perturbed distance $y$ is in the source plane.
-
-Note that this changes the notation of the first eq in Alard eq.3
-(which is fairly nonsensical, of course).
-
-Eq.(\ref{eq:rspert}) leads to a modification of eq.(\ref{eq:einsteinradius}) into
-
-\beq
-\label{eq:rpert}
-r = \re + \eps x
-\eeq
-
-which changes the notation in Alard eq.4 (which is somewhat weird notation,
-since his $dr$ is not necessarily a small distance), and we do not follow
-his convention of setting $\re \equiv 1$.
+...
 
 Note that now the perturbed distance $x$ is in the image plane.
 
@@ -122,44 +74,8 @@ Now let's go back and substitute eq.~\eqref{eq:rspert}) and eq.~\eqref{eq:rpert}
 \eps y = \left( \re + \eps x -  {\prtl  \phi \over \prtl r} \right) \hat{r} - {1 \over \re + \eps x}  {\prtl  \phi \over \prtl \theta} \hat{\theta}
 \eeq
 
-Now substitute eq.~\eqref{eq:tse2}) into this to find
+More steps, then:
 
-\bea
-\eps y = \left( \re + \eps x -  {\prtl \over \prtl r} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n  \right) \right) \hat{r} - \\
-{1 \over \re + \eps x}  {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n  \right)  \hat{\theta} \nonumber
-\eea
-
-Remembering that $C_n, f_n$ are independent of $r$, and using $r-\re = \eps x$ :
-
-\bea
-\label{eq:tse3}
-\eps y = \left( \re + \eps x -   \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] n (\eps x)^{n-1}  \right) \hat{r} - \\
-{1 \over \re + \eps x}  {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (\eps x)^n  \right)  \hat{\theta} \nonumber
-\eea
-
-Let us expand eq.~\eqref{eq:tse3}) in orders, first the zero'th order piece in $\eps$:
-
-
-\beq
-0 =  \left(\re - C_1 \right) \hat{r} \rightarrow \re = C_1 = \left. \prtl \phi \over \prtl \theta \right|_{\re}
-\eeq
-
-
-Next the first order piece in $\eps$:
-
-\beq
-\eps y = \left( \eps x - (2 C_2 \eps x + \eps f_1 ) \right) \hat{r} - {1 \over \re} \eps {\prtl f_0 \over \prtl \theta } \hat{\theta}
-\eeq
-
-where the coefficient of $C_2$ was expanded to order with $n=2$, that of the $f_1$ term with $n=1$, and that of the $\prtl f_1 \over \prtl \theta$ term with $n=0$.  Bit involved, but this is how to get each term proportional to $\eps$.
-
-Now divide through by $\eps$ and collect terms:
-
-\beq
- y = \left[ (1-2 C_2) x -  f_1 \right] \hat{r} - {1 \over \re} {\prtl f_0 \over \prtl \te} \hat{\theta}
-\eeq
-
-or, defining $\kt = 1-2 C_2$
 
 \beq
 \label{eq:rsexpanded}
@@ -168,46 +84,12 @@ or, defining $\kt = 1-2 C_2$
 
 which is Alard eq.8 (remember he set $\re \equiv 1$).
 
+Should we put the actual technical steps in an appendix, since Alard skips so many..?
 
-\section{Conditions for the Validity of the Approximation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Habib
 
-At first order in $\eps$ we may define
+\subsection{Critical Curves and Caustic Lines in the Perturbative Approach}
 
-\begin{equation}
- q \equiv \frac{r}{\re}[1-\eps\,g(\te)].
-\end{equation}
-
-As the functional $\phi_0(q)$ represents the general expression
-for the perturbed potential, with $q$ defined above, we may expand $\phi_0(q)$
-
-\begin{displaymath}
- \phi_0(q)=\phi_0\left(\rre-\eps\rre\,g(\te)\right)
-\end{displaymath}
-
-\noindent in a Taylor Series around $\eps=0$, in the following way
-
-\def\dpdq{ \left. \left( \frac{d\phi_0}{dq}\right) \right|_{\eps=0} }
-\def\dpde{ \left. \left( \frac{d\phi_0}{d\eps}\right) \right|_{\eps=0} }
-
-\begin{eqnarray}
- \phi_0(q) &\approx& \phi_0\prre+\eps \dpde \\
-	  & = & \phi\prre+\eps \dpdq  \left(\frac{\prtl q}{\prtl \eps}\right)\\
-	  &\approx& \phi\prre-\rre\phi_0^\prime\prre g(\te)\eps \label{key1}
-\end{eqnarray}
-
-Where we have defined $\phi_0^\prime\prre \equiv  \dpdq$.  Note, that we have $\phi_0(q)=\phi_0\prre$ when $\eps=0$ and similarly with its derivatives. Therefore,
-taking the partial derivatives of Eq.~(\ref{key1}), it is straightforward to verify
-
-\begin{eqnarray}
- \re\frac{\prtl \phi}{\prtl r}&=& \phi_0^\prime\prre -%
-  \eps\left[g(\te)\phi_0^\prime\prre+\rre g(\te)\phi_0^{\prime \prime}\prre\right]\\
-\frac{\re}{r}\frac{\prtl \phi}{\prtl \te}&=&-\phi_0^\prime\prre \frac{dg(\te)}{d\te}\eps
-\end{eqnarray}
-
-(Alard eq.19).
-
-\section{Critical Curves and Caustic Lines in the Perturbative Approach}
+{\bf \Large Can shorten, get a modified version of this:}
 
 We will now obtain the equations of the critical curves in the lens
 plane (corresponding to the caustic curves in the source plane).
@@ -230,49 +112,27 @@ J=\frac{\prtl y_1}{\prtl r}\frac{\prtl y_2}{\prtl \te}-\frac{\prtl y_1}{\prtl \t
 \label{jacob}
 \end{equation}
 
-The critical lines are defined by the condition $J=0$. Now, we may easily verify that
-\begin{eqnarray}
-\frac{\prtl y_1}{\prtl r}&=& \frac{\kt}{\epsilon} \cos{\te}\label{dy1dx}   \\
-\frac{\prtl y_2}{\prtl r}&=& \frac{\kt}{\epsilon} \sin{\te}\\
-\frac{\prtl y_1}{\prtl \te}&=& \scriptf(\te)\sin{\te}+\scriptg(\te)\cos{\te}\\
-\frac{\prtl y_2}{\prtl \te}&=& -\scriptf(\te)\cos{\te}+\scriptg(\te)\sin{\te}\label{dy2dte}
-\end{eqnarray}
-
-using eq.~\eqref{eq:rsexpanded}, ${\prtl \over \prtl r} ={ 1 \over \epsilon}
-{\prtl \over \prtl x}$ (from eq.~\eqref{eq:rpert}) and defining the functions
-$\scriptf$ and $\scriptg$ as
-
-\bea
-% \begin{equation}
-\scriptf(\te)&=&\frac{1}{\re}\frac{d^2f_0}{d\te^2}-(\kt x -f_1) \quad \\
-% \textrm{and} \quad % \\
-\scriptg(\te)&=&\frac{1}{\re}\frac{df_0}{d\te}-\frac{df_1}{d\te}
-\eea
-% \end{equation}
-
-Substituting eqs.~(\ref{dy1dx}-\ref{dy2dte}) into eq.~(\ref{jacob}),
-it is straightforward to verify that $J=-{\kt \over \eps}
-\scriptf(\te)$ and therefore on the critical curves, where $J = 0$,
+The critical lines are defined by the condition $J=0$. This leads after some work to the expression for the tangential critical curve:
 
 \begin{equation}
 x=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right] \label{xte}.
 \end{equation}
 
-This is Alard eq. 30. From this last equation, the tangential critical
-curve can be expressed in parametric form as \beq
+
+Or in parametric form as \beq
 \vec{r}_{\mathrm{crit}}= \left[(\re
   +x)\cos{\te},(\re+x)\sin{\te}\right],\quad 0 \leq \te < 2\pi.  \eeq
 
-Now, substituting this last equation into eqs.~(\ref{y_1}) and
-(\ref{y_2}) we obtain, the parametric equation for the tangential
-caustic, i.e.,
+
+And for the parametric equation for the tangential
+caustic:
 
 \begin{eqnarray}
 y_{1_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\cos{\te}+\frac{1}{\re}\frac{df_0}{d\te}\sin{\te}\\
 y_{2_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\sin{\te}-\frac{1}{\re}\frac{df_0}{d\te}\cos{\te}
 \end{eqnarray}
 
-These last equations are Alard eqs. (31).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  From before
 
@@ -281,7 +141,7 @@ Getting Alard eq.33 from 31 is straight, and from there we may obtain
 A.eq.34 from 33 and 32.
 % with some small hiccups..
 
-\section{Reconstruction of Images}
+\subsection{Reconstruction of Images}
 
 One advantage of the perturbative approach is that it allows us to
 construct the lensed images from sources located near the
@@ -290,13 +150,13 @@ circular and elliptical contours using this formalism.
 
 \subsection{Circular Sources}
 
-\begin{wrapfigure}{r}{0.4\textwidth}
+\begin{figure*}{r}
   \begin{center}
 %  \centering{\epsfig{Fig_subsstructure.eps,width=0.45\textwidth}}
    \includegraphics[width=0.35\textwidth]{graphics/sourceplane.pdf}
   \end{center}
     \caption{\label{fig:circular_source}Circular source geometry in the source plane.}
-\end{wrapfigure}
+\end{figure*}
 
 Notation: $ \vec{r}_{0}$ points from the origin (i.e center of the
 source plane, which is the point we see looking directly on-axis from
@@ -308,81 +168,19 @@ edge of the circular source. See Fig.~\ref{fig:circular_source} for this
 configuration.
 
 
-
-Thus we have
-
-\bea
-\vec{r}_s &=&  \vec{r}_{0} + \vec{R}_{0} \\
-  \vec{R}_{0} &=& \vec{r}_s - \vec{r}_{0}. \nonumber
-\eea
-
-
-Replacing $r_s$ by eq.~\eqref{eq:rsexpanded}, we obtain:
-
-\beq
-\label{eq:Rzero}
-\vec{R_{0}} = \left[ \kappa_2 x - f_{1}(\theta) \right]\hat{r} - \frac{1}{\re} \frac{\partial f_0(\theta)}{\partial \theta} \hat{\theta} - \vec{r_{0}}. \;\;\;
-\eeq
-
-
-Note that $\vec{r}_{0} = (x_0,y_0)$ lies in the source plane, but we
-can write it in terms of the polar unit vectors
-
-\bea
-\label{eq:unitvs}
-\hat{r}=(\cos\te, \sin \te) \\
-\hat{\theta}=(-\sin \te, \cos \te)
-\eea
-
- as following
-
-\beq
-\vecrz = (\vecrz \cdot \hatth) \hatth + (\vecrz \cdot \hatr) \hatr
-\eeq
-
-or
-
-\beq
-\label{eq:rzero}
-\vec{r}_{0} = \left[ x_0 \,  \cos \te + y_0 \,  \sin \te \right] \hat{r} + \left[ -x_0 \,  \sin \te + y_0 \,  \cos \te \right] \hat{\theta}.  \;\;\;
-\eeq
-
-So that eq.~\eqref{eq:Rzero} becomes
-
-\beq
-\vec{R_{0}} = \left[ \kappa_2 x - f_{1}(\theta) \right]\hat{r} - \frac{1}{\re} \frac{\partial f_0(\theta)}{\partial \theta} \hat{\theta} -  \left[ x_0 \,  \cos \te + y_0 \,  \sin \te \right] \hat{r} + \left[ -x_0 \,  \sin \te + y_0 \,  \cos \te \right] \hat{\theta} \;\;\;
-\eeq
-
-
-Defining
-
-\beq
-\overline{f}_i(\theta) \equiv f_i(\theta) + (x_0 \cos \te + y_0 \sin \te)\re^{1-i}, \;\; i=0,1
-\eeq
-
-this becomes
-
-\beq
-\vec{R}_{0} = \left[ \kappa_2 x - \overline{f}_{1}(\theta) \right]\hat{r} - \frac{1}{\re} \frac{\partial \overline{f}_0(\theta)}{\partial \theta} \hat{\theta}. \;\;\; \label{eq:Alard11}
-\eeq
-
-(Alard eq.11).
-
-Now, taking the square of this we obtain
-
-\beq
-R_{0}^2 = \left[ \kappa_2 x - \overline{f}_{1}(\theta) \right]^2 + \left[\frac{1}{\re} \frac{\partial \overline{f}_0(\theta)}{\partial \theta}\right]^2. \;\;\;
-\eeq
+...
 
 Solving this for $x(\te)$, the radius of the arc in the image plane as
-a function of theta, the following two solutions are obtained:
+a function of theta, the following two solutions are obtained, the
+negative and positive solutions corresponding to the inner and outer
+edges of the arc.:
 
 \beq
 \label{eq:xsoln}
 x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;
 \eeq
 
-the negative and positive solutions corresponding to the inner and outer edges of the arc.
+
 
 Thus, given the source radius $R_{0}$ and position $(x_0,y_0)$ we can
 draw the arcs using eq.~\eqref{eq:xsoln}). The parametric equation for the
@@ -393,48 +191,13 @@ arcs images is given by
 \eeq
 
 
-\subsection{Elliptical Source Contours with Aligned Axes}
+\subsubsection{Elliptical Source Contours with Aligned Axes}
 %%%%%%%%%%%%%%%%%%% Gabriel
 % {\bf If someone have doubts about this procedure, let me know \ldots}
 
 We now extend the discussion of the previous section to elliptical contours.
 
-First we can consider the vectorial equation of an elliptical contour
-aligned along the major axis of the potential (note that this is a
-very limited set of ellipses),
-
-\beq
-\label{eq:ellipse}
-\vec{R}_0=\left(\sqrt{1-\eta_s} \, y_{1s},\sqrt{1+\eta_s} \, y_{2s}\right)
-\eeq
-where $\eta_s$ is the ellipticity of the source, $R_0$ is the characteristic size of the source
-and
- 
-\bea
-y_{1s} &=& (\vec{r}_s-\vec{r}_0)\cdot\hat{i}, \\
-y_{2s} &=& (\vec{r}_s-\vec{r}_0)\cdot\hat{j}
-\eea
-
-From eq.~(\ref{eq:Alard11}) and writing the polar unit vectors in Cartesian components we obtain
-
-\bea
-y_{1s}&=&(\kt x -\bar{f}_1)\cos{\te}+\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl \te}\sin{\te} \label{y_1s}\\
-y_{2s}&=&(\kt x -\bar{f}_1)\sin{\te}-\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl \te}\cos{\te} \label{y_2s}.
-\eea
-
-Defining
-
-\bea
-\bar{y}_{1s}&=&\kt x -\bar{f}_1\label{bar_y1}\\
-\bar{y}_{2s}&=&\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl \te},\label{bar_y2}
-\eea
-we may express $\vec{R}_0$ as
-
-\beq
-\vec{R}_0=\left[\sqrt{1-\eta_s}(\bar{y}_{1s}\cos{\te}+\bar{y}_{2s}\sin{\te}) \right]\hat{\imath}+\left[\sqrt{1+\eta_s}(\bar{y}_{1s}\sin{\te}-\bar{y}_{2s}\cos{\te}) \right]\hat{\jmath}
-\eeq
-
-Taking square of the equation above and solving for $\bar{y}_{1s}$, is straightforward to verify
+It is straightforward to verify:
 
 \beq
 \bar{y}_{1s}=\dfrac{\eta_s\cos{(2\te)}}{S}\bar{y}_{2s}\pm \frac{1}{S}\sqrt{S R_0^2-(1-\eta_s)\bar{y}^2_{2s}}

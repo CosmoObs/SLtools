@@ -27,7 +27,7 @@ int main(){
   if (entrada1== NULL) 
     {
       printf("Nao foi possivel abrir o arquivo.\n");
-      lens_par[1]=0.8,lens_par[2]=1.5,lens_par[3]=0. ;
+      lens_par[1]=0.8,lens_par[2]=1.5,lens_par[3]=0.1 ;
 //       break;
 //        exit();
      }else{
@@ -40,7 +40,7 @@ int main(){
 //       int nlp = i++;
   
   int npts = 4001;
-//   double twpi= 6.283185308;  
+   double twpi= 6.283185308;  
   double pert_params[]={lens_par[3],1,lens_par[1],lens_par[2]};
   double pot_params[] = {pert_params[2],pert_params[3]};
   
@@ -56,9 +56,9 @@ int main(){
 //   source.y0 = 0.0;
   printf(" Source Position %f %f\n",source.x0, source.y0);
   source.R0 = (sqrt(2.0)/60.0)*_r_e_nfw;
-  source.eta0 = 0.0;
-//   source.theta0 = twpi/8.0;
-  source.theta0 = 0.0;
+  source.eta0 = 0.5;
+   source.theta0 = twpi/8.0;
+  //source.theta0 = 0.0;
 
   FILE *outarc = fopen ("arcs_pnfw.dat" , "w");
   FILE *outls = fopen ("lensing_data.txt" , "w");  
@@ -67,8 +67,8 @@ int main(){
   FILE *outsrc = fopen ("src_plot.dat" , "w");
   
   plot_arcs(source, f1_pnfw, Df0Dtheta_pnfw, pert_params, kappa_2,_r_e_nfw,npts, outarc);
-  plot_curves(source, f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npts, outtc, outcau, outsrc);
-  
+  plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npts, outtc, outcau);
+  plot_sources(source,npts,outsrc);
 
   fprintf(outls,"\t\t PNFW Model Parameters: \n");  
   fprintf(outls," Scale Radius = %f\n",pot_params[1]);
@@ -92,6 +92,9 @@ int main(){
   fprintf(outls2, "%f\n", source.R0);
   fprintf(outls2, "%i\n", step);
   fprintf(outls2, "%i\n", nang);
+  
+  system("xmgrace -view 0.15 0.15 0.85 0.85 tang_caust.dat src_plot.dat");
+  system("xmgrace -view 0.15 0.15 0.85 0.85 tang_crit.dat arcs_pnfw.dat");
 
  // double gof_crit= gof_per_method(f1_pnfw, Df0Dtheta_pnfw,D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw, 1);
  // printf(" The value of the gof, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],gof_crit);

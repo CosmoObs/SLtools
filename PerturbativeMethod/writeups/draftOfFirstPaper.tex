@@ -1,10 +1,8 @@
-% Inicio do texto da tese
-% Por: Habib S. D. Montoya
-% Doutorado em Fisica
-% Orientador: Martín Makler
 % CBPF - Centro Brasileiro de Pesquisas Fisicas
-% Atualizado:26/10/2007
-\documentclass[a4paper,12pt,twoside]{report}
+% \documentclass[12pt,twoside]{paper}
+
+\documentclass[useAMS,usenatbib]{mn2e}
+
 \linespread{1.5}
 % putting the package to be used
 \usepackage[pdftex]{color,graphicx}
@@ -13,7 +11,7 @@
 \usepackage[x11names]{xcolor}
 \usepackage{float}
 \usepackage{wrapfig}
-\usepackage{ccaption}
+% \usepackage{ccaption}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{dcolumn}
@@ -32,6 +30,9 @@
 % \addunit{\anho}{yr}
 % \addunit{\edad}{\giga\anho}
 % defining some abbreviations
+
+\RequirePackage{epsfig}
+\RequirePackage{subfigure}
 
 %%%%%%%%%%%%%%%%%%% Mandeep's Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -99,60 +100,24 @@
 % \setlength{\textwidth}{16 cm}
 % \setlength{\marginparsep}{0.25 cm}
 % \setlength{\marginparwidth}{2.54 cm}
-\usepackage[margin=2.cm,asymmetric]{geometry}
+% \usepackage[margin=2.cm,asymmetric]{geometry}
 \bibliographystyle{unsrt}
 %_________________________________________________________________________________%
 
+\title{Creating Simulated Arcs in the Strong Gravitational Lensing Perturbative Approach }
+
+\author{By: The Usual Suspects}
+
 \begin{document}
+\maketitle
+
 %_______________________Paginas Iniciais_______________________________________________%
 \pagenumbering{roman}\setcounter{page}{2}\pagestyle{plain}
-\include{title}
-%\include{abstract}
-\tableofcontents
-\listoffigures %\addcontentsline{toc}{section}{List of Figures}
-% \listoftables  %\addcontentsline{toc}{section}{Lista de Tabelas}
 
+%
+\input{secs/1.introduction.tex}
+\input{secs/2.slpm_detail.tex}
+\input{secs/3.results.tex}
 
-%________________________Corpo de Texto________________________________________________%
-%
-% Now set up the main body of the paper:
-\newpage\pagenumbering{arabic}\setcounter{page}{1}%\pagestyle{plain}
-\setlength{\headheight}{30pt}
-\pagestyle{fancy}
-\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
-\renewcommand{\sectionmark}[1]{\markright{#1}{}}
-%
-\fancyhf{}
-\fancyhead[LE,RO]{\thepage}
-\fancyhead[RE]{\textbf{\textit{\nouppercase{\leftmark}}}}
-\fancyhead[LO]{\textit{\nouppercase{\rightmark}}}
-%
-\fancypagestyle{plain}{ %
-\fancyhf{} % remove everything
-\renewcommand{\headrulewidth}{0.4pt} % remove lines as well
-\renewcommand{\footrulewidth}{0.4pt}}
-%
-\include{introduction}
-\include{perturbative_method_chap2}
-\include{perturbative_method_chap3}
-
-\addcontentsline{toc}{chapter}{References}
-%\input{bibliografia}
-%\input{biblio-modi}
 \end{document}
 
-% \begin{center}
-% \fboxrule6pt
-% \fcolorbox
-% {red!70!green}% outer frame
-% {yellow!30!blue}% outer background
-% {\fcolorbox
-% {-yellow!30!blue}% inner frame
-% {-red!70!green}% inner background
-% {\begin{minipage}{10cm}
-% {\it
-% texto
-% }
-%  \end{minipage}
-% }}
-% \end{center}
