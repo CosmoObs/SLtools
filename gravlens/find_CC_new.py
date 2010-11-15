@@ -1,5 +1,7 @@
-#saidas das coordenadas das CC
-
+# Output of coordinates of the CC curves (lens curves)
+# By Pedro F.
+# Nov 2010
+# Comment cleanup by MSSG
 
 import os
 import logging
@@ -34,12 +36,17 @@ def get_CC_from_file(filename):
 def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, filename='crit.txt'):
 	""" Determines the caustics and critical curves of a given lens model
 
-	The CC size may vary considerably depending on the lens-source configuration. Because of this, we developed 
-	an iterating method to find the CC, that envolves the size of the grid used by gravlens (gridhi1). The initial 
-	value of gridhi1 must be an upper limit for the size of the CC, and find_CC_new will try to find the CC. Each 
-	time gravlens can't find the CC, wet lower gridhi1 by a factor of 5, in order to increase precision. This goes 
-	on until gravlens finds the CC or the number of 20 iterations is reached. After finding the CC, if it is composed
-	of less than 200 points, the code redefines gridhi1 to a third of it, usually increasing the number of points.
+	The CC size may vary considerably depending on the lens-source
+	configuration. Because of this, we developed an iterative
+	method to find the CC, that involves the size of the grid used
+	by gravlens (gridhi1). The initial value of gridhi1 must be an
+	upper limit for the size of the CC, and find_CC_new will try
+	to find the CC. Each time gravlens can't find the CC, we lower
+	gridhi1 by a factor of 5, in order to increase precision. This
+	continues on until gravlens finds the CC or the number of 20
+	iterations is reached. After finding the CC, if it is composed
+	of less than 200 points, the code redefines gridhi1 to a third
+	of it, usually increasing the number of points.
 
 	Input:
 	 - lens                   <str> : Lens name (see gravlens manual table 3.1)
