@@ -9,15 +9,32 @@ import logging
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 
 
-def critcurves_new(gravinput, filename):
+# given the gravlens 'config file' runs gravlens to generate the 
+# file with caustics and CC
+#
+def _critcurves_new(gravinput, filename):
 	fmag = open('gravlens_CC_input.txt', 'w')
 	fmag.write(gravinput)
 	fmag.write('plotcrit %s\n' % filename )
 	fmag.close()
 	os.system('gravlens gravlens_CC_input.txt > /dev/null')
 
-
+## get_CC_from_file
+# Reads critical curves file outputed by gravlens (with plotmode=1)
+#
 def get_CC_from_file(filename):
+	"""
+	Reads critical curves file outputed by gravlens (with 
+	plotmode=1). 
+	
+	Input:
+	 - filename   <str> : name of the file to be read
+
+	Output:
+	 - <list>     : [x_caustic, ycaustic], with x_caustic and ycaustic being the lists with the caustic coordinates
+	 - <list>     : [x_CC, y_CC], with x_CC and y_CC being the lists with the CC coordinates
+
+	"""
 	fcrit = open(filename, 'r').readlines()
 	xcritsrc = []
 	ycritsrc = []
@@ -32,7 +49,11 @@ def get_CC_from_file(filename):
 	return [xcritsrc, ycritsrc], [xcritimg, ycritimg]
 
 
-
+##@package find_CC_new
+# Determines the caustics and CC of a given lens
+#
+# Determines the lens curves using a iterating method using gravlens
+#
 def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, filename='crit.txt'):
 	""" Determines the caustics and critical curves of a given lens model
 
@@ -76,7 +97,7 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 	#--------------------------------------
 
 	#-----------------------------
-	critcurves_new(inputlens, filename) # gets the critical curves (crit.txt file)
+	_critcurves_new(inputlens, filename) # gets the critical curves (crit.txt file)
 	logging.debug('Got the critical curves (%s file) with function \"critcurves\"' % filename)
 	#-----------------------------
 
@@ -88,7 +109,7 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 		lens_par_out = lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 
 		inputlens, setlens, gravlens_params_updated = lens_par_out
-		critcurves_new(inputlens, filename) # gets the critical curves (crit.txt file)
+		_critcurves_new(inputlens, filename) # gets the critical curves (crit.txt file)
 		counter += 1
 	logging.debug( '(Number of iterations on gridhi1 = %d)' % (counter) )
 
@@ -101,7 +122,7 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 		lens_par_out = lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		inputlens, setlens, gravlens_params_updated = lens_par_out
 
-		critcurves_new(inputlens, filename) # gets the critical curves (crit.txt file)
+		_critcurves_new(inputlens, filename) # gets the critical curves (crit.txt file)
 	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
 
 
