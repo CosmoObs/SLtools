@@ -1,4 +1,5 @@
 # Mandatory: bin doc etc
+arcellipse
 catalog
 coordinate
 gravlens
@@ -7,4 +8,5 @@ io
 lens
 plot
 string
+GUI
 Packages
