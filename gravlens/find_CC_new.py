@@ -3,6 +3,12 @@
 # Nov 2010
 # Comment cleanup by MSSG
 
+##@package find_CC_new
+# Determines the caustics and CC of a given lens
+#
+# Determines the lens curves using a iterating method using gravlens
+#
+
 import os
 import logging
 #from lens_parameters_new import lens_parameters_new
@@ -48,14 +54,14 @@ def get_CC_from_file(filename):
 
 	return [xcritsrc, ycritsrc], [xcritimg, ycritimg]
 
-
-##@package find_CC_new
+## find_CC_new
 # Determines the caustics and CC of a given lens
 #
 # Determines the lens curves using a iterating method using gravlens
 #
 def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, filename='crit.txt'):
-	""" Determines the caustics and critical curves of a given lens model
+	""" 
+	Determines the caustics and critical curves of a given lens model
 
 	The CC size may vary considerably depending on the lens-source
 	configuration. Because of this, we developed an iterative
@@ -64,7 +70,7 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 	upper limit for the size of the CC, and find_CC_new will try
 	to find the CC. Each time gravlens can't find the CC, we lower
 	gridhi1 by a factor of 5, in order to increase precision. This
-	continues on until gravlens finds the CC or the number of 20
+	continues on until gravlens finds the CC or the number of n=20
 	iterations is reached. After finding the CC, if it is composed
 	of less than 200 points, the code redefines gridhi1 to a third
 	of it, usually increasing the number of points.
@@ -91,6 +97,12 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 
 	"""
 
+	# definitions of some control params
+	grid_factor = 5.
+	max_iterations_number = 20
+	grid_factor2 = 3.
+	min_n_lines = 200
+	# ==================================
 
 	inputlens, setlens, gravlens_params_updated = lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)	# setlens is the gravlens input line that concerns the lens (ex: nfw 1 0 ...)
 	logging.debug('Determined the strings that defines the mass model in gravlens through the \'lensparameter\' function')
@@ -103,8 +115,8 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 
 	# ITERATION ON gridhi1 (TO GET BETTER RESOLUTION ON CC)
 	counter = 0
-	while os.path.isfile('./' + filename) == False and counter < 20: # looks for the C.C. file (crit.txt) - if this file does not exist, add a note to arccatalog and quit
-		gravlens_params_updated['gridhi1'] = float( gravlens_params_updated['gridhi1'] ) / 5.; # gridhi1 /= 5. 
+	while os.path.isfile('./' + filename) == False and counter < max_iterations_number: # looks for the C.C. file (crit.txt) - if this file does not exist, add a note to arccatalog and quit
+		gravlens_params_updated['gridhi1'] = float( gravlens_params_updated['gridhi1'] ) / grid_factor; # gridhi1 /= 5. 
 
 		lens_par_out = lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 
@@ -116,8 +128,8 @@ def find_CC_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, 
 	if os.path.isfile('./' + filename) == False: # looks for the C.C. file (crit.txt) - if this file does not exist, returns 'False'
 		return False
 
- 	if len(open('./' + filename).readlines() ) < 200: # these correspond to critical cases when the CC have too few points.
-		gravlens_params_updated['gridhi1'] = float( gravlens_params_updated['gridhi1'] ) / 3. # gridhi1 /= 3. 
+ 	if len(open('./' + filename).readlines() ) < min_n_lines: # these correspond to critical cases when the CC have too few points.
+		gravlens_params_updated['gridhi1'] = float( gravlens_params_updated['gridhi1'] ) / grid_factor2 # gridhi1 /= 3. 
 
 		lens_par_out = lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		inputlens, setlens, gravlens_params_updated = lens_par_out
