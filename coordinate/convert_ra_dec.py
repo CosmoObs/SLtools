@@ -19,11 +19,11 @@ import sys
 # This package contains functions to convert RA and DEC formats, 
 # from sexagesimal to decimal format and vice-versa.
 #
-# 'convert_sexag_dec' converts from sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss) to decimal degrees format.
+# 'convert_sexag2deg' converts from sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss) to decimal degrees format.
 #
-# 'convert_dec_sexag' converts from decimal degrees format to sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss).
+# 'convert_deg2sexag' converts from decimal degrees format to sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss).
 #
-# Both convert_sexag_dec and convert_dec_sexag have two arguments, RA and DEC, which can be given in 
+# Both, convert_sexag2deg and convert_deg2sexag, have two arguments, RA and DEC, which can be given in 
 # hr:min:sec or deg:min:sec format or decimal degree format. Depending on the format, the package calls 
 # the appropriate function for format conversion.
 #
@@ -42,7 +42,7 @@ import sys
 
 
 
-def convert_sexag_dec(ra,dec):
+def convert_sexag2deg(ra,dec):
 
 	"""Converts from sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss) to decimal degrees format.
 	Input:
@@ -68,11 +68,11 @@ def convert_sexag_dec(ra,dec):
 	if dec_signal == "-":
 		dec_deg = -1. * dec_deg
 	
-	print "%f  %f\n" %(ra_deg,dec_deg)
+	print "%.6f  %.6f\n" %(ra_deg,dec_deg)
 	return ra_deg,dec_deg
 
 
-def convert_dec_sexag(ra,dec):
+def convert_deg2sexag(ra,dec):
 
 	"""Converts from decimal degree format to sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss).
 	Input:
