@@ -19,13 +19,14 @@ def set_gravlens_default():
 	imglev  : 3 # Deepest level of subgrid near images
 	ngrid1  : 30 # dimension of top grid (in radius)
 	ngrid2  : 30 # dimension of top grid (in angle)
+	plotmode: 1 # Specifies file format for curve plots
 
 	Any of these parameters can be modified through the input.
 	
 	Output:
 	- <dic> : contains the updated keys for gravlens configuration
 	"""
-	gravlens_params_default = { 'gridhi1' : 150, 'xtol' : 1e-10, 'crittol' : 1e-6, 'inttol' : 1e-6, 'maxlev' : 4, 'gallev' : 3, 'imglev' : 3, 'ngrid1' : 30, 'ngrid2' : 30 }
+	gravlens_params_default = { 'gridhi1' : 150, 'xtol' : 1e-10, 'crittol' : 1e-6, 'inttol' : 1e-6, 'maxlev' : 4, 'gallev' : 3, 'imglev' : 3, 'ngrid1' : 30, 'ngrid2' : 30, 'plotmode' : 1 }
 
 
 	return gravlens_params_default
@@ -69,6 +70,7 @@ set inttol = %0.12f
 set maxlev = %d
 set gallev = %d 
 set imglev = %d 
+set plotmode = %d
 startup 1 1
 %s
 0 0 0 0 0 0 0 0 0 0\n""" % ( float(gravlens_params_updated['gridhi1']),
@@ -79,6 +81,7 @@ startup 1 1
                              float(gravlens_params_updated['inttol']),
                              int(gravlens_params_updated['maxlev']),
                              int(gravlens_params_updated['gallev']),
-                             int(gravlens_params_updated['imglev']), setlens) 
+                             int(gravlens_params_updated['imglev']),
+                             int(gravlens_params_updated['plotmode']), setlens) 
 
 	return inputlens, setlens, gravlens_params_updated
