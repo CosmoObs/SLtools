@@ -1,4 +1,8 @@
-
+##@package lens_parameters_new
+# deals with gravlens configuration
+#
+# 
+#
 
 def set_gravlens_default():
 	"""
@@ -21,7 +25,7 @@ def set_gravlens_default():
 	Output:
 	- <dic> : contains the updated keys for gravlens configuration
 	"""
-	gravlens_params_default = { 'gridhi1' : 15, 'xtol' : 1e-10, 'crittol' : 1e-6, 'inttol' : 1e-6, 'maxlev' : 4, 'gallev' : 3, 'imglev' : 3, 'ngrid1' : 30, 'ngrid2' : 30 }
+	gravlens_params_default = { 'gridhi1' : 150, 'xtol' : 1e-10, 'crittol' : 1e-6, 'inttol' : 1e-6, 'maxlev' : 4, 'gallev' : 3, 'imglev' : 3, 'ngrid1' : 30, 'ngrid2' : 30 }
 
 
 	return gravlens_params_default
