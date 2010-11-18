@@ -1,6 +1,6 @@
 # Contents of sltools/PerturbativeMethod dir
 # Started: Sep 8, 2010
-# Current: Oct 11, 2010
+# Current: Nov 18, 2010
 # Contributors: MSSG
 
 ----------- New code
@@ -27,16 +27,17 @@ first generate Doxyfile with doxygen -g in the dir, then run doxygen
 in the dir]
 
 
----- We try to keep the below consistent with this page:
+---- We used to try to keep the below consistent with this page:
 
 http://twiki.on.br/bin/save/StrongLensing/PerturbativeArcContoursv01
 
+but not so recently...
 
 ---------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------
 
 
---------------------- Pert Method code in dir: .../repositories/sltools/PerturbativeMethod
+--------------------- Pert Method code in dir: ...sltools/PerturbativeMethod
 
 
 ----------------------------------------- Dir Contains:
@@ -65,20 +66,37 @@ writeups/
 [To use any of the below, go to examples subdir, and look at readme there.]
 
 
---------------- Models:
+----------------------------- Models:
 
----- sis_sub_model.h* -- Doxygenated -- This gives needed functions for SIS potential
+------------ General
 
----- pnfw_model.cpp* --  Doxygenated  --values of shear, conv, and needed deriv values
-     in the PNFW model
+---- pseudo_elliptical_model.h* -- Doxygenated -- Returns values of f1, df0/dtheta, d^2f0/dtheta^2 in general PE models
+
+------------ SIS type
+
+---- sis_sub_model.h* -- Doxygenated -- Returns values of f1,
+     df0/dtheta, d^2f0/dtheta^2, kappa2, for a SIS substructure
+     potential
+
+---- sis_model.h* -- Doxygenated -- This gives shear, conv, kappa2, and alpha (ang deflection) for a SIS potential
+
+---- psis_model.h --Doxygenated --  Returns values of f1, df0/dtheta, d^2f0/dtheta^2 in the PSIS  potential
+
+-------------- NFW type
+
+---- pnfw_model.cpp* --  Doxygenated  -- Returns values of f1, df0/dtheta, d^2f0/dtheta^2 in the PNFW  potential
+
+---- pnfw_model2.cpp* --  what's the dif with above?
 
 ---- pnfw_model_old.h* -- deprecated version of above
 
----- nfw_circular_model.h* - Doxygenated  --values of shear, conv, and needed deriv values
-     in the axisymmetric NFW model
+---- nfw_circular_model.h* - Doxygenated --values of shear, conv,
+     lambda, R_e and a couple of others in the axisymmetric NFW model
 
----- external_shear_model.h* - Doxygenated  --values of shear, conv, and needed deriv values
-     in an externally applied shear model 
+-------------- Other models
+
+---- external_shear_model.h* - Doxygenated -- Returns values of f1,
+     df0/dtheta, d^2f0/dtheta^2 in an externally applied shear model
 
 ---- lens_models_old.h* -- Doxygenated, deprecated -- This takes out the f1,df0dt
      functions so they can be accessed directly from any code here
@@ -88,12 +106,25 @@ writeups/
 
 ---- generate_arcs.h* - Doxygenated  -- writes out the values of an arc into an external file
 
+---- generate_curves.h -  Doxygenated  -- Generate lens curves useful to the
+     perturbative approach, as Tangential Critical Curve, Tangential
+     Caustic and also Source contours
+
+
 ---- theta_find.h* -- unDoxygenated yet -- code to find the extrema of
      arcs by checking for sign changes of the radicand in the x
      solution (the distance to arc from origin in lens plane).  Writes
      the theta values for start and end of arc into an output txt
      file.
 
+---- gof_per_method.h* - File to compute the goodness of fit, to
+     compare the solution of the perturbative method with fully
+     numerical solution for the tangential critical and caustic curves
+     
+
+---- arc_properties.h - File to compute image properties, such number,
+     center coordinates, curvature radius, length, width,
+     length-to-width ratio.
 
 ----- perturbative_method.h*  -- Doxygenated -- general accessor utility code for many needed functions:
  - central potential phi
