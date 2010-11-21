@@ -79,6 +79,24 @@ GenDoxygenDoc()
 
 }
 
+Link_subtree_Clone()
+{
+	DEST=$1
+	
+	# Clone directory entries below current dir to dir passed trough argument '$1'
+	for i in `find ./[a-zA-Z0-9]* -name "*"`
+	do
+		[ -d $i ] && mkdir -p $DEST/$i
+	done
+
+	# Clone non-directory entries, but now make link instead of copying the files
+	for i in `find ./[_a-zA-Z0-9]* -name "*"`
+	do
+		[ ! -d $i ] && ln -sf $i $DEST/$i
+	done
+
+}
+
 # SLtools build
 
 sltools()
@@ -123,12 +141,25 @@ sltools()
 
 [ ! -z "$1" ] && opt1="$1" || opt1="null"
 [ ! -z "$2" ] && opt2="$2" || opt2="--all"
+[ ! -z "$3" ] && opt3="$3" || opt3=""
 
-[ "$opt2" == "--all" -o "$opt2" == "--no-doc" -o "$opt2" == "--no-pdf" ] && mode=$2 || opt1="null"
+[ "$opt2" == "--devel" -o "$opt2" == "--no-doc" -o "$opt2" == "--no-pdf" -o "$opt2" == "--all" ] && mode=$2 || opt1="null"
+[ "$opt2" == "--devel" -a -z "$opt3" ] && opt1="null" || destdir=$3
 
 if [ "$opt1" == "sltools" ]
 then
 
+	if [ "$mode" == "--devel" ]; then
+		[ ! -w $destdir -o "$destdir" == "$PWD" ] && { echo "Directory $destdir is not writeable. Try again."; exit 1; }
+		mkdir -p $destdir/sltools
+		destdir="$destdir/sltools"
+		Link_subtree_Clone $destdir
+		rm -f $destdir/build.sh
+		rm -f $destdir/DIRECTORIES_TO_INCLUDE_IN_BUILD
+		echo "Done devel tree clone"
+		exit 0
+	fi
+	
     # Read package VERSION and exec building function:
     version=$(cat ./etc/version.txt)
     folder=$opt1-v$version
@@ -139,9 +170,9 @@ then
     find $folder -name "*.pyc" -delete
 
     if [ "$mode" != "--no-doc" ]; then
-	# compile documentation
-	echo "Generating Doxygen documentation..."
-	GenDoxygenDoc $opt1 $version $mode
+		# compile documentation
+		echo "Generating Doxygen documentation..."
+		GenDoxygenDoc $opt1 $version $mode
     fi
 
     sed "s/%VERSION%/$version/" $folder/install.sh > $folder/install.tmp
@@ -157,8 +188,13 @@ then
 
 else
 
-    echo "Usage: ./build.sh { sltools } [ --all | --no-doc | --no-pdf ]"
-    echo
+    echo "Usage: ./build.sh { sltools } [ --devel <DESTINY> | --no-doc | --no-pdf ]"
+    echo ""
+	echo " (default: all)     If no argument is given the building system run defaults: build entire package"
+	echo " --devel <path>     clone subtree structure to DESTINY(path). Useful for developing outside Git"
+	echo " --no-doc           No Doxygen documentation is compiled"
+	echo " --no-pdf           No Doxygen PDF pages are generated, just HTML doc"
+	echo ""
     exit 1
 
 fi
