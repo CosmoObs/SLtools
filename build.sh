@@ -92,7 +92,7 @@ Link_subtree_Clone()
 	# Clone non-directory entries, but now make link instead of copying the files
 	for i in `find ./[_a-zA-Z0-9]* -name "*"`
 	do
-		[ ! -d $i ] && ln -sf $i $DEST/$i
+		[ ! -d $i ] && ln -sf $PWD/$i $DEST/$i
 	done
 
 }
