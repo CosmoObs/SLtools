@@ -28,6 +28,8 @@ npts= number of points to compute curves.
 
 $for77_compiler -o exec_name pnfw_contours.f lensing_functions.f root_finding.f
 
+./exec_name (To run the program)
+
    * Mandatory have the input file "in_pnfw_par.txt" : ks rs elp lw_u iflag npt 
 
    * If iflag=1, the code only plots the tangential and radial curves (both critical and caustic curves)
@@ -63,6 +65,7 @@ $for77_compiler -o exec_name pnfw_contours.f lensing_functions.f root_finding.f
 
 $for77_compiler -o exec_name arc_cross_section.f arc_cross_subroutine.f  lensing_functions.f root_finding.f
 
+./exec_name (To run the program)
 
     *Mandatory two input file files "ifile" and "ifile2":
 
