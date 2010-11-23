@@ -27,7 +27,7 @@ npts= number of points to compute curves.
 
 --+ To plot PNFW model curves, use the pnfw_contours.f
 
-$for77_compiler -o exec_name pnfw_contours.f lensing_functions.f root_finding.f
+$for77_compiler -o c_pnfw pnfw_contours.f lensing_functions.f root_finding.f
 
 ./exec_name (To run the program)
 

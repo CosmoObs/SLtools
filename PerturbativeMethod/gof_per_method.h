@@ -16,7 +16,7 @@
 
 #include <cmath> 
 #include "perturbative_method.h"
-#define TAM_MAX 1000
+#define TAM_MAX 10000
 
 /** A function to compute the goodness of fit to the interesting curves (tangential critical or tangential caustic curve) of any model, aiming to compare the perturbative method solution to the fully numerical solution
 *
@@ -47,56 +47,124 @@
 
 double gof_per_method(f_type f1_in, f_type Df0Dtheta_in,f_type D2f0Dtheta2_in,double kappa2,double pert_params[],double _r_e, int cflag){
 
-    float x_cord[TAM_MAX],y_cord[TAM_MAX];
-
-    FILE *encurv;
-    if(cflag==1){encurv=fopen("cc.dat","r");}
-    else{encurv=fopen("ca.dat","r");}
-    int i=0;
-    if (encurv== NULL) 
+    float xct_cord[TAM_MAX],yct_cord[TAM_MAX];
+    float xca_cord[TAM_MAX],yca_cord[TAM_MAX];
+    
+    FILE *incurv1;
+    incurv1=fopen("cc.dat","r");
+    int ict=0;
+    if (incurv1== NULL) 
     {
       printf("Nao foi possivel abrir o arquivo.\n");
-//        break;
-//        exit(1);
+      exit(1);
      }else{
-      while (! feof(encurv))
+      while (! feof(incurv1))
       {
-        i++;
-        fscanf(encurv," %f %f",&x_cord[i], &y_cord[i]);
+        ict++;
+        fscanf(incurv1," %f %f",&xct_cord[ict], &yct_cord[ict]);	
+      }}
+      int n_crit = ict++-1;
+      printf("The number of points is %i\n",n_crit);
+    
+
+    FILE *incurv2;
+    incurv2=fopen("ca.dat","r");
+    int ica=0;
+
+    if (incurv2== NULL) 
+    {
+      printf("Nao foi possivel abrir o arquivo.\n");
+      exit(1);
+     }else{
+      while (! feof(incurv2))
+      {
+        ica++;
+        fscanf(incurv2," %f %f",&xca_cord[ica], &yca_cord[ica]);
 	
       }}
-      int n_points = i++-1;
-      printf("The number of points is %i\n",n_points);
+      int n_ca = ica++-1;
+      printf("The number of points is %i\n",n_ca);
 
+     int n_points=n_crit;
 
-  double d_nor=sqrt(pow((x_cord[1]-x_cord[n_points]),2)+pow((y_cord[1]-y_cord[n_points]),2) );
-  double phi[TAM_MAX],r_cord[TAM_MAX],wphi[TAM_MAX];  
-  double r_pertm[TAM_MAX],theta[TAM_MAX];
+  fclose(incurv1);
+  fclose(incurv2);
+  double phi[TAM_MAX],phi_ca[TAM_MAX];
+  double r_ct[TAM_MAX],r_ca[TAM_MAX],phi_ca_pm[TAM_MAX];
+
+  FILE *angles;
+  angles=fopen("ca_angles.dat","w");
 
   for(int i=1;i<=n_points;i++){
-    phi[i]=atan(y_cord[i]/x_cord[i]);
-    r_cord[i]=sqrt(pow(x_cord[i],2)+pow(y_cord[i],2));
+    phi[i]=atan(yct_cord[i]/xct_cord[i]);
+    phi_ca[i]=atan(yca_cord[i]/xca_cord[i]);
+    phi_ca_pm[i]=atan(fabs(caustic_y2(Df0Dtheta_in,D2f0Dtheta2_in,phi[i],pert_params,_r_e))/fabs(caustic_y1(Df0Dtheta_in,D2f0Dtheta2_in,phi[i],pert_params,_r_e)));
+    r_ct[i]=sqrt(pow(xct_cord[i],2)+pow(yct_cord[i],2));
+    r_ca[i]=sqrt(pow(xca_cord[i],2)+pow(yca_cord[i],2));
+    fprintf(angles,"%f %f\n",phi_ca[i], phi_ca_pm[i]);
   }
+  fclose(angles);
+//   wphi[1]=fabs(phi[1]-phi[2]);
 
-  wphi[1]=fabs(phi[1]-phi[2]);
+  double wphi[TAM_MAX],wphi_ca[TAM_MAX];
+  double dx_ct[TAM_MAX],dx_ca[TAM_MAX];
+  double dy_ct[TAM_MAX],dy_ca[TAM_MAX];
 
-  for (int j=2;j<=n_points; j++){
-    int j1=j-1;
-    wphi[j]=fabs(phi[j]-phi[j1]);
+  for (int j=1;j<n_points; j++){
+    int j1=j+1;
+    wphi[j]=fabs(phi[j1]-phi[j]);
+    wphi_ca[j]=fabs(phi_ca[j1]-phi_ca[j]);
+    dx_ct[j]=fabs(xct_cord[j1]-xct_cord[j]);
+    dx_ca[j]=fabs(xca_cord[j1]-xca_cord[j]);
+    dy_ct[j]=fabs(yct_cord[j1]-yct_cord[j]);
+    dy_ca[j]=fabs(yca_cord[j1]-yca_cord[j]);
   }
+  wphi[n_points]=fabs(phi[n_points]-phi[n_points-1]);
+  wphi_ca[n_points]=fabs(phi_ca[n_points]-phi_ca[n_points-1]);
 
-  double sum1=0.0, sum_nor=0.0;
+//   double area_ct=0.0, area_ca=0.0;
+// 
+//   for(int j2=1;j2<n_points;j2++){
+//     area_ct+=dx_ct[j2]*dy_ct[j2];
+//     area_ca+=dx_ca[j2]*dy_ca[j2];
+//   }
+// 
+//   double cnor_ct=area_ct;
+//   double cnor_ca=area_ca;
+  
+  double sum_ct, sum_nor_ct, sum_ca, sum_nor_ca;
+  sum_ct=0.0, sum_nor_ct=0.0;
+  sum_ca=0.0, sum_nor_ca=0.0;
+  double theta[TAM_MAX],r_pm_ct[TAM_MAX],r_pm_ca[TAM_MAX];
+  
     for(int k=1; k<=n_points; k++){
       theta[k]=phi[k]; 
-      if(cflag==1){ r_pertm[k]=r_crit(f1_in, D2f0Dtheta2_in, kappa2, theta[k], pert_params,_r_e);}
-      else{ r_pertm[k]=r_caust(Df0Dtheta_in,D2f0Dtheta2_in,theta[k], pert_params, _r_e);}
-      sum1+= wphi[k]*pow((r_cord[k]-r_pertm[k]),2);
-     sum_nor+=wphi[k]*pow(r_cord[k],2);
+      r_pm_ct[k]=r_crit(f1_in, D2f0Dtheta2_in, kappa2, theta[k], pert_params,_r_e);
+      sum_ct+= wphi[k]*pow((r_ct[k]-r_pm_ct[k]),2);
+      sum_nor_ct+= wphi[k]*pow(r_ct[k],2);
+//
+      r_pm_ca[k]=r_caust(Df0Dtheta_in,D2f0Dtheta2_in,theta[k], pert_params, _r_e);
+      sum_ca+= wphi_ca[k]*pow((r_ca[k]-r_pm_ca[k]),2);
+      sum_nor_ca+=wphi_ca[k]*pow(r_ca[k],2);
     }
-//      double fom;
-//     if(cflag==1){fom=sum1/sum_nor;}else{fom=sum1;}
-     double fom=sum1/sum_nor;
-//    double fom=sum1/d_nor;  
+    double fom_crit=(sum_ct/sum_nor_ct);
+    double fom_ca=(sum_ca/sum_nor_ca);
+    
+//     double fom_crit=sum_ct/cnor_ct;
+//     double fom_ca=sum_ca/cnor_ca;
+
+    if(pert_params[0]<=1E-7){
+        fom_crit=0.0;
+        fom_ca=0.0;
+    }
+
+    double fom;
+    if(cflag==1){
+        fom=fom_crit;
+    }else{
+        fom=fom_ca;
+    }
+    
     return fom;
 }
 
