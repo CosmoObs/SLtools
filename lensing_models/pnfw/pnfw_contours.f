@@ -8,27 +8,29 @@
         double precision v_in,v_out,vit,vir,vilwn,vilwp
         double precision elp!,e_ad
         integer npt,opt,iflag
-!         character*20 name
-!         dimension name(8)
+        character*30 name
+        dimension name(8)
         open(unit=1,file='in_pnfw_par.txt',status='unknown')
-!         open(unit=2,file='cluster_data.txt',status='unknown'
-!      &  ,access='append')
+        open(unit=2,file='cluster_data.txt',status='unknown'
+     &  ,access='append')
 
         opt=2
-        iflag=1
+!         iflag=1
         lw=1.0
-        read(1,*)ks,rs,elp,npt
-!         read(1,*) name(1),ks
-!         read(1,*) name(2),opt
-!         read(1,*) name(3),elp
-!         read(1,*) name(4),lw
-!         read(1,*) name(5),npt
-!         read(1,*) name(6),iflag
-!         read(1,*) name(7),rs
+! !         read(1,*)ks,rs,elp,npt
+	read(1,*)ks,rs,elp,lw,iflag,npt 
+	name(1)= "characteristic_convergence :"
+	name(2)= "ellipticity :"
+	name(3)= "scale_radius :"
+	name(4)=  "length-to-width :"
+        write(2,*) name(1),ks
+        write(2,*) name(2),elp
+	write(2,*) name(3),rs
+        write(2,*) name(4),lw
         
 !         
         if(opt.eq.2)then
-            write(2,*)"working with the ellipticity parameter"
+!             write(2,*)"working with the ellipticity parameter"
             e=elp
             write(*,*)e
         else
@@ -44,9 +46,9 @@
 !         write(*,*)name(4),lw
         write(*,*)"scale radius",rs
         write(*,*)"number of points",npt
+	write(*,*)"length-to-width ratio",lw 
 !         write(*,*)name(6),iflag
         
-!         pause
 !       Some scaling parameter
 !         rs=1.d0
         theta=0.d0
@@ -65,13 +67,12 @@
         if(iflag.eq.2)then
           vilwp=v_out
           vilwn=v_out
-!           call contour_lwp(npt,vilwp,lwp,rs,theta,ks,e)  
-
-!           call contour_lwn(npt,vilwn,lwn,rs,theta,ks,e,v_out)  
+          call contour_lwp(npt,vilwp,lwp,rs,theta,ks,e)  
+          call contour_lwn(npt,vilwn,lwn,rs,theta,ks,e,v_out)  
           go to 21
         endif
           vir=v_out
-!         call contour_lr(npt,vir,rs,theta,ks,e)
+         call contour_lr(npt,vir,rs,theta,ks,e)
 !        
 21      write(*,*)'Ending the plots'	
         end
@@ -142,12 +143,6 @@
           x1b=0.d0+(j-1)*stept
           d2s=1.1*x2
           d2i=0.9*x2
-!           if(gamma2_e(e,x1b,d2s).lt.0.d0.or.
-!      &    gamma2_e(e,x1b,d2i).lt.0.d0)then
-!             write(*,*)"limit parameters in lt= 0", ks,e
-!             write(60,*)'tangential critical curve ',ks,e
-!             go to 10
-!           endif
         end do 
 10      ip=i
         if(ip.lt.1)ip=1

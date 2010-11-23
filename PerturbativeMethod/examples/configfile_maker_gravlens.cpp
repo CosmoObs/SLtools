@@ -66,32 +66,32 @@ fprintf(outfile," set imglev = %E\n",ccpar[7]);
 fprintf(outfile," startup  %i %i\n",1,1); 
 fprintf(outfile," alpha  %E %E %E %E %E %E %E %E %E %E\n",fpar[1],fpar[2],fpar[3],fpar[4],fpar[5],fpar[6],fpar[7],fpar[8],fpar[9],fpar[10]); 
 fprintf(outfile,  "%E %E %E %E %E %E %E %E %E %E\n",par_var[1],par_var[2],par_var[3],par_var[4],par_var[5],par_var[6],par_var[7],par_var[8],par_var[9],par_var[10]); 
-fprintf(outfile," plotcrit sis_curves.dat \n"); 
+fprintf(outfile," plotcrit pesis_curves.dat \n"); 
 
 
-/////////////// Open source config file for output (to make the arcs)
-int steps=1, nang=400;
-FILE *outfile2 = fopen ("source_file.txt" , "w");
-x0_s = 1.0/10.0, y0_s = 0 ; 
-R0 = 1.0/15.0, eta_s=0.0, PA_s=0.0 ;
-a_lo=R0,a_hi=R0;
-
-// creating the source file
-fprintf(outfile2," gridmode  %i\n",1);
-fprintf(outfile2," set ngrid1 = %i\n",25);
-fprintf(outfile2," set ngrid2 = %i\n",75);
-fprintf(outfile2," set gridlo1 = %E\n",ccpar[1]); 
-fprintf(outfile2," set gridhi1 = %E\n",ccpar[2]); 
-fprintf(outfile2," set xtol = %E\n",ccpar[3]); 
-fprintf(outfile2," set crittol = %E\n",ccpar[4]); 
-fprintf(outfile2," set inttol = %E\n",ccpar[5]); 
-fprintf(outfile2," set maxlev = %E\n",ccpar[6]); 
-fprintf(outfile2," set imglev = %E\n",ccpar[7]); 
-fprintf(outfile2," startup  %i %i\n",1,1); 
-fprintf(outfile2," alpha  %E %E %E %E %E %E %E %E %E %E\n",fpar[1],fpar[2],fpar[3],fpar[4],fpar[5],fpar[6],fpar[7],fpar[8],fpar[9],fpar[10]); 
-fprintf(outfile2,  "%E %E %E %E %E %E %E %E %E %E\n",par_var[1],par_var[2],par_var[3],par_var[4],par_var[5],par_var[6],par_var[7],par_var[8],par_var[9],par_var[10]);
-fprintf(outfile2," ellsrc src_img_plot.txt  %E %E %E %E %E %E %i %i\n",x0_s,y0_s,eta_s,PA_s,a_lo,a_hi,steps,nang);
-fprintf(outfile2," findimg  %E %E\n", x0_s,y0_s,"src_im_pos.txt");
+// /////////////// Open source config file for output (to make the arcs)
+// int steps=1, nang=400;
+// FILE *outfile2 = fopen ("source_file.txt" , "w");
+// x0_s = 1.0/10.0, y0_s = 0 ; 
+// R0 = 1.0/15.0, eta_s=0.0, PA_s=0.0 ;
+// a_lo=R0,a_hi=R0;
+// 
+// // creating the source file
+// fprintf(outfile2," gridmode  %i\n",1);
+// fprintf(outfile2," set ngrid1 = %i\n",25);
+// fprintf(outfile2," set ngrid2 = %i\n",75);
+// fprintf(outfile2," set gridlo1 = %E\n",ccpar[1]); 
+// fprintf(outfile2," set gridhi1 = %E\n",ccpar[2]); 
+// fprintf(outfile2," set xtol = %E\n",ccpar[3]); 
+// fprintf(outfile2," set crittol = %E\n",ccpar[4]); 
+// fprintf(outfile2," set inttol = %E\n",ccpar[5]); 
+// fprintf(outfile2," set maxlev = %E\n",ccpar[6]); 
+// fprintf(outfile2," set imglev = %E\n",ccpar[7]); 
+// fprintf(outfile2," startup  %i %i\n",1,1); 
+// fprintf(outfile2," alpha  %E %E %E %E %E %E %E %E %E %E\n",fpar[1],fpar[2],fpar[3],fpar[4],fpar[5],fpar[6],fpar[7],fpar[8],fpar[9],fpar[10]); 
+// fprintf(outfile2,  "%E %E %E %E %E %E %E %E %E %E\n",par_var[1],par_var[2],par_var[3],par_var[4],par_var[5],par_var[6],par_var[7],par_var[8],par_var[9],par_var[10]);
+// fprintf(outfile2," ellsrc src_img_plot.txt  %E %E %E %E %E %E %i %i\n",x0_s,y0_s,eta_s,PA_s,a_lo,a_hi,steps,nang);
+// fprintf(outfile2," findimg  %E %E\n", x0_s,y0_s,"src_im_pos.txt");
 
 
 // creating the file for the source
