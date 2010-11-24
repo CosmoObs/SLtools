@@ -198,8 +198,11 @@ double bracketing_lambda_t(double f(double r, double params[]), double params[],
     z_max = z+dz;
   }
 
+  z_min+=1E-6;
+
   out[0] = z_min;
   out[1] = z_max;
+  
 
   return 0.0;
 }
@@ -217,6 +220,7 @@ double r_e_nfw_find(double pot_params[], double *est_err_out=NULL, double x_lo =
   double out[2];
   
   bracketing_lambda_t(re_find_func_nfw, params, out);
+  printf("the range where the root is [%f , %f]\n", out[0],out[1]);
   
   
   double re = root_find(re_find_func_nfw, params,est_err_out, out[0],out[1],max_iter,relative_error,v);

@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cstdio>
+#include <stdio.h>
 #include <fstream>        //funcoes de entrada e saida para arquivos
 #include <iostream>
 
@@ -14,20 +15,31 @@
 
 #define TAM_MAX1 20
 
-// to compile make: g++ -Wall -o exec_name pnfw_test_new.cpp `pkg-config gsl --cflags --libs`
+// to compile make: g++ -Wall -o exec_pnfw pnfw_test_new.cpp `pkg-config gsl --cflags --libs`
 
 int main(){
   
 //   double pert_params[4];
   FILE *entrada1;
   entrada1=fopen("input_lens.txt","r");
-  float lens_par[TAM_MAX1]; 
-  int i=0;
+  float argv[3];
+  float lens_par[TAM_MAX1];
+  int iargv=1;
   
+
+  int i=0;
   if (entrada1== NULL) 
     {
-      printf("Nao foi possivel abrir o arquivo.\n");
-      lens_par[1]=0.8,lens_par[2]=1.5,lens_par[3]=0.1 ;
+      printf("Nao foi possivel abrir o arquivo... then \n");
+      printf("Enter the convergence \n scale radius \n ellipticity \n ");
+      scanf("%f %f %f",&argv[0],&argv[1], &argv[2]);
+      lens_par[1]=argv[0];
+      lens_par[2]=argv[1];
+      lens_par[3]=argv[2];
+
+      printf("enter the flag control to choice the parameterization: ");
+      scanf("%i",&iargv);
+
 //       break;
 //        exit();
      }else{
@@ -35,13 +47,12 @@ int main(){
       {
         i++;
         fscanf(entrada1," %f",&lens_par[i]);
-	
       }}
 //       int nlp = i++;
   
   int npts = 4001;
-   double twpi= 6.283185308;  
-  double pert_params[]={lens_par[3],1,lens_par[1],lens_par[2]};
+  double twpi= 6.283185308;  
+  double pert_params[]={lens_par[3],iargv,lens_par[1],lens_par[2]};
   double pot_params[] = {pert_params[2],pert_params[3]};
   
   double _r_e_nfw= r_e_nfw_find(pot_params);
@@ -92,10 +103,17 @@ int main(){
   fprintf(outls2, "%f\n", source.R0);
   fprintf(outls2, "%i\n", step);
   fprintf(outls2, "%i\n", nang);
+
+   fclose(outls2);
+   fclose(outarc);
+   fclose(outls); 
+   fclose(outtc); 
+   fclose(outcau); 
+   fclose(outsrc); 
   
   system("xmgrace -view 0.15 0.15 0.85 0.85 tang_caust.dat src_plot.dat");
   system("xmgrace -view 0.15 0.15 0.85 0.85 tang_crit.dat arcs_pnfw.dat");
-
+  
  // double gof_crit= gof_per_method(f1_pnfw, Df0Dtheta_pnfw,D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw, 1);
  // printf(" The value of the gof, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],gof_crit);
   
