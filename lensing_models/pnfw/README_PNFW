@@ -33,17 +33,13 @@ $for77_compiler -o c_pnfw pnfw_contours.f lensing_functions.f root_finding.f
 
    * Mandatory have the input file "in_pnfw_par.txt" : ks rs elp lw_u iflag npt 
 
-   * If iflag=1, the code only plots the tangential and radial curves (both critical and caustic curves)
+   * If iflag=1, the code only plots the tangential curves (both critical and caustic curves)
 
       Output files: 
 
       For the tangential curves : fort.65 (critical curves), fort.75 (caustics)
       Also the plot for critical lines in each quadrant, from 1st to 4th, fort.61, fort.62, fort.63, fort.64
       the plot for caustics lines in each quadrant, from 1st to 4th, fort.71, fort.72, fort.73, fort.74
-
-      For the radial curves : fort.25 (critical curves), fort.35 (caustics)
-      Also the plot for critical lines in each quadrant, from 1st to 4th, fort.21, fort.22, fort.23, fort.24
-      the plot for caustics lines in each quadrant, from 1st to 4th, fort.31, fort.32, fort.33, fort.34
 
    * If iflag=2, the code plot the region of tangential arc formation with length-to-width ratio>= lw.
     
@@ -58,9 +54,13 @@ $for77_compiler -o c_pnfw pnfw_contours.f lensing_functions.f root_finding.f
       ** Length-to-width curves > |lw_u|: fort.85 (lens plane), fort.95 (source plane).
       Also the plot in each quadrant of the lens plane: fort.81 ... fort.84
       Also the plot in each quadrant of the source plane: fort.91 ... fort.94
+ 
+   * If iflag=3 the code compute the tangential and radial curves (both critical and caustic curves)
+      For the radial curves : fort.25 (critical curves), fort.35 (caustics)
+      Also the plot  for critical lines in each quadrant, from 1st to 4th, fort.21, fort.22, fort.23, fort.24
+      the plot for caustics lines in each quadrant, from 1st to 4th, fort.31, fort.32, fort.33, fort.34
 
-
-
+  
 
 --++ For compute the arc cross section for deformation arcs "sigma_q", use arc_cross_section.f 
 

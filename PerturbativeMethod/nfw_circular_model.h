@@ -132,6 +132,21 @@ double kappa2_nfw(double pot_params[],double _r_e_nfw){
 
   return k2;
 }
+//! Third coefficient of the Taylor Expansion of the NFW potential
+//!
+//! \f$ C_3(r)= \frac{4}{r_s(X^2_{\mathrm{E}}-1)}\left[\frac{1}{X_{\mathrm{E}}}-\frac{3}{2}\frac{X_{\mathrm{E}}\kappa(R_{\mathrm{E}})}{2\kappa_s}  \right] +2 \frac{\gamma(R_{\mathrm{E}})}{R_{\mathrm{E}}} \f$
+//!
+/*! \param r_e_nfw : Einstein Radius of the NFW model, \param pot_params[] : NFW lens parameters,\return \f$ C_3 \f$ */
+
+double c3_nfw(double pot_params[],double _r_e_nfw){
+  double ks=pot_params[0],rs=pot_params[1];
+  double Re=_r_e_nfw, Xe=Re/rs;
+  double dkdr=(2.*ks/(rs*(pow(Xe,2)-1.0)))*((1.0/Xe)-(3./(2.*ks))*Xe*conv_nfw_circ(Re,pot_params));
+//   printf("the value of the derivative of kappa at RE is %f\n", dkdr);
+  double gor=shear_nfw_circ(Re, pot_params)/Re;
+//   printf("the value of the shear/r is %f\n", gor);
+  return 2.0*(dkdr+gor);
+}
 
 
 //!  Function  useful to find the Einstein Radius (i.e. solving the equation \f$ \alpha(r)-r=0  \f$)
@@ -198,7 +213,7 @@ double bracketing_lambda_t(double f(double r, double params[]), double params[],
     z_max = z+dz;
   }
 
-  z_min+=1E-6;
+  if(z_min <1.E-8){z_min+=1E-8;}
 
   out[0] = z_min;
   out[1] = z_max;
@@ -206,9 +221,6 @@ double bracketing_lambda_t(double f(double r, double params[]), double params[],
 
   return 0.0;
 }
-
-
-
 
 //pot_params[0] = kappas
 //pot_params[1] = rs

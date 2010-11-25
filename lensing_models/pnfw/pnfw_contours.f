@@ -27,6 +27,7 @@
         write(2,*) name(2),elp
 	write(2,*) name(3),rs
         write(2,*) name(4),lw
+	write(*,*)'valor do iflag',iflag	
         
 !         
         if(opt.eq.2)then
@@ -72,7 +73,9 @@
           go to 21
         endif
           vir=v_out
+        if(iflag.eq.3)then
          call contour_lr(npt,vir,rs,theta,ks,e)
+        endif	
 !        
 21      write(*,*)'Ending the plots'	
         end
