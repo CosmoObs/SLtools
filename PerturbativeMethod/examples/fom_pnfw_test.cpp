@@ -16,11 +16,10 @@ int main(){
   
 
   FILE *out2;
-  out2=fopen("gof_pnfw.dat","w");
+  out2=fopen("comparison_pnfw.dat","w");
 
   system(" echo  compiling the fortran code, please wait...  ");
   system(" g77-3.4 -Wall -o c_pnfw ../../lensing_models/pnfw/pnfw_contours.f ../../lensing_models/pnfw/root_finding.f ../../lensing_models/pnfw/lensing_functions.f ");
-//   system(" gfortran-4.4 -o c_pnfw   fortran_srcs/*.f ");  
 //   system(" gfortran-4.4 -Wall -o c_pnfw ../../lensing_models/pnfw/pnfw_contours.f ../../lensing_models/pnfw/root_finding.f ../../lensing_models/pnfw/lensing_functions.f ");
 
   system(" echo  ending the compilation  ");
@@ -32,12 +31,15 @@ int main(){
   scanf("%f %f %f",&argv[0],&argv[1], &argv[2]);
 //     printf("Enter the convergence, scale radius: ");
 //     scanf("%f %f",&argv[0],&argv[1]);
+//     printf("Enter the convergence: ");
+//     scanf("%f",&argv[0]);
     double ks=argv[0];
     double rs=argv[1];
     double elp=argv[2];
 //   printf("enter the flag control to choice the parameterization: ");
 //   scanf("%i",&iargv);
     double lw_u=10.0;
+//     double rs=1.0;
     int npt=251;
 //     double elp=0.0;
     double s_el=0.005;
@@ -65,8 +67,6 @@ int main(){
       double kappa_2=kappa2_nfw(pot_params,_r_e_nfw);
       double c3_model= c3_nfw(pot_params,_r_e_nfw);
       printf("the value of C3 is %f\n",c3_model);
-//       plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npt, outtc, outcau, outsrc);
-//       printf(" terminei as curvas");
       
       double mwsrfd_crit= d2_crit(f1_pnfw, D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw);
       printf(" The value of the D2, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],mwsrfd_crit);
@@ -74,11 +74,22 @@ int main(){
       double dmax=lin_grad(f1_pnfw,D2f0Dtheta2_pnfw,c3_model, kappa_2,pert_params, _r_e_nfw,200);
       printf(" The value of the D2, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],mwsrfd_caust);
       fprintf(out2," %f %f  %f %f \n",elp,mwsrfd_crit,mwsrfd_caust,dmax);  
-//        }
       
+//        }
       fclose(out2);
+      system("rm fort.*");
 
-  return 0.0;
+//       FILE *outtc = fopen ("tang_crit.dat" , "w");
+//       FILE *outcau = fopen ("tang_caust.dat" , "w");
+// 
+//       plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npt, outtc, outcau);
+// 
+//       fclose(outtc);
+//       fclose(outcau);
+// 
+//       system("xmgrace -view 0.15 0.15 0.85 0.85 tang_crit.dat  fort.65  -saveall clplane_ks.agr");
+//       system("xmgrace -view 0.15 0.15 0.85 0.85 tang_caust.dat fort.75  -saveall csplane_ks.agr");
+      return 0.0;
 }
 
 
