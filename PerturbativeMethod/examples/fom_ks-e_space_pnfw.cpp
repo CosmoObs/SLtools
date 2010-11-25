@@ -48,8 +48,8 @@ int main(){
     double ks;
     double s_el=0.005;
     double s_ks=0.01;
-    double cut1_l=0.0009, cut2_l=0.0019, cut3_l=0.0039, cut4_l=0.0059;
-    double cut1_u=0.0011, cut2_u=0.0021, cut3_u=0.0041, cut4_u=0.0061;
+    double cut1_l=0.00095, cut2_l=0.00195, cut3_l=0.00395, cut4_l=0.00595;
+    double cut1_u=0.00105, cut2_u=0.00205, cut3_u=0.00405, cut4_u=0.00605;
 
   for(int j=0; j<=50; j++){
           ks=0.1+j*s_ks;
