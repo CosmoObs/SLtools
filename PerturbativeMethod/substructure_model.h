@@ -1,5 +1,5 @@
 /** @file
-* Function to calculate the main perturbative fields related with substructures  (valid for any radial profile)
+* Function to calculate the substructure fields  (valid for any radial profile)
 *
 // Note: (pert_params[0],pert_params[1], pert_params[2]....) must be (ellipticity, flag control, mass and so on..)  
 //
@@ -23,9 +23,6 @@
 */
 
 // By MSSG, Start: Nov 25, 2010
-
-// NOTE THIS VERSION IS *NOT* WORKING, JUST A SHELL, I WILL GET IT
-// WORKING I HOPE BY NOV 26 -- DON'T TRY TO USE!
 
 # ifndef SUBSTRUCTURE_MODEL_H
 # define SUBSTRUCTURE_MODEL_H
