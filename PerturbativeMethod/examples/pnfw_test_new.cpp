@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <stdio.h>
+#include <string.h>
 #include <fstream>        //funcoes de entrada e saida para arquivos
 #include <iostream>
 
@@ -26,12 +27,13 @@ int main(){
   float lens_par[TAM_MAX1];
   int iargv=1;
   
+  
 
   int i=0;
   if (entrada1== NULL) 
     {
       printf("Nao foi possivel abrir o arquivo... then \n");
-      printf("Enter the convergence \n scale radius \n ellipticity \n ");
+      printf("Enter the convergence, scale radius,  ellipticity: ");
       scanf("%f %f %f",&argv[0],&argv[1], &argv[2]);
       lens_par[1]=argv[0];
       lens_par[2]=argv[1];
@@ -39,7 +41,6 @@ int main(){
 
       printf("enter the flag control to choice the parameterization: ");
       scanf("%i",&iargv);
-
 //       break;
 //        exit();
      }else{
@@ -54,11 +55,11 @@ int main(){
   double twpi= 6.283185308;  
   double pert_params[]={lens_par[3],iargv,lens_par[1],lens_par[2]};
   double pot_params[] = {pert_params[2],pert_params[3]};
-  
-  double _r_e_nfw= r_e_nfw_find(pot_params);
+
+  double _r_e_nfw= r_e_nfw_find(pot_params);   //func
   printf("Einstein Radius = %f\n",_r_e_nfw);
 
-  double kappa_2=kappa2_nfw(pot_params,_r_e_nfw);
+  double kappa_2=kappa2_nfw(pot_params,_r_e_nfw);   //func
 
   elliptical_source source;
 
@@ -77,9 +78,9 @@ int main(){
   FILE *outcau = fopen ("tang_caust.dat" , "w");
   FILE *outsrc = fopen ("src_plot.dat" , "w");
   
-  plot_arcs(source, f1_pnfw, Df0Dtheta_pnfw, pert_params, kappa_2,_r_e_nfw,npts, outarc);
-  plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npts, outtc, outcau);
-  plot_sources(source,npts,outsrc);
+  plot_arcs(source, f1_pnfw, Df0Dtheta_pnfw, pert_params, kappa_2,_r_e_nfw,npts, outarc);   //func
+  plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npts, outtc, outcau);   //func
+  plot_sources(source,npts,outsrc);   //func
 
   fprintf(outls,"\t\t PNFW Model Parameters: \n");  
   fprintf(outls," Scale Radius = %f\n",pot_params[1]);
@@ -90,7 +91,7 @@ int main(){
   fprintf(outls," Source Radius %f\n",source.R0);
   fprintf(outls," Source Ellipticity and Inclination %f %f\n\n",source.eta0,source.theta0);
 
-  arc_measures(f1_pnfw, Df0Dtheta_pnfw, kappa_2, source, pert_params, _r_e_nfw, npts,outls);  
+  arc_measures(f1_pnfw, Df0Dtheta_pnfw, kappa_2, source, pert_params, _r_e_nfw, npts,outls);   //func
 
   FILE *outls2 = fopen ("input_src.txt","w"); 
   int step=1, nang=400;
@@ -114,10 +115,5 @@ int main(){
   system("xmgrace -view 0.15 0.15 0.85 0.85 tang_caust.dat src_plot.dat");
   system("xmgrace -view 0.15 0.15 0.85 0.85 tang_crit.dat arcs_pnfw.dat");
   
- // double gof_crit= gof_per_method(f1_pnfw, Df0Dtheta_pnfw,D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw, 1);
- // printf(" The value of the gof, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],gof_crit);
-  
- // double gof_caust= gof_per_method(f1_pnfw, Df0Dtheta_pnfw,D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw, 2);
- // printf(" The value of the gof, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],gof_caust);  
 
 }

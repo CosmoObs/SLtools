@@ -10,78 +10,86 @@
 #include "../generate_arcs.h"
 #include "../generate_curves.h"
 // #include "../arc_properties.h"
-#include "../gof_per_method.h"
-
+#include "../comparison_fns.h"
 // to compile make: g++  -o exec_fom fom_pnfw_test.cpp `pkg-config gsl --cflags --libs`
 int main(){
   
 
   FILE *out2;
-  out2=fopen("gof_pnfw.dat","w");
+  out2=fopen("comparison_pnfw.dat","w");
 
   system(" echo  compiling the fortran code, please wait...  ");
-//   system(" g77-3.4 -Wall -o c_pnfw   fortran_srcs/*.f ");
-  system(" gfortran-4.4 -o c_pnfw   fortran_srcs/*.f ");  
+  system(" g77-3.4 -Wall -o c_pnfw ../../lensing_models/pnfw/pnfw_contours.f ../../lensing_models/pnfw/root_finding.f ../../lensing_models/pnfw/lensing_functions.f ");
+//   system(" gfortran-4.4 -Wall -o c_pnfw ../../lensing_models/pnfw/pnfw_contours.f ../../lensing_models/pnfw/root_finding.f ../../lensing_models/pnfw/lensing_functions.f ");
+
   system(" echo  ending the compilation  ");
 
-  double ks=1.0, rs=2.0;
-  int npt=251;
-//   double elp=0.1;
-  double elp=0.0;
-  double s_el=0.005;
+   float argv[3];
+   int iargv=1, iflagc=1;
 
-  for(int i=1;i<=199;i++){
+  printf("Enter the convergence, scale radius,  ellipticity: ");
+  scanf("%f %f %f",&argv[0],&argv[1], &argv[2]);
+//     printf("Enter the convergence, scale radius: ");
+//     scanf("%f %f",&argv[0],&argv[1]);
+//     printf("Enter the convergence: ");
+//     scanf("%f",&argv[0]);
+    double ks=argv[0];
+    double rs=argv[1];
+    double elp=argv[2];
+//   printf("enter the flag control to choice the parameterization: ");
+//   scanf("%i",&iargv);
+    double lw_u=10.0;
+//     double rs=1.0;
+    int npt=251;
+//     double elp=0.0;
+    double s_el=0.005;
+  
+//   for(int i=1;i<=199;i++){
       FILE *out1;
       out1=fopen("in_pnfw_par.txt","w");
   
-      elp=i*s_el;
+//       elp=i*s_el;
       
-      fprintf(out1,"%f %f %f %i\n",ks,rs,elp,npt);
+      fprintf(out1,"%f %f %f %f %i %i\n",ks,rs,elp,lw_u,iflagc,npt);
       fclose(out1);    
+
       system("./c_pnfw");
       system("cp fort.61 cc.dat");
       system("cp fort.71 ca.dat");
-//       system("rm in_pnfw_par.txt");
   
       double pert_params[]={elp,1,ks,rs};
       double pot_params[] = {pert_params[2],pert_params[3]};
 
-//       printf("counter %i, k_s %f, r_s=%f, ellipticity %f\n", i,pert_params[2],pert_params[3],pert_params[0]);
   
       double _r_e_nfw= r_e_nfw_find(pot_params);
       printf("Einstein Radius = %f\n",_r_e_nfw);
 
       double kappa_2=kappa2_nfw(pot_params,_r_e_nfw);
-
-      elliptical_source source;
-
-      source.x0 = (_r_e_nfw/15.5);
-      source.y0 = source.x0;
-      printf(" Source Position %f %f\n",source.x0, source.y0);
-      source.R0 = (sqrt(2.0)/60.0)*_r_e_nfw;
-      source.eta0 = 0.0;
-      source.theta0 = 0.0;
-
-      FILE *outtc = fopen ("tang_crit.dat" , "w");
-      FILE *outcau = fopen ("tang_caust.dat" , "w");
-      FILE *outsrc = fopen ("src_plot.dat" , "w");
+      double c3_model= c3_nfw(pot_params,_r_e_nfw);
+      printf("the value of C3 is %f\n",c3_model);
       
+      double mwsrfd_crit= d2_crit(f1_pnfw, D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw);
+      printf(" The value of the D2, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],mwsrfd_crit);
+      double mwsrfd_caust= d2_caust(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw);
+      double dmax=lin_grad(f1_pnfw,D2f0Dtheta2_pnfw,c3_model, kappa_2,pert_params, _r_e_nfw,200);
+      printf(" The value of the D2, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],mwsrfd_caust);
+      fprintf(out2," %f %f  %f %f \n",elp,mwsrfd_crit,mwsrfd_caust,dmax);  
       
-
-      plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npt, outtc, outcau, outsrc);
-      printf(" terminei as curvas");
-      
-      double gof_crit= gof_per_method(f1_pnfw, Df0Dtheta_pnfw,D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw, 1);
-      printf(" The value of the gof, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],gof_crit);
-  
-      double gof_caust= gof_per_method(f1_pnfw, Df0Dtheta_pnfw,D2f0Dtheta2_pnfw,kappa_2, pert_params, _r_e_nfw, 2);
-      printf(" The value of the gof, for kappa_s %f and ellipticity %f, is %f\n", pert_params[2],pert_params[0],gof_caust);
-      fprintf(out2," %f %f %f \n",elp,gof_crit,gof_caust);
-       }
-      
+//        }
       fclose(out2);
+      system("rm fort.*");
 
-  return 0.0;
+//       FILE *outtc = fopen ("tang_crit.dat" , "w");
+//       FILE *outcau = fopen ("tang_caust.dat" , "w");
+// 
+//       plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npt, outtc, outcau);
+// 
+//       fclose(outtc);
+//       fclose(outcau);
+// 
+//       system("xmgrace -view 0.15 0.15 0.85 0.85 tang_crit.dat  fort.65  -saveall clplane_ks.agr");
+//       system("xmgrace -view 0.15 0.15 0.85 0.85 tang_caust.dat fort.75  -saveall csplane_ks.agr");
+      return 0.0;
 }
 
 
