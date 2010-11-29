@@ -14,6 +14,7 @@ import logging
 #from lens_parameters_new import lens_parameters_new
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 import numpy as np
+import matplotlib.pyplot as pyplot
 
 # given the gravlens 'config file' runs gravlens to generate the 
 # file with caustics and CC
@@ -256,6 +257,34 @@ def separate_CC(inputlens, caustic_CC_file='crit.txt'):
 	return {'tan_caustic_x': tan_caustic_x, 'tan_caustic_y': tan_caustic_y, 'rad_caustic_x': rad_caustic_x, 'rad_caustic_y': rad_caustic_y, 'tan_CC_x': tan_CC_x, 'tan_CC_y': tan_CC_y, 'rad_CC_x': rad_CC_x, 'rad_CC_y': rad_CC_y }
 
 #---------------------------------------------------------------------------------------------------------------------
+
+
+## plot_CC
+# Plots the caustics and critical curves
+#
+def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, plot_filename):
+	pyplot.clf()
+	f1 = pyplot.figure(1,figsize = (15,15) )
+	pyplot.subplot(121) # (numRows,numCols, plotNum)
+	pyplot.plot(tan_caustic_x, tan_caustic_y, color='red',   linestyle='.', marker='.', markersize=2 )
+	pyplot.plot(rad_caustic_x, rad_caustic_y, color='black', linestyle='.', marker='.', markersize=2 )
+	pyplot.axis('equal')
+	pyplot.title('Causticas'  , fontsize = 20)
+	pyplot.subplot(122) # (numRows,numCols, plotNum)
+	pyplot.plot(tan_CC_x, tan_CC_y, color='red',   linestyle='.', marker='.', markersize=2 )
+	pyplot.plot(rad_CC_x, rad_CC_y, color='black', linestyle='.', marker='.', markersize=2 )
+	pyplot.axis('equal')
+	pyplot.title('CC'  , fontsize = 20)
+	pyplot.savefig(plot_filename)
+
+
+
+
+
+
+
+
+
 
 
 
