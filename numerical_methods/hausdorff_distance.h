@@ -117,4 +117,25 @@ double dist2curves_max(double c1x[], double c1y[], int c1npts, double c2x[], dou
   return dist_out;
 }
 
+/** \brief Compute the f_4 modified Hausdorff distance between two curves. (see http://twiki.linea.gov.br/bin/view/StrongLensing/HausdorffDistance)
+*
+*  \param cx1[] x coordinates values that define the curve 1
+*  \param cy1[] y coordinates values that define the curve 1
+*  \param c1npts number of points of curve 1
+*  \param cx2[] x coordinates values that define the curve 2
+*  \param cy2[] y coordinates values that define the curve 2
+*  \param c2npts number of points of curve 2
+*  \param type specify the type of distance, see http://twiki.linea.gov.br/bin/view/StrongLensing/HausdorffDistance
+*  \return f_4 modified Hausdorff distance
+*/
+double haus_dist_f4(double c1x[], double c1y[], int c1npts, double c2x[], double c2y[], int c2npts, int type = 3){
+  
+  double distAB = dist2curves(c1x, c1y, c1npts, c2x, c2y, c2npts, type);
+  double distBA = dist2curves(c2x, c2y, c2npts, c1x, c1y, c1npts, type);
+
+  return (double(c1npts)*distAB + double(c2npts)*distBA)/double(c1npts+c2npts);
+
+}
+
+
 #endif
