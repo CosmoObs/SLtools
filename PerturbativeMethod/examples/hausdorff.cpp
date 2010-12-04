@@ -95,10 +95,10 @@ int main(){
 
 //Escreve no arquivo in_penf_par.txt os imputs para o programa em fortran.
   //FILE * h_in = fopen ("../../lensing_models/pnfw/in_pnfw_par.txt","w");
-  double ks = 1.2;
-  double rs = 1.0;
-  double elp= 0.2;
-  int npt = 400;
+  double ks = 1.1;
+  double rs = 1.;
+  double elp= 0.0;
+  int npt = 300;
 
   double cc_x[4*npt], cc_y[4*npt];
   double ca_x[4*npt], ca_y[4*npt];
@@ -109,15 +109,6 @@ int main(){
 //  generate_curves_f(ks, rs, elp, npt, cc_x    , cc_y    , ca_x    , ca_y);
 //  generate_curves_p(ks, rs, elp, npt, cc_x_per, cc_y_per, ca_x_per, ca_y_per);
 
-  FILE *h_dist_cc = fopen("h_cc_out.dat","w");
-
-  for(int i=2;i<400;i=i+4){
-    generate_curves_f(ks, rs, elp, i, cc_x    , cc_y    , ca_x    , ca_y);
-    generate_curves_p(ks, rs, elp, i, cc_x_per, cc_y_per, ca_x_per, ca_y_per);
-    fprintf(h_dist_cc,"%i %E\n",i,haus_dist_f4(cc_x_per, cc_y_per, 4*i, cc_x, cc_y, 4*i));
-  }
-
-  fclose(h_dist_cc);
 
 //Mean radius for CC and CA from the fortran code
   double r_cc_mean = mean_rad_vec(cc_x,cc_y,4*npt);
@@ -127,6 +118,30 @@ int main(){
   double r_ca_mean_per = mean_rad_vec(ca_x_per,ca_y_per,4*npt);;
 
 
+
+  FILE *h_dist_cc = fopen("h_cc_rs1_ks11.dat","w");
+  FILE *h_dist_ca = fopen("h_ca_rs1_ks11.dat","w");
+
+  for(int i=0;i<50;i++){
+    generate_curves_f(ks, rs, elp, npt, cc_x    , cc_y    , ca_x    , ca_y);
+    generate_curves_p(ks, rs, elp, npt, cc_x_per, cc_y_per, ca_x_per, ca_y_per);
+
+    r_cc_mean = mean_rad_vec(cc_x,cc_y,4*npt);
+    r_ca_mean = mean_rad_vec(ca_x,ca_y,4*npt);;
+
+    r_cc_mean_per = mean_rad_vec(cc_x_per,cc_y_per,4*npt);
+    r_ca_mean_per = mean_rad_vec(ca_x_per,ca_y_per,4*npt);
+
+    fprintf(h_dist_cc,"%E %E\n",elp,haus_dist_f4(cc_x_per, cc_y_per, 4*npt, cc_x, cc_y, 4*npt)/(r_cc_mean+r_cc_mean_per) );
+    fprintf(h_dist_ca,"%E %E\n",elp,haus_dist_f4(ca_x_per, ca_y_per, 4*npt, ca_x, ca_y, 4*npt)/(r_ca_mean+r_ca_mean_per) );
+    elp+=1.0/50.0;
+  }
+
+  fclose(h_dist_cc);
+  fclose(h_dist_ca);
+
+  printf("r_cc_mean=%E r_ca_mean=%E\n",r_cc_mean,r_ca_mean);
+  printf("r_cc_mean_per=%E r_ca_mean_per=%E\n",r_cc_mean_per,r_ca_mean_per);
 
   return 0;
 }

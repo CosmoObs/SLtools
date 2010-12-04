@@ -38,16 +38,32 @@ void plot_arcs(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_in, d
 
     if(arg_sqrt(Df0Dtheta_in, source_in, theta, pert_params, _r_e)>0.0){
       r_p = _r_e+dr_plus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params,_r_e);
-      r_m = _r_e+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params,_r_e);
+      //r_m = _r_e+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params,_r_e);
       if(file_in==NULL){
         printf("%E %E\n",r_p*cos(theta),r_p*sin(theta));
-        printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));
+        //printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));
       } else {
         fprintf(file_in,"%E %E\n",r_p*cos(theta),r_p*sin(theta));
-        fprintf(file_in,"%E %E\n",r_m*cos(theta),r_m*sin(theta));
+        //fprintf(file_in,"%E %E\n",r_m*cos(theta),r_m*sin(theta));
       }
     }
     theta+= 6.283185308/npts;
+  }
+
+  for(int i=0;i<=npts+1;i++){
+
+    if(arg_sqrt(Df0Dtheta_in, source_in, theta, pert_params, _r_e)>0.0){
+      //r_p = _r_e+dr_plus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params,_r_e);
+      r_m = _r_e+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params,_r_e);
+      if(file_in==NULL){
+        //printf("%E %E\n",r_p*cos(theta),r_p*sin(theta));
+        printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));
+      } else {
+        //fprintf(file_in,"%E %E\n",r_p*cos(theta),r_p*sin(theta));
+        fprintf(file_in,"%E %E\n",r_m*cos(theta),r_m*sin(theta));
+      }
+    }
+    theta-= 6.283185308/npts;
   }
 
 }
