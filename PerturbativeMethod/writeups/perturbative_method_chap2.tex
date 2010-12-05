@@ -1,5 +1,5 @@
 \chapter{Perturbative Approach in Strong Lensing}
-\section{Basic Ideas}
+\section{\label{sec:BasicIdeas} Basic Ideas}
 
 
 Let us assume that the two-dimensional projected density $\Sigma$ of a
@@ -59,7 +59,7 @@ We now take the first step of perturbing the situation:
 \bea
 \label{eq:rspert}
 r_s & = & \eps y \\
-\phi & = & \phi_0 + \eps \psi
+\phi & = & \phi_0 + \eps \psi \label{eq:potsplit}
 \eea
 
 which imply we have moved the source off-axis, and added a non-axially
@@ -100,10 +100,12 @@ or
 And now define
 
 \beq
+\label{eq:Cndef}
 C_n \equiv {1 \over n!} \left. {d^n \phi_0 \over dr^n }\right|_{\re}
 \eeq
 
 \beq
+\label{eq:fndef}
 f_n(\theta) \equiv  {1 \over n!} \left. {d^n \psi(\theta) \over dr^n }\right|_{\re}
 \eeq
 
@@ -255,7 +257,8 @@ it is straightforward to verify that $J=-{\kt \over \eps}
 \scriptf(\te)$ and therefore on the critical curves, where $J = 0$,
 
 \begin{equation}
-x=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right] \label{xte}.
+\label{eq:critcurves}
+x=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right]
 \end{equation}
 
 This is Alard eq. 30. From this last equation, the tangential critical
@@ -268,7 +271,9 @@ Now, substituting this last equation into eqs.~(\ref{y_1}) and
 caustic, i.e.,
 
 \begin{eqnarray}
+\label{eq:xcaustic}
 y_{1_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\cos{\te}+\frac{1}{\re}\frac{df_0}{d\te}\sin{\te}\\
+\label{eq:ycaustic}
 y_{2_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\sin{\te}-\frac{1}{\re}\frac{df_0}{d\te}\cos{\te}
 \end{eqnarray}
 
