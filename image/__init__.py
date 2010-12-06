@@ -15,8 +15,5 @@ from get_extrema_2loops import *
 from get_extrema_bf import *
 from get_header_parameter import *
 from get_image_limits import *
-from imcp import *
-from objsshot import *
-from segment import *
 from get_bisectrix_pts import *
 

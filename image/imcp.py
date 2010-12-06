@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Package to deal with (FITS) image copy/cuts"""
+"""Package to deal with image copy/cuts"""
 
 ##@package imcp
 #
@@ -36,8 +36,12 @@ import string
 import commands
 import numpy as np;
 
+import sltools;
+from sltools.string import regexp;
+from sltools.image import segobjs;
 
 # \cond
+#----------------------
 # INTERNAL FUNCTIONS #
 #----------------------
 def _hdr_dimpix( hdr ):
@@ -69,8 +73,8 @@ def _hdr_dimpix( hdr ):
 	if ( CUNIT1 == 'deg' and CUNIT2 == 'deg' ):
 		conv_factor = 3600.0;
 
-# Scale is given, using CD1_1, CD1_2, CD2_1, CD2_2 header keys:
-#   scale = 3600. * sqrt ((cd11**2+cd21**2+cd12**2+cd22**2)/2.) 
+    # Scale is given, using CD1_1, CD1_2, CD2_1, CD2_2 header keys:
+    #scale = 3600. * sqrt ((cd11**2+cd21**2+cd12**2+cd22**2)/2.) 
 
 	x_arcsec_to_pixel = abs(CD1_1) * conv_factor;
 	y_arcsec_to_pixel = abs(CD2_2) * conv_factor;
@@ -78,9 +82,8 @@ def _hdr_dimpix( hdr ):
 
 	return (y_arcsec_to_pixel, x_arcsec_to_pixel);
 
-# ---
 
-#----------------------------------
+
 def _hdr_update(hdr, x_ini, y_ini):
 	"""Update header information about world coordinate system"""
 
@@ -154,10 +157,66 @@ def _hdr_update(hdr, x_ini, y_ini):
 
 	return (hdr);
 
-# ---
+#----------------------
 # \endcond
 
-# =============================================================================================================================
+#=============================================================================
+def copy_objimgs(seg_img, obj_img, objIDs):
+    """
+    Identify objects on given images by their IDs and return object images
+
+    objects_IDfy( objIDs.list, seg_img.ndarray, obj_img.ndarray )
+
+    Function identifies the pixels of each ID(int) in 'objIDs' on segmentation
+    image(array) - seg_img. These identified pixels (their values) are copied 
+    from object image, obj_img, to a new blank array with same shape as given images.
+    (BTW, it is clear that seg_img.shape == obj_img.shape, right...)
+
+    Since a list with object IDs is given, a list with arrays, with each IDentified
+    object, is returned.
+
+    Input:
+     - seg_img : image with segmented objects, with pixels values in objIDs
+     - obj_img : image with objects (observed pixel values)
+     - objIDs  : a list with (int) numbers that identify the objects in seg_img
+
+    Output:
+     - objs_list : a list with arrays containing each identified object
+
+    """
+
+    objs_list = [];
+
+    if (objIDs == []):
+        objIDs = list(set(seg_img.flatten()) - set([0]))
+        
+    # In case the user just give a number (one object ID..), we deal with that
+    # Lets try first the list, if not, use the single ID and do the job..
+    #
+    try:
+        for objID in objIDs:
+            merged_img = np.zeros( seg_img.shape, dtype = obj_img.dtype );
+            _ind = np.where(seg_img == objID);
+            merged_img[_ind] = obj_img[_ind];
+
+            objs_list.append( merged_img );
+
+    except:
+        objID = objIDs;
+        # Identify and copy the pixels in obj_img to a new blank image
+        #
+        merged_img = np.zeros( seg_img.shape, dtype = obj_img.dtype );
+        _ind = np.where(seg_img == objID);
+        merged_img[_ind] = obj_img[_ind];
+
+        objs_list.append( merged_img );
+
+
+    return (objs_list);
+
+# ---
+
+# =================================================================================================================
 def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_size=0, y_size=0, mask=None ):
 	"""
 	Do a snapshot from given fits image.
@@ -311,12 +370,12 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 
 # ---
 
-#==========================================================================================
-def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, objIDs=[]):
+# ==========================================================================================
+def segstamp(obj_img, seg_img, header=None, increase=0, relative_increase=False, objIDs=[]):
     """
     Identify objects on given images by their IDs and return object images
 
-    sextamp( seg_img.ndarray, obj_img.ndarray [,...] )
+    segstamp( seg_img.ndarray, obj_img.ndarray [,...] )
 
     By default, if 'objIDs' is not given, postamp will scan segmentation image ('seg_img') for
     the list of object ID numbers. If 'objIDs' is given, those IDs will be used for object
@@ -330,12 +389,12 @@ def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, 
     object, is returned.
 
     Input:
-     - seg_img           : image with segmented objects (e.g, SEx's segmentation image)
      - obj_img           : image with objects (observed pixel values)
+     - seg_img           : image with segmented objects (e.g, SEx's segmentation image)
      - header            : FITS header to be updated and passed for each poststamp
      - increase          : float value for poststamp resizing (>0)
      - relative_increase : Is 'increase' a additive value (default) or multiplicative one(?)
-     - objIDs            : List with objects ID in 'seg_img'. Default is to scan 'seg_img' for IDs
+     - objIDs            : List with objects ID(integers) in 'seg_img'. Default is to scan 'seg_img' for IDs
 
     Output:
      - (ndarrays,headers)  : lists with image (poststamps) arrays and corresponding headers
@@ -352,60 +411,62 @@ def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, 
     if ( objIDs == [] ):
 	    objIDs = list( set( seg_img.flatten() ) - set([0]) );
 
-    # For each object (id) scan the respective indices for image mask and 'cutout' params
-    #
-    for id in objIDs:
+    if type(objIDs) is int :
+        objIDs = [objIDs];
+    
+    for _id in objIDs:
+    
+        if (_id == 0):
+            objs_list.append(None);
+            hdrs_list.append(None);
+            continue;
+            
+        ind = segobjs.create_IDmask(seg_img, _id)[0];
 
-	# 'ind' will be used (also) as the 'mask' information on "cutout" function
-        ind = np.where(seg_img == id);
-	
-	y_min = min( ind[0] );
-	x_min = min( ind[1] );
+        y_min = min( ind[0] );
+        x_min = min( ind[1] );
 
-	y_idx = ind[0] - y_min;
-	x_idx = ind[1] - x_min;
+        y_idx = ind[0] - y_min;
+        x_idx = ind[1] - x_min;
 
-	y_size = max( y_idx ) + 1;
-	x_size = max( x_idx ) + 1;
+        y_size = max( y_idx ) + 1;
+        x_size = max( x_idx ) + 1;
 
-	# Central pixel on original image:
-	yo = y_size/2 + y_min;
-	xo = x_size/2 + x_min;
+        # Central pixel on original image:
+        yo = y_size/2 + y_min;
+        xo = x_size/2 + x_min;
 
-	if ( increase != 0 ):
-		
-		if (relative_increase == True):
+        if ( increase != 0 ):		
+            if (relative_increase == True):
+                x_size = x_size*increase;
+                y_size = y_size*increase;
+            else:
+                x_size = x_size + 2*increase;
+                y_size = y_size + 2*increase;
 
-			x_size = x_size*increase;
-			y_size = y_size*increase;
-
-		else:
-
-			x_size = x_size + 2*increase;
-			y_size = y_size + 2*increase;
+        try:
+            hdr = header.copy();
+        except:
+            hdr = None;
 
 
-	try:
-		hdr = header.copy();
-	except:
-		hdr = None;
-
-
-	# Get the final image from 'cutout' output..
-	#
+        # Get the final image from 'cutout' output..
+        #
         image_out, hdr = cutout( obj_img, header=hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
 
         objs_list.append( image_out );
-	hdrs_list.append( hdr );
-
+        hdrs_list.append( hdr );
 
     return ( objs_list,hdrs_list );
 
 # ---
-
+# To keep compatibility with the old "sextamp" function:
+def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, objIDs=[]):
+	return segstamp(obj_img, seg_img, header, increase, relative_increase, objIDs)
+# ---
 
 # \cond
-#==========================
+# ============================================================================
 if __name__ == "__main__" :
 
 	from optparse import OptionParser;
@@ -414,8 +475,8 @@ if __name__ == "__main__" :
 	parser = OptionParser(usage=usage);
 
 	parser.add_option('-o',
-			  dest='output_file', default='output.fits',
-			  help='Output FITS image [output.fits]');
+			  dest='output_file', default='pstamp_',
+			  help='Output (image) file rootname ["pstamp_"]');
 	parser.add_option('--coord',
 			  dest='coord_unit', default='pixel',
 			  help='Coordinate units, for xo & yo [pixel]');
@@ -425,28 +486,33 @@ if __name__ == "__main__" :
 	parser.add_option('--yo',
 			  dest='yo', default=0,
 			  help='Y centre');
-	parser.add_option('--size',
+	parser.add_option('--size_unit',
 			  dest='size_unit', default='pixel',
-			  help='Side length untis, for x_size & y_size [pixel]');
+			  help='Side length unit, for x_size & y_size [pixel]');
 	parser.add_option('--x_size',
 			  dest='x_size', default=0,
 			  help='Size of x side on output');
 	parser.add_option('--y_size',
 			  dest='y_size', default=0,
 			  help='Size of y side on output');
-#	parser.add_option('--increase',
-#			  dest='incr', default=0,
-#			  help='Amount of border/enlarge of image. It is an additive or multiplicative factor. See "relative_increase" flag');
-#	parser.add_option('--relative_increase', action='store_true',
-#			  dest='rel_incr', default=False,
-#			  help='Turn on the multiplicative factor for increase image.');
 	parser.add_option('--no-header', action='store_false',
 			  dest='use_header', default=True,
 			  help="Do not use existing image header.");
 	parser.add_option('--outdir',
 			  dest='dir_name', default='out_imcp',
-			  help="Directory name to put output images");
-
+			  help="Directory name to store output images(poststamps)");
+	parser.add_option('-s', '--segimg',
+			  dest='segimg', default=None,
+			  help="Segmentation image (e.g, Sextractor's SEGMENTATION output)");
+	parser.add_option('--objIDs',
+			  dest='IDs',default='',
+			  help="Comma-separated list of object IDs found on 'segimg' to extract");
+	parser.add_option('--increase',
+			  dest='incr', default=0,
+			  help="Amount of border/enlarge of object poststamp. It is an additive or multiplicative factor. See 'relative_increase' flag");
+	parser.add_option('--relative_increase', action='store_true',
+			  dest='rel_incr', default=False,
+			  help="Turn on the multiplicative factor for increase image, otherwise, 'increase' will be treated as an absolute value.");
 
 	(opts,args) = parser.parse_args();
 
@@ -457,8 +523,10 @@ if __name__ == "__main__" :
 	size = opts.size_unit;
 	dx = opts.x_size;
 	dy = opts.y_size;
-#	incr = opts.incr;
-#	rel_incr = opts.rel_incr;
+	segimg = opts.segimg;
+	IDs = opts.IDs;
+	incr = opts.incr;
+	rel_incr = opts.rel_incr;
 	use_header = opts.use_header;
 	dir_name = opts.dir_name;
 
@@ -473,11 +541,6 @@ if __name__ == "__main__" :
 		image = pyfits.getdata(infits, header=False);
 		hdr = None;
 
-	#	if (incr == 0):
-	#		imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
-	#	else:
-	#		imgcut, hdr = poststamp( image, header=hdr, increase=incr, relative_increase=rel_incr )
-
 	try:
 		os.mkdir( dir_name );
 	except OSError:
@@ -485,11 +548,20 @@ if __name__ == "__main__" :
 
 	owd = os.getcwd()+"/";
 	os.chdir( dir_name );
-	
-	imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
 
-	os.system('[ -f %s ] && rm %s' % (outfits,outfits));
-	pyfits.writeto( outfits, imgcut, hdr );
+	if (segimg):
+		IDs = regexp.str2lst(IDs);
+		imglst, hdrlst = segstamp(image, segimg, header=hdr, increase=incr, relative_increase=rel_incr, objIDs=objIDs)
+	else:
+		imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
+		IDs = ['0'];
+		imglst = [imgcut];
+		hdrlst = [hdr];
+
+	for i in range(len(IDs)):
+		outfits = outfits+"%s.fits" % (IDs[i]);
+		os.system('[ -f %s ] && rm -f %s' % (outfits,outfits));
+		pyfits.writeto( outfits, imglst[i], hdrlst[i] );
 
 	print >> sys.stdout, "Done.";
 	os.chdir( owd );
