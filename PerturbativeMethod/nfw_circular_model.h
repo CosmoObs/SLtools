@@ -132,6 +132,21 @@ double kappa2_nfw(double pot_params[],double _r_e_nfw){
 
   return k2;
 }
+//! Third coefficient of the Taylor Expansion of the NFW potential
+//!
+//! \f$ C_3(r)= \frac{4}{r_s(X^2_{\mathrm{E}}-1)}\left[\frac{1}{X_{\mathrm{E}}}-\frac{3}{2}\frac{X_{\mathrm{E}}\kappa(R_{\mathrm{E}})}{2\kappa_s}  \right] +2 \frac{\gamma(R_{\mathrm{E}})}{R_{\mathrm{E}}} \f$
+//!
+/*! \param r_e_nfw : Einstein Radius of the NFW model, \param pot_params[] : NFW lens parameters,\return \f$ C_3 \f$ */
+
+double c3_nfw(double pot_params[],double _r_e_nfw){
+  double ks=pot_params[0],rs=pot_params[1];
+  double Re=_r_e_nfw, Xe=Re/rs;
+  double dkdr=(2.*ks/(rs*(pow(Xe,2)-1.0)))*((1.0/Xe)-(3./(2.*ks))*Xe*conv_nfw_circ(Re,pot_params));
+//   printf("the value of the derivative of kappa at RE is %f\n", dkdr);
+  double gor=shear_nfw_circ(Re, pot_params)/Re;
+//   printf("the value of the shear/r is %f\n", gor);
+  return 2.0*(dkdr+gor);
+}
 
 
 //!  Function  useful to find the Einstein Radius (i.e. solving the equation \f$ \alpha(r)-r=0  \f$)
@@ -198,27 +213,34 @@ double bracketing_lambda_t(double f(double r, double params[]), double params[],
     z_max = z+dz;
   }
 
+  /*if(z_min <1.E-8){*/
+  z_min+=1E-8;
+
   out[0] = z_min;
   out[1] = z_max;
+  
 
   return 0.0;
 }
 
-
-
-
 //pot_params[0] = kappas
 //pot_params[1] = rs
-double r_e_nfw_find(double pot_params[], double *est_err_out=NULL, double x_lo = 1E-4, double x_hi = 10.0, int max_iter = 100, double relative_error = 1E-4, int v=1){
+double r_e_nfw_find(double pot_params[], double *est_err_out=NULL, double x_lo = 1E-4, double x_hi = 10.0, int max_iter = 100, double relative_error = 1E-6, int v=1){
   double *params = (double*) malloc(2.0*sizeof(double));
   params[0] = pot_params[0];
   params[1] = pot_params[1];
   
   double out[2];
-  
-  bracketing_lambda_t(re_find_func_nfw, params, out);
-  
-  
+  double v_in,dz;
+  double ks=pot_params[0],rs=pot_params[1];
+  if(ks<=0.11){v_in=5.E-3*rs;}
+  if((ks>0.11) && (ks<=0.5)){v_in=2.5E-1*rs;}
+  if((ks>0.15) && (ks<=1.0)){v_in=0.5*rs;}
+  if(ks>1.0){v_in=1.0*rs;}
+  dz=v_in*1.E-3;
+  bracketing_lambda_t(re_find_func_nfw, params, out,v_in,dz);
+  printf("the range where the root is [%f , %f]\n", out[0],out[1]);
+    
   double re = root_find(re_find_func_nfw, params,est_err_out, out[0],out[1],max_iter,relative_error,v);
   return re;
 }

@@ -1,0 +1,96 @@
+Codes for computing relevant quantities for the PNFW model
+Author: Habib Dúmet-Montoya (2010-)
+This model uses the Angle Deflection Convention 
+(see Habib Dúmet-Montoya, Gabriel Caminha & Martin Makler (2010), in preparation...)
+
+Parameter definition:
+
+ks = characteristic convergence
+rs= scale radius
+elp= ellipticity parameter
+lw_u= local approximation for the length-to-width ratio (must be greather than 1)
+mu_th = threshold magnification
+
+Quantities of interest
+sigma_q: arc cross section as a function of lens paramenter (ks, elp) and (lw_u)
+sigma_0: arc cross section computed for elp=0
+sigma_u: arc cross section computed for mu>mu_th
+mu_min= minimum magnification
+
+
+Control Parameters
+iflag= flag to compute the desired option
+npts= number of points to compute curves.
+
+
+---+++ To compile the code, uses some fortran 77 compiler (for77_compiler= g77-3.4, gfortran-3.4 or gfortran-4.4)---+++
+
+--+ To plot PNFW model curves, use the pnfw_contours.f
+
+$for77_compiler -o c_pnfw pnfw_contours.f lensing_functions.f root_finding.f
+
+./exec_name (To run the program)
+
+   * Mandatory have the input file "in_pnfw_par.txt" : ks rs elp lw_u iflag npt 
+
+   * If iflag=1, the code only plots the tangential curves (both critical and caustic curves)
+
+      Output files: 
+
+      For the tangential curves : fort.65 (critical curves), fort.75 (caustics)
+      Also the plot for critical lines in each quadrant, from 1st to 4th, fort.61, fort.62, fort.63, fort.64
+      the plot for caustics lines in each quadrant, from 1st to 4th, fort.71, fort.72, fort.73, fort.74
+
+   * If iflag=2, the code plot the region of tangential arc formation with length-to-width ratio>= lw.
+    
+      Together with the plot for tangential curves, the output files are too
+
+      ** Length-to-width curves < -|lw_u|: fort.45 (lens plane), fort.65 (source plane).    
+
+      Also the plot in each quadrant of the lens plane: fort.41 ... fort.44
+      Also the plot in each quadrant of the source plane: fort.61 ... fort.64
+
+
+      ** Length-to-width curves > |lw_u|: fort.85 (lens plane), fort.95 (source plane).
+      Also the plot in each quadrant of the lens plane: fort.81 ... fort.84
+      Also the plot in each quadrant of the source plane: fort.91 ... fort.94
+ 
+   * If iflag=3 the code compute the tangential and radial curves (both critical and caustic curves)
+      For the radial curves : fort.25 (critical curves), fort.35 (caustics)
+      Also the plot  for critical lines in each quadrant, from 1st to 4th, fort.21, fort.22, fort.23, fort.24
+      the plot for caustics lines in each quadrant, from 1st to 4th, fort.31, fort.32, fort.33, fort.34
+
+  
+
+--++ For compute the arc cross section for deformation arcs "sigma_q", use arc_cross_section.f 
+
+$for77_compiler -o exec_name arc_cross_section.f arc_cross_subroutine.f  lensing_functions.f root_finding.f
+
+./exec_name (To run the program)
+
+    *Mandatory two input file files "ifile" and "ifile2":
+
+    *ifile: iflag ks elp lw_u muth
+    where iflag is the flag to compute the arc cross section as a function of some quantity.
+
+    *ifile2: qu_min qu_max N_qu
+    where qu_min, qu_max correspond to lower limit and upper limit for a quantity to be varied. N_qu is the number of point uses to divide 
+    the range [qu_min, qu_max]. This file depend of the choice for iflag.
+
+    *Output file (for any choice of iflag) is fort.3
+
+    *If iflag=1: mu_th is varies
+      output file: muth sigma_u/sigma_q
+
+    *If iflag=2 : ks is varies
+      output file : ks sigma_q u_min
+
+    *If iflag=3 : elp is varies
+      output file: e sigma_q u_min (if you are interested in to have sigma_q/sigma_0, comment line 108 and uncoment line 107)
+
+    *If iflag=4 : lw_u is varies
+      output file: lw_u sigma_q u_min
+
+
+Bugs:
+sent me e-mail to habibdumet@gmail.com or  habib@linea.gov.br

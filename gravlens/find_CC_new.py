@@ -14,16 +14,17 @@ import logging
 #from lens_parameters_new import lens_parameters_new
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 import numpy as np
+import matplotlib.pyplot as pyplot
 
 # given the gravlens 'config file' runs gravlens to generate the 
 # file with caustics and CC
 #
-def _critcurves_new(gravinput, caustic_CC_file):
-	fmag = open('gravlens_CC_input.txt', 'w')
+def _critcurves_new(gravinput, caustic_CC_file, gravlens_input_file='gravlens_CC_input.txt'):
+	fmag = open(gravlens_input_file, 'w')
 	fmag.write(gravinput)
 	fmag.write('plotcrit %s\n' % caustic_CC_file )
 	fmag.close()
-	os.system('gravlens gravlens_CC_input.txt > /dev/null')
+	os.system('gravlens %s > /dev/null' % gravlens_input_file )
 
 ## get_CC_from_file
 # Reads critical curves file outputed by gravlens (with plotmode=1)
@@ -59,7 +60,7 @@ def get_CC_from_file(caustic_CC_file):
 #
 # Determines the lens curves using a iterating method using gravlens
 #
-def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt'):
+def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt'):
 	""" 
 	Determines the caustics and critical curves for a single 
 	component lens model. Uses an iterative procedure to determine 
@@ -98,6 +99,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 					  (see default parameters at function set_gravlens_default,
                                           inside lens_parameters_new)
 	 - caustic_CC_file        <str> : name of the output file with the caustic and CC positions
+	 - gravlens_input_file    <str> : name of the input file used to run gravlens
 
 	Output:
 	 - <list>     : [x_caustic, ycaustic], with x_caustic and ycaustic being the lists with the caustic coordinates
@@ -120,7 +122,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	#--------------------------------------
 
 	#-----------------------------
-	_critcurves_new(inputlens, caustic_CC_file) # gets the critical curves (crit.txt file)
+	_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 	logging.debug('Got the critical curves (%s file) with function \"critcurves\"' % caustic_CC_file)
 	#-----------------------------
 
@@ -132,7 +134,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		lens_par_out = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 
 		inputlens, setlens, gravlens_params_updated = lens_par_out
-		_critcurves_new(inputlens, caustic_CC_file) # gets the critical curves (crit.txt file)
+		_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 		counter += 1
 	logging.debug( '(Number of iterations on gridhi1 = %d)' % (counter) )
 
@@ -145,7 +147,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		lens_par_out = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		inputlens, setlens, gravlens_params_updated = lens_par_out
 
-		_critcurves_new(inputlens, caustic_CC_file) # gets the critical curves (crit.txt file)
+		_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
 
 
@@ -163,8 +165,129 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	lens_par_out = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 	inputlens, setlens, gravlens_params_updated = lens_par_out
 
-	_critcurves_new(inputlens, caustic_CC_file) # gets the critical curves (crit.txt file)
+	_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 
 	caustics_xy, crit_curves_xy = get_CC_from_file(caustic_CC_file)
 
 	return caustics_xy, crit_curves_xy, gravlens_params_updated
+
+
+
+
+#===========================================================================
+
+
+## separate_CC
+# Identifies the radial and tangential points of the critical curves and caustics
+#
+def separate_CC(inputlens, caustic_CC_file='crit.txt'):
+	"""
+	Separates the CC according to the magnification tensor eigenvalues 
+	(\lambda_t and \lambda_r). Needs a critical curves file output by 
+	gravlens ran with plotmode=1 (gravlens default). This function runs 
+	gravlens to get the eigenvalues of the CC points.
+	If |\lambda_t| < 10^{-6} it is a tangential point.
+	If |\lambda_r| < 10^{-6} it is a radial point.
+	This method has the disadvantage of needing all lens parameters, since
+	it needs to run gravlens internaly.
+
+	Input:
+	 - inputlens          <str> : a string with all the lines gravlens needs to its configuration
+	 - caustic_CC_file   <file> : file generated by gravlens (with plotmode=1) with the CC points
+
+
+	Output:
+	 - <dic> : contains the lists with the separated curves (the keys are 'tan_caustic_x', 
+		   'tan_caustic_y', 'rad_caustic_x', 'rad_caustic_y', 'tan_CC_x', 'tan_CC_y', 
+		   'rad_CC_x', 'rad_CC_y')
+
+	"""
+
+	fcrit = open(caustic_CC_file, 'r').readlines()
+	xcritsrc = []
+	ycritsrc = []
+	xcritimg = []
+	ycritimg = []
+	f1 = open('gravlensmagtensor2.txt', 'w')
+	f1.write(inputlens) # record the lines relatives to the lens on the new file
+	f1.close()
+	for i in range (10,len(fcrit)): # because the first 10 lines of this file are only comments
+		f1 = open('gravlensmagtensor2.txt', 'a')
+		f1.write('magtensor %0.12f %0.12f\n' % ( float(fcrit[i].split()[0]) , float(fcrit[i].split()[1])  ) )
+		xcritimg.append(float(fcrit[i].split()[0]))
+		ycritimg.append(float(fcrit[i].split()[1]))
+		xcritsrc.append(float(fcrit[i].split()[2]))
+		ycritsrc.append(float(fcrit[i].split()[3]))
+		f1.close()
+	os.system('gravlens gravlensmagtensor2.txt > saidamagtensor.txt') # running gravlens n times make this function MUCH slower.
+	# up to now, we have a file containing all the magnification matrices, besides the lists with all the coodinates of the caustics and C.C.
+	f = open('saidamagtensor.txt' , 'r').readlines()
+	nlinha = len(f) - len(xcritimg)*6 # I am using this to get the matrix elements without worrying about the number of lines the file has (which depends on
+				# the number of parameters of gravlens we modify). 'nlinha' is the number of lines that DON'T contain the output data of magtensor 
+	tan_caustic_x = [] # tangential caustic x coordinate
+	tan_caustic_y = [] # tangential caustic y coordinate
+	rad_caustic_x = [] # radial caustic x coordinate
+	rad_caustic_y = [] # radial caustic y coordinate
+	tan_CC_x = [] # tangential CC x coordinate
+	tan_CC_y = [] # tangential CC y coordinate
+	rad_CC_x = [] # radial CC x coordinate
+	rad_CC_y = [] # radial CC y coordinate
+	for i in range(0,len(xcritimg) ): # computes the magnification of each point of the caustic
+		a11 = float(f[nlinha + i*6].split()[0]) # element 11 of the mag tensor
+		a12 = float(f[nlinha + i*6].split()[1]) # element 12 (=21) of the mag tensor
+		a22 = float(f[nlinha + i*6 + 1].split()[1]) # element 22 of the mag tensor
+		lambda_t = ((a11 + a22)/2)/(a11*a22 - a12**2) - ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) 
+		lambda_r = ((a11 + a22)/2)/(a11*a22 - a12**2) + ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) 
+		
+		if abs(lambda_t) < 1e-6:
+			tan_caustic_x.append(xcritsrc[i])
+			tan_caustic_y.append(ycritsrc[i])
+			tan_CC_x.append(xcritimg[i])
+			tan_CC_y.append(ycritimg[i])
+		if abs(lambda_r) < 1e-6:
+			rad_caustic_x.append(xcritsrc[i])
+			rad_caustic_y.append(ycritsrc[i])
+			rad_CC_x.append(xcritimg[i])
+			rad_CC_y.append(ycritimg[i])
+#	tan_CC_x = np.array(tan_CC_x)
+#	tan_CC_y = np.array(tan_CC_y)
+#	##############################################################################
+#	indice = np.argmax(tan_CC_x**2 + tan_CC_y**2)
+#	a = 3.0*( (tan_CC_x[indice]**2 + tan_CC_y[indice]**2)**0.5 ) # define 'a', which will be the region, in arcsec, to be converted to fits
+	return {'tan_caustic_x': tan_caustic_x, 'tan_caustic_y': tan_caustic_y, 'rad_caustic_x': rad_caustic_x, 'rad_caustic_y': rad_caustic_y, 'tan_CC_x': tan_CC_x, 'tan_CC_y': tan_CC_y, 'rad_CC_x': rad_CC_x, 'rad_CC_y': rad_CC_y }
+
+#---------------------------------------------------------------------------------------------------------------------
+
+
+## plot_CC
+# Plots the caustics and critical curves
+#
+def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, plot_filename):
+	pyplot.clf()
+	f1 = pyplot.figure(1,figsize = (15,15) )
+	pyplot.subplot(121) # (numRows,numCols, plotNum)
+	pyplot.plot(tan_caustic_x, tan_caustic_y, color='red',   linestyle='.', marker='.', markersize=2 )
+	pyplot.plot(rad_caustic_x, rad_caustic_y, color='black', linestyle='.', marker='.', markersize=2 )
+	pyplot.axis('equal')
+	pyplot.title('Causticas'  , fontsize = 20)
+	pyplot.subplot(122) # (numRows,numCols, plotNum)
+	pyplot.plot(tan_CC_x, tan_CC_y, color='red',   linestyle='.', marker='.', markersize=2 )
+	pyplot.plot(rad_CC_x, rad_CC_y, color='black', linestyle='.', marker='.', markersize=2 )
+	pyplot.axis('equal')
+	pyplot.title('CC'  , fontsize = 20)
+	pyplot.savefig(plot_filename)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
