@@ -1,5 +1,7 @@
 \chapter{Description of the effect of perturbative fields on arcs}
-Put the motivation
+
+Insert a motivation
+
 \section{Pseudo-Elliptical Models}
 The Pseudo-Elliptical models come from the distortion of the lensing potential, in which
 the radial coordinate $r$ is replaced by $\xi$, i.e $\phi(r)\rightarrow \phi(\xi)$, where
@@ -8,21 +10,25 @@ the radial coordinate $r$ is replaced by $\xi$, i.e $\phi(r)\rightarrow \phi(\xi
 x_{1\eta}&=&\sqrt{\ae} x_1\\
 x_{2\eta}&=&\sqrt{\be} x_2
 \eea
-where $r_0$ is a scaling parameter (model dependent), $\ae$ and $\be$ are the parameter
-defining the ellipticity.
+where $r_0$ is a model-dependent scaling parameter, and $\ae$, $\be$ are axes lengths for different parameterizations of the ellipticity.
 
 The most common parameterizations for the ellipticity are
 
 \begin{eqnarray}
-\ae=1-\eta &\qquad& \be =1+\eta \label{par_gk}\\
+\ae=1-\eta &\qquad& \be =1+\eta \label{par_gk}
+\end{eqnarray}
+
+and
+
+\begin{eqnarray}
 \ae=1-\eta &\qquad & \be =\dfrac{1}{1-\eta} \label{par_gen}
 \end{eqnarray}
-where the Eq.~ (\ref{par_gk}) corresponds to the parametrization of the
-Angle Deflection Model ($\eta=\varepsilon$ following the notation of  Golse \& Kneib 2002)
-and the other one, Eq.~ (\ref{par_gen}),  corresponds to the standard parametrization ($\eta=\varepsilon_\varphi$
-following the notation of Meneghetti et al 2002).
+where \eqref{par_gk}) corresponds to the parametrization of the
+Angle Deflection Model ($\eta=\varepsilon$ following the notation of  \cite{golsekneib})
+and \eqref{par_gen}),  corresponds to the standard parametrization ($\eta=\varepsilon_\varphi$
+following the notation of \cite{meneg}).
 
-Working in polar coordinates $x_1=x\cos{\te}$ + $x_2=x\sin{\te}$ we get to
+Working in polar coordinates $x_1=x\cos{\te}$ , $x_2=x\sin{\te}$ we obtain
 
 \beq
 \xi=r\sqrt{\ae \cos^2{\te}+\be\sin^2{\te}}.
@@ -44,13 +50,13 @@ Here, we use the following notation
 \xer \equiv \re \sqrt{\ae \cos^2{\te}+\be\sin^2{\te}},&\quad& \scriptg(\eta,\te)=\re^2\mathcal{A}(\eta)\sin{(2\te)},\quad \mathcal{A}(\eta)=\be-\ae
 \end{eqnarray*}
 
-The, we will begin to derive the analytical expression for the main fields of the Perturbative Method. Using the 
-definition, we have
+Now we derive the analytical expression for the main fields of the
+Perturbative Method. Using the definition, we have
 
 \beq
 f_0(\te)=\phi(\xer)-\phi_0(\re)
 \eeq
-then, its derivative respect to $\te$ is
+The derivative of $f_0$ with respect to $\te$ is
 \beq
 \frac{df_0}{d\te}=\dfrac{d\phi_{\xer}}{d\xer}\dfrac{d\xer}{d\te}=\frac{1}{2}\dfrac{\phi^\prime_{\xer}}{\xer}\scriptg(\eta,\te)
 \label{df0_pe}
@@ -61,19 +67,19 @@ where, we used
 \label{dxer_pe}
 \eeq
 
-From Eqs.{(\ref{pe_radius}, \ref{pe_model})} is easily get to
+From Eqs.{(\ref{pe_radius}, \ref{pe_model})} we may obtain 
 
 \begin{equation*}
 \dfrac{\prtl \psi_{_{\mathrm{PE}}}(r) }{\prtl r}=\dfrac{d\phi_\xi}{d\xi}\dfrac{\prtl \xi}{\prtl r}-\dfrac{\prtl \phi_0}{\prtl r}
 \end{equation*}
 
-Evaluating at the Einstein Radius, we have
+Evaluating this at the Einstein Radius, we have
 \beq
 f_1(\te)=\dfrac{\xer}{\re}\phi^\prime_{\xer}-\phi^\prime_0
 \label{f1_pe}
 \eeq
 
-Also, making the derivative of Eq.~(\ref{df0_pe}) respect to $\te$, is straightforward get to
+Also, taking the derivative of Eq.~(\ref{df0_pe}) respect to $\te$, it is straightforward to get
 \beq
 \dfrac{d^2f_0}{d\te^2}=\frac{1}{2}\scriptg_\te(\eta,\te)\dfrac{\phi^\prime_{\xer}}{\xer}+%
 \frac{1}{4}\left[ \dfrac{\scriptg(\eta,\te)}{\xer}\right]^2\left(\phi^{\prime\prime}_{\xer}-\dfrac{\phi^{\prime}_{\xer}}{\xer}  \right)
@@ -81,7 +87,7 @@ Also, making the derivative of Eq.~(\ref{df0_pe}) respect to $\te$, is straightf
 \eeq
 where $\scriptg_\te(\eta,\te)\equiv d\scriptg(\eta,\te)/d\te$.
 
-Now, to write the expression of $d^nf_0/d\te$ and $f_1$ as function of the lensing functions, we use some basic relationships valid for
+Now, to write the expression of $d^nf_0 \over d\te^n$ and $f_1$ as function of the lensing functions, we use some basic relationships valid for
 any circular model
 
 \bea
@@ -90,36 +96,36 @@ any circular model
 \gamma(r)&=&\dfrac{\alpha(r)}{r}-\kappa(r) \label{shear_gen}
 \eea
 
-Then, using these relationships and as $r$ is a dummy variable, we have for the main fields
+Using these relationships and $r$ is a dummy variable, we have for the main fields
 \bea
 \dfrac{df_0}{d\te}&=& \frac{1}{2}\dfrac{\alpha(\xer)}{\xer}\scriptg(\eta,\te) \label{df0_pe2}\\
 f_1(\te)&=&\dfrac{\xer}{\re}\alpha(\xer)-\alpha(\re) \label{f1_pe2}
 \eea
-and also, we have
+and further
 \beq
 \label{ddf0_pe2}
 \dfrac{d^2f_0}{d\te^2}=\frac{1}{2}\scriptg_\te(\eta,\te)\dfrac{\alpha(\xer)}{\xer}-%
-\frac{\gamma(\xer)}{2}\left[ \dfrac{\scriptg(\eta,\te)}{\xer}\right]^2 
+\frac{\gamma(\xer)}{2}\left[ \dfrac{\scriptg(\eta,\te)}{\xer}\right]^2 .
 \eeq
 
 \subsection{Expression for small values of the ellipticity}
 
-Now, we will expand the analytical expressions for the main fields 
-Eqs.(\ref{df0_pe2}, \ref{f1_pe2}) in Taylor Series around $\eta=0$. 
-Is straightforward verify that
+Now, we expand the analytical expressions for the main fields 
+Eqs.(\ref{df0_pe2}, \ref{f1_pe2}) in a Taylor Series around $\eta=0$. 
+Is straightforward to verify that
 
 \bea
 \dfrac{df_0}{d\te}& \approx & \eta\alpha(\re)\re\sin{(2\te)} \label{df0_pe_appr}\\
 f_1(\te)&\approx&-\eta \kappa(\re)\re\cos{(2\te)} \label{f1_pe_appr}
 \eea
 
-And from the  Eq.~(\ref{df0_pe_appr}), or making the Taylor Series in the Eq.~(\ref{ddf0_pe2}), we get
+And from  Eq.~(\ref{df0_pe_appr}), or expanding Eq.~(\ref{ddf0_pe2}) in a Taylor Series, we obtain
 to
 \beq
 \dfrac{d^2f_0}{d\te^2}=2\eta\alpha(\re)\re\cos{(2\te)} \label{ddf0_pe_appr}
 \eeq
 
-For example, if we considerer and Pseudo-Elliptical SIS (setting $\re=1$) we get to the
+For example, if we consider the Pseudo-Elliptical SIS (setting $\re=1$) we get to the
 Eqs.(17) of Alard's Paper 2008 (without considering the contribution of substructures), i.e,
 \begin{eqnarray*}
  f_1(\te)&\approx&-\frac{\eta}{2}\cos{(2\te)}\\
@@ -130,24 +136,25 @@ Eqs.(17) of Alard's Paper 2008 (without considering the contribution of substruc
 
 \pagebreak
 
-\section{Elliptical Models (Gabriel)}
+\section{Elliptical Models } % Gabriel
 
 \section{Substructures}
 \begin{wrapfigure}{r}{0.4\textwidth}
   \begin{center}
 %  \centering{\epsfig{Fig_subsstructure.eps,width=0.45\textwidth}}
    \includegraphics[width=0.30\textwidth]{graphics/Fig_subsstructure.pdf}
+\label{fig:substruc}
   \end{center}
-    \caption{Geometry of the perturbation induced by the substructure. The great circle corresponds to Einstein Ring,
-  while the small one represent the substructure located at $r_p=\re +\zeta$.}
+    \caption{Geometry of the perturbation induced by the substructure. The large circle corresponds to Einstein Ring,
+  while the smaller one represents the substructure located at $r_p=\re +\zeta$.}
 \end{wrapfigure}
 
 We may consider the perturbation as
 \begin{equation}
 \psi_{ss}(r,\te,\pi_p)=\varphi(\zeta)
 \end{equation}
-where the ``ss'' indicates substructure, $\varphi$ corresponds to a central potential (a circular model, such as SIS, NFW and so on) and $\pi_p$
-are the substructure parameters, such as mass, position and inclination. $\zeta$ comes from Fig. 1 ($dr=\zeta$)
+where the ``ss'' indicates substructure, $\varphi$ corresponds to a central potential (any circular model, such as SIS, NFW and so on) and $\pi_p$
+are the substructure parameters, such as mass, position and inclination angle. $\zeta$ comes from Fig. \ref{fig:substruc} (in which $dr=\zeta$)
 where
 \begin{eqnarray}
 \vec{r}_p&=&r_p\cos{\tep}\hat{\imath} + r_p\sin{\tep}\hat{\jmath}\\
@@ -160,8 +167,8 @@ Taking the modulus of $\zeta$, is straightforward to verify that
 \label{xirte}
 \end{equation}
 
-Before give the analytical expression for the fields $f_1$ and ${d^nf_0 \over d\te^n}$ ($n=1,2$), we will
-give some useful results (with $\zeta\equiv\zeta(r,\te)$).
+Before giving the analytical expression for the fields $f_1$ and ${d^nf_0 \over d\te^n}$ ($n=1,2$), we
+give some useful results (with $\zeta = \zeta(r,\te)$).
 \begin{eqnarray}
 \Omega(\zeta) & \equiv & r r_p \sin{(\te-\te_p)} \\
 \dfrac{d\zeta}{d\te}&=&  \dfrac{\Omega(\zeta)}{\zeta}\\
@@ -169,8 +176,14 @@ give some useful results (with $\zeta\equiv\zeta(r,\te)$).
 \dfrac{d\zeta}{dr}&=&\dfrac{r-r_p\cos{(\te-\te_p)}}{\zeta}
 \end{eqnarray}
 
-Introducing the following notation $\varphi_\zeta\equiv \varphi(\zeta) $, $\varphi^\prime_\zeta=d\varphi_\zeta/d\zeta$, $\varphi^{\prime\prime}_\zeta=d^2\varphi_\zeta/d\zeta^2$
-and using the relations above we have.
+Introducing the following notation
+\begin{eqnarray}
+\varphi_\zeta & \equiv & \varphi(\zeta) \\
+\varphi^\prime_\zeta &=& d\varphi_\zeta \over d\zeta \\
+\varphi^{\prime\prime}_\zeta &=& d^2\varphi_\zeta \over d\zeta^2
+\end{eqnarray}
+
+and using the relations above we have
 
 \begin{eqnarray}
 \dfrac{\prtl \psi_{ss}}{\prtl \te}&=&\Omega(\zeta)\dfrac{\varphi^\prime}{\zeta}\label{df0}\\
@@ -181,7 +194,7 @@ and using the relations above we have.
 
 Using the Eqs.~(\ref{dphi}, \, \ref{ddphi} and \ref{shear_gen}), where $r$ is dummy variable, we can define 
 $\al_\zeta=\al(\zeta)=\varphi^\prime_\zeta$, $\kappa_\zeta=\kappa(\zeta)$ and $\gamma_\zeta=\al_\zeta/\zeta-\kappa_\zeta$. 
-From the Eqs.(\ref{xirte}, \ref{df0}-\ref{f1}) (evaluated at $r=\re$), we get to the analytical expression for the main fields of
+From Eqs.(\ref{xirte}, \ref{df0}-\ref{f1}) (evaluated at $r=\re$), we obtain the analytical expressions for the main fields of
 the perturbative approach as function of the angle deflection and convergence, i.e.
 \begin{eqnarray}
 \dfrac{df_0}{d\te}&=&\al_{\xie}\dfrac{\Omega(\xie)}{\xie}\\
@@ -194,23 +207,23 @@ f_1(\te)&=&\al_{\xie}\dfrac{[\re-r_p\cos{(\te-\tep)}]}{\xie},
 
 \subsection{SIS model as substructure}
 
-As application of these analytical expression, we will considerer the case of the Singular Isothermal Sphere, for
-which $\psi(r,\te,\pi_p)=m_p\zeta$, where $m_p$ is the mass contained at the critical radius.
+As application of these analytical expressions, we will consider the case of the Singular Isothermal Sphere, for
+which $\psi(r,\te,\pi_p)=m_p\zeta$, where $m_p$ is the mass contained within the critical radius.
 Is very easy to verify that $\al_\zeta=m_p$,  $\kappa_\zeta=m_p/(2\zeta)$ (this expression comes from the usual
-definition of the SIS convergence) and therefore we get to
+definition of the SIS convergence) and therefore we obtain
 \begin{eqnarray}
 \dfrac{d f_0}{d\te}&=&\dfrac{\re m_p r_p \sin{(\te -\tep)}}{\sqrt{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p}}.\\
 f_1&=&\dfrac{m_p[\re-r_p\cos{(\te-\tep)}]}{\sqrt{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p}}.
 \end{eqnarray}
-If we choose $\re=1$ we get to the expression given in Alard's Paper 2008.
+If we choose $\re=1$ we get to the expression given in Alard's 2008 Paper .
 
-Besides, the another quantity useful to calculate the critical and caustic lines is
+Another quantity useful to calculate the critical and caustic lines is
 \begin{equation}
 \dfrac{d^2 f_0}{d\te^2}=\dfrac{m_p}{\sqrt{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p}}%
 \left[\re r_p\cos{(\te-\tep)}- \dfrac{[\re r_p\sin{(\te-\tep)}]^2}{\re^2-2\re r_p\cos{(\te-\tep)}+r^2_p} \right].
 \end{equation}
 
-Conclusions: Now, we are able to considerer another kind of substructure that come from circular lenses.
+Conclusions: Now, we are able to at least consider substructure in the form of a circular lens.
 
 
 \section{External Shear + Continuous Matter}

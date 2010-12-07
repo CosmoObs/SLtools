@@ -2,30 +2,32 @@
 
 \section{Remarks on Notation}
 
+{\bf Source Plane Coordinates}
 \begin{itemize}
-
-\item{ $ x = (x_1, x_2) $ are Cartesian coordinates of a point in the lens plane}
 \item{ $ y = (y_1, y_2) $ are Cartesian coordinates of a point in the source plane}
-
-\item{ $  (r, \theta) $ are polar coordinates of a point in the lens plane}
-
 \item{   $r_s $ is the radial coordinate of a point in the source plane}
+\item{   $r_0 $ is the radial coordinate to the center of a circular source in the source plane}
 
-\item{   $r_0 $ is the radial coordinate to the center of circular source in the source plane}
+\item{   $\vec{r}_0 =(\yone,\ytwo)$ is the vector to the center of a circular source in the source plane}
 
 \item{ $R_0 $ is the vector distance from the center of circular
   source to its edge in the source plane}
 
-\item{ $\re$ is Einstein Radius of the critical curve in the lens plane}
+\item{ $\eta_s$ is the ellipticity of an object in the source plane}
 
+\end{itemize}
+
+{\bf Lens Plane Coordinates}
+
+\begin{itemize}
+\item{ $ x = (x_1, x_2) $ are Cartesian coordinates of a point in the lens plane}
+\item{ $  (r, \theta) $ are polar coordinates of a point in the lens plane}
+\item{ $\re$ is Einstein Radius of the critical curve in the lens plane}
 \end{itemize}
 
 
 
 \section{Summary of primary equations}
-
-\def\eqref{eq.~(\ref}
-\def\secref{Sec.~\ref}
 
 From \secref{sec:BasicIdeas}, we have the division of the potential into
 axisymmetric and non-axisymmetric pieces:
@@ -67,8 +69,32 @@ And for the caustics:
 \\
 {\bf Arcs}
 
-For an extended source, the arc position in the lens plane is
+For a circular extended source, the radial arc position in the lens plane is
 
 \eqref{eq:xsoln}):  $x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right] $
 
 With $\overline{f}_i(\theta) \equiv f_i(\theta) + (x_0 \cos \te + y_0 \sin \te)\re^{1-i}, \;\; i=0,1 $
+
+And
+\eqref{eq:parametricarcs}): $\vec{r}= \left[(\re +x)\cos{\te},(\re+x)\sin{\te}\right], \quad 0 \leq \te < 2\pi$
+
+are the Cartesian coordinates for this in parametric form.
+\\
+\\
+For an elliptical extended source where the source is oriented at an angle $\theta_0$ \wrt\ the semi-major axis of the central potential, the radial arc position in the lens plane is
+
+\eqref{eq:ellipsource}): $x = \frac{1}{\kappa_2} \left\{\bar{f}_{1}(\theta) +%
+\frac{\eta_s\sin(2\tilde{\theta})}{S}\left(\frac{1}{\re}\dfrac{\partial%
+\bar{f}_0(\theta)}{\partial \theta}\right) \pm \frac{1}{S}\sqrt{SR_{0}^2 -%
+(1-\eta_s^2)\left[ \frac{1}{\re}\frac{\partial \bar{f}_0(\theta)}{\partial
+\theta}\right]^2}  \right\}$
+
+with $ S \equiv 1-\eta_s\cos{(2\tilde{\te})}$, and $\tilde{\te} = \theta - \theta_0$
+
+And again
+\eqref{eq:parametricarcs}): $\vec{r}= \left[(\re +x)\cos{\te},(\re+x)\sin{\te}\right], \quad 0 \leq \te < 2\pi$
+
+are the Cartesian coordinates for this in parametric form.
+
+
+{\bf }
