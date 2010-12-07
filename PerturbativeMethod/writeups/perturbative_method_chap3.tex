@@ -136,8 +136,54 @@ Eqs.(17) of Alard's Paper 2008 (without considering the contribution of substruc
 
 \pagebreak
 
-\section{Elliptical Models } % Gabriel
-
+\section{Elliptical Models } % Bruno
+\subsection{General results for elliptical models}
+Contrary to pseudo-elliptical models, elliptical models introduce the ellipticity directly into the convergence. To do this, we apply the following transformation to the convergence of an axisymetric model:
+\beq
+\label{variavel-eliptica}
+x^2 \rightarrow \frac{x^2}{a^2} + \frac{y^2}{b^2}.
+\eeq
+It can then be shown that the derivatives of the potential in Cartesian coordinates can be written as (cf. Gabriel's master thesis):
+\begin{eqnarray}
+\label{der-pot1}
+\phi_1(x_1,x_2) &=& abx_1J_0, \\
+\label{der-pot2}
+\phi_2(x_1,x_2) &=& abx_2J_1, \\
+\label{der-pot3}
+\phi_{11}(x_1,x_2)&=& 2abx_1^2K_0 + abJ_0, \\
+\label{der-pot4}
+\phi_{22}(x_1,x_2)&=& 2abx_2^2K_2 + abJ_1, \\
+\label{der-pot5}
+\phi_{12}(x_1,x_2)&=& 2abx_1x_2K_1,
+\end{eqnarray}
+where $\phi_i$ is the derivative of $\phi$ according to $x_i$ and $J_n$ and $K_n$ are defined as  
+\begin{eqnarray}
+\label{int-1}
+J_n(r,\te)&=& \int_{0}^{1} \dfrac{\kappa\left( m(u) \right) }{\left[1-(1-b^2)u \right]^{\frac{1}{2}+n} \left[1-(1-a^2)u \right]^{\frac{3}{2}-n}}du,\\
+K_n(r,\te)&=& \int_{0}^{1} \dfrac{u\kappa'\left( m(u) \right) }{\left[1-(1-b^2)u \right]^{\frac{1}{2}+n} \left[1-(1-a^2)u \right]^{\frac{5}{2}-n}}du,
+\end{eqnarray}
+In these integrals, $m$ is written as (in radial coordinates for our purposes)
+\beq
+m^2 = ur^2\left( \dfrac{cos^2\te}{1-(1-a^2)u} + \dfrac{sen^2\te}{1-(1-b^2)u}\right)\,.
+\eeq
+From the first-order derivatives in Cartesian coordinates, we can obtain the ones in polar coordinates using the transformation of the gradient
+\bea
+\frac{\partial\phi}{\partial r}&=&\phi_1\cos\,\te+\phi_2 \sin\,\te\\
+\frac{\partial\phi}{\partial \te}&=&-\phi_1\sin\,\te+\phi_2\cos\,\te
+\eea
+Then it is easy to obtain
+\bea
+\frac{\partial \phi}{\partial r}&=&abr\left[J_0(r,\te)cos^2\te+J_1(r,\te)sin^2\te\right]\\
+\frac{\partial \phi}{\partial \te}&=&abr^2sin\,\te cos\,\te\left[J_1(r,\te)-J_0(r,\te)\right]
+\eea
+In order to get the coefficients in Alard's expansion, we need to extract the axisymmetric part of the potential. Defining $\psi(r,\te)\equiv\phi(r,\te)-\phi_0(r)$, we arrive at
+\bea
+f_1&=&\re\left[ab\left(J_0\,cos^2\te+J_1\,sen^2\te\right)-1\right]\\[10pt]
+\frac{{\rm d}f_0}{{\rm d}\te}&=&ab\,\frac{\re^2}{2}\left(J_1-J_0\right)sen\,2\te\\[10pt]
+\frac{{\rm d}^2f_0}{{\rm d}\te^2}&=&ab\,\re^2\left[\left(J_1-J_0\right)cos\,2\te+\frac{\re^2}{2}\left(K_0-2K_1+K_2\right)sen^22\te\right]
+\eea
+\subsection{SIE: CC, caustics and arcs}
+\subsection{ENFW: CC, caustics and arcs}
 \section{Substructures}
 \begin{wrapfigure}{r}{0.4\textwidth}
   \begin{center}
