@@ -86,19 +86,86 @@ double mean_rad_vec(double vec_x[], double vec_y[], int npt){
   return out;
 }
 
+void invar_test(){
+  double ks = 1.1;
+  double rs = 1.2;
+  double elp= 0.1;
 
+  int npt = 200;
+
+  double cc_x[4*npt], cc_y[4*npt];
+  double ca_x[4*npt], ca_y[4*npt];
+
+  double cc_x_per[4*npt], cc_y_per[4*npt];
+  double ca_x_per[4*npt], ca_y_per[4*npt];
+
+  double r_cc_mean = 0.0;
+  double r_ca_mean = 0.0;
+
+  double r_cc_mean_per = 0.0;
+  double r_ca_mean_per = 0.0;
+
+  generate_curves_f(ks, rs, elp, npt, cc_x    , cc_y    , ca_x    , ca_y);
+  generate_curves_p(ks, rs, elp, npt, cc_x_per, cc_y_per, ca_x_per, ca_y_per);
+  
+  r_cc_mean = mean_rad_vec(cc_x,cc_y,4*npt);
+  r_ca_mean = mean_rad_vec(ca_x,ca_y,4*npt);;
+  r_cc_mean_per = mean_rad_vec(cc_x_per,cc_y_per,4*npt);;
+  r_ca_mean_per = mean_rad_vec(ca_x_per,ca_y_per,4*npt);;
+
+  printf("\n\ndist2curves for rs=%.2f:\n",rs);
+  printf("1- %E 1/rs- %E\n",dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,1), dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,1)/rs);
+  printf("2- %E 2/rs- %E\n",dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,2), dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,2)/rs);
+  printf("3- %E 3/rs- %E\n\n",dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,3), dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,3)/rs);
+
+  printf("hd1- %E hd1/rs- %E\n",haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,1), haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,1)/rs);
+  printf("hd2- %E hd2/rs- %E\n",haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,2), haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,2)/rs);
+  printf("hd3- %E hd3/rs- %E\n\n",haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,3), haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,3)/rs);
+
+  printf("<r_cc>-     %E <r_cc>/rs-     %E\n",r_cc_mean,r_cc_mean/rs);
+  printf("<r_ca>-     %E <r_cc>/rs-     %E\n",r_ca_mean,r_ca_mean/rs);
+  printf("<r_cc_per>- %E <r_cc_per>/rs- %E\n",r_cc_mean_per,r_cc_mean_per/rs);
+  printf("<r_ca_per>- %E <r_cc_per>/rs- %E\n",r_ca_mean_per,r_ca_mean_per/rs);
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  rs = 0.17;
+  generate_curves_f(ks, rs, elp, npt, cc_x    , cc_y    , ca_x    , ca_y);
+  generate_curves_p(ks, rs, elp, npt, cc_x_per, cc_y_per, ca_x_per, ca_y_per);
+
+  r_cc_mean = mean_rad_vec(cc_x,cc_y,4*npt);
+  r_ca_mean = mean_rad_vec(ca_x,ca_y,4*npt);;
+  r_cc_mean_per = mean_rad_vec(cc_x_per,cc_y_per,4*npt);;
+  r_ca_mean_per = mean_rad_vec(ca_x_per,ca_y_per,4*npt);;
+
+  printf("\n\ndist2curves for rs=%.2f:\n",rs);
+  printf("1- %E 1/rs- %E\n",dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,1), dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,1)/rs);
+  printf("2- %E 2/rs- %E\n",dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,2), dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,2)/rs);
+  printf("3- %E 3/rs- %E\n\n",dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,3), dist2curves(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,3)/rs);
+
+  printf("hd1- %E hd1/rs- %E\n",haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,1), haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,1)/rs);
+  printf("hd2- %E hd2/rs- %E\n",haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,2), haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,2)/rs);
+  printf("hd3- %E hd3/rs- %E\n\n",haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,3), haus_dist_f4(cc_x, cc_y, npt, cc_x_per, cc_y_per, npt,3)/rs);
+
+  printf("<r_cc>-     %E <r_cc>/rs-     %E\n",r_cc_mean,r_cc_mean/rs);
+  printf("<r_ca>-     %E <r_cc>/rs-     %E\n",r_ca_mean,r_ca_mean/rs);
+  printf("<r_cc_per>- %E <r_cc_per>/rs- %E\n",r_cc_mean_per,r_cc_mean_per/rs);
+  printf("<r_ca_per>- %E <r_cc_per>/rs- %E\n",r_ca_mean_per,r_ca_mean_per/rs);
+
+
+}
 
 
 
 int main(){
-
+  //invar_test();
 
 //Escreve no arquivo in_penf_par.txt os imputs para o programa em fortran.
   //FILE * h_in = fopen ("../../lensing_models/pnfw/in_pnfw_par.txt","w");
-  double ks = 1.1;
+  double ks = 0.08;
   double rs = 1.;
-  double elp= 0.0;
-  int npt = 300;
+  double elp= 0.7;
+  int npt = 200;
 
   double cc_x[4*npt], cc_y[4*npt];
   double ca_x[4*npt], ca_y[4*npt];
@@ -119,8 +186,8 @@ int main(){
 
 
 
-  FILE *h_dist_cc = fopen("h_cc_rs1_ks11.dat","w");
-  FILE *h_dist_ca = fopen("h_ca_rs1_ks11.dat","w");
+  FILE *h_dist_cc = fopen("h_cc_rs1_elp07-3.dat","w");
+  FILE *h_dist_ca = fopen("h_ca_rs1_elp07-3.dat","w");
 
   for(int i=0;i<50;i++){
     generate_curves_f(ks, rs, elp, npt, cc_x    , cc_y    , ca_x    , ca_y);
@@ -132,9 +199,9 @@ int main(){
     r_cc_mean_per = mean_rad_vec(cc_x_per,cc_y_per,4*npt);
     r_ca_mean_per = mean_rad_vec(ca_x_per,ca_y_per,4*npt);
 
-    fprintf(h_dist_cc,"%E %E\n",elp,haus_dist_f4(cc_x_per, cc_y_per, 4*npt, cc_x, cc_y, 4*npt)/(r_cc_mean+r_cc_mean_per) );
-    fprintf(h_dist_ca,"%E %E\n",elp,haus_dist_f4(ca_x_per, ca_y_per, 4*npt, ca_x, ca_y, 4*npt)/(r_ca_mean+r_ca_mean_per) );
-    elp+=1.0/50.0;
+    fprintf(h_dist_cc,"%E %E\n",ks,haus_dist_f4(cc_x_per, cc_y_per, 4*npt, cc_x, cc_y, 4*npt,3)/(r_cc_mean) );
+    fprintf(h_dist_ca,"%E %E\n",ks,haus_dist_f4(ca_x_per, ca_y_per, 4*npt, ca_x, ca_y, 4*npt,3)/(r_ca_mean) );
+    ks+=1.0/50.0;
   }
 
   fclose(h_dist_cc);
