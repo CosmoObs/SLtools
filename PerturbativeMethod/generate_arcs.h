@@ -98,15 +98,14 @@ void plot_arcs_sep(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_i
   double r_m = 0.0;
 
   double arcs[10][2];
+
+  if(fabs(source_in.x0-source_in.y0)<1E-10) source_in.y0+=source_in.y0*0.001;
   theta_find(Df0Dtheta_in, source_in,  pert_params, _r_e, arcs);
 
-//  printf("\%E %E\n",arcs[0][0],arcs[0][1]);
-//  printf("\%E %E\n",arcs[1][0],arcs[1][1]);
-//  printf("\%E %E\n",arcs[2][0],arcs[2][1]);
-//  printf("\%E %E\n",arcs[3][0],arcs[3][1]);
+
 
   if(arcs[ int(arcs[0][0]) ][1]< arcs[ int(arcs[0][0]) ][0]) arcs[ int(arcs[0][0]) ][1] += 6.283185308;
-  if(arcs[ int(arcs[0][0]+1) ][1]< arcs[ int(arcs[0][0]+1) ][0]) arcs[ int(arcs[0][0]+1) ][1] += 6.283185308;
+
 
   printf("\%E %E\n",arcs[0][0],arcs[0][1]);
   printf("\%E %E\n",arcs[1][0],arcs[1][1]);
@@ -124,7 +123,7 @@ void plot_arcs_sep(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_i
 
   }
 
-  for(int i=1;i<=arcs[0][0]+1;i++){
+  for(int i=1;i<=arcs[0][0];i++){
 
 
 //printing arc 'i' in anti-clock direction
@@ -133,13 +132,10 @@ void plot_arcs_sep(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_i
     for(int j=0;j<=npts/2;j++){
       if(arg_sqrt(Df0Dtheta_in, source_in, theta, pert_params, _r_e)>0.0){
         r_p = _r_e+dr_plus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params,_r_e);
-        //r_m = _r_e+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params,_r_e);
         if(file_in==NULL){
           printf("%E %E\n",r_p*cos(theta),r_p*sin(theta));
-          //printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));
         } else {
           fprintf(file_in,"%E %E\n",r_p*cos(theta),r_p*sin(theta));
-          //fprintf(file_in,"%E %E\n",r_m*cos(theta),r_m*sin(theta));
         }
       }
     
@@ -153,13 +149,10 @@ void plot_arcs_sep(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_i
     for(int j=0;j<=npts/2;j++){
 
       if(arg_sqrt(Df0Dtheta_in, source_in, theta, pert_params, _r_e)>0.0){
-        //r_p = _r_e+dr_plus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params,_r_e);
         r_m = _r_e+dr_minus(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params,_r_e);
         if(file_in==NULL){
-          //printf("%E %E\n",r_p*cos(theta),r_p*sin(theta));
           printf("%E %E\n",r_m*cos(theta),r_m*sin(theta));
         } else {
-          //fprintf(file_in,"%E %E\n",r_p*cos(theta),r_p*sin(theta));
           fprintf(file_in,"%E %E\n",r_m*cos(theta),r_m*sin(theta));
         }
       }
