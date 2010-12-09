@@ -77,6 +77,21 @@ void plot_arcs(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_in, d
 
 }
 
+
+/** A functions to print the arcs separately
+*
+*  \param source_in a struct that define elliptical sources
+*  \param Df0Dtheta_in function related to the perturbed potential
+*  \param f1_in function related to the perturbed potential
+*  \param pert_params[] a vector that contains all the perturbation parameters
+*  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
+*  \param _r_e Einstein Radius (if is not write, the code assumes \f$ R_{_{\mathrm{E}}}=1 \f$ )
+*  \param npts number of theta divisions 
+*  \param file_in a file to write the arc's contours
+*  \return nothing
+*
+*  \sa f_type, dr_plus, dr_minus
+*/
 void plot_arcs_sep(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_in, double pert_params[], double kappa2, double _r_e, int npts=500, FILE *file_in=NULL){
   double theta = 0.0;
   double r_p = 0.0;
