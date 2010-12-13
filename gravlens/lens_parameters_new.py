@@ -49,7 +49,10 @@ def lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_pa
 
 
 	Output:
-	 - (ndarray, header) : resultant image array and (updated) header instance
+	 - <str> : a string with all the lines gravlens needs to its configuration
+	 - <str> : a string line that only defines the lens used (in gravlens format) 
+	 - <dic> : all gravlens defaults (defined at 'set_gravlens_default') plus the
+		   ones used as input
 
 	"""
 

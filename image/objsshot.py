@@ -1,5 +1,20 @@
 #!/usr/bin/env python
 
+import sys;
+import os;
+
+import re;
+import string;
+import numpy as np;
+import pyfits;
+
+import sltools;
+from sltools.io import *;
+from sltools.image import segment,imcp;
+from sltools.string import *;
+
+#!/usr/bin/env python
+
 """Program for automate SExtractor run and produce objects postamps
 
 The following functions run SExtractor on given image and create poststamps of identified objects.
@@ -224,12 +239,6 @@ def readout_objs(fits_image, params=[], args={}, use_header=True, increase=0, pr
 
     return ({'IDs' : objIDs, 'images' : objs, 'headers' : hdrs});
 
-#-------------------------------------------------------------------------------
-def run(fits_image, params=[], args={}, use_header=True, increase=0, custom=''):
-    """This is just an alias for function 'readout_objs', use it instead of run."""
-    return ( readout_objs( fits_image, params, args, use_header, increase, preset=custom ));
-
-# ---
 
 # ==============================================================================================
 def pickout_obj(fits_image, xo, yo, params=[], args={}, use_header=True, increase=0, preset=''):
@@ -306,6 +315,36 @@ def pickout_obj(fits_image, xo, yo, params=[], args={}, use_header=True, increas
 # ---
 
 # \cond
+#---------------------------------------------------------------------------------------------------
+def _check_config(cfg_file):
+    """Check if given config file has the necessary structure.
+
+    In particular, if checking fails, a fixing procedure based on
+    Sextractor config file (default.sex) design.
+    """
+
+    fp = open(cfg_file, 'r');
+
+    file = filter( _valid_line, fp.readlines() );
+
+    for line in file:
+
+        if ( re.search("\[.*\]",line) ) :
+            continue;
+
+        if not ( bool(re.search("=",line))  or  bool(re.search(":",line)) ) :
+            return (False);
+
+        if not ( len(string.split(line,sep="=")) >= 2  or  len(string.split(line,sep=":")) >= 2 ) :
+            return (False);
+
+    fp.close();
+
+
+    return (True);
+
+# ---
+
 # =======================================================================================================
 
 if __name__ == "__main__" :

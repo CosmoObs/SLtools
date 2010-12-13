@@ -1,5 +1,5 @@
 """
-sltools is a library designed to support strong lensing applications 
+a library designed to support strong lensing applications 
 
 The following example shows how to import a package:
 

@@ -8,7 +8,7 @@ from pywcs import WCS;
 
 # SLTOOLS:
 from sltools.image import imcp;
-from sltools.Packages import sextractor as SE;
+from sltools.image import sextractor as SE;
 
 
 # -----
@@ -59,12 +59,6 @@ def click(image,hdr):
 
 # ---
 
-def fits_2_img(fits_image, preset=''):
-    """Run Sextractor and read images to arrays"""
-
-
-# ---
-
 def select_objects(segimg, objimg, centroids, header=None):
     """Select objects based on given positions
 
@@ -90,8 +84,7 @@ def select_objects(segimg, objimg, centroids, header=None):
         if ( objid != 0 ):
             objIDs.append(objid);
         else:
-            print >> sys.stdout, "No objects were identified on given (x=%s,y=%s) position." % (xo,yo);
-            return None;
+            print >> sys.stdout, "No objects were identified for (x=%s,y=%s) position." % (xo,yo);
 
     # Read out the objects recognized from images..
     #
@@ -202,36 +195,16 @@ def run(fits_image, preset='', use_header=True):
     if not _dic:
         return False;
 
-    objimg = pyfits.getdata( _dic['OBJECTS_file'] );
-    segimg = pyfits.getdata( _dic['SEGMENTATION_file'] );
-    cat = pyfits.open( _dic['CATALOG_file'] )[1].data;
+    objimg = pyfits.getdata( _dic['OBJECTS'] );
+    segimg = pyfits.getdata( _dic['SEGMENTATION'] );
+    cat = pyfits.open( _dic['CATALOG'] )[1].data;
     del _dic;
-
-
-#    # Print out selected points..
-#    #
-#    print "%s:" % (fits_image);
-#    print "%s  X     :  Y     :  RA       :  DEC" % (len(fits_image)*' ');
-#    if (header):
-#        for i in range(len(x)):
-#            print "%s %4.2f : %4.2f : %3.5f : %2.5f" % (len(fits_image)*' ',x[i],y[i],ra[i],dec[i]);
-#    else:
-#        for i in range(len(x)):
-#            print "%s %.2f : %.2f : --- : ---" % (len(fits_image)*' ',x[i],y[i]);
 
 
     _dic = select_objects(segimg, objimg, centroids, header);
     if not _dic:
         return False;
     
-#    objIDs = _dic['IDs'];
-#    objs = _dic['images'];
-#    hdrs = _dic['headers'];
-
-#    imshow(objs[0]);
-#    show()
-    
-
     return (_dic);
 
 # ---

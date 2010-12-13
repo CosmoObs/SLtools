@@ -1,5 +1,5 @@
 \chapter{Perturbative Approach in Strong Lensing}
-\section{Basic Ideas}
+\section{\label{sec:BasicIdeas} Basic Ideas}
 
 
 Let us assume that the two-dimensional projected density $\Sigma$ of a
@@ -59,7 +59,7 @@ We now take the first step of perturbing the situation:
 \bea
 \label{eq:rspert}
 r_s & = & \eps y \\
-\phi & = & \phi_0 + \eps \psi
+\phi & = & \phi_0 + \eps \psi \label{eq:potsplit}
 \eea
 
 which imply we have moved the source off-axis, and added a non-axially
@@ -100,10 +100,12 @@ or
 And now define
 
 \beq
+\label{eq:Cndef}
 C_n \equiv {1 \over n!} \left. {d^n \phi_0 \over dr^n }\right|_{\re}
 \eeq
 
 \beq
+\label{eq:fndef}
 f_n(\theta) \equiv  {1 \over n!} \left. {d^n \psi(\theta) \over dr^n }\right|_{\re}
 \eeq
 
@@ -255,7 +257,8 @@ it is straightforward to verify that $J=-{\kt \over \eps}
 \scriptf(\te)$ and therefore on the critical curves, where $J = 0$,
 
 \begin{equation}
-x=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right] \label{xte}.
+\label{eq:critcurves}
+x=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right]
 \end{equation}
 
 This is Alard eq. 30. From this last equation, the tangential critical
@@ -268,7 +271,9 @@ Now, substituting this last equation into eqs.~(\ref{y_1}) and
 caustic, i.e.,
 
 \begin{eqnarray}
+\label{eq:xcaustic}
 y_{1_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\cos{\te}+\frac{1}{\re}\frac{df_0}{d\te}\sin{\te}\\
+\label{eq:ycaustic}
 y_{2_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\sin{\te}-\frac{1}{\re}\frac{df_0}{d\te}\cos{\te}
 \end{eqnarray}
 
@@ -325,7 +330,7 @@ Replacing $r_s$ by eq.~\eqref{eq:rsexpanded}, we obtain:
 \eeq
 
 
-Note that $\vec{r}_{0} = (x_0,y_0)$ lies in the source plane, but we
+Note that $\vec{r}_{0} = (\yone,\ytwo)$ lies in the source plane, but we
 can write it in terms of the polar unit vectors
 
 \bea
@@ -342,22 +347,23 @@ can write it in terms of the polar unit vectors
 
 or
 
+
 \beq
 \label{eq:rzero}
-\vec{r}_{0} = \left[ x_0 \,  \cos \te + y_0 \,  \sin \te \right] \hat{r} + \left[ -x_0 \,  \sin \te + y_0 \,  \cos \te \right] \hat{\theta}.  \;\;\;
+\vec{r}_{0} = \left[ \yone \,  \cos \te + \ytwo \,  \sin \te \right] \hat{r} + \left[ -\yone \,  \sin \te + \ytwo \,  \cos \te \right] \hat{\theta}.  \;\;\;
 \eeq
 
 So that eq.~\eqref{eq:Rzero} becomes
 
 \beq
-\vec{R_{0}} = \left[ \kappa_2 x - f_{1}(\theta) \right]\hat{r} - \frac{1}{\re} \frac{\partial f_0(\theta)}{\partial \theta} \hat{\theta} -  \left[ x_0 \,  \cos \te + y_0 \,  \sin \te \right] \hat{r} + \left[ -x_0 \,  \sin \te + y_0 \,  \cos \te \right] \hat{\theta} \;\;\;
+\vec{R_{0}} = \left[ \kappa_2 x - f_{1}(\theta) \right]\hat{r} - \frac{1}{\re} \frac{\partial f_0(\theta)}{\partial \theta} \hat{\theta} -  \left[ \yone \,  \cos \te + \ytwo \,  \sin \te \right] \hat{r} - \left[ -\yone \,  \sin \te + \ytwo \,  \cos \te \right] \hat{\theta} \;\;\;
 \eeq
 
 
 Defining
 
 \beq
-\overline{f}_i(\theta) \equiv f_i(\theta) + (x_0 \cos \te + y_0 \sin \te)\re^{1-i}, \;\; i=0,1
+\overline{f}_i(\theta) \equiv f_i(\theta) + (\yone \cos \te + \ytwo \sin \te)\re^{1-i}, \;\; i=0,1
 \eeq
 
 this becomes
@@ -389,6 +395,7 @@ draw the arcs using eq.~\eqref{eq:xsoln}). The parametric equation for the
 arcs images is given by
 
 \beq
+\label{eq:parametricarcs}
 \vec{r}= \left[(\re +x)\cos{\te},(\re+x)\sin{\te}\right], \quad 0 \leq \te < 2\pi.
 \eeq
 
@@ -397,9 +404,10 @@ arcs images is given by
 %%%%%%%%%%%%%%%%%%% Gabriel
 % {\bf If someone have doubts about this procedure, let me know \ldots}
 
-We now extend the discussion of the previous section to elliptical contours.
+We now extend the discussion of the previous section to elliptical
+source contours.
 
-First we can consider the vectorial equation of an elliptical contour
+First we consider the vectorial equation of an elliptical source
 aligned along the major axis of the potential (note that this is a
 very limited set of ellipses),
 
@@ -407,7 +415,10 @@ very limited set of ellipses),
 \label{eq:ellipse}
 \vec{R}_0=\left(\sqrt{1-\eta_s} \, y_{1s},\sqrt{1+\eta_s} \, y_{2s}\right)
 \eeq
-where $\eta_s$ is the ellipticity of the source, $R_0$ is the characteristic size of the source
+
+where $\eta_s$ is the ellipticity of the source, $R_0$ is the vector from the center to the edge of the source
+
+% characteristic size of the source
 and
  
 \bea
@@ -434,7 +445,7 @@ we may express $\vec{R}_0$ as
 \vec{R}_0=\left[\sqrt{1-\eta_s}(\bar{y}_{1s}\cos{\te}+\bar{y}_{2s}\sin{\te}) \right]\hat{\imath}+\left[\sqrt{1+\eta_s}(\bar{y}_{1s}\sin{\te}-\bar{y}_{2s}\cos{\te}) \right]\hat{\jmath}
 \eeq
 
-Taking square of the equation above and solving for $\bar{y}_{1s}$, is straightforward to verify
+Taking the square of the equation above and solving for $\bar{y}_{1s}$, it is straightforward to verify
 
 \beq
 \bar{y}_{1s}=\dfrac{\eta_s\cos{(2\te)}}{S}\bar{y}_{2s}\pm \frac{1}{S}\sqrt{S R_0^2-(1-\eta_s)\bar{y}^2_{2s}}
@@ -481,6 +492,7 @@ Now, following the procedure shown above, is straightforward to obtain the expre
 lensed elliptical sources (with orientation $\te_0$).  It is given by the Eq.(\ref{elliptical_contour}) with $\te$ replaced by $\tilde{\te}$, i.e.
 
 \bea
+\label{eq:ellipsource}
 x &=& \frac{1}{\kappa_2} \left\{\bar{f}_{1}(\theta) +%
 \frac{\eta_s\sin(2\tilde{\theta})}{S}\left(\frac{1}{\re}\dfrac{\partial%
 \bar{f}_0(\theta)}{\partial \theta}\right) \pm \frac{1}{S}\sqrt{SR_{0}^2 -%
@@ -500,7 +512,10 @@ As we can see, the condition for the formation of images is given by
 S\,R^2_0>(1-\eta^2_s)\left[\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl \te}\right]^2
 \end{equation*}
 
-And therefore, the number of images is given by the quantity of times over $\theta = 0 $ to $2 \pi$ that the expression of the radicand in eq.~\eqref{elliptical_contour2} switches sign, divided by two.
+And therefore, the number of images is given by the quantity of times
+in the range $\theta = 0 $ to $2 \pi$ that the expression of the
+radicand in \eqref{elliptical_contour2}) switches sign, divided by
+two.
 
 
 \section{Measurements of the arc properties}
@@ -521,16 +536,16 @@ measurement of the width}
 \end{figure*}
 
 
-Following Pedro's ideas, shown in his Master Degree Thesis {We need to
-  start building a bibliography}, we will give the expressions for the
-measurements of the Length, Width and area of the
-arc-images. Basically, Pedro shows three methods for measuring the
-length of the arcs, denoted $L_1$, $L_2$ and $L_3$, and two methods
-for measure the width of the arcs, denoted $W$ and $W_q$.  The first
-method is overly simplistic and will not be considered in this report,
-except to introduce the geometry of the arcs. We will adapt the second
-and third methods in the framework of the Perturbative Method and also
-to propose a method similar to Clecio's Method to measure the length.
+Following P.~Ferreira's ideas, shown in \cite{pedrothesis}, we will now
+provide expressions for the measurements of the Length, Width and area
+of the arc-images. Basically, Ferreira shows three methods for
+measuring the length of the arcs, denoted $L_1$, $L_2$ and $L_3$, and
+two methods for measure the width of the arcs, denoted $W$ and $W_q$.
+The first method is overly simplistic and will not be considered in
+this report, except to introduce the geometry of the arcs. We will
+adapt the second and third methods in the framework of the
+Perturbative Method and also to propose a method similar to C.~De Bom's
+Method \cite{clecio} to measure the length.
 
 
 In the Perturbative Method, the inner and outer radial vector of an arc
@@ -542,8 +557,10 @@ are given by
 \vec{r}_{-}&=&(\re + x_{-})\cos{\te}\hat{\imath}+(\re
 +x_{-})\sin{\te}\hat{\jmath}\label{rminus}
 \eea
-where $x_{\pm}$ are given by eq.~(\ref{elliptical_contour2}). Therefore, we
-may define a mean value of the radial coordinate at a given angle $\te$ as
+where $x_{\pm}$ are given by eq.~(\ref{elliptical_contour2}) for an
+elliptical source oriented in any direction with respect to the source
+potential semimajor axis.  Therefore, we may define a mean value of
+the radial coordinate at a given angle $\te$ as
 
 \bea
 \bar{r}(\te)&=&\dfrac{r_{+}+r_{-}}{2}=\re+\left(\dfrac{x_{+}+x_{-}}{2}
@@ -552,7 +569,7 @@ may define a mean value of the radial coordinate at a given angle $\te$ as
 \frac{\eta_s\sin(2\tilde{\theta})}{S}\left(\frac{1}{\re}\dfrac{\partial%
 \bar{f}_0(\theta)}{\partial \theta}\right) \right\},\label{r_mean}
 \eea
-and the width as a function of $\te$ is then
+and the width as a function of $\te$ is given by 
 \beq
 W(\te)=x_+ - x_- = \dfrac{2}{\kt\,S}\sqrt{SR_{0}^2 -(1-\eta_s^2)\left[ \frac{1}{\re}\frac{\partial \bar{f}_0(\theta)}{\partial \theta}\right]^2}
 \label{w_arc}
@@ -564,6 +581,7 @@ Another useful quantity is the angle defining the barycenter of the image, given
 \label{angle_bary}
 \eeq
 
+where $ \te_i , \te_f $ label the beginning and ending angular position of a given arc.
 
 \subsection{Measurement of the Length}
 
@@ -587,13 +605,14 @@ L_1=\sqrt{\bar{r}_i^2+\bar{r}_f^2-2\bar{r}_i\bar{r}_f\cos{(\te_f-\te_i)}}.
 \label{first_length_def}
 \eeq
 
-This overly simplistic method will not be further discussed in this report.
+This overly simplistic method was only introduced for notational
+purposes, and will not be further discussed in this report.
 
 The second method consists of calculating the distance resulting of
 the summation of the straight line segments joining the points $P_1$
 and $P_G$ ($L_{1G}$) and $P_G$ and $P_2$ ($L_{2G}$). Where the Point
-$P_G$ correspond to the barycenter of the image, defined by radial
-vector at the angle $\te_G$.
+$P_G$ correspond to the barycenter (i.e. gravicenter) of the image,
+defined by radial vector at the angle $\te_G$.
 
 \beq
 P_G\equiv
@@ -622,7 +641,7 @@ x^2+y^2+Ax+By+C=0\\
 \eeq 
 
 Considering the circular arc that passes through three points $P_1$, $P_G$ and
-$P_2$, we need solve the following system of equation
+$P_2$, we need to solve the following system of equations
 
 
 \begin{equation}
@@ -641,16 +660,17 @@ where
  R_c &=&\sqrt{x_c^2+y_c^2-C}. 
 \eea
 
-Then, the length of the image is defined by
+The length of the image is then defined in this method by
 \beq
 L_3=R_c\arccos{\left(1-\dfrac{L_1^2}{2R_c^2}  \right)}
 \eeq
 where $L_1$ was given in Eq.~(\ref{first_length_def}).
 
-Another proposal to measure the length corresponds perhaps to a more
-accurate way of obtaining it (corresponding to the length of an arc of
-circumference passing through the points $P_1$ and $P_2$), see the dashed
-line at the Left Panel of the Fig.~\ref{measure_arcs}, and is given by
+Another proposal to measure the length yields perhaps a yet more
+accurate way of obtaining it.  This method gives the length of a
+circular arc segment passing through the points $P_1$ and $P_2$, see
+the dashed line at the Left Panel of the Fig.~\ref{measure_arcs}, and
+is given by
 
 \beq
 L_4=\int_{\te_i}^{\te_f}\bar{r}(\te)d\te.
@@ -688,18 +708,18 @@ Note, that for a circular source, $\mathcal{L}_s$ becomes
 \subsection{Measurement of the Width}
 
 The first method to obtain the width of the arcs, is to measure the width 
-at the angle $\te_G$, i.e, $W_q \equiv W(\te_m)$.
+at the angle $\te_G$, i.e, $W_q \equiv W(\te_m)$, using \eqref{w_arc}).
 
 
-The second method consists of finding the area of the image. This area is given by
+The second method consists of using the area of the image. This area is given by
 \bea
-\mathcal{A}&=&\int_{\te_i}^{\te_f}\int_{r_{-}(\te)}^{r_{+}(\te)}rdrd\te \nonumber\\
+\mathcal{A}&=&\int_{\te_i}^{\te_f}\int_{r_{-}(\te)}^{r_{+}(\te)}r \, dr \, d\te \nonumber\\
            &=&\int_{\te_i}^{\te_f}W(\te)\bar{r}(\te)d\te.
 \eea
 where, $\bar{r}(\te)$ and $W(\te)$ are given by the Eqs. (\ref{r_mean}) and (\ref{w_arc}) respectively.
 
-Here, we suppose that the area of an arc is the area of a distorted ellipse. With this supposition the
-width of an arcs is given by
+Now we assume that the area of an arc is exactly that of a distorted
+ellipse. With this assumption, the width of an arcs is given by
 \beq
 W_k=\dfrac{4\mathcal{A}}{\pi L_k}
 \eeq
@@ -715,15 +735,14 @@ fields $f_0(\te)$ and $f_1(\te)$.
 
 
 For a circular source contour, a radial line of direction $\te$ intersects
-the contours at two point, $r_i=\re+x_i$ and $r_o=\re+x_o$ (the inner part and
-the outer part). Now, taking the Alard's Eq. 12
+the arc contours at two points, $r_i=\re+x_i$ and $r_o=\re+x_o$ (the inner part and
+the outer part). Now, we will use Alard Eq. 12
 
 \beq
 x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;
 \eeq
 
 And the separate two solutions for the inner and outer edges of the arc:
-
 
 
 \bea
@@ -734,8 +753,9 @@ x_o = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) + \sqrt{R_0^2 - %
 \eea
 
 
-Now clearly
+With these, clearly
 
+[There is a problem here, dealing with the definition of $r_{i,o}$ vs. $x_{i,o}$ -MSSG, Dec 6]
 \beq
 x_o + x_i  = {2 \over \kappa_2} \fbar -2\re
 %= r_o+r_i - 2\re  ??

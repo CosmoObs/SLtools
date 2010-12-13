@@ -17,7 +17,7 @@ following functions.
 # option = value
 #
 # So that, function read from config
-#   section:option:value
+#   section->option->value
 # to python dicitonary
 #   {'section' : { 'option' = 'value' }}
 #
@@ -191,7 +191,7 @@ def read_xml( config_file, _section='section', _key='scalar', _value='default' )
     return map;
 
 # ---
-
+"""
 ###########################
 if __name__ == "__main__" :
     import optparse;
@@ -232,3 +232,4 @@ if __name__ == "__main__" :
     print "-";
 
     sys.exit(0);
+"""

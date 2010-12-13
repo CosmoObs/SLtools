@@ -199,6 +199,10 @@
           x2sc(i)=-x1t(i)*rx2+x2t(i)*rx1
           y1sc(i)=y1t(i)*rx1+y2t(i)*rx2
           y2sc(i)=-y1t(i)*rx2+y2t(i)*rx1
+	  if(e.le.1.d-7)then
+	    y1sc(i)=0.0d0
+	    y2sc(i)=0.d0
+	  endif
         end do
 
 !       Writing in the first quadrant

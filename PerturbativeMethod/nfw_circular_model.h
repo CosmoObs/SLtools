@@ -231,11 +231,16 @@ double r_e_nfw_find(double pot_params[], double *est_err_out=NULL, double x_lo =
   params[1] = pot_params[1];
   
   double out[2];
-  
-  bracketing_lambda_t(re_find_func_nfw, params, out);
+  double v_in,dz;
+  double ks=pot_params[0],rs=pot_params[1];
+  if(ks<=0.11){v_in=5.E-3*rs;}
+  if((ks>0.11) && (ks<=0.5)){v_in=2.5E-1*rs;}
+  if((ks>0.15) && (ks<=1.0)){v_in=0.5*rs;}
+  if(ks>1.0){v_in=1.0*rs;}
+  dz=v_in*1.E-3;
+  bracketing_lambda_t(re_find_func_nfw, params, out,v_in,dz);
   printf("the range where the root is [%f , %f]\n", out[0],out[1]);
-  
-  
+    
   double re = root_find(re_find_func_nfw, params,est_err_out, out[0],out[1],max_iter,relative_error,v);
   return re;
 }

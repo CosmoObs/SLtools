@@ -6,7 +6,7 @@ The catalog package has modules to handle FITS and ascii catalogs
 """
 
 from sort_by_column import *
-from get_fits_data import *
+from fits import *
 from open_fits_catalog import *
 from halos.get_halo_parameters import *
 from halos.select_halos_by_radec import *

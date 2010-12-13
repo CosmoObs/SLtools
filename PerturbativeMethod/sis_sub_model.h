@@ -30,7 +30,7 @@ double _r_e_model = 1.0;
 
 *  \sa Df0Dtheta_pert_SIS, f_type
 */
-double f1_pert_SIS(double theta, double pot_params[]){	
+double f1_pert_SIS(double theta, double pot_params[],  double a){	
   double mp=pot_params[0], rp=pot_params[1],theta_p=pot_params[2];
   double re=_r_e_model, bar_theta=theta-theta_p;
   double tmp1 = mp*(re-rp*cos(bar_theta));
@@ -49,7 +49,7 @@ double f1_pert_SIS(double theta, double pot_params[]){
 
 *  \sa f1_pert_SIS, f_type
 */
-double Df0Dtheta_pert_SIS(double theta, double pot_params[]){
+double Df0Dtheta_pert_SIS(double theta, double pot_params[], double a){
     double mp=pot_params[0], rp=pot_params[1],theta_p=pot_params[2];
   double re=_r_e_model, bar_theta=theta-theta_p;
   double tmp1 = mp*re*rp*sin(bar_theta);
@@ -58,7 +58,7 @@ double Df0Dtheta_pert_SIS(double theta, double pot_params[]){
 }
 /**********************************************************************************************************************/
 
-double D2f0Dtheta2_pert_SIS(double theta, double pot_params[]){
+double D2f0Dtheta2_pert_SIS(double theta, double pot_params[], double a){
 double mp=pot_params[0],rp=pot_params[1],thetap=pot_params[2];
 double bar_theta=theta-thetap, re=_r_e_model;
 double Rsq=pow(re,2)-2.0*rp*re*cos(bar_theta)+pow(rp,2);

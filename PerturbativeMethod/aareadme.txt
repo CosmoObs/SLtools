@@ -8,6 +8,8 @@
 arcdifferencemeasure.h*
 arc_properties.h*
 
+comparison_fns.h*
+
 generate_curves.h*
 gof_per_method.h*
 
