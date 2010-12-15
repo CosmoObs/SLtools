@@ -151,3 +151,4 @@ if __name__ == '__main__' :
     if reg:
         ret = read_cat(reg);
         print zip(ret['x'],ret['y'],ret['dx'],ret['dy']);
+

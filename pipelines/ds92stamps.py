@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import sys;
 
 """ Module for automate the process of object images segmentation """
@@ -17,7 +17,7 @@ import numpy as np;
 from numpy import asarray as ndaa;
 import re;
 
-from sltools.io import check_dependencies as ckdep;
+#from sltools.io import check_dependencies as ckdep;
 from sltools.catalog import ds9region as ds9reg;
 from sltools.image import sextractor as se;
 from sltools.image import segobjs;
@@ -144,7 +144,7 @@ def run(regionfile, imagename, outfits='.pstamp_', catrootname='objectsin_'):
 
     centroids = zip(ndaa(Dds9['x'],dtype=int),ndaa(Dds9['y'],dtype=int));
 
-    imagename_ds9 = Dds9['image'].rstrip('\n');
+    imagename_ds9 = Dds9['image'];
     if (imagename != imagename_ds9):
         print >> sys.stderr,"Image filenames do not match: %s %s" % (imagename,imagename_ds9);
         print >> sys.stderr,"Continuing with image %s " % (imagename);
@@ -202,10 +202,10 @@ if __name__ == '__main__' :
 
     parser.add_option('-o',
                         dest='outPstamp', default='.pstamp_',
-                        help='Output (image) file rootname ["pstamp_"]');
+                        help='Output (image) file name appended to image file rootname [".pstamp_"]');
     parser.add_option('-c',
                         dest='outCatalog', default='objectsin_',
-                        help='Name for output identified objects (csv) catalog');
+                        help='Name for output identified objects (csv) catalog ["objectsin_"]');
 
     (opts,args) = parser.parse_args();
 
@@ -219,7 +219,7 @@ if __name__ == '__main__' :
     regionfile = args[0];
     imagename = args[1];
 
-    run(regionfile, imagename, outfitsname, catrootname):
+    run(regionfile, imagename, outfitsname, catrootname)
 
     print >> sys.stdout, "Done.";
     sys.exit(0);
