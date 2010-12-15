@@ -56,7 +56,7 @@ def _hdr_dimpix( hdr ):
 		CUNIT2 = str(hdr['CUNIT2']);
 	except:
 		print >> sys.stderr, "Warning: Unable to find 'CUNIT[1|2]' parameters in header instance for image coordinates unit.";
-		print >> sys.stderr, "         Degrees ('deg') is being used as default value.";
+		print >> sys.stderr, "         Degrees ('deg') is being used as default unit value.";
 		CUNIT1 = 'deg';
 		CUNIT2 = 'deg';
 
@@ -251,6 +251,10 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 
 	"""
 
+	xo=float(xo);
+	yo=float(xo);
+	x_size=float(x_size);
+	y_size=float(y_size);
 
 	imagem = image;
 	hdr = header;
@@ -297,7 +301,6 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 		print >> sys.stdout, "Warning: Requested output sizes are the same as input image. Returning image and header unchanged.";
 		return (imagem,hdr);
 
-
 	# Verify central coordinates values..
 	#
 	if ( coord_unit == 'pixel' and (xo != 0 and yo != 0) ):
@@ -307,8 +310,8 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 	elif ( coord_unit == 'degrees' and (xo != 0 and yo != 0) ):
 		_out = commands.getoutput( 'sky2xy %s %s %s' % (input_file, xo, yo) );
 		_out = string.split(_out);
-		x_halo = int(_out[-2])-1;
-		y_halo = int(_out[-1])-1;
+		x_halo = int(float(_out[-2]))-1;
+		y_halo = int(float(_out[-1]))-1;
 
 	elif ( xo == 0 and yo == 0 ):
 		x_halo = int(x_img_size/2);

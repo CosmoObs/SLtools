@@ -27,11 +27,9 @@ import sextractor as se;
 run_sex = se.run;
 
 #=============================================================================
-def objects_IDfy(objIDs, seg_img, obj_img):
+def object_shots(objIDs, seg_img, obj_img):
     """
     Identify objects on given images by their IDs and return object images
-
-    objects_IDfy( objIDs.list, seg_img.ndarray, obj_img.ndarray )
 
     Function identifies the pixels of each ID(int) in 'objIDs' on segmentation
     image(array) - seg_img. These identified pixels (their values) are copied 
@@ -42,12 +40,15 @@ def objects_IDfy(objIDs, seg_img, obj_img):
     object, is returned.
 
     Input:
-     - objIDs  : a list with (int) numbers that identify the objects in seg_img
-     - seg_img : image with segmented objects, with pixels values in objIDs
-     - obj_img : image with objects (observed pixel values)
+     - objIDs  : [int,]
+        List with (int) numbers that identify the objects in seg_img
+     - seg_img : <ndarray>
+        Segmentation image with plain objects (pixels -int- values in objIDs)
+     - obj_img : <ndarray>
+        Image with objects (observed -float- pixel values)
 
     Output:
-     - objs_list : a list with arrays containing each identified object
+     - [ndarray,] : List with arrays containing each segmented object (float) values
 
     """
 
@@ -77,10 +78,11 @@ def objects_IDfy(objIDs, seg_img, obj_img):
 
     return (objs_list);
 
+objects_IDfy = object_shots;
 # ---
 
 #==========================================================================================================================
-def images_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
+def image_shots(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
     """
     Identify objects on given images by their IDs on catalog and write object images
 
@@ -130,3 +132,4 @@ def images_IDfy(catalog, seg_image, obj_image, out_rootname="IDfy_out_"):
 
     return (True);
 
+images_IDfy = image_shots;

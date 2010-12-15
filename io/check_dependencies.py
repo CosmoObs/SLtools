@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys;
 
 """Check if some system binaries and/or python modules are installed"""
 
@@ -7,51 +8,40 @@
 # Verify system dependencies, binaries in your PATH and python modules.
 #
 
-import sys;
-
 import commands;
 
 
 #=============================================
-def check_dependencies( dep_struct={'binaries':[''], 'modules':['']} ):
-	"""
-	check_dependencies( { 'binaries' : ['bin1','bin2'] , 'modules' : ['mod1','mod2'] } ) -> True/False
-
-	Functions check whether listed binaries (bin1, bin2) and python
-	modules (mod1, mod2)  do exist and are reachable on current system
+def check_deps( binaries=[], modules=[] ):
+	"""	Check if listed binaries (bin1, bin2) and python modules 
+    (mod1, mod2)  do exist and are executable from current shell.
 
 	Input:
-	 - dep_struct : dictionary with binaries/modules lists
+	 - binaries : [str,]
+        list of binaries ($PATH) to check
+     - modules : [str,]
+        list of modules ($PYTHONPATH) to check
 
 	Output:
 	 - True/False : If all items exist, return True. Otherwise, False
-
-	Example:
-	>>> deps = {'binaries':['ls','cat'], 'modules':['sys','os','logging']}
-	>>> check_dependencies( deps )
-	True
 
 	"""
 
 	check_flag = True;
 
-	bin_key = dep_struct.has_key('binaries');
-	mod_key = dep_struct.has_key('modules');
-
-	if not (bin_key  or  mod_key):
-		print >> sys.stderr, "Error: Given dictionary does not contain a valid key.";
-		return (False);
+	if binaries==[]  and  modules==[]):
+		return (True);
 
 
-	if (bin_key):
-		for _bin in dep_struct['binaries']:
+	if binaries :
+		for _bin in binaries:
 			_statusoutput = commands.getstatusoutput('which %s' % (_bin));
 			if _statusoutput[0] != 0:
 				print "Error: %s not found." % (_bin);
 				check_flag = False;
 
-	if (mod_key):
-		for _mod in dep_struct['modules']:
+	if modules:
+		for _mod in modules:
 			try:
 				__import__(_mod);
 			except ImportError:
@@ -60,4 +50,7 @@ def check_dependencies( dep_struct={'binaries':[''], 'modules':['']} ):
 
 	return check_flag
 
+def check_dependencies( dep_struct={'binaries':[''], 'modules':['']} ):
+    """ DEPRECATED - see check_deps for new format """
+    return check_deps(binaries=dep_struct['binaries'],modules=dep_struct['modules'])
 # ---

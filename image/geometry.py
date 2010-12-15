@@ -95,25 +95,25 @@ def Perpendicular_Bisector(p1,p2):
      
     """
 
-	x1=p1[0]
-	y1=p1[1]	
-	x2=p2[0]
-	y2=p2[1]	
-	Dy=float(y2-y1)
-	Dx=float(x2-x1)
-	b1=0
-	My=0
-	Mx=0
-	if (fabs(Dy)>0): 
-		m=-(Dx)/(Dy)
-		theta=atan(m)
-		My=float(y2+y1)/2.
-		Mx=float(x2+x1)/2.
-		
-		b1=My-m*Mx			
-	elif Dy==0:
-		m=0
-		theta=2*atan(1)
-		b1=float(x2+x1)/2.		
-			
-	return theta,b1	
+    x1=p1[0]
+    y1=p1[1]	
+    x2=p2[0]
+    y2=p2[1]	
+    Dy=float(y2-y1)
+    Dx=float(x2-x1)
+    b1=0
+    My=0
+    Mx=0
+    if (fabs(Dy)>0): 
+        m=-(Dx)/(Dy)
+        theta=atan(m)
+        My=float(y2+y1)/2.
+        Mx=float(x2+x1)/2.
+        
+        b1=My-m*Mx			
+    elif Dy==0:
+        m=0
+        theta=2*atan(1)
+        b1=float(x2+x1)/2.		
+            
+    return theta,b1	

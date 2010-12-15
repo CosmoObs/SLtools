@@ -5,13 +5,51 @@
 import re;
 import string;
 
+
+def write_cat(centroids=[],size=20,marker='circle',color='green',imagefile='null.fits',outputfile='ds9.reg'):
+    """ Function to write a ds9 region file
+    
+    It works only with a circular 'marker' with fixed
+    radius for all (x,y) - 'centroids' - given.
+    
+    Input:
+     - centroids : [(x0,y0),]
+     - size : int
+     - marker : str
+     - outputfile : str
+
+    Output:
+     <bool>
+
+    """
+
+    output = open(outputfile,'w');
+    
+    # DS9 region file header
+    output.write("# Region file format: DS9 version 4.1 \n");
+    output.write("# Filename: %s \n" % (imagefile));
+    output.write("global color="+color+" dashlist=8 3 width=1 font=\"helvetica 10 normal\" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n");
+    output.write("image\n");
+
+    # Circle entities
+    for o_o in centroids:
+        output.write("%s(%d,%d,%d) \n" % (marker,o_o[0],o_o[1],size));
+        
+    output.close();
+    
+    print "New file: ds9.reg"
+    return (True);
+    
+# ---
+
 def read_cat(regionfile):
     """ Function to read ds9 region file
 
     Only regions marked with a 'circle' or 'box' are read.
-    Color used for region marks (circle/box) are also read
-    with the purpose of being used as a 'tag'.
-    'x','y','dx','dy' are given in a dictionary as output.
+    'color' used for region marks (circle/box) are given as
+    output together with 'x','y','dx','dy' as list in a 
+    dictionary. The key 'image' in the output (<dict>) gives
+    the filename in the 'regionfile'.
     
     Input:
      - regionfile   :   ASCII (ds9 format) file
@@ -69,5 +107,48 @@ def read_cat(regionfile):
 
 if __name__ == '__main__' :
     import sys;
-    ret = read_cat(sys.argv[1]);
-    print zip(ret['x'],ret['y'],ret['dx'],ret['dy']);
+    import string;
+    import numpy;
+    import optparse;
+    
+    parser = optparse.OptionParser();
+    
+    parser.add_option('-r',
+                    dest='regionfile',default=None,
+                    help='DS9 Region file');
+    parser.add_option('-c',
+                    dest='block_data', default=None,
+                    help='ASCII file with values in columns whitespaced (block data). Header should be commented (#)');
+    parser.add_option('--cols_xy',
+                    dest='xy_columns',default='1,2',
+                    help='Column id. So far, just where "x" and "y" are concerns so far');
+    parser.add_option('--color',
+                    dest='mark_color',default='green',
+                    help='Color to use for region file markers');
+    
+    (opts,args) = parser.parse_args();
+    
+    reg = opts.regionfile;
+    cat = opts.block_data;
+    cols = opts.xy_columns;
+    color = opts.mark_color;
+    
+    if not (reg or cat) :
+        parser.print_help();
+        parser.exit(msg='No (ds9) region file nor block data given.\n');
+        
+    xcol,ycol = string.split(cols,sep=',');
+    xcol = int(xcol);
+    ycol = int(ycol);
+
+    if cat:
+        data = numpy.loadtxt(cat,comments='#').T;
+        x,y = data[xcol-1],data[ycol-1];
+        x = x.tolist();
+        y = y.tolist();
+        write_cat(zip(x,y),imagefile='F814W_sci.fits',color=color);
+        
+    if reg:
+        ret = read_cat(reg);
+        print zip(ret['x'],ret['y'],ret['dx'],ret['dy']);
+
