@@ -20,22 +20,29 @@ the point source in the source plane (see fig. 5 in \cite{NarayanAndB}
 for this configuration), $\vec{r} = r \hat{r} $ is the angular
 position of the point source in the image plane, and $\vec{\alpha}$ is
 the deflection angle, which is equal to the gradient of the 2D
-projected lens potential $\phi$ in the image plane, which in polar coordinates is
+projected lens potential $\phi$ in the image plane, which in polar coordinates
+is
 
 \beq
-\vec{\alpha} = \nabla_r \phi = \dfrac{\prtl  \phi}{\prtl r} \hat{r} + \dfrac{1}{r} \dfrac{\prtl  \phi}{\prtl \theta} \hat{\theta}.
+\vec{\alpha} = \nabla_r \phi = \dfrac{\prtl  \phi}{\prtl r} \hat{r} +
+\dfrac{1}{r} \dfrac{\prtl  \phi}{\prtl \theta} \hat{\theta}.
 \eeq
 
-(also, we use $ \hat{r}, \hat{\theta}$ in place of Alard's $\hat{u}_r, \hat{u}_\theta$).
+(also, we use $ \hat{r}, \hat{\theta}$ in place of Alard's $\hat{u}_r,
+\hat{u}_\theta$).
 
 Thus
 \bea
-\vec{r}_s & = & r \hat{r} - \left( \dfrac{\prtl  \phi}{\prtl r} \hat{r} + {1 \over r} \dfrac{\prtl  \phi }{ \prtl \theta} \hat{\theta} \right) \label{eq:rs} \\
-& = & \left( r -  \dfrac{\prtl \phi}{\prtl r} \right) \hat{r} -  \dfrac{1}{r} \dfrac{\prtl \phi }{\prtl \theta} \hat{\theta}
+\vec{r}_s & = & r \hat{r} - \left( \dfrac{\prtl  \phi}{\prtl r} \hat{r} + {1
+\over r} \dfrac{\prtl  \phi }{ \prtl \theta} \hat{\theta} \right) \label{eq:rs}
+\\
+& = & \left( r -  \dfrac{\prtl \phi}{\prtl r} \right) \hat{r} -  \dfrac{1}{r}
+\dfrac{\prtl \phi }{\prtl \theta} \hat{\theta}
 \eea
 
 Now let us go to the simplest case of an on-axis point source with
-perfectly axially symmetric potential $\phi(\vec{r}) = \phi_0(|\vec{r}|)$.  In this case
+perfectly axially symmetric potential $\phi(\vec{r}) = \phi_0(|\vec{r}|)$.  In
+this case
 $r_s = 0$ and  ${\prtl \phi_0 \over \prtl \theta} = 0$ since there is no
 angular variation of the potential.
 
@@ -52,16 +59,19 @@ the solution to which is the Einstein Radius
   \re =  \left. {\prtl  \phi \over \prtl r} \right|_{\re} 
 \eeq
 
-where the derivative of the potential is to be evaluated at the Einstein radius, $ \re$.
+where the derivative of the potential is to be evaluated at the Einstein radius,
+$ \re$.
 
-This indicates the point source is spread into a circle of radius $ \re $ in the image plane.
+This indicates the point source is spread into a circle of radius $ \re $ in the
+image plane.
 
 We now take the first step of perturbing the situation:
 
 \bea
 \label{eq:rspert}
 \vec{r}_s & = & \eps \vec{y}, \\
-\phi( \vec{r} ) & = & \phi_0(|\vec{r}|) + \eps \psi( \vec{r} ) \label{eq:potsplit},
+\phi( \vec{r} ) & = & \phi_0(|\vec{r}|) + \eps \psi( \vec{r} )
+\label{eq:potsplit},
 \eea
 
 which imply we have moved the source off-axis, and added a non-axially
@@ -88,17 +98,22 @@ Note that now the perturbed distance $x$ is in the image plane.
 
 To recap: $r_s, y$ are in the source plane, while $r, x$ are in the image plane.
 
-Now we do a Taylor series expansion of the potential about the Einstein ring radius:
+Now we do a Taylor series expansion of the potential about the Einstein ring
+radius:
 
 \beq
-\phi = \phi_0 + \eps \psi = \sum_{n=0}^\infty {1 \over n!} \left. {d^n \phi_0 \over dr^n }\right|_{\re} (r-\re)^n + \eps {1 \over n!} \left. {d^n \psi \over dr^n }\right|_{\re} (r-\re)^n
+\phi = \phi_0 + \eps \psi = \sum_{n=0}^\infty {1 \over n!} \left. {d^n \phi_0
+\over dr^n }\right|_{\re} (r-\re)^n + \eps {1 \over n!} \left. {d^n \psi \over
+dr^n }\right|_{\re} (r-\re)^n
 \eeq
 
 or
 
 \beq
 \label{eq:tse}
-\phi  = \sum_{n=0}^\infty \left[ {1 \over n!} \left. {d^n \phi_0 \over dr^n }\right|_{\re} + \eps {1 \over n!} \left. {d^n \psi \over dr^n }\right|_{\re} \right] (r-\re)^n
+\phi  = \sum_{n=0}^\infty \left[ {1 \over n!} \left. {d^n \phi_0 \over dr^n
+}\right|_{\re} + \eps {1 \over n!} \left. {d^n \psi \over dr^n }\right|_{\re}
+\right] (r-\re)^n
 \eeq
 
 And now define
@@ -123,30 +138,40 @@ So that we can write  eq.(\ref{eq:tse}) as
 where $f_n(\theta)$ is a one-dimensional function independent of $r$.
 
 
-Now we go back and substitute \eqref{eq:rspert}) and \eqref{eq:rpert}) into \eqref{eq:rs}) to find
+Now we go back and substitute \eqref{eq:rspert}) and \eqref{eq:rpert}) into
+\eqref{eq:rs}) to find
 \beq
-\eps y = \left( \re + \eps x -  {\prtl  \phi \over \prtl r} \right) \hat{r} - {1 \over \re + \eps x}  {\prtl  \phi \over \prtl \theta} \hat{\theta}
+\eps y = \left( \re + \eps x -  {\prtl  \phi \over \prtl r} \right) \hat{r} - {1
+\over \re + \eps x}  {\prtl  \phi \over \prtl \theta} \hat{\theta}
 \eeq
 
 Now substitute \eqref{eq:tse2}) into this to find
 
 \bea
-\eps \vec{y} = \left( \re + \eps x -  {\prtl \over \prtl r} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n  \right) \right) \hat{r} - \\
-{1 \over \re + \eps x}  {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n  \right)  \hat{\theta} \nonumber
+\eps \vec{y} = \left( \re + \eps x -  {\prtl \over \prtl r} \left(
+\sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n  \right) \right)
+\hat{r} - \\
+{1 \over \re + \eps x}  {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty
+\left[ C_n + \eps f_n  \right] (r-\re)^n  \right)  \hat{\theta} \nonumber
 \eea
 
-Remembering that $C_n$ and  $f_n$ are independent of $r$, and using \eqref{eq:rpert}), $r-\re = \eps x$ we find
+Remembering that $C_n$ and  $f_n$ are independent of $r$, and using
+\eqref{eq:rpert}), $r-\re = \eps x$ we find
 
 \bea
 \label{eq:tse3}
-\eps y = \left( \re + \eps x -   \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] n (\eps x)^{n-1}  \right) \hat{r} - \\
-{1 \over \re + \eps x}  {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (\eps x)^n  \right)  \hat{\theta} \nonumber
+\eps y = \left( \re + \eps x -   \sum_{n=0}^\infty \left[ C_n + \eps f_n 
+\right] n (\eps x)^{n-1}  \right) \hat{r} - \\
+{1 \over \re + \eps x}  {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty
+\left[ C_n + \eps f_n  \right] (\eps x)^n  \right)  \hat{\theta} \nonumber
 \eea
 
-Let us expand \eqref{eq:tse3} in orders, first the zero'th order piece in $\eps$:
+Let us expand \eqref{eq:tse3} in orders, first the zero'th order piece in
+$\eps$:
 
 \beq
-0 =  \left(\re - C_1 \right) \hat{r} \rightarrow \re = C_1 = \left. \prtl \phi \over \prtl \theta \right|_{\re},
+0 =  \left(\re - C_1 \right) \hat{r} \rightarrow \re = C_1 = \left. \prtl \phi
+\over \prtl \theta \right|_{\re},
 \eeq
 
 so that we reassuringly recover the Einstein ring solution.
@@ -154,7 +179,8 @@ so that we reassuringly recover the Einstein ring solution.
 Next the first order piece in $\eps$:
 
 \beq
-\eps \vec{y} = \left( \eps x - (2 C_2 \eps x + \eps f_1 ) \right) \hat{r} - {1 \over \re} \eps {\prtl f_0 \over \prtl \theta } \hat{\theta}
+\eps \vec{y} = \left( \eps x - (2 C_2 \eps x + \eps f_1 ) \right) \hat{r} - {1
+\over \re} \eps {\prtl f_0 \over \prtl \theta } \hat{\theta}
 \eeq
 
 where the coefficient of $C_2$ was expanded to order $n=2$, that of
@@ -163,19 +189,22 @@ the $f_1$ term to order $n=1$, and that of the $\prtl f_1 \over \prtl
 
 %Bit involved, but this is how to get each term proportional to $\eps$.
 
-%Now we will return to the ``physical variables'' $\eps \vec{y} = \vec{r}_s, \eps x = \Delta r
+%Now we will return to the ``physical variables'' $\eps \vec{y} = \vec{r}_s,
+%\eps x = \Delta r
 
 Now divide through by $\eps$ and collect terms:
 
 \beq
- \vecy = \left[ (1-2 C_2) x -  f_1 \right] \hat{r} - {1 \over \re} {\prtl f_0 \over \prtl \te} \hat{\theta}
+ \vecy = \left[ (1-2 C_2) x -  f_1 \right] \hat{r} - {1 \over \re} {\prtl f_0
+\over \prtl \te} \hat{\theta}
 \eeq
 
 or, defining $\kt = 1-2 C_2$
 
 \beq
 \label{eq:rsexpanded}
-\vecy = ( \kt x - f_1 ) \hat{r} - {1 \over \re} {\prtl f_0 \over \prtl \te}  \hat{\theta}
+\vecy = ( \kt x - f_1 ) \hat{r} - {1 \over \re} {\prtl f_0 \over \prtl \te} 
+\hat{\theta}
 \eeq
 
 which is Alard eq.8 (remember he set $\re \equiv 1$).
@@ -208,19 +237,49 @@ for the perturbed potential, with $q$ defined above, we may expand $\phi_0(q)$
 	  &\approx& \phi\prre-\rre\phi_0^\prime\prre g(\te)\eps \label{key1}
 \end{eqnarray}
 
-Where we have defined $\phi_0^\prime\prre \equiv  \dpdq$.  Note, that we have $\phi_0(q)=\phi_0\prre$ when $\eps=0$ and similarly with its derivatives. Therefore,
-taking the partial derivatives of Eq.~(\ref{key1}), it is straightforward to verify
+Where we have defined $\phi_0^\prime\prre \equiv  \dpdq$.  Note, that we have
+$\phi_0(q)=\phi_0\prre$ when $\eps=0$ and similarly with its derivatives.
+Therefore,
+taking the partial derivatives of Eq.~(\ref{key1}), it is straightforward to
+verify
 
 \begin{eqnarray}
  \re\frac{\prtl \phi}{\prtl r}&=& \phi_0^\prime\prre -%
-  \eps\left[g(\te)\phi_0^\prime\prre+\rre g(\te)\phi_0^{\prime \prime}\prre\right]\\
-\frac{\re}{r}\frac{\prtl \phi}{\prtl \te}&=&-\phi_0^\prime\prre \frac{dg(\te)}{d\te}\eps
+  \eps\left[g(\te)\phi_0^\prime\prre+\rre g(\te)\phi_0^{\prime
+\prime}\prre\right]\\
+\frac{\re}{r}\frac{\prtl \phi}{\prtl \te}&=&-\phi_0^\prime\prre
+\frac{dg(\te)}{d\te}\eps
 \end{eqnarray}
 
 (Alard eq.19).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\section{Critical Curves and Caustic Lines in the Perturbative Approach}
+\section{Critical Curves, Caustic Lines and Deformation Cross-Section in the
+Perturbative Approach}
+
+[{\bf Include an introduction discussing the importance of source-independent
+``observables''}]
+
+\subsection{The Jacobian Matrix of the transformation}
+
+In order to obtain the equations for the critical curves, caustics and the area
+of the deformation cross-section, we'll need to make coordinate transformations
+between the two planes, {\it bearing in mind that there may also be coordinate
+transformations involved in the process}.
+
+More specifically, suppose that we're using the perturbed Lens Equation to pass
+from the lens plane to the source plane, both in Cartesian coordinates. This
+transformation is given by the Jacobian Matrix $J_{L_C\rightarrow S_C}$.
+However, in the perturbative approach, a lot of the quantities are more
+conveniently written in terms of polar coordinates in some of the intermediate
+steps. In the next sections, we'll make use of the following two facts:
+\bea
+J_{L_C\rightarrow S_C}=J_{L_C\rightarrow L_P}J_{L_P\rightarrow
+S_C}\label{jacobian_comp}\\
+\det(AB)=\det A\det B\label{determinant_mult}
+\eea
+
+\subsection{Critical Curves and Caustics}
 
 We will now obtain the equations for the critical curves in the lens
 plane, which correspond to the caustic curves in the source plane.
@@ -232,23 +291,31 @@ lens plane:
 %Note that as we have not considered the position of the source,
 %we have $\bar{f}_i=f_i$ and therefore
 \begin{eqnarray}
-y_{1} &=& (\kt x - f_1)\cos{\te}+\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te} \label{y_1}\\
-y_{2} &=& (\kt x - f_1)\sin{\te}-\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te} \label{y_2},
+y_{1} &=& (\kt x - f_1)\cos{\te}+\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te}
+\label{y_1}\\
+y_{2} &=& (\kt x - f_1)\sin{\te}-\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te}
+\label{y_2},
 \end{eqnarray}
 
-The Jacobian of the transformation from source to image plane coordinates  is given by %polar to Cartesian coordinates
+It is important to stress that even though $y_{1}$ and $y_{2}$ are written in
+terms of $r$ and $\te$, equations (\ref{y_1}) and (\ref{y_2}) describe the
+transformation $J_{L_C\rightarrow S_C}$. Let us decompose it following eq.
+(\ref{jacobian_comp}). The components of the Jacobian matrix $J_{L_P\rightarrow
+S_C}$ are given by %polar to Cartesian coordinates
 
-\begin{equation}
-J=\frac{\prtl y_1}{\prtl r}\frac{\prtl y_2}{\prtl \te}-\frac{\prtl y_1}{\prtl \te}\frac{\prtl y_2}{\prtl r}.
-\label{jacob}
-\end{equation}
+%\begin{equation}
+%J=\frac{\prtl y_1}{\prtl r}\frac{\prtl y_2}{\prtl \te}-\frac{\prtl y_1}{\prtl
+%\te}\frac{\prtl y_2}{\prtl r}.
+%\label{jacob}
+%\end{equation}
 
-The critical lines are defined by the condition $J=0$. Now, we may easily verify that
+%The critical lines are defined by the condition $J=0$. 
 \begin{eqnarray}
 \frac{\prtl y_1}{\prtl r}&=& \kt \cos{\te}\label{dy1dx}   \\
 \frac{\prtl y_2}{\prtl r}&=& \kt \sin{\te}\\
 \frac{\prtl y_1}{\prtl \te}&=& \scriptf(\te)\sin{\te}+\scriptg(\te)\cos{\te}\\
-\frac{\prtl y_2}{\prtl \te}&=& -\scriptf(\te)\cos{\te}+\scriptg(\te)\sin{\te}\label{dy2dte}
+\frac{\prtl y_2}{\prtl \te}&=&
+-\scriptf(\te)\cos{\te}+\scriptg(\te)\sin{\te}\label{dy2dte}
 \end{eqnarray}
 
 using \eqref{eq:rsexpanded}), ${\prtl \over \prtl r} ={ 1 \over \epsilon}
@@ -263,9 +330,17 @@ $\scriptf$ and $\scriptg$ as
 \eea
 % \end{equation}
 
-Substituting eqs.~(\ref{dy1dx}-\ref{dy2dte}) into eq.~(\ref{jacob}),
-it is straightforward to verify that $J=-\kt 
-\scriptf(\te)$ and therefore on the critical curves, where $J = 0$, we have
+It is straightforward to verify that the determinant of this matrix is given by
+$\det \left(J_{L_P\rightarrow S_C}\right)=-\kt\scriptf(\te)$. Knowing that the
+Jacobian matrix $J_{L_C\rightarrow L_P}$ is the usual Jacobian transformation
+from Cartesian to polar coordinates, with $\det \left(J_{L_C\rightarrow
+L_P}\right)=\frac{1}{r}$, we can use eq. (\ref{determinant_mult}) to show that
+\beq
+J\equiv\det \left(J_{L_C\rightarrow
+S_C}\right)=-\frac{\kt\scriptf(\te)}{r}\,.\label{jacobian}
+\eeq
+
+Therefore on the critical curves, where $J = 0$, we have
 
 \begin{equation}
 \label{eq:critcurves}
@@ -275,7 +350,8 @@ x=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right]
 This is Alard eq.~30. From this last equation, the tangential critical
 curve can be expressed in Cartesian coordinates in parametric form as 
 \beq
-\vec{r}_{\mathrm{crit}}= \left[(\re  +x)\cos{\te},(\re+x)\sin{\te}\right],\quad 0 \leq \te < 2\pi.  
+\vec{r}_{\mathrm{crit}}= \left[(\re  +x)\cos{\te},(\re+x)\sin{\te}\right],\quad
+0 \leq \te < 2\pi.  
 \eeq
 
 Now, substituting this last equation into eqs.~(\ref{y_1}) and
@@ -284,9 +360,13 @@ caustic, i.e.,
 
 \begin{eqnarray}
 \label{eq:xcaustic}
-y_{1_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\cos{\te}+\frac{1}{\re}\frac{df_0}{d\te}\sin{\te}\\
+y_{1_\mathrm{caust}} &=&
+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\cos{\te}+\frac{1}{\re}\frac{df_0}{d\te}\sin{
+\te}\\
 \label{eq:ycaustic}
-y_{2_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\sin{\te}-\frac{1}{\re}\frac{df_0}{d\te}\cos{\te}
+y_{2_\mathrm{caust}} &=&
+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\sin{\te}-\frac{1}{\re}\frac{df_0}{d\te}\cos{
+\te}
 \end{eqnarray}
 
 Which reduce to Alard's eqs.~31 for $\re=0$.
@@ -297,6 +377,24 @@ Getting Alard eq.33 from the above is straight, and from there we may obtain
 % I (MSSG) got most of the way to 
 Alard eq.34 from 33 and 32.
 % with some small hiccups..
+\subsection{Eigenvalues of the Jacobian Matrix and Deformation Cross-Section}
+
+To obtain the deformation cross-section, we want to obtain a
+non-parametric expression $r_\pm (\te)$ for the limiting curves of this area. To
+begin with, we recall that the eigenvalues of a $2\times 2$ non-singular matrix $M$
+are given by
+\beq
+\lambda_\pm=\frac{1}{2}\left(\mbox{tr}\, M\pm\sqrt{(\mbox{tr}\,M)^2+4\det M}\right)\label{eigenvalues}
+\eeq 
+where $\mbox{tr}\, M$ is the trace of the matrix $M$. Therefore
+\beq
+\frac{\lambda_+}{\lambda_-}=\frac{1+\tau\sqrt{1-\alpha}}{1-\tau\sqrt{1-\alpha}}\label{eigenvalues_division}
+\eeq
+with $\tau=\mbox{sgn}\, M$ and $\alpha=4\frac{\det M}{(\mbox{tr}\,M)^2}$. If we set $\frac{\lambda_+}{\lambda_-}=N$ (a condition that will be used to define tha cross-section), then we can invert eq (\ref{eigenvalues_division}) to obtain
+\beq
+\frac{\det M}{(\mbox{tr}\,M)^2}=\frac{N}{(N+1)^2}
+\eeq
+{\bf To be continued}
 
 \section{Reconstruction of Images}
 
@@ -312,7 +410,8 @@ mapping of circular and elliptical contours using this formalism.
 %  \centering{\epsfig{Fig_subsstructure.eps,width=0.45\textwidth}}
    \includegraphics[width=0.35\textwidth]{graphics/sourceplane.pdf}
   \end{center}
-    \caption{\label{fig:circular_source}Circular source geometry in the source plane.}
+    \caption{\label{fig:circular_source}Circular source geometry in the source
+plane.}
 \end{wrapfigure}
 
 Notation: $ \vec{r}_{0}$ points from the origin (i.e center of the
@@ -338,7 +437,8 @@ Replacing $r_s$ by eq.~\eqref{eq:rsexpanded}, we obtain:
 
 \beq
 \label{eq:Rzero}
-\vec{R_{0}} = \left[ \kappa_2 x - f_{1}(\theta) \right]\hat{r} - \frac{1}{\re} \frac{\partial f_0(\theta)}{\partial \theta} \hat{\theta} - \vec{r_{0}}. \;\;\;
+\vec{R_{0}} = \left[ \kappa_2 x - f_{1}(\theta) \right]\hat{r} - \frac{1}{\re}
+\frac{\partial f_0(\theta)}{\partial \theta} \hat{\theta} - \vec{r_{0}}. \;\;\;
 \eeq
 
 
@@ -362,26 +462,33 @@ or
 
 \beq
 \label{eq:rzero}
-\vec{r}_{0} = \left[ \yone \,  \cos \te + \ytwo \,  \sin \te \right] \hat{r} + \left[ -\yone \,  \sin \te + \ytwo \,  \cos \te \right] \hat{\theta}.  \;\;\;
+\vec{r}_{0} = \left[ \yone \,  \cos \te + \ytwo \,  \sin \te \right] \hat{r} +
+\left[ -\yone \,  \sin \te + \ytwo \,  \cos \te \right] \hat{\theta}.  \;\;\;
 \eeq
 
 So that eq.~\eqref{eq:Rzero} becomes
 
 \beq
-\vec{R_{0}} = \left[ \kappa_2 x - f_{1}(\theta) \right]\hat{r} - \frac{1}{\re} \frac{\partial f_0(\theta)}{\partial \theta} \hat{\theta} -  \left[ \yone \,  \cos \te + \ytwo \,  \sin \te \right] \hat{r} - \left[ -\yone \,  \sin \te + \ytwo \,  \cos \te \right] \hat{\theta} \;\;\;
+\vec{R_{0}} = \left[ \kappa_2 x - f_{1}(\theta) \right]\hat{r} - \frac{1}{\re}
+\frac{\partial f_0(\theta)}{\partial \theta} \hat{\theta} -  \left[ \yone \, 
+\cos \te + \ytwo \,  \sin \te \right] \hat{r} - \left[ -\yone \,  \sin \te +
+\ytwo \,  \cos \te \right] \hat{\theta} \;\;\;
 \eeq
 
 
 Defining
 
 \beq
-\overline{f}_i(\theta) \equiv f_i(\theta) + (\yone \cos \te + \ytwo \sin \te)\re^{1-i}, \;\; i=0,1
+\overline{f}_i(\theta) \equiv f_i(\theta) + (\yone \cos \te + \ytwo \sin
+\te)\re^{1-i}, \;\; i=0,1
 \eeq
 
 this becomes
 
 \beq
-\vec{R}_{0} = \left[ \kappa_2 x - \overline{f}_{1}(\theta) \right]\hat{r} - \frac{1}{\re} \frac{\partial \overline{f}_0(\theta)}{\partial \theta} \hat{\theta}. \;\;\; \label{eq:Alard11}
+\vec{R}_{0} = \left[ \kappa_2 x - \overline{f}_{1}(\theta) \right]\hat{r} -
+\frac{1}{\re} \frac{\partial \overline{f}_0(\theta)}{\partial \theta}
+\hat{\theta}. \;\;\; \label{eq:Alard11}
 \eeq
 
 (Alard eq.11).
@@ -389,7 +496,9 @@ this becomes
 Now, taking the square of this we obtain
 
 \beq
-R_{0}^2 = \left[ \kappa_2 x - \overline{f}_{1}(\theta) \right]^2 + \left[\frac{1}{\re} \frac{\partial \overline{f}_0(\theta)}{\partial \theta}\right]^2. \;\;\;
+R_{0}^2 = \left[ \kappa_2 x - \overline{f}_{1}(\theta) \right]^2 +
+\left[\frac{1}{\re} \frac{\partial \overline{f}_0(\theta)}{\partial
+\theta}\right]^2. \;\;\;
 \eeq
 
 Solving this for $x(\te)$, the radius of the arc in the image plane as
@@ -397,10 +506,13 @@ a function of theta, the following two solutions are obtained:
 
 \beq
 \label{eq:xsoln}
-x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;
+x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left(
+\frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2}
+\right]. \;\;\;
 \eeq
 
-the negative and positive solutions corresponding to the inner and outer edges of the arc.
+the negative and positive solutions corresponding to the inner and outer edges
+of the arc.
 
 Thus, given the source radius $R_{0}$ and position $(x_0,y_0)$ we can
 draw the arcs using eq.~\eqref{eq:xsoln}). The parametric equation for the
@@ -408,7 +520,8 @@ arcs images is given by
 
 \beq
 \label{eq:parametricarcs}
-\vec{r}= \left[(\re +x)\cos{\te},(\re+x)\sin{\te}\right], \quad 0 \leq \te < 2\pi.
+\vec{r}= \left[(\re +x)\cos{\te},(\re+x)\sin{\te}\right], \quad 0 \leq \te <
+2\pi.
 \eeq
 
 
@@ -428,7 +541,8 @@ very limited set of ellipses),
 \vec{R}_0=\left(\sqrt{1-\eta_s} \, y_{1s},\sqrt{1+\eta_s} \, y_{2s}\right)
 \eeq
 
-where $\eta_s$ is the ellipticity of the source, $R_0$ is the vector from the center to the edge of the source
+where $\eta_s$ is the ellipticity of the source, $R_0$ is the vector from the
+center to the edge of the source
 
 % characteristic size of the source
 and
@@ -438,11 +552,14 @@ y_{1s} &=& (\vec{r}_s-\vec{r}_0)\cdot\hat{i}, \\
 y_{2s} &=& (\vec{r}_s-\vec{r}_0)\cdot\hat{j}
 \eea
 
-From eq.~(\ref{eq:Alard11}) and writing the polar unit vectors in Cartesian components we obtain
+From eq.~(\ref{eq:Alard11}) and writing the polar unit vectors in Cartesian
+components we obtain
 
 \bea
-y_{1s}&=&(\kt x -\bar{f}_1)\cos{\te}+\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl \te}\sin{\te} \label{y_1s}\\
-y_{2s}&=&(\kt x -\bar{f}_1)\sin{\te}-\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl \te}\cos{\te} \label{y_2s}.
+y_{1s}&=&(\kt x -\bar{f}_1)\cos{\te}+\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl
+\te}\sin{\te} \label{y_1s}\\
+y_{2s}&=&(\kt x -\bar{f}_1)\sin{\te}-\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl
+\te}\cos{\te} \label{y_2s}.
 \eea
 
 Defining
@@ -454,43 +571,58 @@ Defining
 we may express $\vec{R}_0$ as
 
 \beq
-\vec{R}_0=\left[\sqrt{1-\eta_s}(\bar{y}_{1s}\cos{\te}+\bar{y}_{2s}\sin{\te}) \right]\hat{\imath}+\left[\sqrt{1+\eta_s}(\bar{y}_{1s}\sin{\te}-\bar{y}_{2s}\cos{\te}) \right]\hat{\jmath}
+\vec{R}_0=\left[\sqrt{1-\eta_s}(\bar{y}_{1s}\cos{\te}+\bar{y}_{2s}\sin{\te})
+\right]\hat{\imath}+\left[\sqrt{1+\eta_s}(\bar{y}_{1s}\sin{\te}-\bar{y}_{2s}\cos
+{\te}) \right]\hat{\jmath}
 \eeq
 
-Taking the square of the equation above and solving for $\bar{y}_{1s}$, it is straightforward to verify
+Taking the square of the equation above and solving for $\bar{y}_{1s}$, it is
+straightforward to verify
 
 \beq
-\bar{y}_{1s}=\dfrac{\eta_s\cos{(2\te)}}{S}\bar{y}_{2s}\pm \frac{1}{S}\sqrt{S R_0^2-(1-\eta_s)\bar{y}^2_{2s}}
+\bar{y}_{1s}=\dfrac{\eta_s\cos{(2\te)}}{S}\bar{y}_{2s}\pm \frac{1}{S}\sqrt{S
+R_0^2-(1-\eta_s)\bar{y}^2_{2s}}
 \eeq
 
-where $S=1-\eta_s\cos{(2\te)}$. Substituting eq.~\eqref{bar_y1} and eq.~\eqref{bar_y2} into the equation above, we obtain
+where $S=1-\eta_s\cos{(2\te)}$. Substituting eq.~\eqref{bar_y1} and
+eq.~\eqref{bar_y2} into the equation above, we obtain
 
 \beq
-x = \frac{1}{\kappa_2} \left\{\bar{f}_{1}(\theta) + \frac{\eta_s\sin(2\theta)}{S}\left(\frac{1}{\re}\dfrac{\partial \bar{f}_0(\theta)}{\partial \theta}\right) \pm \frac{1}{S}\sqrt{SR_{0}^2 - (1-\eta_s^2)\left[ \frac{1}{\re}\frac{\partial \bar{f}_0(\theta)}{\partial \theta}\right]^2}  \right\}.
+x = \frac{1}{\kappa_2} \left\{\bar{f}_{1}(\theta) +
+\frac{\eta_s\sin(2\theta)}{S}\left(\frac{1}{\re}\dfrac{\partial
+\bar{f}_0(\theta)}{\partial \theta}\right) \pm \frac{1}{S}\sqrt{SR_{0}^2 -
+(1-\eta_s^2)\left[ \frac{1}{\re}\frac{\partial \bar{f}_0(\theta)}{\partial
+\theta}\right]^2}  \right\}.
 \label{elliptical_contour}
 \eeq
 
 The parametric equation now for the images of elliptical sources of this form is
 
 \beq
-\vec{r}= \left[(\re +x)\cos{\te},(\re+x)\sin{\te}\right], \quad 0 \leq \te < 2\pi.
+\vec{r}= \left[(\re +x)\cos{\te},(\re+x)\sin{\te}\right], \quad 0 \leq \te <
+2\pi.
 \eeq
 
 
 \subsection{Elliptical Source Contours in the General Case (Nonaligned Axes)}
 
-In the general case, when the source is not aligned to the semimajor axis of the potential, the vectorial equation of an elliptical contour is
+In the general case, when the source is not aligned to the semimajor axis of the
+potential, the vectorial equation of an elliptical contour is
 
 \beq
 \label{eq:ellipsetheta}
-\vec{R}_0=\left(\sqrt{1-\eta_s} \, y^\prime_{1s},\sqrt{1+\eta_s} \, y^\prime_{2s}\right)
+\vec{R}_0=\left(\sqrt{1-\eta_s} \, y^\prime_{1s},\sqrt{1+\eta_s} \,
+y^\prime_{2s}\right)
 \eeq
 where the source is oriented at an angle
-$\te_0$ \wrt\ the  semimajor axis,  and $y^\prime_{is}\, (i=1,2)$ are obtained by rotating the coordinate system of the source by an angle $\te_0$,
+$\te_0$ \wrt\ the  semimajor axis,  and $y^\prime_{is}\, (i=1,2)$ are obtained
+by rotating the coordinate system of the source by an angle $\te_0$,
 i.e
 \begin{equation}
-\left(\begin{array}{c}y^\prime_{1s} \\ y^\prime_{2s} \end{array}\right)=\left[\begin{array}{c c}%
-\cos{\te_0} & \sin{\te_0}\\ -\sin{\te_0} & \cos{\te_0} \end{array} \right]\left( \begin{array}{c} y_{1s}\\ y_{2s}\end{array}\right)
+\left(\begin{array}{c}y^\prime_{1s} \\ y^\prime_{2s}
+\end{array}\right)=\left[\begin{array}{c c}%
+\cos{\te_0} & \sin{\te_0}\\ -\sin{\te_0} & \cos{\te_0} \end{array} \right]\left(
+\begin{array}{c} y_{1s}\\ y_{2s}\end{array}\right)
 \end{equation}
 
 Using eqs.~(\ref{y_1s}-\ref{bar_y2}) it is straightforward to verify
@@ -500,8 +632,10 @@ y^\prime_{2s}&=&\bar{y}_1\sin{\tilde{\te}}-\bar{y}_2\cos{\tilde{\te}}\\
 \tilde{\te}&\equiv&\te-\te_0
 \eea
 
-Now, following the procedure shown above, is straightforward to obtain the expression for the images coming from
-lensed elliptical sources (with orientation $\te_0$).  It is given by the Eq.(\ref{elliptical_contour}) with $\te$ replaced by $\tilde{\te}$, i.e.
+Now, following the procedure shown above, is straightforward to obtain the
+expression for the images coming from
+lensed elliptical sources (with orientation $\te_0$).  It is given by the
+Eq.(\ref{elliptical_contour}) with $\te$ replaced by $\tilde{\te}$, i.e.
 
 \bea
 \label{eq:ellipsource}
@@ -512,7 +646,8 @@ x &=& \frac{1}{\kappa_2} \left\{\bar{f}_{1}(\theta) +%
 \theta}\right]^2}  \right\}.\label{elliptical_contour2}\\
 S&\equiv& 1-\eta_s\cos{(2\tilde{\te})}\nonumber
 \eea
-This is the eq.~(28) of Peirani et al. 2008 (recall again, they set $\re=1$ and $\eta_s=\sqrt{2\eta_0}$)
+This is the eq.~(28) of Peirani et al. 2008 (recall again, they set $\re=1$ and
+$\eta_s=\sqrt{2\eta_0}$)
 
 %\beq
 %\label{eq:ellipse}
@@ -521,7 +656,8 @@ This is the eq.~(28) of Peirani et al. 2008 (recall again, they set $\re=1$ and 
 
 As we can see, the condition for the formation of images is given by
 \begin{equation*}
-S\,R^2_0>(1-\eta^2_s)\left[\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl \te}\right]^2
+S\,R^2_0>(1-\eta^2_s)\left[\frac{1}{\re}\dfrac{\prtl \bar{f}_0}{\prtl
+\te}\right]^2
 \end{equation*}
 
 And therefore, the number of images is given by the quantity of times
@@ -583,17 +719,20 @@ the radial coordinate at a given angle $\te$ as
 \eea
 and the width as a function of $\te$ is given by 
 \beq
-W(\te)=x_+ - x_- = \dfrac{2}{\kt\,S}\sqrt{SR_{0}^2 -(1-\eta_s^2)\left[ \frac{1}{\re}\frac{\partial \bar{f}_0(\theta)}{\partial \theta}\right]^2}
+W(\te)=x_+ - x_- = \dfrac{2}{\kt\,S}\sqrt{SR_{0}^2 -(1-\eta_s^2)\left[
+\frac{1}{\re}\frac{\partial \bar{f}_0(\theta)}{\partial \theta}\right]^2}
 \label{w_arc}
 \eeq
 
-Another useful quantity is the angle defining the barycenter of the image, given by
+Another useful quantity is the angle defining the barycenter of the image, given
+by
 \beq
 \te_G={ \te_i+\te_f \over 2}
 \label{angle_bary}
 \eeq
 
-where $ \te_i , \te_f $ label the beginning and ending angular position of a given arc.
+where $ \te_i , \te_f $ label the beginning and ending angular position of a
+given arc.
 
 \subsection{Measurement of the Length}
 
@@ -725,17 +864,20 @@ at the angle $\te_G$, i.e, $W_q \equiv W(\te_m)$, using \eqref{w_arc}).
 
 The second method consists of using the area of the image. This area is given by
 \bea
-\mathcal{A}&=&\int_{\te_i}^{\te_f}\int_{r_{-}(\te)}^{r_{+}(\te)}r \, dr \, d\te \nonumber\\
+\mathcal{A}&=&\int_{\te_i}^{\te_f}\int_{r_{-}(\te)}^{r_{+}(\te)}r \, dr \, d\te
+\nonumber\\
            &=&\int_{\te_i}^{\te_f}W(\te)\bar{r}(\te)d\te.
 \eea
-where, $\bar{r}(\te)$ and $W(\te)$ are given by the Eqs. (\ref{r_mean}) and (\ref{w_arc}) respectively.
+where, $\bar{r}(\te)$ and $W(\te)$ are given by the Eqs. (\ref{r_mean}) and
+(\ref{w_arc}) respectively.
 
 Now we assume that the area of an arc is exactly that of a distorted
 ellipse. With this assumption, the width of an arcs is given by
 \beq
 W_k=\dfrac{4\mathcal{A}}{\pi L_k}
 \eeq
-where $L_k$ corresponds to the one of the methods of measuring the length of the arcs, $k=2,3$ or
+where $L_k$ corresponds to the one of the methods of measuring the length of the
+arcs, $k=2,3$ or
 $4$. 
 
 
@@ -747,11 +889,14 @@ fields $f_0(\te)$ and $f_1(\te)$.
 
 
 For a circular source contour, a radial line of direction $\te$ intersects
-the arc contours at two points, $r_i=\re+x_i$ and $r_o=\re+x_o$ (the inner part and
+the arc contours at two points, $r_i=\re+x_i$ and $r_o=\re+x_o$ (the inner part
+and
 the outer part). Now, we will use Alard Eq. 12
 
 \beq
-x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;
+x = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) \pm \sqrt{R_0^2 - \left(
+\frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2}
+\right]. \;\;\;
 \eeq
 
 And the separate two solutions for the inner and outer edges of the arc:
@@ -759,15 +904,18 @@ And the separate two solutions for the inner and outer edges of the arc:
 
 \bea
 x_i = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) - \sqrt{R_0^2 -%
-\left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;  \\
+\left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta}
+\right)^2} \right]. \;\;\;  \\
 x_o = \frac{1}{\kappa_2}\left[ \overline{f}_{1}(\theta) + \sqrt{R_0^2 - %
-\left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta} \right)^2} \right]. \;\;\;
+\left( \frac{1}{\re}\frac{\partial \overline{f}_0(\theta)}{\partial \theta}
+\right)^2} \right]. \;\;\;
 \eea
 
 
 With these, clearly
 
-[There is a problem here, dealing with the definition of $r_{i,o}$ vs. $x_{i,o}$ -MSSG, Dec 6]
+[There is a problem here, dealing with the definition of $r_{i,o}$ vs. $x_{i,o}$
+-MSSG, Dec 6]
 \beq
 x_o + x_i  = {2 \over \kappa_2} \fbar -2\re
 %= r_o+r_i - 2\re  ??
@@ -785,7 +933,8 @@ which is exactly Alard eq. 29a, with his additional constant ($C=-\kt\re$).
 Now take
 
 \beq
-x_o - x_i = {1 \over \kappa_2} \left(2 \sqrt{R_0^2 - {\left( {1 \over \re} \dfdt \right)}^2 }\right)
+x_o - x_i = {1 \over \kappa_2} \left(2 \sqrt{R_0^2 - {\left( {1 \over \re} \dfdt
+\right)}^2 }\right)
 \eeq
 
 And solve for $\dfdt$ (few straight steps of algebra here):
@@ -808,26 +957,32 @@ Recall that $\phi=\phi_0+\eps\psi$ and expand only $\psi$:
 Differentiating we obtain
 
 \bea
-\frac{\partial \phi}{\partial r }&=&\phi_0^\prime+\eps\sum_{n=1}^{\infty}f_n(\theta)n(r-\re)^{n-1} \\
-\frac{\partial \phi}{\partial \theta}&=&\eps\sum_{n=0}^{\infty} \frac{\partial f_n}{\partial \theta}(r-\re)^n
+\frac{\partial \phi}{\partial r
+}&=&\phi_0^\prime+\eps\sum_{n=1}^{\infty}f_n(\theta)n(r-\re)^{n-1} \\
+\frac{\partial \phi}{\partial \theta}&=&\eps\sum_{n=0}^{\infty} \frac{\partial
+f_n}{\partial \theta}(r-\re)^n
 \eea
 
 Evaluating at the Einstein radius $r=r_{\mathrm{E}}$, we have
 
 \bea
 \frac{\partial \phi}{\partial r }&=&\phi_0^\prime+f_1(\theta) \\
-\frac{\partial \phi}{\partial \theta}&=&\eps \frac{\partial f_0}{\partial \theta}
+\frac{\partial \phi}{\partial \theta}&=&\eps \frac{\partial f_0}{\partial
+\theta}
 \eea
 
-On the other hand, evaluating Eqs. 19 in Alard at $r=\re$, and using Eq. 16 in Alard $\phi_0^\prime=1+2C_2(r-r_{\mathrm{E}}+...$
+On the other hand, evaluating Eqs. 19 in Alard at $r=\re$, and using Eq. 16 in
+Alard $\phi_0^\prime=1+2C_2(r-r_{\mathrm{E}}+...$
 
 \bea
 \frac{\prtl \phi}{\prtl r}&=& \phi_0^\prime -%
-  \eps g(\te)\left[\phi_0^\prime+ \phi_0^{\prime \prime}\right]=\phi_0^\prime-\eps g(\te)(1+C_2)\\
+  \eps g(\te)\left[\phi_0^\prime+ \phi_0^{\prime
+\prime}\right]=\phi_0^\prime-\eps g(\te)(1+C_2)\\
 \frac{\prtl \phi}{\prtl \te}&=&-\eps\phi_0^\prime \frac{dg(\te)}{d\te}
 \eea
 
-Comparing these equations, we have a relation between the $f_n(\te)$ and $g(\te)$ functions:
+Comparing these equations, we have a relation between the $f_n(\te)$ and
+$g(\te)$ functions:
 
 \bea
 f_1&=&-(1+2C_2)g \\
@@ -854,11 +1009,14 @@ dr_c\sim -\frac{d^2g}{d\te^2}-2g
 we have that for e.g. the NFW profile with ellipticity (as in Eq. 28 of Alard)
 
 \bea
-\phi_0(q)&=&\frac{1}{2}\log^2\left(\frac{q}{2}\right)-2\arctan^2\left(\sqrt{\frac{1-q}{1+q}}\right) \\
-q&=&u_0r\sqrt{1-\eta\cos(\theta)}\approx u_0 r \left[1-\frac{\eta}{2}\cos(2\theta)\right]
+\phi_0(q)&=&\frac{1}{2}\log^2\left(\frac{q}{2}\right)-2\arctan^2\left(\sqrt{
+\frac{1-q}{1+q}}\right) \\
+q&=&u_0r\sqrt{1-\eta\cos(\theta)}\approx u_0 r
+\left[1-\frac{\eta}{2}\cos(2\theta)\right]
 \eea
 
-So in this case we have (notice $\eta/2$ plays the role of $\eps$ here, so only expect expansion to work
+So in this case we have (notice $\eta/2$ plays the role of $\eps$ here, so only
+expect expansion to work
 for small ellipticities)
 
 \bea
@@ -866,17 +1024,21 @@ g(\te)&=&\frac{\eta}{2}\cos(2\theta) \\
 \frac{d^2g(\te)}{d\te^2}&=&-2\eta\cos(\theta)=-4g
 \eea
 
-so that $dr_c=\eta\cos(\theta)$. Not sure if this is true for any elliptical potential or if it's specific to NFW.
+so that $dr_c=\eta\cos(\theta)$. Not sure if this is true for any elliptical
+potential or if it's specific to NFW.
 In any case the deviation is maximum for $\te=0,\pi$
 
-If the Taylor expansion converges, truncating it at some order has a maximum error given by the next order
-term. In this case the maximum error due to the non-linearity of the gradient of the potential is
+If the Taylor expansion converges, truncating it at some order has a maximum
+error given by the next order
+term. In this case the maximum error due to the non-linearity of the gradient of
+the potential is
 
 \beq
 D=3C_3\max[dr_c^2]=3C_3\eta^2
 \eeq
 
-Notice it increases with the ellipticity squared. For a general potential of the form
+Notice it increases with the ellipticity squared. For a general potential of the
+form
 
 \beq
 \phi=\frac{1}{\alpha}r^{\alpha[1+\beta(r-1)]}
