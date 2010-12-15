@@ -6,11 +6,11 @@
 //
 // The three kind of parameterization accepted in this functions are:
 //
-// For pert_params[1]=1, Is used \f$ a_{1\eta}=1-\eta, a_{2\eta}=1+\eta \f$, i.e Angle Deflection Model
+// For pert_params[1]=1, this is used: \f$ a_{1\eta}=1-\eta, a_{2\eta}=1+\eta \f$, i.e Angle Deflection Model
 // 
-// For pert_params[1]=2, Is used \f$ a_{1\eta}=1-\eta, a_{2\eta}=1/(1-\eta) \f$, i.e Standard Parameterization
+// For pert_params[1]=2, this is used: \f$ a_{1\eta}=1-\eta, a_{2\eta}=1/(1-\eta) \f$, i.e Standard Parameterization
 //
-// For pert_params[1]=3, Is used \f$ a_{1\eta}=1, a_{2\eta}=1/(1-\eta)^2 \f$, i.e Keeton's Parameterization
+// For pert_params[1]=3, this is used: \f$ a_{1\eta}=1, a_{2\eta}=1/(1-\eta)^2 \f$, i.e Keeton's Parameterization
 //
 // example: for the PNFW model, useful for comparison with gravlens, we must define pert_params[]={\f$ \eta \f$ ,3, \f$ \kappa_s \f$, \f$ r_s \f$}
 */
@@ -49,31 +49,20 @@ typedef double (*f_type2)   (double r, double pert_params[]);
   \return \f$ f_{1}(\theta) = \dfrac{\xi_{\mathrm{E}}}{R_{\mathrm{E}}}\alpha(\xi_{\mathrm{E}})-\alpha(R_{\mathrm{E}}) \f$
 */
 
-double f1_sub(f_type2 alpha_in, double R_E, double theta, double pert_params[]){
+/* \dfrac{df_0}{d\te}&=&\al_{\xie}\dfrac{\Omega(\xie)}{\xie}\		\
+% \dfrac{d^2f_0}{d\te^2}&=&2\left[\kappa_{\xie}-\dfrac{\al_{\xie}}{\xie}\right]%
+% \left(\dfrac{\Omega(\xie)}{\xie}\right)^2+\al_{\xie}\dfrac{[\re r_p\cos{(\te-\tep)}]}{\xie}\\
+\dfrac{d^2f_0}{d\te^2}&=& \al_{\xie}\dfrac{[\re r_p\cos{(\te-\tep)}]}{\xie}% 
+- 2\gamma_{\xie} \left(\dfrac{\Omega(\xie)}{\xie}\right)^2\\
+
+f_1(\te)&=& \al_{\xie}\dfrac{[\re-r_p\cos{(\te-\tep)}]}{\xie},
+*/
+
+double f1_sub(f_type2 alpha_in, double R_E, double theta, double subst_params[]){
   // double pot_params[]= thetap, rp 
-double eps=pert_params[0], a_1eps,a_2eps;
-int iflag=pert_params[1];
 
-if(iflag==1){
-// printf("You chose the Angle Deflection Parameterization");
-a_1eps=1.-eps, a_2eps=1.+eps;
 }
 
-if(iflag==2){
-// printf("You chose the standard parameterization");
-a_1eps=1.-eps,a_2eps=1./a_1eps;
-}
-
-if(iflag==3){
-// printf("You chose Keeton's parameterization");
-a_1eps=1.0, a_2eps=1./pow((1.-eps),2);
-}
-
-double thetap = pert_params[2];
-double rp = pert_params[3];
-
-// double xie=R_E*sqrt(a_1eps*pow(cos(theta),2)+a_2eps*pow(sin(theta),2));
- double f1_tmp=alpha_in(R_E,pert_params)*(R_E - rp*cos(theta-thetap);
 
 return f1_tmp;
 }

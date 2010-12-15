@@ -1,30 +1,32 @@
+
+
 \chapter{Perturbative Approach in Strong Lensing}
 \section{\label{sec:BasicIdeas} Basic Ideas}
 
 
 Let us assume that the two-dimensional projected density $\Sigma$ of a
 strong gravitational lens system is axially symmetric and centered at
-the origin. Let us assume that the lens is dense enough to reach
-critical density at a given radius $\re$. Under such an hypothesis,
-the image of a point source placed in the source plane at the origin
-will be a perfect ring at $\re$. However, if the source is not
-perfectly at the center, or the potential is not perfectly
+the origin. Let us assume that the lens is dense enough and that the
+distances among the observer, lens, and soruce are such that the
+critical density is reached within a radius $\re$. Under such an
+hypothesis, the image of a point source placed in the source plane at
+the origin will be a perfect ring at $\re$. However, if the source is
+not perfectly at the center, or the potential is not perfectly
 axisymmetric, the perfect ring is broken into arcs.
 
 To investigate this fact, we will use the lens equation $\vec{r}_s =
 \vec{r} - \vec{\alpha}$, where $\vec{r}_s$ is the angular position of
-the point source in the source plane (see fig. in Narayan and
-Bartelmann for this [get proper ref for this fig]), $\vec{r} = r
-\hat{r} $ is the angular position of the point source in the image
-plane, and $\vec{\alpha}$ is the deflection angle, which is equal to
-the radial gradient of the 2D projected potential $\phi$, which in
-polar coordinates is
+the point source in the source plane (see fig. 5 in \cite{NarayanAndB}
+for this configuration), $\vec{r} = r \hat{r} $ is the angular
+position of the point source in the image plane, and $\vec{\alpha}$ is
+the deflection angle, which is equal to the gradient of the 2D
+projected lens potential $\phi$ in the image plane, which in polar coordinates is
 
 \beq
-\nabla_r \phi = \dfrac{\prtl  \phi}{\prtl r} \hat{r} + \dfrac{1}{r} \dfrac{\prtl  \phi}{\prtl \theta} \hat{\theta}.
+\vec{\alpha} = \nabla_r \phi = \dfrac{\prtl  \phi}{\prtl r} \hat{r} + \dfrac{1}{r} \dfrac{\prtl  \phi}{\prtl \theta} \hat{\theta}.
 \eeq
 
-(also, we use $ \hat{r}, \hat{\theta}$ in place of Alard's $\hat{u_r}, \hat{u_\theta}$).
+(also, we use $ \hat{r}, \hat{\theta}$ in place of Alard's $\hat{u}_r, \hat{u}_\theta$).
 
 Thus
 \bea
@@ -33,8 +35,8 @@ Thus
 \eea
 
 Now let us go to the simplest case of an on-axis point source with
-perfectly axially symmetric potential $\phi = \phi_0$.  In this case
-$r_s = 0, {\prtl \phi_0 \over \prtl \theta} = 0$ since there is no
+perfectly axially symmetric potential $\phi(\vec{r}) = \phi_0(|\vec{r}|)$.  In this case
+$r_s = 0$ and  ${\prtl \phi_0 \over \prtl \theta} = 0$ since there is no
 angular variation of the potential.
 
 Thus, eq.(\ref{eq:rs}) reduces to
@@ -43,14 +45,14 @@ Thus, eq.(\ref{eq:rs}) reduces to
 0 =  r -  {\prtl  \phi \over \prtl r}
 \eeq
 
-or
+the solution to which is the Einstein Radius
 
 \beq
 \label{eq:einsteinradius}
-  r =  \left. {\prtl  \phi \over \prtl r} \right|_{\re} = \re
+  \re =  \left. {\prtl  \phi \over \prtl r} \right|_{\re} 
 \eeq
 
-Where the derivative of the potential is to be evaluated at the Einstein radius, $ \re$.
+where the derivative of the potential is to be evaluated at the Einstein radius, $ \re$.
 
 This indicates the point source is spread into a circle of radius $ \re $ in the image plane.
 
@@ -58,25 +60,27 @@ We now take the first step of perturbing the situation:
 
 \bea
 \label{eq:rspert}
-r_s & = & \eps y \\
-\phi & = & \phi_0 + \eps \psi \label{eq:potsplit}
+\vec{r}_s & = & \eps \vec{y}, \\
+\phi( \vec{r} ) & = & \phi_0(|\vec{r}|) + \eps \psi( \vec{r} ) \label{eq:potsplit},
 \eea
 
 which imply we have moved the source off-axis, and added a non-axially
 symmetric potential, both to the exact same order $\eps$ by
 assumption.  Note that the perturbed distance $y$ is in the source plane.
 
-Note that this changes the notation of the first eq in Alard eq.3
-(which is fairly nonsensical, of course).
+Note that this changes the notation of the first eq in Alard eq.~3
+(which doesn't make much sense, of course).
 
-Eq.(\ref{eq:rspert}) leads to a modification of eq.(\ref{eq:einsteinradius}) into
+We now write the image position also as a perturbation around the
+Einstein Radius, using eq.(\ref{eq:rspert}) to modify
+eq.(\ref{eq:einsteinradius}) into
 
 \beq
 \label{eq:rpert}
-r = \re + \eps x
+r = \re +  \eps x
 \eeq
 
-which changes the notation in Alard eq.4 (which is somewhat weird notation,
+which changes the notation in Alard eq.~4 (which is somewhat weird notation,
 since his $dr$ is not necessarily a small distance), and we do not follow
 his convention of setting $\re \equiv 1$.
 
@@ -84,17 +88,17 @@ Note that now the perturbed distance $x$ is in the image plane.
 
 To recap: $r_s, y$ are in the source plane, while $r, x$ are in the image plane.
 
-Now we do a Taylor series expansion of the potential:
+Now we do a Taylor series expansion of the potential about the Einstein ring radius:
 
 \beq
-\phi = \phi_0 + \eps \psi = \sum_{n=0}^\infty {1 \over n!} \left. {d^n \phi_0 \over dr^n }\right|_{\re} (r-\re)^n + \eps {1 \over n!} \left. {d^n \psi(\theta) \over dr^n }\right|_{\re} (r-\re)^n
+\phi = \phi_0 + \eps \psi = \sum_{n=0}^\infty {1 \over n!} \left. {d^n \phi_0 \over dr^n }\right|_{\re} (r-\re)^n + \eps {1 \over n!} \left. {d^n \psi \over dr^n }\right|_{\re} (r-\re)^n
 \eeq
 
 or
 
 \beq
 \label{eq:tse}
-\phi  = \sum_{n=0}^\infty \left[ {1 \over n!} \left. {d^n \phi_0 \over dr^n }\right|_{\re} + \eps {1 \over n!} \left. {d^n \psi(\theta) \over dr^n }\right|_{\re} \right] (r-\re)^n
+\phi  = \sum_{n=0}^\infty \left[ {1 \over n!} \left. {d^n \phi_0 \over dr^n }\right|_{\re} + \eps {1 \over n!} \left. {d^n \psi \over dr^n }\right|_{\re} \right] (r-\re)^n
 \eeq
 
 And now define
@@ -106,32 +110,32 @@ C_n \equiv {1 \over n!} \left. {d^n \phi_0 \over dr^n }\right|_{\re}
 
 \beq
 \label{eq:fndef}
-f_n(\theta) \equiv  {1 \over n!} \left. {d^n \psi(\theta) \over dr^n }\right|_{\re}
+f_n(\theta) \equiv  {1 \over n!} \left. {d^n \psi \over dr^n }\right|_{\re}
 \eeq
 
 So that we can write  eq.(\ref{eq:tse}) as
 
 \beq
 \label{eq:tse2}
-\phi  = \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n
+\phi  = \sum_{n=0}^\infty \left[ C_n + \eps f_n(\theta)  \right] (r-\re)^n
 \eeq
 
-where $f_n = f_n(\theta)$.
+where $f_n(\theta)$ is a one-dimensional function independent of $r$.
 
 
-Now let's go back and substitute eq.~\eqref{eq:rspert}) and eq.~\eqref{eq:rpert}) into eq.~\eqref{eq:rs}) to find
+Now we go back and substitute \eqref{eq:rspert}) and \eqref{eq:rpert}) into \eqref{eq:rs}) to find
 \beq
 \eps y = \left( \re + \eps x -  {\prtl  \phi \over \prtl r} \right) \hat{r} - {1 \over \re + \eps x}  {\prtl  \phi \over \prtl \theta} \hat{\theta}
 \eeq
 
-Now substitute eq.~\eqref{eq:tse2}) into this to find
+Now substitute \eqref{eq:tse2}) into this to find
 
 \bea
-\eps y = \left( \re + \eps x -  {\prtl \over \prtl r} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n  \right) \right) \hat{r} - \\
+\eps \vec{y} = \left( \re + \eps x -  {\prtl \over \prtl r} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n  \right) \right) \hat{r} - \\
 {1 \over \re + \eps x}  {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n  \right)  \hat{\theta} \nonumber
 \eea
 
-Remembering that $C_n, f_n$ are independent of $r$, and using $r-\re = \eps x$ :
+Remembering that $C_n$ and  $f_n$ are independent of $r$, and using \eqref{eq:rpert}), $r-\re = \eps x$ we find
 
 \bea
 \label{eq:tse3}
@@ -139,33 +143,39 @@ Remembering that $C_n, f_n$ are independent of $r$, and using $r-\re = \eps x$ :
 {1 \over \re + \eps x}  {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (\eps x)^n  \right)  \hat{\theta} \nonumber
 \eea
 
-Let us expand eq.~\eqref{eq:tse3}) in orders, first the zero'th order piece in $\eps$:
-
+Let us expand \eqref{eq:tse3} in orders, first the zero'th order piece in $\eps$:
 
 \beq
-0 =  \left(\re - C_1 \right) \hat{r} \rightarrow \re = C_1 = \left. \prtl \phi \over \prtl \theta \right|_{\re}
+0 =  \left(\re - C_1 \right) \hat{r} \rightarrow \re = C_1 = \left. \prtl \phi \over \prtl \theta \right|_{\re},
 \eeq
 
+so that we reassuringly recover the Einstein ring solution.
 
 Next the first order piece in $\eps$:
 
 \beq
-\eps y = \left( \eps x - (2 C_2 \eps x + \eps f_1 ) \right) \hat{r} - {1 \over \re} \eps {\prtl f_0 \over \prtl \theta } \hat{\theta}
+\eps \vec{y} = \left( \eps x - (2 C_2 \eps x + \eps f_1 ) \right) \hat{r} - {1 \over \re} \eps {\prtl f_0 \over \prtl \theta } \hat{\theta}
 \eeq
 
-where the coefficient of $C_2$ was expanded to order with $n=2$, that of the $f_1$ term with $n=1$, and that of the $\prtl f_1 \over \prtl \theta$ term with $n=0$.  Bit involved, but this is how to get each term proportional to $\eps$.
+where the coefficient of $C_2$ was expanded to order $n=2$, that of
+the $f_1$ term to order $n=1$, and that of the $\prtl f_1 \over \prtl
+\theta$ term ro order $n=0$.  
+
+%Bit involved, but this is how to get each term proportional to $\eps$.
+
+%Now we will return to the ``physical variables'' $\eps \vec{y} = \vec{r}_s, \eps x = \Delta r
 
 Now divide through by $\eps$ and collect terms:
 
 \beq
- y = \left[ (1-2 C_2) x -  f_1 \right] \hat{r} - {1 \over \re} {\prtl f_0 \over \prtl \te} \hat{\theta}
+ \vecy = \left[ (1-2 C_2) x -  f_1 \right] \hat{r} - {1 \over \re} {\prtl f_0 \over \prtl \te} \hat{\theta}
 \eeq
 
 or, defining $\kt = 1-2 C_2$
 
 \beq
 \label{eq:rsexpanded}
- y = \left[ \kt x - f_1 \right] \hat{r} - {1 \over \re} {\prtl f_0 \over \prtl \te}  \hat{\theta}
+\vecy = ( \kt x - f_1 ) \hat{r} - {1 \over \re} {\prtl f_0 \over \prtl \te}  \hat{\theta}
 \eeq
 
 which is Alard eq.8 (remember he set $\re \equiv 1$).
@@ -209,23 +219,24 @@ taking the partial derivatives of Eq.~(\ref{key1}), it is straightforward to ver
 
 (Alard eq.19).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 \section{Critical Curves and Caustic Lines in the Perturbative Approach}
 
-We will now obtain the equations of the critical curves in the lens
-plane (corresponding to the caustic curves in the source plane).
+We will now obtain the equations for the critical curves in the lens
+plane, which correspond to the caustic curves in the source plane.
 
-First write eq.~\eqref{eq:rsexpanded} in Cartesian coordinates (expanding
-the unit polar vectors, eq.~\eqref{eq:unitvs}, and taking
+First write \eqref{eq:rsexpanded}) in Cartesian coordinates (writing
+the unit polar vectors as \eqref{eq:unitvs}), and taking
 $\vec{y}=(y_1,y_2)$ in the source plane and $\vec{r}=(r,\te)$ in the
 lens plane:
 %Note that as we have not considered the position of the source,
 %we have $\bar{f}_i=f_i$ and therefore
 \begin{eqnarray}
-y_{1} &=& [\kt x - f_1]\cos{\te}+\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te} \label{y_1}\\
-y_{2} &=& [\kt x - f_1]\sin{\te}-\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te} \label{y_2},
+y_{1} &=& (\kt x - f_1)\cos{\te}+\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te} \label{y_1}\\
+y_{2} &=& (\kt x - f_1)\sin{\te}-\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te} \label{y_2},
 \end{eqnarray}
 
-The Jacobian of the transformation from polar to Cartesian coordinates is given by
+The Jacobian of the transformation from source to image plane coordinates  is given by %polar to Cartesian coordinates
 
 \begin{equation}
 J=\frac{\prtl y_1}{\prtl r}\frac{\prtl y_2}{\prtl \te}-\frac{\prtl y_1}{\prtl \te}\frac{\prtl y_2}{\prtl r}.
@@ -234,14 +245,14 @@ J=\frac{\prtl y_1}{\prtl r}\frac{\prtl y_2}{\prtl \te}-\frac{\prtl y_1}{\prtl \t
 
 The critical lines are defined by the condition $J=0$. Now, we may easily verify that
 \begin{eqnarray}
-\frac{\prtl y_1}{\prtl r}&=& \frac{\kt}{\epsilon} \cos{\te}\label{dy1dx}   \\
-\frac{\prtl y_2}{\prtl r}&=& \frac{\kt}{\epsilon} \sin{\te}\\
+\frac{\prtl y_1}{\prtl r}&=& \kt \cos{\te}\label{dy1dx}   \\
+\frac{\prtl y_2}{\prtl r}&=& \kt \sin{\te}\\
 \frac{\prtl y_1}{\prtl \te}&=& \scriptf(\te)\sin{\te}+\scriptg(\te)\cos{\te}\\
 \frac{\prtl y_2}{\prtl \te}&=& -\scriptf(\te)\cos{\te}+\scriptg(\te)\sin{\te}\label{dy2dte}
 \end{eqnarray}
 
-using eq.~\eqref{eq:rsexpanded}, ${\prtl \over \prtl r} ={ 1 \over \epsilon}
-{\prtl \over \prtl x}$ (from eq.~\eqref{eq:rpert}) and defining the functions
+using \eqref{eq:rsexpanded}), ${\prtl \over \prtl r} ={ 1 \over \epsilon}
+{\prtl \over \prtl x}$ (from \eqref{eq:rpert}) and defining the functions
 $\scriptf$ and $\scriptg$ as
 
 \bea
@@ -253,18 +264,19 @@ $\scriptf$ and $\scriptg$ as
 % \end{equation}
 
 Substituting eqs.~(\ref{dy1dx}-\ref{dy2dte}) into eq.~(\ref{jacob}),
-it is straightforward to verify that $J=-{\kt \over \eps}
-\scriptf(\te)$ and therefore on the critical curves, where $J = 0$,
+it is straightforward to verify that $J=-\kt 
+\scriptf(\te)$ and therefore on the critical curves, where $J = 0$, we have
 
 \begin{equation}
 \label{eq:critcurves}
 x=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right]
 \end{equation}
 
-This is Alard eq. 30. From this last equation, the tangential critical
-curve can be expressed in parametric form as \beq
-\vec{r}_{\mathrm{crit}}= \left[(\re
-  +x)\cos{\te},(\re+x)\sin{\te}\right],\quad 0 \leq \te < 2\pi.  \eeq
+This is Alard eq.~30. From this last equation, the tangential critical
+curve can be expressed in Cartesian coordinates in parametric form as 
+\beq
+\vec{r}_{\mathrm{crit}}= \left[(\re  +x)\cos{\te},(\re+x)\sin{\te}\right],\quad 0 \leq \te < 2\pi.  
+\eeq
 
 Now, substituting this last equation into eqs.~(\ref{y_1}) and
 (\ref{y_2}) we obtain, the parametric equation for the tangential
@@ -277,21 +289,21 @@ y_{1_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\cos{\te}+\frac{1}{\r
 y_{2_\mathrm{caust}} &=& \frac{1}{\re}\frac{d^2f_0}{d\te^2}\sin{\te}-\frac{1}{\re}\frac{df_0}{d\te}\cos{\te}
 \end{eqnarray}
 
-These last equations are Alard eqs. (31).
+Which reduce to Alard's eqs.~31 for $\re=0$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  From before
 
-Getting Alard eq.33 from 31 is straight, and from there we may obtain
+Getting Alard eq.33 from the above is straight, and from there we may obtain
 % I (MSSG) got most of the way to 
-A.eq.34 from 33 and 32.
+Alard eq.34 from 33 and 32.
 % with some small hiccups..
 
 \section{Reconstruction of Images}
 
 One advantage of the perturbative approach is that it allows us to
-construct the lensed images from sources located near the
-tangential caustic.  In this section we study the mapping of 
-circular and elliptical contours using this formalism.
+construct an analytic solution for the lensed images of sources
+located near the tangential caustic.  In this section we study the
+mapping of circular and elliptical contours using this formalism.
 
 \subsection{Circular Sources}
 
