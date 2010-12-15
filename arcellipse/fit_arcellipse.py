@@ -1,24 +1,19 @@
 #!/usr/bin/python
-#
-##
-# Module to fit arcs parameters using ArcEllipse analytical expression.
 
-##@module fut_arcellipse
-#
-#
-# This module fits arcs parameters using ArcEllipse analytical expression combined with a Sersic profile to describe the radial 
-# light distribution of the arc. The ArcEllipse expression is the result of a deformation of an ellipse such 
-# that one of its main axes becomes a circle segment. 
-#
-# 
-# It uses chi2 minimization to find the best fit parameters values. The chi2 minimization is done using Pyminuit 
-# (see http://code.google.com/p/pyminuit/).
-#
-#
-#
-#
+""" Module to fit arcs parameters using ArcEllipse analytical expression."""
 
+##@module fit_arcellipse
 
+"""
+ This module fits arcs parameters using ArcEllipse analytical expression combined with a Sersic profile to describe the radial 
+ light distribution of the arc. The ArcEllipse expression is the result of a deformation of an ellipse such 
+ that one of its main axes becomes a circle segment. 
+
+ 
+ It uses chi2 minimization to find the best fit parameters values. The chi2 minimization is done using Pyminuit 
+ (see http://code.google.com/p/pyminuit/).
+
+"""
 
 from __future__ import division
 import numpy
@@ -31,31 +26,27 @@ from sltools.image import get_header_parameter
 
 
 #========================================================================
-##
-#	Function to compute the value of the surface brightness of the
-#	(x,y) pixel following the ArcEllipse prescription.
-#
-#	Input:
-#	- x: x position (pixel)
-#	- y: y position (pixel)
-#	- x0: x position of the cluster center or the point where the arc is centered (pixel)
-#	- y0: y position of the cluster center or the point where the arc is centered (pixel)
-#	- r_c: distance of the arc center related to the cluster center (pixel)
-#	- ellip: ellipticity of the arc
-#	- I_0: central surface brightness of the Sersic profile
-#	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
-#	- n: index that describes the shape of the Sersic profile 
-#	- theta0: orientation of the arc center related to the cluster center or the point where the arc is centered (radians)
-#
-#	Output:
-#	- the value of the surface brightness of the (x,y) point following the ArcEllipse prescription
-#	
-#
-
 def f(x,y,x0,y0,rc,ellip,I0,re,n,theta0):
+    """ Function to compute the value of the surface brightness of the
+	(x,y) pixel following the ArcEllipse prescription.
+
+	Input:
+	- x: x position (pixel)
+	- y: y position (pixel)
+	- x0: x position of the cluster center or the point where the arc is centered (pixel)
+	- y0: y position of the cluster center or the point where the arc is centered (pixel)
+	- r_c: distance of the arc center related to the cluster center (pixel)
+	- ellip: ellipticity of the arc
+	- I_0: central surface brightness of the Sersic profile
+	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
+	- n: index that describes the shape of the Sersic profile 
+	- theta0: orientation of the arc center related to the cluster center or the point where the arc is centered (radians)
+
+	Output:
+	- the value of the surface brightness of the (x,y) point following the ArcEllipse prescription
+	"""
 	
-	
-	x = float(x)
+    x = float(x)
 	y = float(y)	
 	#x_0 = 10.
 	#y_0 = 10.
@@ -81,28 +72,25 @@ def f(x,y,x0,y0,rc,ellip,I0,re,n,theta0):
 
 
 #========================================================================
-##
-#	Function to compute the chi2 of the f(x,y,x0,y0,rc,ellip,I0,re,n,theta0) function related to the data.
-#	Since we do not have an error associated with the data, we use Poissonic error (sigma[i][j] = sqrt(data[i][j]) )
-#
-#	Input:
-#	- x0: x position of the cluster center or the point where the arc is centered (pixel)
-#	- y0: y position of the cluster center or the point where the arc is centered (pixel)
-#	- r_c: distance of the arc center related to the cluster center (pixel)
-#	- ellip: ellipticity of the arc
-#	- I_0: central surface brightness of the Sersic profile
-#	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
-#	- n: index that describes the shape of the Sersic profile 
-#	- theta0: orientation of the arc center related to the cluster center or the point where the arc is centered (radians)
-#
-#	Output:
-#	- the value of the chi2
-#	
-#
-
-
-
 def chi2(x0,y0,rc,ellip,I0,re,n,theta0):
+    """ Function to compute the chi2 of the f(x,y,x0,y0,rc,ellip,I0,re,n,theta0) function related to the data.
+    
+	Since we do not have an error associated with the data, we use Poissonic error (sigma[i][j] = sqrt(data[i][j]) )
+
+	Input:
+	- x0: x position of the cluster center or the point where the arc is centered (pixel)
+	- y0: y position of the cluster center or the point where the arc is centered (pixel)
+	- r_c: distance of the arc center related to the cluster center (pixel)
+	- ellip: ellipticity of the arc
+	- I_0: central surface brightness of the Sersic profile
+	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
+	- n: index that describes the shape of the Sersic profile 
+	- theta0: orientation of the arc center related to the cluster center or the point where the arc is centered (radians)
+
+	Output:
+	- the value of the chi2
+	"""
+
 	c2 = 0.
 
 	for i in range(dim_x):
@@ -112,39 +100,40 @@ def chi2(x0,y0,rc,ellip,I0,re,n,theta0):
 
 
 ###########################################################################
-#Get image data
-data = pyfits.getdata("arc.fits")
-#Get image parameters
-dim_x,dim_y = get_header_parameter("arc.fits",'NAXIS1','NAXIS2') 
+def run():
+    #Get image data
+    data = pyfits.getdata("arc.fits")
+    #Get image parameters
+    dim_x,dim_y = get_header_parameter("arc.fits",'NAXIS1','NAXIS2') 
 
-#Using Pyminuit
+    #Using Pyminuit
 
-m = minuit.Minuit(chi2)
+    m = minuit.Minuit(chi2)
 
-#Initial guesses
-m.values["x0"] = 10.
-m.values["y0"] = 10.
-m.values["rc"] = 74.5
-m.values["ellip"] = 0.85
-#m.values["I0"] = 28.
-m.values["re"] = 2.22
-m.values["n"] = 1.0
-m.values["theta0"] = 0.78
+    #Initial guesses
+    m.values["x0"] = 10.
+    m.values["y0"] = 10.
+    m.values["rc"] = 74.5
+    m.values["ellip"] = 0.85
+    #m.values["I0"] = 28.
+    m.values["re"] = 2.22
+    m.values["n"] = 1.0
+    m.values["theta0"] = 0.78
 
-#m.limits["I0"] = (10., 50.)
+    #m.limits["I0"] = (10., 50.)
 
-m.printMode = 1
+    m.printMode = 1
 
-#print m.limits
+    #print m.limits
 
-#Minimization
-m.migrad() 
-#m.simplex()
-#m.hesse()
-m.scan(("I0",10,0,50))
+    #Minimization
+    m.migrad() 
+    #m.simplex()
+    #m.hesse()
+    m.scan(("I0",10,0,50))
 
 
-print m.values
+    print m.values
 
-		
-
+if __name__ == '__main__':
+    run();
