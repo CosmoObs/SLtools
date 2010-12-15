@@ -57,6 +57,26 @@ double F(double X)
     return f;
 }
 
+//! Derivative of F
+/*!
+  \param X radial coordinate in units of r_s (r_s is the NFW profile parameter)
+  \return \f$ \frac{dF(x)}{dx} = \frac{1-x^2 F(x)}{x(x^2-1)}\f$
+  \sa F()
+*/
+double Flinha(double X)
+{
+    double x2;
+    double arg;
+    double flinha;
+    
+    x2 = X*X;
+    arg = x2 - 1.0;
+    
+    flinha = (1.0 - x2*F(X))/(X*arg);
+    
+    
+    return flinha;
+}
 
 //pot_params[0] = kappas
 //pot_params[1] = rs
@@ -65,11 +85,15 @@ double F(double X)
 //! \f$ \kappa(r)=2\,\kappa_s\dfrac{(1-\mathcal{F}(x))}{x^2-1}\f$, 
 //!
 //! where \f$ \kappa_s \f$ is the characteristic convergence and \f$ \mathcal{F}(x)\f$ is defined in F(double x)
-/*!   \param r : radial distance,   \param pot_params[] : NFW lens parameters,   \return \f$ \kappa(r)\f$ */
+/*!   \param r : radial distance,
+      \param pot_params[] : NFW lens parameters,
+      \return \f$ \kappa(r)\f$
+*/
 double conv_nfw_circ(double r, double pot_params[])
 {
     double K, ks=pot_params[0];
-    double rs=pot_params[1],X=r/rs;
+    double rs=pot_params[1];
+    double X=r/rs;
     
     if(X == 1.0)
     {
@@ -80,6 +104,27 @@ double conv_nfw_circ(double r, double pot_params[])
         K = 2.0*ks*(1.0 - F(X))/(X*X - 1.0);
         return K;
     }    
+}
+
+//! Derivative of conv_nfw_circ(
+/*!
+  \param r radial distance
+  \param pot_params[0] : NFW lens parameters kappa_s,
+  \param pot_params[1] : NFW lens parameters r_s,
+  \return \f$ \frac{dk(x)}{d\left(x^2\right)}\f$
+  \sa F()
+*/
+double conv_nfw_circ_prime(double r, double pot_params[])
+{
+
+  double K, ks=pot_params[0];
+  double rs=pot_params[1];
+  double X=r/rs;
+  double X2=X*X;
+  double UMX2=X2-1.0;
+	
+	if( fabs(X-1.0) < 1e-8) return -0.4*ks;
+    return ks*( 2.0*(F(fabs(X))-1.0) - UMX2*Flinha(fabs(X))/X )/(UMX2*UMX2);
 }
 
 //pot_params[0] = kappas

@@ -6,9 +6,11 @@
 #include "../../numerical_methods/hausdorff_distance.h"
 
 
-#include "../perturbative_method.h"
-#include "../pnfw_model.h"
-#include "../nfw_circular_model.h"
+//#include "../perturbative_method.h"
+
+#include "perturbative_method.h"
+#include "pnfw_model.h"
+#include "nfw_circular_model.h"
 
 // to compile make: g++ -Wall -o exec_h hausdorff.cpp `pkg-config gsl --cflags --libs`
 

@@ -100,9 +100,7 @@ void plot_arcs_sep(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_i
   double arcs[10][2];
 
   if(fabs(source_in.x0-source_in.y0)<1E-10) source_in.y0+=source_in.y0*0.001;
-  theta_find(Df0Dtheta_in, source_in,  pert_params, _r_e, arcs);
-
-
+  theta_find(Df0Dtheta_in, source_in,  pert_params, _r_e, arcs, 2000);
 
   if(arcs[ int(arcs[0][0]) ][1]< arcs[ int(arcs[0][0]) ][0]) arcs[ int(arcs[0][0]) ][1] += 6.283185308;
 
@@ -116,6 +114,7 @@ void plot_arcs_sep(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_i
   double theta_max[int(arcs[0][0])];
   double delta_theta[int(arcs[0][0])];
 
+  if(arcs[0][0]<1)arcs[0][0]=1.0;
   for(int i=1;i<=arcs[0][0];i++){
     theta_min[i]  = arcs[i][0] - arcs[0][1];
     theta_max[i]  = arcs[i][1] + arcs[0][1];
