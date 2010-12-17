@@ -332,7 +332,7 @@ double IntGaulegSub100(double f(double x, double par[]), double par_in[], double
   return INT*Xf_M_Xi;
 }
 
-double IntGaulegSub50_elip_model(double f(double x, double par[], double g(double x, double par[]) ), double par_in[], double x_init, double x_final, double conv(double y, double par[]))
+double IntGaulegSub50_elip_model(double f(double , double *, double g(double , double *) ), double par_in[], double x_init, double x_final, double conv(double , double *))
 {
   int n=50;
   double x[n],w[n];

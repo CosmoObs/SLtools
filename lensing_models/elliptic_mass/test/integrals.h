@@ -52,11 +52,10 @@ double AK(int n, conv_type conv_in,double X1, double X2, double conv_params[], d
   \param par[0] n, from J_n
   \param par[1] X1
   \param par[2] X2
-  \param par[3]
-  \param par[4]
-  \param par[5]
-  \param par[6]
-  \return est_err_out
+  \param par[3] a
+  \param par[4] b
+  \param par[5 - ] lens parameters
+  \return 
 */
 double AJ_final(double u, double par[], conv_type conv_in){
   int n = int(par[0]);
@@ -65,26 +64,89 @@ double AJ_final(double u, double par[], conv_type conv_in){
   double  a = par[3];
   double  b = par[4];
 
+  //printf("%f %f %f %f %f ",par[0],par[1],par[2],par[3] ,par[4]);
+
   double conv_params[10];
-  int i=5;
-  while(conv_params[i-5] != 0.0){
+  //int i=5;
+  for(int i=5;i<15;i++){
     conv_params[i-5] = par[i];
   }
+  //printf("%f %f %f\n",par[5],par[6],par[7]);
 
   return AJ(n, conv_in, X1,  X2,  conv_params, u, a, b);
+}
+
+//!  K integral argument in the form double(double u, double par[])
+//!
+/*!
+  \param u mute variable
+  \param par[0] n, from J_n
+  \param par[1] X1
+  \param par[2] X2
+  \param par[3] a
+  \param par[4] b
+  \param par[5 - ] lens parameters
+  \return 
+*/
+double AK_final(double u, double par[], conv_type conv_in){
+  int n = int(par[0]);
+  double X1 = par[1];
+  double X2 = par[2];
+  double  a = par[3];
+  double  b = par[4];
+
+  //printf("%f %f %f %f %f ",par[0],par[1],par[2],par[3] ,par[4]);
+
+  double conv_params[10];
+  //int i=5;
+  for(int i=5;i<15;i++){
+    conv_params[i-5] = par[i];
+  }
+  //printf("%f %f %f\n",par[5],par[6],par[7]);
+
+  return AK(n, conv_in, X1,  X2,  conv_params, u, a, b);
 }
 /******************************************************************************/
 
 
-/*double J(int n, conv_type conv_in,double X1, double X2, double conv_params[], double u, double a, double b){
+double J(int n, conv_type conv_in,double X1, double X2, double conv_params[], double a, double b){
 
-  double int = IntGaulegSub50(conv_in, conv_params[], double x_init, double x_final)
+  double int_params[15];
+  int_params[0] = n;
+  int_params[1] = X1;
+  int_params[2] = X2;
+  int_params[3] = a;
+  int_params[4] = b;
+
+  //printf("%f %f %f %f %f ",int_params[0],int_params[1],int_params[2],int_params[3] ,int_params[4]);
+
+  for(int i=5;i<15;i++){
+    int_params[i] = conv_params[i-5];
+  }
+  //printf("%f %f %f\n",int_params[5],int_params[6],int_params[7]);
+
+  return IntGaulegSub50_elip_model(AJ_final, int_params, 0.0, 1.0, conv_in);
+}
 
 
-}*/
+double K(int n, conv_type conv_in,double X1, double X2, double conv_params[], double a, double b){
 
+  double int_params[15];
+  int_params[0] = n;
+  int_params[1] = X1;
+  int_params[2] = X2;
+  int_params[3] = a;
+  int_params[4] = b;
 
+  //printf("%f %f %f %f %f ",int_params[0],int_params[1],int_params[2],int_params[3] ,int_params[4]);
 
+  for(int i=5;i<15;i++){
+    int_params[i] = conv_params[i-5];
+  }
+  //printf("%f %f %f\n",int_params[5],int_params[6],int_params[7]);
+
+  return IntGaulegSub50_elip_model(AK_final, int_params, 0.0, 1.0, conv_in);
+}
 
 
 
