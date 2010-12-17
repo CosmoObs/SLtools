@@ -271,13 +271,22 @@ More specifically, suppose that we're using the perturbed Lens Equation to pass
 from the lens plane to the source plane, both in Cartesian coordinates. This
 transformation is given by the Jacobian Matrix $J_{L_C\rightarrow S_C}$.
 However, in the perturbative approach, a lot of the quantities are more
-conveniently written in terms of polar coordinates in some of the intermediate
-steps. In the next sections, we'll make use of the following two facts:
+conveniently written in terms of polar coordinates. In the next sections, we'll
+make use of the following three facts:
 \bea
-J_{L_C\rightarrow S_C}=J_{L_C\rightarrow L_P}J_{L_P\rightarrow
-S_C}\label{jacobian_comp}\\
-\det(AB)=\det A\det B\label{determinant_mult}
+J_{L_C\rightarrow S_C}&=&J_{L_P\rightarrow
+S_C}J_{L_C\rightarrow L_P}\label{jacobian_comp}\\
+\det(AB)&=&\det A\det B\label{determinant_mult}\\
+\mbox{tr}\,(AB)&=&A_{11}B_{11}+A_{12}B_{21}+A_{21}B_{12}+A_{22}B_{22}\,,\mbox{
+for $2\times 2$ matrices}\label{trace}
 \eea
+We also recall that the components of $J_{L_C\rightarrow L_P}$ are given by:
+\begin{eqnarray}
+\frac{\prtl r}{\prtl x_1}&=&\cos{\te}\label{drdx1}   \\
+\frac{\prtl \te}{\prtl x_1}&=&-\frac{\sin{\te}}{r}\label{dtedx1}\\
+\frac{\prtl r}{\prtl x_2}&=&\sin{\te}\label{drdx2}\\
+\frac{\prtl \te}{\prtl x_2}&=&-\frac{\cos{\te}}{r}\label{dte2dx2}
+\end{eqnarray}
 
 \subsection{Critical Curves and Caustics}
 
@@ -344,13 +353,13 @@ Therefore on the critical curves, where $J = 0$, we have
 
 \begin{equation}
 \label{eq:critcurves}
-x=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right]
+\Delta x_{crit}=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right]
 \end{equation}
 
 This is Alard eq.~30. From this last equation, the tangential critical
 curve can be expressed in Cartesian coordinates in parametric form as 
 \beq
-\vec{r}_{\mathrm{crit}}= \left[(\re  +x)\cos{\te},(\re+x)\sin{\te}\right],\quad
+\vec{r}_{\mathrm{crit}}= \left[(\re  +\Delta x_{crit})\cos{\te},(\re+\Delta x_{crit})\sin{\te}\right],\quad
 0 \leq \te < 2\pi.  
 \eeq
 
@@ -381,20 +390,38 @@ Alard eq.34 from 33 and 32.
 
 To obtain the deformation cross-section, we want to obtain a
 non-parametric expression $r_\pm (\te)$ for the limiting curves of this area. To
-begin with, we recall that the eigenvalues of a $2\times 2$ non-singular matrix $M$
+begin with, we recall that the eigenvalues of a $2\times 2$ non-singular matrix
+$M$
 are given by
 \beq
-\lambda_\pm=\frac{1}{2}\left(\mbox{tr}\, M\pm\sqrt{(\mbox{tr}\,M)^2+4\det M}\right)\label{eigenvalues}
+\lambda_\pm=\frac{1}{2}\left(\mbox{tr}\, M\pm\sqrt{(\mbox{tr}\,M)^2-4\det
+M}\right)\label{eigenvalues}
 \eeq 
-where $\mbox{tr}\, M$ is the trace of the matrix $M$. Therefore
-\beq
-\frac{\lambda_+}{\lambda_-}=\frac{1+\tau\sqrt{1-\alpha}}{1-\tau\sqrt{1-\alpha}}\label{eigenvalues_division}
-\eeq
-with $\tau=\mbox{sgn}\, M$ and $\alpha=4\frac{\det M}{(\mbox{tr}\,M)^2}$. If we set $\frac{\lambda_+}{\lambda_-}=N$ (a condition that will be used to define tha cross-section), then we can invert eq (\ref{eigenvalues_division}) to obtain
-\beq
-\frac{\det M}{(\mbox{tr}\,M)^2}=\frac{N}{(N+1)^2}
-\eeq
-{\bf To be continued}
+where $\mbox{tr}\, M$ is the trace of the matrix $M$. Using eqs. \ref{jacobian}
+and \ref{trace}, it is possible to show that the eigenvalues of $J_{L_C\rightarrow
+S_C}$ are given by
+\bea
+\lambda_{+}&=&\kt\label{eigenvalue1}\\
+\lambda_{-}&=&-\frac{\scriptf(\te)}{r}=-\frac{\scriptf(\te)}{\re+x}\label{eigenvalue2}
+\eea
+
+
+%Therefore
+%\beq
+%\frac{\lambda_+}{\lambda_-}=\frac{1+\tau\sqrt{1-\alpha}}{1-\tau\sqrt{1-\alpha}}
+%\label{eigenvalues_division}
+%\eeq
+%with $\tau=\mbox{sgn}\, M$ and $\alpha=4\frac{\det M}{(\mbox{tr}\,M)^2}$. 
+If we set $\left|\frac{\lambda_+}{\lambda_-}\right|=N$ (a condition that will be used to define the
+cross-section), then we can solve for the radius of the frontiers of the deformation cross-section area. The solutions are
+\bea
+r_{+}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1+\frac{1}{1-N}\right)\label{rmax}\\
+r_{-}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1-\frac{1}{1-N}\right)\label{rmin}
+\eea
+%\beq
+%\frac{\det M}{(\mbox{tr}\,M)^2}=\frac{N}{(N+1)^2}
+%\eeq
+
 
 \section{Reconstruction of Images}
 
