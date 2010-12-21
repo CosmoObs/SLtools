@@ -39,10 +39,10 @@ double AJ(int n, conv_type conv_in,double X1, double X2, double conv_params[], d
   return kCSI2U(conv_in,X1,X2,conv_params,u,a,b)/(tmp_a*tmp_b);
 }
 
-double AK(int n, conv_type conv_in,double X1, double X2, double conv_params[], double u, double a, double b){
+double AK(int n, conv_type conv_prime_in,double X1, double X2, double conv_params[], double u, double a, double b){
   double tmp_a = pow( 1.0 - (1.0-a*a)*u , 2.5 - n);
   double tmp_b = pow( 1.0 - (1.0-b*b)*u , 0.5 + n);
-  return u*kCSI2U(conv_nfw_circ_prime,X1,X2,conv_params,u,a,b)/(tmp_a*tmp_b);
+  return u*kCSI2U(conv_prime_in,X1,X2,conv_params,u,a,b)/(tmp_a*tmp_b);
 }
 
 //!  J integral argument in the form double(double u, double par[])
