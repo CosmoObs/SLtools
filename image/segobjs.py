@@ -48,11 +48,11 @@ def centroid2ID(segimg, centroids=[]):
     #
     try:
         for xo,yo in centroids:
-            objid = segimg[int(yo),int(xo)];
+            objid = segimg[int(float(yo)),int(float(xo))];
             objIDs.append(objid);
             if not (objid):
                 print >> sys.stdout, "No objects were identified for (x=%s,y=%s) position." % (xo,yo);
-                print >> sys.stdout, "Be careful, \"ID\" 0 was appended to the output to fill the position.";
+                print >> sys.stdout, "\"ID\" 0 means \"no object identified\".";
     except TypeError:
         print >> sys.stderr, "Error: Points were not given as expected. centroids=[(x1,y1), ...]"
         del objIDs;
