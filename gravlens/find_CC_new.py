@@ -82,7 +82,11 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	(gridhi1_CC_factor(=2) times the distance of the furthest CC 
 	point to the origin) to reobtain the CC with the apropriate 
 	value for the grid. If the CC were not found after all these 
-	attempts, this function returns "False" and an error message.
+	attempts, this function returns "False" and an error message. 
+	If all caustic points have coordinates < acceptable_res_limit 
+	(=2E-4), a warning message will be generated, meaning that the 
+	precision of gravlens (limited by the number of digits in the 
+	output file) is being reached. 
 
 	Input:
 	 - lens_model             <str> : Lens name (see gravlens manual table 3.1)
@@ -116,6 +120,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	grid_factor2 = 3.
 	min_n_lines = 200
 	gridhi1_CC_factor = 2.
+	acceptable_res_limit = 2E-4
 	# ==================================
 
 	inputlens, setlens, gravlens_params_updated = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)	# setlens is the gravlens input line that concerns the lens (ex: nfw 1 0 ...)
@@ -172,7 +177,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	caustics_xy, crit_curves_xy = get_CC_from_file(caustic_CC_file)
 
 	# check if the precision is ok (gravlens outputs coordinates with only 6 decimal places)
-	if max( max(np.abs(caustics_xy[0])), max(np.abs(caustics_xy[1])) ) < 2E-4:
+	if max( max(np.abs(caustics_xy[0])), max(np.abs(caustics_xy[1])) ) < acceptable_res_limit:
 		logging.warning('The caustics seem to be determined with low resolution')
 
 	return caustics_xy, crit_curves_xy, gravlens_params_updated
