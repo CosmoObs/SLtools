@@ -441,7 +441,36 @@ Now we know in Cartesian coordinates:
 
 with $\gamma = \sqrt{\gamma_1^2 + \gamma_2^2}$
 
-We need to convert these Cartesian derivatives to polar ones...
+We need to convert these Cartesian derivatives to polar ones, using:
+
+\bea
+{\partial \over \partial x } &=& \cost \ppr - \sint \oor \ppt \\
+{\partial \over \partial y } &=& \sint \ppr + \cost \oor \ppt
+\eea
+
+Which lead to the expressions
+
+\bea
+{\partial^2 \over \partial x^2 } + {\partial^2 \over \partial y^2 } &=&  \pprsq +  \oorsq \pptsq + \oor \ppr \\
+{\partial^2 \over \partial x^2 } - {\partial^2 \over \partial y^2 } &=&  \costwot \lp \pprsq -  \oorsq \pptsq - \oor \ppr \rp + \sintwot \lp \oorsq \ppt - \twoor \pprt \rp \\
+{\partial^2 \over \partial x \partial y }  &=&  \half \sintwot \lp \pprsq -  \oorsq \pptsq - \oor \ppr \rp + \costwot \lp - \oorsq \ppt - \oor \pprt \rp
+\eea
+
+Where the first is the standard Laplacian in polar coordinates.
+
+Using now $f_0 = \Psi$, $f_1 = {\prtl \Psi \over \prtl r}$, $f_2 = \half {\prtl^2 \Psi \over \prtl r^2}$, we obtain the following:
+
+\bea
+\kappa &=& {1 \over 2} \lp 2 f_2 + \oorsq \pptsqfz + \oor f_1 \rp \\
+\gamma_1 &=&   {1 \over 2} \lp \costwot \lp 2 f_2 - \oorsq \pptsqfz - \oor f_1 \rp + \sintwot \lp \oorsq \pptfz - \twoor \pptfone \rp \rp \\
+\gamma_2 &=&   \half \sintwot \lp 2 f_2 - \oorsq \pptsqfz - \oor f_1 \rp + \costwot \lp - \oorsq \pptfz - \oor \pptfone \rp  \\
+\eea
+
+%So that 
+
+%\beq
+%\gamma &=&   \sqrt \lbracket {1 \over 4}  \lp 2 f_2 - \oorsq \pptsqfz - \oor f_1 \rp^2 + \lp \oorsq \pptfz - \twoor \pptfone \rp \rp \rbracket\\
+%\eeq
 
 \section{Reconstruction of Images}
 
