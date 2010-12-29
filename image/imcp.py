@@ -161,11 +161,10 @@ def _hdr_update(hdr, x_ini, y_ini):
 # \endcond
 
 #=============================================================================
-def copy_objimgs(seg_img, obj_img, objIDs):
+def copy_object_images(seg_img, obj_img, objIDs):
     """
-    Identify objects on given images by their IDs and return object images
-
-    objects_IDfy( objIDs.list, seg_img.ndarray, obj_img.ndarray )
+    Returns a image (with same size/shape as given ones) for each object in 
+    'obj_img' found in 'seg_img' with ID in 'objIDs'.
 
     Function identifies the pixels of each ID(int) in 'objIDs' on segmentation
     image(array) - seg_img. These identified pixels (their values) are copied 
@@ -181,7 +180,8 @@ def copy_objimgs(seg_img, obj_img, objIDs):
      - objIDs  : a list with (int) numbers that identify the objects in seg_img
 
     Output:
-     - objs_list : a list with arrays containing each identified object
+     - [ ndarray(ndim=2,dtype=float) , ]
+        A list with numpy arrays containing each identified object
 
     """
 
@@ -304,8 +304,8 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 	# Verify central coordinates values..
 	#
 	if ( coord_unit == 'pixel' and (xo != 0 and yo != 0) ):
-		x_halo = int(xo);
-		y_halo = int(yo);
+		x_halo = int(float(xo));
+		y_halo = int(float(yo));
 
 	elif ( coord_unit == 'degrees' and (xo != 0 and yo != 0) ):
 		_out = commands.getoutput( 'sky2xy %s %s %s' % (input_file, xo, yo) );
@@ -371,6 +371,12 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 
 	return (imagemnova, hdr);
 
+
+def snapshot( image, header=None, centroid=(0,0), shape=(0,0), coord_unit='pixel', size_unit='pixel', mask=None ):
+    """See 'cutout' help. This is just a definition to interface (xo,yo)<->centroid and (x_size,y_size)<->shape"""
+    xo,yo = centroid;
+    x_size,y_size= shape;
+    return cutout( image, header, coord_unit,xo, yo, size_unit, x_size, y_size, mask );
 # ---
 
 # ==========================================================================================

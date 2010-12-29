@@ -6,8 +6,8 @@ import re;
 import string;
 
 
-def write_cat(centroids=[],size=20,marker='circle',color='green',imagefile='null.fits',outputfile='ds9.reg'):
-    """ Function to write a ds9 region file
+def write_cat(centroids,size=20,marker='circle',color='red',imagefile='null.fits',outputfile='ds9.reg'):
+    """ Function to write a ds9 region file given a set of centroids
     
     It works only with a circular 'marker' with fixed
     radius for all (x,y) - 'centroids' - given.
@@ -55,11 +55,11 @@ def read_cat(regionfile):
      - regionfile   :   ASCII (ds9 format) file
      
     Output:
-     -> {'image':str,'tag':[],'x':[],'y:[]','dx':[],'dy':[]}
+     -> {'image':str,'color':[],'x':[],'y:[]','dx':[],'dy':[]}
     
     """
     
-    out = {'image':'', 'tag':[], 'x':[], 'y':[], 'dx':[], 'dy':[]};
+    out = {'image':'', 'color':[], 'x':[], 'y':[], 'dx':[], 'dy':[]};
 
     fp = open(regionfile,'r');
 
@@ -85,7 +85,7 @@ def read_cat(regionfile):
                 out['y'].append(y);
                 out['dx'].append(dx);
                 out['dy'].append(dy);
-                out['tag'].append(color);
+                out['color'].append(color);
                 continue;
             except AttributeError:
                 pass;
@@ -97,7 +97,7 @@ def read_cat(regionfile):
                 out['y'].append(y);
                 out['dx'].append(R);
                 out['dy'].append(R);
-                out['tag'].append(color);
+                out['color'].append(color);
                 continue;
             except AttributeError:
                 pass;
