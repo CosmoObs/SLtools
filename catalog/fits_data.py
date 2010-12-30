@@ -84,6 +84,51 @@ def select_columns(tbhdu, *fields):
     return pyfits.new_table(coldefs);
 
 # ---
+'''
+def read_SE_data(segimg,tbdata,centroids):
+    """ Read table data for requested objects
+
+    Objects referenced on segmented image 'segimg'
+    by 'centroids' positions are searched for
+    in 'tbdata' (fits hdulist.data).
+    
+    Input:
+     - segimg : <ndarray>
+     - tbdata : <numpy record-array> (fits cat)
+     - centroids : list of tuples [(x,y),]
+    
+    Output:
+     -> {'*tbdata.names'},{'x','y'}
+     1st dict: cross-checked objects entries/features from 'tbdata'
+     2nd dict: non-checked object centroids
+     
+    """
+    
+    # Get the object IDs of selected objects (ds9)..
+    #
+    objIDs = segobjs.centroid2ID(segimg,centroids=centroids);
+    
+    # and see how many objects were not deteted.
+    # Store these guys in somewhere, and remove them from objIDs list.
+    Dnon = {};
+    if (objIDs.count(0)):
+        non_detected_centroids = [ centroids[i] for i in range(len(centroids)) if objIDs[i]==0 ];
+        non_detected_indexes = [i for i in range(len(centroids)) if objIDs[i]==0 ];
+    Dnon['x'],Dnon['y'] = zip(*non_detected_centroids);
+    Dnon['ind'] = non_detected_indexes;
+    
+    objIDs = filter(lambda x: x, objIDs);
+    
+    # Read SE's catalog entries corresponding the ones in DS9's catalog..
+    #
+    params = tbdata.names;
+    tbdata = fts.get_entries(tbdata, 'NUMBER', *objIDs);
+    Ddata = fts.get_columns(tbdata, *params);
+    
+    return (Ddata,Dnon)
+'''
+
+# ---
 
 def dict_to_tbHDU(dic, tbname='', *args):
     """ Return a table HDU with 'dic' keys|lists
@@ -138,9 +183,6 @@ def dict_to_tbHDU(dic, tbname='', *args):
                 tipo = '10A'
         except:
             tipo = '20A'
-#        except:
-#            print >> sys.stderr,"Key %s and their value were not written to newtable. Passing by." % (_arg);
-#            continue;
             
         c.append(pyfits.Column(name=str(_arg).upper(),format=tipo,array=np.asarray(dic[_arg])));
     
