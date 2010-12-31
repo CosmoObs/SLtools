@@ -39,7 +39,7 @@ import numpy as np;
 import sltools;
 from sltools.string import regexp;
 from sltools.image import segobjs;
-from sltools.image import header;
+from sltools.image import header_funcs as _hf_;
 
 
 # =================================================================================================================
@@ -94,7 +94,7 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 
 
 	if ( hdr ):
-		dimpix = header.read_pixelscale( hdr );
+		dimpix = _hf_.read_pixelscale( hdr );
 
 
 	y_img_size, x_img_size = imagem.shape;
@@ -165,7 +165,7 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 	# If header, update pixel<->sky information..
 	#
 	if ( hdr ):
-		hdr = header.update_coordinates(hdr.copy(), x_ini, y_ini);
+		hdr = _hf_.update_coordinates(hdr.copy(), x_ini, y_ini);
 		hdr.update('NAXIS1',x_cut_size);
 		hdr.update('NAXIS2',y_cut_size);
 
@@ -299,6 +299,7 @@ def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, 
 # ---
 
 #=============================================================================
+'''
 def copy_objects(obj_img, seg_img, objIDs):
     """
     Returns a image (with same size/shape as given ones) for each object in 
@@ -351,110 +352,106 @@ def copy_objects(obj_img, seg_img, objIDs):
 
 
     return (objs_list);
-
+'''
 # ---
 
 # \cond
 # ============================================================================
 if __name__ == "__main__" :
 
-	from optparse import OptionParser;
+    from optparse import OptionParser;
 
-	usage="Usage: %prog [options] <image.fits>"
-	parser = OptionParser(usage=usage);
+    usage="\n  %prog image.fits x y  [options]"
+    parser = OptionParser(usage=usage);
 
-	parser.add_option('-o',
-			  dest='output_file', default='pstamp_',
-			  help='Output (image) file rootname ["pstamp_"]');
-	parser.add_option('--coord',
-			  dest='coord_unit', default='pixel',
-			  help='Coordinate units, for xo & yo [pixel]');
-	parser.add_option('--xo',
-			  dest='xo', default=0,
-			  help='X centre');
-	parser.add_option('--yo',
-			  dest='yo', default=0,
-			  help='Y centre');
-	parser.add_option('--size_unit',
-			  dest='size_unit', default='pixel',
-			  help='Side length unit, for x_size & y_size [pixel]');
-	parser.add_option('--x_size',
-			  dest='x_size', default=0,
-			  help='Size of x side on output');
-	parser.add_option('--y_size',
-			  dest='y_size', default=0,
-			  help='Size of y side on output');
-	parser.add_option('--no-header', action='store_false',
-			  dest='use_header', default=True,
-			  help="Do not use existing image header.");
-	parser.add_option('--outdir',
-			  dest='dir_name', default='out_imcp',
-			  help="Directory name to store output images(poststamps)");
-	parser.add_option('-s', '--segimg',
-			  dest='segimg', default=None,
-			  help="Segmentation image (e.g, Sextractor's SEGMENTATION output)");
-	parser.add_option('--objIDs',
-			  dest='IDs',default='',
-			  help="Comma-separated list of object IDs found on 'segimg' to extract");
-	parser.add_option('--increase',
-			  dest='incr', default=0,
-			  help="Amount of border/enlarge of object poststamp. It is an additive or multiplicative factor. See 'relative_increase' flag");
-	parser.add_option('--relative_increase', action='store_true',
-			  dest='rel_incr', default=False,
-			  help="Turn on the multiplicative factor for increase image, otherwise, 'increase' will be treated as an absolute value.");
+    parser.add_option('-j', action='store_true',
+                dest='is_coord_deg', default=False,
+                help="If given (x,y) coordinates are in degrees, default is False");
+    parser.add_option('-J', action='store_true',
+                dest='is_shape_deg', default=False,
+                help="If given 'shape' (x,y sizes) are in degrees, default is False");
+    parser.add_option('-s',
+                dest='dim', default=(250,250),
+                help="Output stamps shape default is (250,250)");
+    parser.add_option('--increase',
+                dest='incr', default=0,
+                help="Amount of border/enlarge of object poststamp. It is an additive or multiplicative factor. See 'relative_increase' flag");
+    parser.add_option('--relative_increase', action='store_true',
+                dest='rel_incr', default=False,
+                help="Turn on the multiplicative factor for increase image, otherwise, 'increase' will be treated as an absolute value.");
+    parser.add_option('-o',
+                dest='sufx', default='pstamp_',
+                help="Output images (stamps) filename suffix [pstamp_]");
+    parser.add_option('--no-header', action='store_false',
+                dest='use_header', default=True,
+                help="Do not use input image header.");
+    parser.add_option('--outdir',
+                dest='dir_name', default='out_imcp',
+                help="Directory name to store output images(poststamps)");
 
-	(opts,args) = parser.parse_args();
+    parser.add_option('--segimg',
+                dest='segimg', default=None,
+                help="Segmented image (e.g, SE's SEGMENTATION output)");
+    parser.add_option('--objIDs',
+                dest='IDs',default='',
+                help="Comma-separated list of object IDs found on 'segimg' to extract");
 
-	outfits = opts.output_file;
-	coord = opts.coord_unit;
-	x = opts.xo;
-	y = opts.yo;
-	size = opts.size_unit;
-	dx = opts.x_size;
-	dy = opts.y_size;
-	segimg = opts.segimg;
-	IDs = opts.IDs;
-	incr = opts.incr;
-	rel_incr = opts.rel_incr;
-	use_header = opts.use_header;
-	dir_name = opts.dir_name;
+    
+    (opts,args) = parser.parse_args();
 
-	if ( len(args) != 1 ):
-		parser.error("Wrong number of arguments. Try option '--help' for usage and help messages.")
+    segimg = opts.segimg;
+    IDs = opts.IDs;
+    incr = opts.incr;
+    rel_incr = opts.rel_incr;
+    use_header = opts.use_header;
+    dir_name = opts.dir_name;
 
-	infits = args[0];
+    if ( len(args) < 3 ):
+        parser.print_help();
+        sys.exit(0);
 
-	if (use_header):
-		image, hdr = pyfits.getdata(infits,header=True);
-	else:
-		image = pyfits.getdata(infits, header=False);
-		hdr = None;
+    infits = args[0];
+    x = args[2];
+    y = args[1];
+    coord_deg = opts.is_coord_deg;
+    shape_deg = opts.is_shape_deg;
+    dx,dy = opts.dim;
+    outfits = opts.sufx;
 
-	try:
-		os.mkdir( dir_name );
-	except OSError:
-		pass;
+    coord = 'degrees' if coord_deg else 'pixel';
+    size = 'degrees' if shape_deg else 'pixel';        
 
-	owd = os.getcwd()+"/";
-	os.chdir( dir_name );
+    if (use_header):
+        image, hdr = pyfits.getdata(infits,header=True);
+    else:
+        image = pyfits.getdata(infits, header=False);
+        hdr = None;
 
-	if (segimg):
-		IDs = regexp.str2lst(IDs);
-		imglst, hdrlst = segstamp(image, segimg, header=hdr, increase=incr, relative_increase=rel_incr, objIDs=objIDs)
-	else:
-		imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
-		IDs = ['0'];
-		imglst = [imgcut];
-		hdrlst = [hdr];
+    try:
+        os.mkdir( dir_name );
+    except OSError:
+        pass;
 
-	for i in range(len(IDs)):
-		outfits = outfits+"%s.fits" % (IDs[i]);
-		os.system('[ -f %s ] && rm -f %s' % (outfits,outfits));
-		pyfits.writeto( outfits, imglst[i], hdrlst[i] );
+    owd = os.getcwd()+"/";
+    os.chdir( dir_name );
 
-	print >> sys.stdout, "Done.";
-	os.chdir( owd );
-	sys.exit(0);
+    if (segimg):
+        IDs = regexp.str2lst(IDs);
+        imglst, hdrlst = segstamp(image, segimg, header=hdr, increase=incr, relative_increase=rel_incr, objIDs=objIDs)
+    else:
+        imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
+        IDs = ['0'];
+        imglst = [imgcut];
+        hdrlst = [hdr];
+
+    for i in range(len(IDs)):
+        outfits = outfits+"%s.fits" % (IDs[i]);
+        os.system('[ -f %s ] && rm -f %s' % (outfits,outfits));
+        pyfits.writeto( outfits, imglst[i], hdrlst[i] );
+
+    print >> sys.stdout, "Done.";
+    os.chdir( owd );
+    sys.exit(0);
 
 # ------------------
 # \endcond

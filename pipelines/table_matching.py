@@ -9,7 +9,7 @@ import numpy as np;
 import sltools;
 from sltools.catalog import fits_data,ascii_data;
 
-def nearest_neighbour(centroids_A, centroids_B):
+def nearest_neighbour(centroids_A, centroids_truth):
     """ Function to compute and return the set of nearest point
         
     This function computes for each entry of 'centroids_A', the
@@ -30,6 +30,8 @@ def nearest_neighbour(centroids_A, centroids_B):
 
     """
     
+    centroids_B = centroids_truth;
+    
     length_A = len(centroids_A);
     length_B = len(centroids_B);
     
@@ -46,9 +48,11 @@ def nearest_neighbour(centroids_A, centroids_B):
     # all points in vector _A to each point in _B, and respective (_A)
     # vector index". Size of both vector should be equal to input "_B"
     # data.('centroids_B')
-    dist_min_AtoB = np.sqrt(np.amin(Mat,axis=0));
-    indx_min_AtoB = np.argmin(Mat,axis=0);
+#    dist_min_AtoB = np.sqrt(np.amin(Mat,axis=0));
+#    indx_min_AtoB = np.argmin(Mat,axis=0);
     
+#    ind_dist_AtoB = zip(indx_min_AtoB,dist_min_AtoB);
+
     # Again here for "_B". All the points in "_B" near(est) to each
     # point in "_A". Index of the nearest point in "_B" and the distance
     # to that point. Size iqual to "_A"-input.(len('centroids_A'))
@@ -56,13 +60,13 @@ def nearest_neighbour(centroids_A, centroids_B):
     indx_min_BtoA = np.argmin(Mat,axis=1);
     
     ind_dist_BtoA = zip(indx_min_BtoA,dist_min_BtoA);
-    ind_dist_AtoB = zip(indx_min_AtoB,dist_min_AtoB);
     
-    return (ind_dist_BtoA,ind_dist_AtoB);
+#    return (ind_dist_BtoA,ind_dist_AtoB);
+    return (ind_dist_BtoA);
 
 # ---
 
-def match_positions(tbhdu_A, tbhdu_B, radius):
+def match_positions(tbhdu_A, tbhdu_truth, radius):
     """ Check if positions in tables match within a given radius
     
     "tbhdu"s 'x' and 'y' fields are expected for the processing
@@ -75,6 +79,8 @@ def match_positions(tbhdu_A, tbhdu_B, radius):
     Output:
      -  
     """
+    
+    tbhdu_B = tbhdu_truth;
     
     tbname_A = tbhdu_A.name;
     tbname_B = tbhdu_B.name;
@@ -100,35 +106,38 @@ def match_positions(tbhdu_A, tbhdu_B, radius):
     except:
         return False;
     
-    A_near_neibors, B_near_neibors = nearest_neighbour(centroids_A,centroids_B);
+    A_near_neibors = nearest_neighbour(centroids_A,centroids_B);
     
     A_nn_indx,A_nn_dist = zip(*A_near_neibors);
-    B_nn_indx,B_nn_dist = zip(*B_near_neibors);
-
+    
     A_match_neibors = [ _d < radius for _d in A_nn_dist ];
-    B_match_neibors = [ _d < radius for _d in B_nn_dist ];
     
     A_neibor_BX = [ x_B[i] for i in A_nn_indx ];
     A_neibor_BY = [ y_B[i] for i in A_nn_indx ];
     
-    B_neibor_AX = [ x_A[i] for i in B_nn_indx ];
-    B_neibor_AY = [ y_A[i] for i in B_nn_indx ];
-    
+    # Alias:
     naa = np.asarray;
 
     tbname = tbname_B+"_points_near_to_"+tbname_A;
     dict_Aout = {'X':naa(x_A),'Y':naa(y_A),'XY_MATCH':naa(A_match_neibors),'X_NEAR':naa(A_neibor_BX),'Y_NEAR':naa(A_neibor_BY)};
     new_tbhdu_A = fits_data.dict_to_tbHDU(dict_Aout,tbname);
     
-    tbname = tbname_A+"_points_near_to_"+tbname_B;
-    dict_Bout = {'X':naa(x_B),'Y':naa(y_B),'XY_MATCH':naa(B_match_neibors),'X_NEAR':naa(B_neibor_AX),'Y_NEAR':naa(B_neibor_AY)};
-    new_tbhdu_B = fits_data.dict_to_tbHDU(dict_Bout,tbname);
-    
-    return (new_tbhdu_A,new_tbhdu_B);
+#    A_near_neibors, B_near_neibors = nearest_neighbour(centroids_A,centroids_B);
+#    B_nn_indx,B_nn_dist = zip(*B_near_neibors);
+#    B_match_neibors = [ _d < radius for _d in B_nn_dist ];
+#    B_neibor_AX = [ x_A[i] for i in B_nn_indx ];
+#    B_neibor_AY = [ y_A[i] for i in B_nn_indx ];
+#    tbname = tbname_A+"_points_near_to_"+tbname_B;
+#    dict_Bout = {'X':naa(x_B),'Y':naa(y_B),'XY_MATCH':naa(B_match_neibors),'X_NEAR':naa(B_neibor_AX),'Y_NEAR':naa(B_neibor_AY)};
+#    new_tbhdu_B = fits_data.dict_to_tbHDU(dict_Bout,tbname);
+#    return (new_tbhdu_A,new_tbhdu_B);
+
+    return (new_tbhdu_A);
 
 # ---
 
-def run(filename_A,filename_B,radius=1,output_A='tableA',output_B='tableB', write_FITS=False):
+#def run(filename_A,filename_B,radius=1,output_A='tableA',output_B='tableB', write_FITS=False):
+def run(filename_A,filename_B,radius=1,output_A='tableA', write_FITS=False):
     """
     Input:
      - filename_A : DS9 region file
@@ -146,39 +155,10 @@ def run(filename_A,filename_B,radius=1,output_A='tableA',output_B='tableB', writ
     tbhdu_A = fits_data.dict_to_tbHDU(DA_in,tbname=filename_A);
     tbhdu_B = fits_data.dict_to_tbHDU(DB_in,tbname=filename_B);
     
-    tbhdu_A_wneib,tbhdu_B_wneib = match_positions(tbhdu_A,tbhdu_B,radius);
+#    tbhdu_A_wneib,tbhdu_B_wneib = match_positions(tbhdu_A,tbhdu_B,radius);
+    tbhdu_A_wneib = match_positions(tbhdu_A,tbhdu_B,radius);
     
-    DA_out = DA_in;
-    TF = tbhdu_A_wneib.data.field('XY_MATCH');
-    _len = int(tbhdu_A_wneib.header['NAXIS2']);
-    _ctmp = tbhdu_A_wneib.data.field('X_NEAR');
-    DA_out['x'].extend( [ _ctmp[i] for i in range(_len) if TF[i] ] );
-    _ctmp = tbhdu_A_wneib.data.field('Y_NEAR');
-    DA_out['y'].extend( [ _ctmp[i] for i in range(_len) if TF[i] ] );
-    DA_out['color'].extend( [ 'green' for i in range(_len) if TF[i] ] );
-    DA_out['marker'].extend( [ 'circle' for i in range(_len) if TF[i] ] );
-    DA_out['size'].extend( [ 30 for i in range(_len) if TF[i] ] );
-    
-    DB_out = DB_in;
-    TF = tbhdu_B_wneib.data.field('XY_MATCH');
-    _len = int(tbhdu_B_wneib.header['NAXIS2']);
-    _ctmp = tbhdu_B_wneib.data.field('X_NEAR');
-    DB_out['x'].extend( [ _ctmp[i] for i in range(_len) if TF[i] ] );
-    _ctmp = tbhdu_B_wneib.data.field('Y_NEAR');
-    DB_out['y'].extend( [ _ctmp[i] for i in range(_len) if TF[i] ] );
-    DB_out['color'].extend( [ 'green' for i in range(_len) if TF[i] ] );
-    DB_out['marker'].extend( [ 'circle' for i in range(_len) if TF[i] ] );
-    DB_out['size'].extend( [ 30 for i in range(_len) if TF[i] ] );
-    
-    ascii_data.write_ds9cat(x=DA_out['x'],y=DA_out['y'],size=DA_out['size'],marker=DA_out['marker'],color=DA_out['color'],outputfile=output_A+'.reg')
-    ascii_data.write_ds9cat(x=DB_out['x'],y=DB_out['y'],size=DB_out['size'],marker=DB_out['marker'],color=DB_out['color'],outputfile=output_B+'.reg')
-    
-    if write_FITS:
-        tbhdu_A_wneib.writeto(output_A+'.fit');
-        tbhdu_B_wneib.writeto(output_B+'.fit');
-    
-    return
-    
+    return tbhdu_A_wneib;
 
 # ==========================
 
@@ -187,20 +167,16 @@ if __name__ == '__main__' :
     # Initializing code, command-line options..
     #
     import optparse;
-    print "";
     
-    usage="Usage:  %prog [options] <ds9regionfile_A.reg> <ds9regionfile_A.reg>"
+    usage="\n  %prog [options] <ds9_CheckTable.reg> <ds9_TruthTable.reg>"
     parser = optparse.OptionParser(usage=usage);
 
-    parser.add_option('--radius',
-                        dest='radius', default=1,
-                        help='Distance for the objects matching in both tables');
-    parser.add_option('--outname_A',
-                        dest='outname_A', default='table_new_A',
-                        help='Output tables (DS9 and FITS) file rootnames["table_new_A"]');
-    parser.add_option('--outname_B',
-                        dest='outname_B', default='table_new_B',
-                        help='Output tables (DS9 and FITS) file rootnames["table_new_B"]');
+    parser.add_option('-r',
+                        dest='radius', default=10,
+                        help='Distance for the objects matching in both tables [10]');
+    parser.add_option('-o',
+                        dest='filename', default='matching_points',
+                        help='Output tables (DS9 and FITS) filename [matching_points]');
     parser.add_option('--write_FITS', action='store_true',
                         dest='write_fits', default=False,
                         help='If used, write output FITS files (tables)');
@@ -208,8 +184,7 @@ if __name__ == '__main__' :
     (opts,args) = parser.parse_args();
 
     radius = opts.radius;
-    outname_A = opts.outname_A;
-    outname_B = opts.outname_B;
+    outfilename = opts.filename;
     write_FITS = opts.write_fits;
     
     if len(args) < 2 :
@@ -219,7 +194,28 @@ if __name__ == '__main__' :
     regionfile_A = args[0];
     regionfile_B = args[1];
 
-    run(regionfile_A, regionfile_B, radius, outname_A, outname_B, write_FITS)
+    tbhdu_A = run(regionfile_A, regionfile_B, radius)
+    
+    if write_FITS:
+        tbhdu_A.writeto(outfilename+'.fit');
+    
+    # Set the dictionary to output to a ds9 region file
+    # the points that matched with the truth table will
+    # be written as yellow in ds9 region file.
+    
+    tbdata = tbhdu_A.data;
 
+    l_len = range( int(tbhdu_A.header['NAXIS2']) );
+    
+    TF = tbdata.field('XY_MATCH');
+    
+    x = [ tbdata.field('X_NEAR')[i] for i in l_len if TF[i] ];
+    y = [ tbdata.field('Y_NEAR')[i] for i in l_len if TF[i] ];
+    marker = [ 'circle' for i in l_len if TF[i] ];
+    color = [ 'green' for i in l_len if TF[i] ];
+    size = [ 30 for i in l_len if TF[i] ];
+    
+    ascii_data.write_ds9cat(x, y, size, marker, color, outputfile=outfilename+'.reg')
+    
     print >> sys.stdout, "Done.";
     sys.exit(0);
