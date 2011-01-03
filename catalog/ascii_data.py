@@ -15,7 +15,7 @@ import string;
 
 # ---
 
-def dict_to_csv(dictionary, fieldnames, filename, mode='w', delimiter=','):
+def dict_to_csv(dictionary, fieldnames=[], filename='cat.csv', mode='w', delimiter=','):
     """ Write a CSV catalog from dictionary contents
     
     Input:
@@ -52,10 +52,9 @@ def dict_to_csv(dictionary, fieldnames, filename, mode='w', delimiter=','):
     
     """
     
-    if not (list(set(fieldnames)-set(dictionary.keys())) == []):
-        print "Error: Given dictionary does not contain every requested fieldnames.";
-        return (False);
-
+    if fieldnames == []:
+        fieldnames = dictionary.keys();
+        
     catFile = open(filename,mode);
     catObj = csv.writer(catFile, delimiter=delimiter);
     catObj.writerow(fieldnames);
@@ -307,7 +306,8 @@ def read_ds9cat(regionfile):
 
     fp.close();
     return D_out;
-
+    
+# ---
 if __name__ == "__main__":
     import doctest;
     doctest.testmod()

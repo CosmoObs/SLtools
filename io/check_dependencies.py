@@ -29,7 +29,7 @@ def check_deps( binaries=[], modules=[] ):
 
 	check_flag = True;
 
-	if binaries==[]  and  modules==[]):
+	if binaries==[]  and  modules==[]:
 		return (True);
 
 
