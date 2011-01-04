@@ -25,6 +25,7 @@ from sltools.image import segobjs;
 from sltools.image import imcp;
 from sltools.catalog import fits_data as fts;
 from sltools.catalog import ascii_data as asc;
+from sltools.io import log;
 
 
 # GLOBAL variables:
@@ -55,7 +56,7 @@ def run(D_in, objimg, segimg=None, shape=(100,100), objsfile='pstamp_', hdr=None
     from numpy import asarray;
     
 
-    imagename_ds9 = D_in['image'];
+    imagename_ds9 = D_in['filename'];
 
     # Detect objects corresponding to given centroids..
     #
@@ -76,14 +77,17 @@ def run(D_in, objimg, segimg=None, shape=(100,100), objsfile='pstamp_', hdr=None
 
     D_out['id'] = objIDs;
     D_out['segmented'] = [ _id != 0  for _id in objIDs ];
-    D_out['filename'] = [];
+    D_out['objfile'] = [];
+    del D_out['size'];
 
     # Now lets take the detected objects snapshots..
     #
     for i in range(len(objIDs)):
 
         outname = objsfile+str(i)+"_id_"+str(objIDs[i])+".fits";
-        D_out['filename'].append(outname);
+        D_out['objfile'].append(outname);
+        logging.info("Output objects/files (#,ID,x,y,filename): %s",(i,objIDs[i],XY[i],outname));
+
         _otmp,_htmp = imcp.snapshot( objimg, hdr, centroid=(XY[i][0],XY[i][1]), shape=shape );
         try:
             pyfits.writeto(outname,_otmp,_htmp);
@@ -99,8 +103,6 @@ def run(D_in, objimg, segimg=None, shape=(100,100), objsfile='pstamp_', hdr=None
 
 if __name__ == '__main__' :
 
-    # Initializing code, command-line options..
-    #
     import optparse;
     
     usage="\n  %prog [options] <ds9regionfile.reg> <image.fits>"
@@ -110,24 +112,24 @@ if __name__ == '__main__' :
                     dest='segfile', default=None,
                     help="Segmentation image to verify the points in 'ds9regionfile'");
     parser.add_option('--shape',
-                    dest='xy_sizes', default=(100,100),
-                    help="Output images shape");
+                    dest='xy_sizes', default='100,100',
+                    help="Output images shape [100,100]");
     parser.add_option('-o',
-                    dest='objsfile', default='pstamp_',
+                    dest='objsname', default='pstamp_',
                     help="Output object filenames prefix [pstamp_]");
     parser.add_option('-c',
-                    dest='catfile', default='regtable_',
-                    help="Name for output objects catalog (FITS|CSV) [regtable_]");
+                    dest='catname', default='regtable_',
+                    help="Name for output objects catalog [regtable_]");
     parser.add_option('-t',
                     dest='cattype', default='fits',
-                    help="Name for output objects catalog (FITS|CSV) [regtable_]");
+                    help="Type of output objects catalog (fits|csv) [fits]");
 
     (opts,args) = parser.parse_args();
 
     cattype = opts.cattype;
-    catfile = opts.catfile;
-    objsfile = opts.objsfile;
-    shape = opts.xy_sizes;
+    catfile = opts.catname;
+    objsfile = opts.objsname;
+    shape = opts.xy_sizes.split(",");
     segimg = opts.segfile;
     
     if len(args) < 2 :
@@ -137,6 +139,13 @@ if __name__ == '__main__' :
     regionfile = args[0];
     imagename = args[1];
 
+    shape = (int(shape[0]),int(shape[1]));
+    
+
+    # Logging handler:
+    logfile = regionfile+'.log'
+    logging = log.init(logfile,debug=True,verbose=True);
+
 
     # Read DS9 regionfile..
     #
@@ -144,12 +153,14 @@ if __name__ == '__main__' :
     objimg = pyfits.getdata(imagename,header=False);
     if segimg:
         segimg = pyfits.getdata(segimg);
+        
+    D_in['filename'] = imagename;
     
     D_out = run(D_in, objimg, segimg, shape=shape, objsfile=objsfile, hdr=None);
 
     if cattype.upper() == 'FITS':
         outname = catfile+re.sub(".reg",".fit",regionfile);
-        tbhdu = fts.dict_to_tbHDU(D_out, tbname=D_out['image']+"_stamps");
+        tbhdu = fts.dict_to_tbHDU(D_out, D_out['filename']+"_stamps", 'filename','x','y','color','segmented','id','objfile');
         try:
             tbhdu.writeto(outname);
         except IOError:
@@ -157,7 +168,7 @@ if __name__ == '__main__' :
             tbhdu.writeto(outname);
     else:
         outname = catfile+re.sub(".reg",".csv",regionfile);
-        asc.dict_to_csv(D_out,filename=outname);
+        asc.dict_to_csv(D_out,filename=outname,fieldnames=['filename','x','y','color','segmented','id','objfile']);
     
     print >> sys.stdout, "Done.";
     sys.exit(0);
