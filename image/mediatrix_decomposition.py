@@ -173,7 +173,7 @@ def Find_Mediatrix_vectors(p):
         
     return vectors
 
-def print_mediatrix_Object_graph(mediatrix_data,image_Path, keydots=False, colors= {'object': "m.", 'vector': "g", 'keydots': "kD"}):
+def print_mediatrix_Object_graph(mediatrix_data,image_Path='', keydots=False, colors= {'object': "m.", 'vector': "g", 'keydots': "kD"}):
     """
     Make a plot presenting the object, keydots and mediatrix vectors. 
 
