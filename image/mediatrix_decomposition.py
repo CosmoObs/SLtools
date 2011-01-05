@@ -192,15 +192,8 @@ def print_mediatrix_Object_graph(mediatrix_data,image_Path, keydots=False, color
     pixels=numpy.where(image>0)    
     A = subplot(111)
     A.plot(pixels[1],pixels[0],colors['object'])
+    Lenght=0
     
-    for i in range(0,len(mediatrix_data)):
-        origin1=mediatrix_data[i]['origin'][0]
-        origin2=mediatrix_data[i]['origin'][1]
-        
-        d1= mediatrix_data[i]['end'][0] - mediatrix_data[i]['origin'][0]
-        d2= mediatrix_data[i]['end'][1] - mediatrix_data[i]['origin'][1]
-        arr = Arrow(origin2, origin1, d2, d1, width=1.3, fc=colors['vector'])
-        A.add_patch(arr)
       
     if keydots==True:
         E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
@@ -216,10 +209,23 @@ def print_mediatrix_Object_graph(mediatrix_data,image_Path, keydots=False, color
             keyY.append(keydots[j][1])
         
         A.plot(keyY,keyX,colors['keydots'])
-        
+    
+    for i in range(0,len(mediatrix_data)):
+        origin1=mediatrix_data[i]['origin'][0]
+        origin2=mediatrix_data[i]['origin'][1]
+        Lenght=Lenght+mediatrix_data[i]['modulus']
+        d1= mediatrix_data[i]['end'][0] - mediatrix_data[i]['origin'][0]
+        d2= mediatrix_data[i]['end'][1] - mediatrix_data[i]['origin'][1]
+        arr = Arrow(origin2, origin1, d2, d1, width=0.05*Lenght, fc=colors['vector'], ec='none',zorder=1000)
+        A.add_patch(arr)
+    print (1.3/Lenght)
+    xmin, xmax = xlim()
+    ymin, ymax = ylim()
+    A.set_xlim(xmin-1*Lenght,xmax+1*Lenght)
+    A.set_ylim(ymin-1*Lenght,ymax+1*Lenght)    
     ylabel("Y")
     xlabel("X")
-    A.axis("equal")
+    #A.axis("equal")
     title("Mediatrix Decomposition applied") 
     #A.axis("equal")
     savefig(image_Path+image_name+"_mediatrixGraph.png")
