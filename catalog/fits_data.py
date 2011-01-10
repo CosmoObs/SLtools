@@ -11,6 +11,56 @@ import re;
 
 # ---
 
+def merge_tbHDU(tbhdu_A, tbhdu_B):
+    """
+    Merge two tables (HDU) columns
+    
+    Input:
+     - tbhdu_A : pyfits.BinTableHDU
+     - tbhdu_B : pyfits.BinTableHDU
+    
+    Output:
+     - tbhdu
+    
+    ---
+    """
+    
+    new_tb = tbhdu_A.columns + tbhdu_B.columns;
+    
+    return pyfits.new_table(new_tb);
+
+# ---
+
+def extend_tbHDU(tbhdu_A, tbhdu_B):
+    """
+    Extend first tbHDU with second entries
+    
+    Input:
+     - tbhdu_A : FITS table HDU
+        First table HDU, to be extended
+     - tbhdu_B : FITS table HDU
+        Second table HDU, to be added
+    
+    Output:
+     - tbhdu : FITS table HDU
+        Result from extention
+    
+    ---
+    """
+    
+    Nrows_A = tbhdu_A.header['NAXIS2'];
+    Nrows_B = tbhdu_B.header['NAXIS2'];
+    Nrows = Nrows_A + Nrows_B;
+    
+    new_tb = pyfits.new_table(tbhdu_A.columns,nrows=Nrows);
+    
+    for name in tbhdu_A.columns.names:
+        new_tb.data.field(name)[Nrows_A:] = tbhdu_B.data.field(name);
+    
+    return new_tb;
+    
+# ---
+
 def select_columns(tbhdu, *fields): 
     """
     Get a list of variables from a FITS catalog
@@ -53,16 +103,8 @@ def select_rows(tbhdu, *indices):
     
     """
     
-#    names = tbhdu.columns.names;
-#    formats = tbhdu.columns.formats;
-
     _inds = [ i for i in indices ];
     data = tbhdu.data.take(_inds);
-
-#    c = [];
-#    for i in range(len(names)):
-#        c.append(pyfits.Column(name=names[i],format=formats[i],array=list(cols[i])));
-#    return pyfits.new_table(pyfits.ColDefs(c));
 
     return pyfits.BinTableHDU(data);
     
@@ -186,9 +228,9 @@ def dict_to_tbHDU(dic, tbname='', *fieldnames):
             elif tipo == 'object':
                 tipo = str(ndim)+'K'
             else:
-                tipo = '10A'
+                tipo = '20A'
         except:
-            tipo = '20A'
+            tipo = '40A'
             
         c.append(pyfits.Column(name=str(_arg).upper(),format=tipo,array=np.asarray(dic[_arg])));
     

@@ -13,7 +13,7 @@ import sltools;
 from sltools.catalog import fits_data,ascii_data;
 from sltools.io import log;
 
-def nearest_neighbour(centroids_A, centroids_truth):
+def nearest_neighbour(centroids_A, centroids_B):
     """ Function to compute and return the set of nearest point
         
     This function computes for each entry of 'centroids_A', the
@@ -29,12 +29,10 @@ def nearest_neighbour(centroids_A, centroids_truth):
      - centroids_B : [(x_B0,y_B0),(x_B1,y_B1), ]
     
     Output:
-     - [(index_BA0,distance_BA0), ]
-     - [(index_AB0,distance_AB0), ]
+     - [(index_BtoA0,distance_BtoA0), ]
 
+    ---
     """
-    
-    centroids_B = centroids_truth;
     
     length_A = len(centroids_A);
     length_B = len(centroids_B);
@@ -58,17 +56,24 @@ def nearest_neighbour(centroids_A, centroids_truth):
 # ---
 
 def match_positions(tbhdu_check, tbhdu_truth, radius):
-    """ Check if positions in tables match within a given radius
+    """
+    Check if positions in tables match within a given radius
     
-    "tbhdu"s 'x' and 'y' fields are expected for the processing
+    "tbhdu"s 'x' and 'y' fields are expected for the processing.
     
     Input:
-     - tbhdu_A (main)
-     - tbhdu_B (reference)
+     - tbhdu_check : tbHDU
+        Binary table HDU, from FITS catalog
+     - tbhdu_truth : tbHDU
+        Binary table HDU, from FITS catalog
      - radius : float
+        Distance parameters for objects position matching
     
     Output:
-     -  
+     - new_tbhdu : tbHDU
+        New table (check) with the matching information added
+        
+    ---
     """
     
     logging.debug("Input params (tbC,tbT,radius): %s,%s,%s" % (tbhdu_check.name,tbhdu_truth.name,radius));
@@ -133,27 +138,12 @@ def match_positions(tbhdu_check, tbhdu_truth, radius):
 
 # ---
 
-def run(filename_A, filename_B, radius=1):
+def run(tbhdu_check, tbhdu_truth, radius=1):
     """
-    Input:
-     - filename_A : DS9 region file
-     - filename_B : DS9 region file
-     
-    Output:
-    
     """
-    # Open two tables, for now, ds9 region files:
-    #
-    DA_in = ascii_data.read_ds9cat(filename_A);
-    DB_in = ascii_data.read_ds9cat(filename_B);
     
-    # Translate them to table HDU (FITS tables Header D Unit)
-    tbhdu_A = fits_data.dict_to_tbHDU(DA_in,tbname=filename_A);
-    tbhdu_B = fits_data.dict_to_tbHDU(DB_in,tbname=filename_B);
-    
-    tbhdu_A_wneib = match_positions(tbhdu_A,tbhdu_B,radius);
+    tbhdu_A_wneib = match_positions(tbhdu_check,tbhdu_truth,radius);
 
-#    Ntotal_truth = int(tbhdu_A_wneib.header['ntottruth']);
     Ntrue = int(tbhdu_A_wneib.header['ntrue']);
     Nfalse = int(tbhdu_A_wneib.header['nfalse']);
     Ntotal = Ntrue + Nfalse;
@@ -165,9 +155,48 @@ def run(filename_A, filename_B, radius=1):
     # Contaminacao:
     Cont = float(Nfalse)/Ntotal;
     logging.info("Contamination (N_false/N_total): %s" % (Cont));
-    
-    
+
     return tbhdu_A_wneib;
+    
+def run_fit(filename_A, filename_B, radius=1):
+    """
+    Input:
+     - filename_A : FITS catalog
+     - filename_B : FITS catalog
+     - radius : matching distance in pixels
+     
+    Output:
+     - tbHDU
+     
+    ---
+    """
+    tbhdu_check = pyfits.open(filename_A)[1];
+    tbhdu_truth = pyfits.open(filename_B)[1];
+    
+    return run(tbhdu_check,tbhdu_truth,radius);
+
+def run_ds9(filename_A, filename_B, radius=1):
+    """
+    Input:
+     - filename_A : DS9 region file
+     - filename_B : DS9 region file
+     
+    Output:
+     - tbhdu
+    
+    ---
+    """
+    
+    # Open two tables, for now, ds9 region files:
+    #
+    DA_in = ascii_data.read_ds9cat(filename_A);
+    DB_in = ascii_data.read_ds9cat(filename_B);
+    
+    # Translate them to table HDU (FITS tables Header D Unit)
+    tbhdu_check = fits_data.dict_to_tbHDU(DA_in,tbname=filename_A);
+    tbhdu_truth = fits_data.dict_to_tbHDU(DB_in,tbname=filename_B);
+    
+    return run(tbhdu_check,tbhdu_truth,radius);
 
 # ==========================
 
@@ -185,15 +214,15 @@ if __name__ == '__main__' :
     parser.add_option('-o',
                         dest='filename', default='matching_points',
                         help='Output tables (DS9 and FITS) filename [matching_points]');
-    parser.add_option('--no_FITS', action='store_false',
-                        dest='write_fits', default=True,
-                        help='Avoid output FITS catalog (table)?');
+    parser.add_option('--no_DS9reg', action='store_false',
+                        dest='write_ds9reg', default=True,
+                        help='Avoid DS9 region file output?');
                         
     (opts,args) = parser.parse_args();
 
     radius = opts.radius;
     outfilename = opts.filename;
-    write_FITS = opts.write_fits;
+    write_ds9reg = opts.write_ds9reg;
 
     if len(args) < 2 :
         parser.print_help();
@@ -208,30 +237,30 @@ if __name__ == '__main__' :
     regionfile_A = args[0];
     regionfile_B = args[1];
 
-    tbhdu_A = run(regionfile_A, regionfile_B, radius)
+    tbhdu_A = run_ds9(regionfile_A, regionfile_B, radius);
 
-    if write_FITS:
-        try:
-            tbhdu_A.writeto(outfilename+'.fit');
-        except IOError:
-            os.remove(outfilename+'.fit');
-            tbhdu_A.writeto(outfilename+'.fit');
+    try:
+        tbhdu_A.writeto(outfilename+'.fit');
+    except IOError:
+        os.remove(outfilename+'.fit');
+        tbhdu_A.writeto(outfilename+'.fit');
 
     # Set the dictionary to output to a ds9 region file
     # the points that matched with the truth table will
     # be written as yellow in ds9 region file.
 
-    tbdata = tbhdu_A.data;
-    l_len = range( int(tbhdu_A.header['NAXIS2']) );
-    TF = tbdata.field('XY_MATCH');
+    if write_ds9reg:
+        tbdata = tbhdu_A.data;
+        l_len = range( int(tbhdu_A.header['NAXIS2']) );
+        TF = tbdata.field('XY_MATCH');
 
-    x = [ tbdata.field('X_NEAR')[i] for i in l_len if TF[i] ];
-    y = [ tbdata.field('Y_NEAR')[i] for i in l_len if TF[i] ];
-    marker = [ 'circle' for i in l_len if TF[i] ];
-    color = [ 'green' for i in l_len if TF[i] ];
-    size = [ 30 for i in l_len if TF[i] ];
+        x = [ tbdata.field('X_NEAR')[i] for i in l_len if TF[i] ];
+        y = [ tbdata.field('Y_NEAR')[i] for i in l_len if TF[i] ];
+        marker = [ 'circle' for i in l_len if TF[i] ];
+        color = [ 'green' for i in l_len if TF[i] ];
+        size = [ 30 for i in l_len if TF[i] ];
 
-    ascii_data.write_ds9cat(x, y, size, marker, color, outputfile=outfilename+'.reg')
+        ascii_data.write_ds9cat(x, y, size, marker, color, outputfile=outfilename+'.reg')
 
     print >> sys.stdout, "Done.";
     sys.exit(0);

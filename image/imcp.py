@@ -44,7 +44,7 @@ from sltools.image import header_funcs as _hf_;
 
 
 # =================================================================================================================
-def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_size=0, y_size=0, mask=None ):
+def cutout( image, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_size=0, y_size=0, mask=None ):
     """
     Do a snapshot from given fits image.
 
@@ -64,7 +64,7 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 
     Input:
      - image      : Image (numpy ndarray)
-     - header     : Image header object
+     - hdr     : Image header object
      - coord_unit : 'pixel' or 'degrees' for position (xo,yo) values
      - xo         : Horizontal central position for output (cut) image
      - yo         : Vertical central position for output (cut) image
@@ -78,7 +78,7 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
 
     """
 
-    logging.debug("Input parameters (type(image),header,coord_unit,xo,yo,size_unit,x_size,y_size,mask): %s",(type(image),header,coord_unit,xo,yo,size_unit,x_size,y_size,mask));
+    logging.debug("Input parameters (type(image),header,coord_unit,xo,yo,size_unit,x_size,y_size,mask): %s",(type(image),hdr,coord_unit,xo,yo,size_unit,x_size,y_size,mask));
 
     xo=float(xo);
     yo=float(yo);
@@ -86,8 +86,9 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
     y_size=float(y_size);
 
     imagem = image;
-    hdr = header;
-
+#    if hdr:
+#        hdr = hdr.copy();
+    
     # Initialize some variables..
     #
     x_diff = 0;   x_edge = 0;
@@ -202,16 +203,16 @@ def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel
     return (imagemnova, hdr);
 
 
-def snapshot( image, header=None, centroid=(0,0), shape=(0,0), coord_unit='pixel', size_unit='pixel', mask=None ):
+def snapshot( image, hdr=None, centroid=(0,0), shape=(0,0), coord_unit='pixel', size_unit='pixel', mask=None ):
     """See 'cutout' help. This is just a definition to interface (xo,yo)<->centroid and (x_size,y_size)<->shape"""
     xo,yo = centroid;
     x_size,y_size= shape;
-    return cutout( image, header, coord_unit, xo, yo, size_unit, x_size, y_size, mask );
+    return cutout( image, hdr, coord_unit, xo, yo, size_unit, x_size, y_size, mask );
     
 # ---
 
 # ==========================================================================================
-def segstamp(obj_img, seg_img, objID, header=None, increase=0, relative_increase=False):
+def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase=False):
     """
     Identify objects on given images by their IDs and return object images
 
@@ -231,7 +232,7 @@ def segstamp(obj_img, seg_img, objID, header=None, increase=0, relative_increase
     Input:
      - obj_img           : image with objects (observed pixel values)
      - seg_img           : image with segmented objects (e.g, SEx's segmentation image)
-     - header            : FITS header to be updated and passed for each poststamp
+     - hdr            : FITS header to be updated and passed for each poststamp
      - increase          : float value for poststamp resizing (>0)
      - relative_increase : Is 'increase' a additive value (default) or multiplicative one(?)
      - objIDs            : List with objects ID(integers) in 'seg_img'. Default is to scan 'seg_img' for IDs
@@ -244,7 +245,7 @@ def segstamp(obj_img, seg_img, objID, header=None, increase=0, relative_increase
 
     _id = objID;
 
-    ind = segobjs.create_IDmask(seg_img, _id);
+    ind = segobjs.create_IDmask(segimg, _id);
 
     y_min = min( ind[0] );
     x_min = min( ind[1] );
@@ -267,22 +268,17 @@ def segstamp(obj_img, seg_img, objID, header=None, increase=0, relative_increase
             x_size = x_size + 2*increase;
             y_size = y_size + 2*increase;
 
-    try:
-        hdr = header.copy();
-    except:
-        hdr = None;
-
-
-    # Get the final image from 'cutout' output..
-    #
-    image_out, hdr = cutout( obj_img, header=hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
-
+    if objimg:
+        image_out, hdr = cutout( objimg, hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
+    else:
+        image_out, hdr = cutout( segimg, hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
+    
     return ( image_out, hdr );
 
 # ---
 # To keep compatibility with the old "sextamp" function:
-def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, objIDs=[]):
-	return [ segstamp(obj_img, seg_img, header, increase, relative_increase, ID) for ID in objIDs ]
+def sextamp(seg_img, obj_img, hdr=None, increase=0, relative_increase=False, objIDs=[]):
+	return [ segstamp(seg_img, ID, obj_img, hdr, increase, relative_increase) for ID in objIDs ]
 # ---
 
 #=============================================================================
@@ -426,9 +422,9 @@ if __name__ == "__main__" :
 
     if (segimg):
         IDs = regexp.str2lst(IDs);
-        imglst, hdrlst = segstamp(image, segimg, header=hdr, increase=incr, relative_increase=rel_incr, objIDs=objIDs)
+        imglst, hdrlst = segstamp(image, segimg, hdr=hdr, increase=incr, relative_increase=rel_incr, objIDs=objIDs)
     else:
-        imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
+        imgcut, hdr = cutout( image, hdr=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
         IDs = ['0'];
         imglst = [imgcut];
         hdrlst = [hdr];
