@@ -7,7 +7,7 @@
 #
 # This package runs Sextractor.
 #
-# Executable package : No
+# Executable package : Yes
 
 
 import sys;
@@ -172,26 +172,76 @@ def _cstm_args(instrument):
 # ---
 
 #=======================================================================
-def run(fits_image, params=[], args={}, preset=''):
-    """SExtract the Image and read the outputs to array
+def run(filename, params=[], args={}, preset='', temp_dir='./'):
+    """ Run Sextractor over given image with optional parameters
+
+    run( 'image.fits' )  ->  <bool>
+
+    Default Sextractor(SE) run is done on given FITS image, 'filename',
+
+    $ sex -d > default.sex  &&  sex 'filename' -c default.sex
+
+    This function is just an interface to run SE (v2.8.6) with default
+    convolution matrix (default.conv) if no extra arguments are given,
+
+    $ cat default.conv
+    CONV NORM
+    # 3x3 ``all-ground'' convolution mask with FWHM = 2 pixels.
+    1 2 1
+    2 4 2
+    1 2 1
+
+    (That is the only different when running "sex" from here instead of
+    the system's shell: the creation of 'default.conv' file during run)
+
+    It is optional to give SE's command-line (config) arguments, as well 
+    as the parameters to compute (and output) from image. See 'args' and 
+    'params' (respectively) below. 
+    'preset' are some pre-set SE configurations to particular images 
+    from instrumentation commonly used in our group.
+
+    'args' is a dictionary datatype interface to SE's command-line arguments.
+    The dictionary keys should be the optional argument labels, with the 
+    corresponding values.
+    E.g.,
+    args = {"CATALOG_TYPE" : "FITS_1.0", "PHOT_AUTOPARAMS" : "2.4,3.6"}
+
+    'params' is a list of strings with the parameters (computed from image)
+    to output (SE's default.param).
+    E.g.,
+    params = ['NUMBER', 'X_IMAGE', 'Y_IMAGE']
+
+    If 'params' is not empty, a file called "run_sex.param" will be 
+    created in 'temp_dir' directory with params contents and used by 
+    "sex" during run. If 'args' *and* 'preset' are used, args values 
+    overwrite preset ones in common (and both, SE defaults).
+    File (default) with SE convolution matrix (default.conv) will also
+    be created inside 'temp_dir'.
 
     Input:
-    - fits_image <str> : filename
-    - use_header <bool> : True/False
-    - params <list str> : See SE's default.param file. Those params
-    - args <dic> : SE's command-line arguments
-    - preset <str> : preset configs (DC4,DC5,...)
+     - filename : str
+        FITS image filename
+     - params : [str,]
+        Sextractor parameters to output (see SE's default.param)
+     - args : {str:str,}
+        Sextractor command-line arguments
+     - preset : str
+        Options are: 'HST', 'CFHT', 'DC4', 'DC5'
+
+    Output:
+     - True|False
 
     """
 
-
+    fits_image = filename;
+    if temp_dir != '':
+        temp_dir = temp_dir+'/';
+    
     # Object features to output..
     #
     if ( params != [] ):
-
-        param_file = "run_sex.param";
+        param_file = temp_dir+'run_sex.param';
         args.update( {'parameters_name' : param_file} );
-
         fparam = open(param_file,'w');
         for _param in params:
             fparam.write( "%s\n" % (_param) );
@@ -202,7 +252,9 @@ def run(fits_image, params=[], args={}, preset=''):
     # WRITE DOWN "default.conv" for sextractor if necessary..
     #
     if (not args.has_key('filter_name')  or  args['filter_name']=='default.conv'):
-        fp = open('default.conv','w');
+        conv_file = temp_dir+'default.conv';
+        args.update( {'filter_name' : conv_file} );
+        fp = open(conv_file,'w');
         fp.write("CONV NORM\n");
         fp.write("# 3x3 ``all-ground'' convolution mask with FWHM = 2 pixels.\n");
         fp.write("1 2 1\n");
@@ -226,9 +278,6 @@ def run(fits_image, params=[], args={}, preset=''):
     status = os.system( 'sex %s %s' % (fits_image,cmd_line));
     if ( status != 0 ):
         print >> sys.stderr, "Error: Sextractor raised and error code '%s' during the run." % (status);
-
-
-    if (status):
         return (False);
 
     return (True);
@@ -236,47 +285,50 @@ def run(fits_image, params=[], args={}, preset=''):
 # -
 
 #---------------------------------------------------------
-def run_segobj(fits_image, params=[], args={}, preset=''):
-    """
-    Run Sextractor on given (fits) image, with optional parameters
+def run_segobj(filename, params=[], args={}, preset='', temp_dir='./'):
+    """ Run Sextractor over given image with specific outputs
 
-    run( 'image.fits' [ [...],{...} ] )
+    run_segobj( 'image.fits' )  ->  <dict>
 
-    Function runs Sextractor on a given FITS image (fits_image) to generate 
-    sex's "OBJECTS" and "SEGMENTATION" outputs. Output parameters (catalogs) 
-    can be passed in a list of strings. SE command-line arguments can
-    be passed as a dictionary {'key' = 'value'}.
+    See sextractor.run() help page for description about
+    'filename', 'params', 'args' and 'preset' arguments.
 
-    Two catalogue files are created during sex's runs: cats_name+'_obj.cat' and 
-    cats_name+'_seg.cat', with "objects" and "segmentation" features output 
-    values, respectively.
-    Two FITS files - images - are also created during the runs, one for each
-    run type: "objects" and "segmentation". File names are just the given 
-    filename with extension ".fits" changed by "_obj.fits" and "_seg.fits", 
-    respectively.
+    This functions adds to 'params' list the value 'NUMBER' if not yet 
+    given. And set some 'args' options to specific values with the goal 
+    to have The SEGMENTATION and OBJECTS output versions of the input 
+    image, as well as a FITS catalog with 'params' computed features.
 
-    Custom SExtractor configuration parameters can be used, chosen to be *good*
-    extraction parameters for different telescopes.
-    preset : 'HST'
-             'DC4'
-             'DC5'
-             'CFHT'
-    Notice that this custom choices do not disable other parameters.
+    SE's hardcoded argument values:
+    CHECKIMAGE_TYPE : "OBJECTS,SEGMENTATION"
+    CHECKIMAGE_NAME : objects_name , segmentation_name
+    CATALOG_TYPE : "FITS_1.0"
+    CATALOG_NAME : catalog_name
+
+    "objects_name", "segmentation_name" and "catalog_name" 
+    have values composed by the image 'filename' (without the ".fits" 
+    extension) with the suffixes "_obj.fits", "_seg.fits" and "_cat.fit", 
+    respectively. These file names are given as output in a dictionary
+    with keys ""OBJECTS", "SEGMENTATION" and "CATALOG".
+
 
     Input:
-     - fits_image : FITS image filename
-     - params     : List of parameters to output on catalogues
-     - args       : Dictionary with sextractor line arguments. If not given,
-                    SE defaults will be used.
-     - preset     : 'HST', 'DC4', 'DC5' or 'CFHT'
+     - filename : str
+        FITS image filename
+     - params : [str,]
+        Sextractor parameters to output (see SE's default.param)
+     - args : {str:str,}
+        Sextractor command-line arguments
+     - preset : str
+        Options are: 'HST', 'CFHT', 'DC4', 'DC5'
 
     Output:
-    - {'OBJECTS':str, 'SEGMENTATION':str, CATATLOG:str}
+     - {'OBJECTS':str, 'SEGMENTATION':str, CATALOG:str}
         SE's OBJECTS, SEGMENTATION, CATALOG output filenames
       
     """
 
-
+    fits_image = filename;
+    
     # Now we set some Sextractor arguments for this script purposes..
     #
     _rootname = string.split( string.replace( fits_image,".fits","" ), sep="/" )[-1];
@@ -295,7 +347,7 @@ def run_segobj(fits_image, params=[], args={}, preset=''):
 
     # Run sextractor module; output catalogues to "catalog" files..
     #
-    out = run(fits_image, params, args, preset);
+    out = run(fits_image, params, args, preset, temp_dir);
 
     if (out == False):
         return (False);
@@ -305,137 +357,141 @@ def run_segobj(fits_image, params=[], args={}, preset=''):
 # ---
 
 # ================================================================================
-def _valid_line(wort):
-    wort.rstrip("\n");
-    wort = re.sub("^\s*","",wort);
-    wort = re.sub("\s+"," ",wort);
-    wort = re.sub("#.*","",wort);
-    return ( not (bool(re.search("^$",wort))  or  bool(re.search("^#",wort))) );
+#def _valid_line(wort):
+#    wort.rstrip("\n");
+#    wort = re.sub("^\s*","",wort);
+#    wort = re.sub("\s+"," ",wort);
+#    wort = re.sub("#.*","",wort);
+#    return ( not (bool(re.search("^$",wort))  or  bool(re.search("^#",wort))) );
 
-def _check_config(cfg_file):
-    """Check if given config file has the necessary structure.
-
-    In particular, if checking fails, a fixing procedure based on
-    Sextractor config file (default.sex) design.
-    """
-
-    fp = open(cfg_file, 'r');
-    file = filter( _valid_line, fp.readlines() );
-
-    cnt_fail = 0;
-    cnt_succ = 0;
-    for line in file:
-        if ( bool(re.search("\[.*\]",line)) ) :
-            continue;
-        else:
-            cnt_fail += 1;
-        if not ( bool(re.search("=",line))  or  bool(re.search(":",line)) ) :
-            cnt_fail += 1;
-        if not ( len(string.split(line,sep="=")) >= 2  or  len(string.split(line,sep=":")) >= 2 ) :
-            cnt_fail += 1;
-        cnt_succ += 1;
-
-    fp.close();
-
-    if (bool(cnt_fail)  and  not bool(cnt_succ)):
-        return (False);
-    elif (bool(cnt_succ)  and  not bool(cnt_fail)):
-        return (True);
-    else:
-        return (None);
-
-def _fix_config(config_file):
-
-    fp = open(config_file,'r');
-    fout = config_file+'.mod';
-    fpfix = open(fout,'w');
-
-    print >> fpfix,"[default]";
-
-    file = filter( _valid_line,fp.readlines() );
-    for line in file:
-        laine = re.sub("\s","=");
-        laine = re.sub("\s",":");
-        print >> fpfix,"%s" % (laine);
-
-    return (fout);
+#def _check_config(cfg_file):
+#    """Check if given config file has the necessary structure.
+#    
+#    In particular, if checking fails, a fixing procedure based on
+#    Sextractor config file (default.sex) design.
+#    """
+#    
+#    fp = open(cfg_file, 'r');
+#    def _valid_line(w):
+#        return ( not (bool(re.search("^$",w))  or  bool(re.search("^#",w))) );
+#    rs = re.sub;
+#    lines = filter( _valid_line, [ rs("#.*","",rs("\s+"," ",rs("^\s*","",w.rstrip("\n")))) for w in fp.readlines() ]);
+#    fp.close();
+#    
+#    cnt_fail = 0;
+#    cnt_succ = 0;
+#    for line in lines:
+#        if not ( bool(re.search("\[.*\]",line)) ) :
+#            cnt_fail += 1;
+#        if not ( bool(re.search("=",line))  or  bool(re.search(":",line)) ) :
+#            cnt_fail += 1;
+#        if not ( len(string.split(line,sep="=")) == 2  or  len(string.split(line,sep=":")) == 2 ) :
+#            cnt_fail += 1;
+#        cnt_succ += 1;
+#
+#    if (bool(cnt_fail)  and  not bool(cnt_succ)):
+#        return (False);
+#    elif (bool(cnt_succ)  and  not bool(cnt_fail)):
+#        return (True);
+#    else:
+#        return (None);
+#
+#def _fix_config(config_file):
+#
+#    fp = open(config_file,'r');
+#    fout = config_file+'.mod';
+#    fpfix = open(fout,'w');
+#
+#    print >> fpfix,"[default]";
+#
+#    file = filter( _valid_line,fp.readlines() );
+#    for line in file:
+#        laine = re.sub("\s","=");
+#        laine = re.sub("\s",":");
+#        print >> fpfix,"%s" % (laine);
+#
+#    return (fout);
 
 # ---
+
+def read_config(SE_configfile):
+    """ Read SE config file (plain: 'key value' ascii) to a dictionary."""
+    rs = re.sub;
+    
+    def valid_line(w):
+        return ( not (bool(re.search("^$",w))  or  bool(re.search("^#",w))) );
+    lines = filter( valid_line, [ rs("#.*","",rs("\s+"," ",rs("^\s*","",w.rstrip("\n")))) for w in open(SE_configfile).readlines() ]);
+    
+    config={};
+    for each_line in lines:
+        _line = string.split(each_line,sep=" ");
+        config[_line[0]] = string.join(_line[1:],sep="");
+    
+    return config;
 
 # \cond
 #==========================
 if __name__ == "__main__" :
 
     from sltools.io import config_parser as CP;
-    
+
     from optparse import OptionParser;
 
-    usage="Usage: %prog [options] <image_fits_file>"
+    usage="\n %prog [options] <image.fits>"
     parser = OptionParser(usage=usage);
 
-    parser.add_option('-p', '--params_file',
-                        dest='params', default=None,
-                        help="Sextractor params file");
-    parser.add_option('-c', '--config_file',
-                        dest='config', default=None,
-                        help="Sextractor config file");
+    parser.add_option('-p',
+                    dest='params', default=None,
+                    help="Sextractor params file (e,g. default.param)");
+    parser.add_option('-c',
+                    dest='config', default=None,
+                    help="Sextractor config file (e.g, default.sex)");
     parser.add_option('--segment', action='store_true',
-                        dest='run_seg', default=False,
-			  help="Run sextractor in SEGMENTATION mode");
+                    dest='run_seg', default=False,
+                    help="Run sextractor in SEGMENTATION mode");
     parser.add_option('--preset',
-                        dest='preset', default='',
-                        help="Use preset SE's configuration for different instruments: DC4, DC5, HST, CFHT");
+                    dest='instrument', default='',
+                    help="Use preset SE's configuration for different instruments: DC4, DC5, HST, CFHT");
         
     (opts,args) = parser.parse_args();
 
     run_seg = opts.run_seg;
     params_file = opts.params;
     config_file = opts.config;
-    preset = opts.preset;
+    preset = opts.instrument;
 
     if ( len(args) != 1 ):
-        parser.error("Wrong number of arguments. Try '--help' for usage and help messages.");
+        parser.print_usage();
+        print "Try '--help' for more info.";
+        sys.exit(0)
+        
+    infits = args[0];
 
-    # FITS image file:
-    #
-	infits = args[0];
-
-    # SE's config file:
-    #
     if (config_file == None):
-        print >> sys.stdout, "Warning: No SE's config file given. Using program defaults.";
         config = {};
     else:
-        _status = _check_config(config_file);
-        if ( _status == False ):
-            config_file = _fix_config(config_file);
-        elif ( _status == None ):
-            print >> sys.stderr, "Error: Given config file does not looks like a INI file neither a plain key-value one.";
-            sys.exit(1);
-        else:
-            config = CP.read_ini(config_file);
+        config = read_config(config_file);
 
     # SE's param file:
     #
     if (params_file):
-        fp_params = open(params_file);
-        params = [ line.rstrip("\n")   for line in fp_params.readlines() ]
+        params = [ line.rstrip("\n")   for line in open(params_file).readlines() ];
     else:
         params = [];
 
     # Run SE:
     #
     if ( run_seg ):
-        _out = run_segobj(infits, params=params, args=config, preset=preset);
-        if (_out):
-            print "Segmentation output files:";
+        _out = run_segobj(infits, params=params, args=config, preset=preset, temp_dir='/tmp');
+        if not (_out):
+            sys.exit(1);
+        else:
+            print "SExtraction output files:";
             print "CATALOG: %s" % (_out['CATALOG']);
             print "OBJECTS: %s" % (_out['OBJECTS']);
             print "SEGMENT: %s" % (_out['SEGMENTATION']);
-        else:
-            sys.exit(1);
     else:
-        _out = run(infits, params=params, args=config, preset=preset);
+        _out = run(infits, params=params, args=config, preset=preset, temp_dir='/tmp');
         if not (_out):
             sys.exit(1);
 
@@ -443,23 +499,3 @@ if __name__ == "__main__" :
 
 # ------------------
 # \endcond
-
-"""
-    # Read fresh images just created by sex run..
-    #
-    objimg = pyfits.getdata( objimgname );
-    segimg = pyfits.getdata( segimgname );
-
-    # FITS version: CATALOG_TYPE = FITS_1.0
-    cat = pyfits.open(catalog)[1].data;
-
-    # If 'header' argument not False/None, read it..
-    #
-    if (use_header):
-        header = pyfits.getheader( fits_image );
-    else:
-        header = None;
-
-
-    return (objimg, segimg, header, cat);
-"""
