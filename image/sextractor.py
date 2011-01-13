@@ -172,7 +172,7 @@ def _cstm_args(instrument):
 # ---
 
 #=======================================================================
-def run(filename, params=[], args={}, preset='', temp_dir='./'):
+def run(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
     """ Run Sextractor over given image with optional parameters
 
     run( 'image.fits' )  ->  <bool>
@@ -275,7 +275,11 @@ def run(filename, params=[], args={}, preset='', temp_dir='./'):
 
     # Run sex..
     #
-    status = os.system( 'sex %s %s' % (fits_image,cmd_line));
+    if quiet:
+        _dev = '&>/dev/null';
+    else:
+        _dev = '';
+    status = os.system( 'sex %s %s %s' % (fits_image,cmd_line,_dev));
     if ( status != 0 ):
         print >> sys.stderr, "Error: Sextractor raised and error code '%s' during the run." % (status);
         return (False);
@@ -285,7 +289,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='./'):
 # -
 
 #---------------------------------------------------------
-def run_segobj(filename, params=[], args={}, preset='', temp_dir='./'):
+def run_segobj(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
     """ Run Sextractor over given image with specific outputs
 
     run_segobj( 'image.fits' )  ->  <dict>
@@ -356,64 +360,6 @@ def run_segobj(filename, params=[], args={}, preset='', temp_dir='./'):
 
 # ---
 
-# ================================================================================
-#def _valid_line(wort):
-#    wort.rstrip("\n");
-#    wort = re.sub("^\s*","",wort);
-#    wort = re.sub("\s+"," ",wort);
-#    wort = re.sub("#.*","",wort);
-#    return ( not (bool(re.search("^$",wort))  or  bool(re.search("^#",wort))) );
-
-#def _check_config(cfg_file):
-#    """Check if given config file has the necessary structure.
-#    
-#    In particular, if checking fails, a fixing procedure based on
-#    Sextractor config file (default.sex) design.
-#    """
-#    
-#    fp = open(cfg_file, 'r');
-#    def _valid_line(w):
-#        return ( not (bool(re.search("^$",w))  or  bool(re.search("^#",w))) );
-#    rs = re.sub;
-#    lines = filter( _valid_line, [ rs("#.*","",rs("\s+"," ",rs("^\s*","",w.rstrip("\n")))) for w in fp.readlines() ]);
-#    fp.close();
-#    
-#    cnt_fail = 0;
-#    cnt_succ = 0;
-#    for line in lines:
-#        if not ( bool(re.search("\[.*\]",line)) ) :
-#            cnt_fail += 1;
-#        if not ( bool(re.search("=",line))  or  bool(re.search(":",line)) ) :
-#            cnt_fail += 1;
-#        if not ( len(string.split(line,sep="=")) == 2  or  len(string.split(line,sep=":")) == 2 ) :
-#            cnt_fail += 1;
-#        cnt_succ += 1;
-#
-#    if (bool(cnt_fail)  and  not bool(cnt_succ)):
-#        return (False);
-#    elif (bool(cnt_succ)  and  not bool(cnt_fail)):
-#        return (True);
-#    else:
-#        return (None);
-#
-#def _fix_config(config_file):
-#
-#    fp = open(config_file,'r');
-#    fout = config_file+'.mod';
-#    fpfix = open(fout,'w');
-#
-#    print >> fpfix,"[default]";
-#
-#    file = filter( _valid_line,fp.readlines() );
-#    for line in file:
-#        laine = re.sub("\s","=");
-#        laine = re.sub("\s",":");
-#        print >> fpfix,"%s" % (laine);
-#
-#    return (fout);
-
-# ---
-
 def read_config(SE_configfile):
     """ Read SE config file (plain: 'key value' ascii) to a dictionary."""
     rs = re.sub;
@@ -452,6 +398,9 @@ if __name__ == "__main__" :
     parser.add_option('--preset',
                     dest='instrument', default='',
                     help="Use preset SE's configuration for different instruments: DC4, DC5, HST, CFHT");
+    parser.add_option('-q','--quiet', action='store_true',
+                    dest='quiet', default=False,
+                    help="Make Sextractor run quiet.");
         
     (opts,args) = parser.parse_args();
 
@@ -459,6 +408,7 @@ if __name__ == "__main__" :
     params_file = opts.params;
     config_file = opts.config;
     preset = opts.instrument;
+    quiet = opts.quiet;
 
     if ( len(args) != 1 ):
         parser.print_usage();
@@ -482,7 +432,7 @@ if __name__ == "__main__" :
     # Run SE:
     #
     if ( run_seg ):
-        _out = run_segobj(infits, params=params, args=config, preset=preset, temp_dir='/tmp');
+        _out = run_segobj(infits, params=params, args=config, preset=preset, temp_dir='/tmp', quiet=quiet);
         if not (_out):
             sys.exit(1);
         else:
@@ -491,7 +441,7 @@ if __name__ == "__main__" :
             print "OBJECTS: %s" % (_out['OBJECTS']);
             print "SEGMENT: %s" % (_out['SEGMENTATION']);
     else:
-        _out = run(infits, params=params, args=config, preset=preset, temp_dir='/tmp');
+        _out = run(infits, params=params, args=config, preset=preset, temp_dir='/tmp', quiet=quiet);
         if not (_out):
             sys.exit(1);
 

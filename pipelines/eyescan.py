@@ -35,7 +35,8 @@ def run(regionfile, imagefile, shape=(100,100), stampsfile="pstamp_"):
     """
     
     # Sextractor Params:
-    PARAMS=['NUMBER','FWHM_IMAGE','ELONGATION','ELLIPTICITY','X_IMAGE','Y_IMAGE','ALPHA_SKY','DELTA_SKY','X2_IMAGE','Y2_IMAGE','XY_IMAGE'];
+#    PARAMS=['NUMBER','FWHM_IMAGE','ELONGATION','ELLIPTICITY','X_IMAGE','Y_IMAGE','ALPHA_SKY','DELTA_SKY','X2_IMAGE','Y2_IMAGE','XY_IMAGE'];
+    PARAMS=['NUMBER','ELONGATION','ELLIPTICITY','ISOAREA_IMAGE','A_IMAGE','B_IMAGE','THETA_IMAGE','X_IMAGE','Y_IMAGE','X2_IMAGE','Y2_IMAGE','XY_IMAGE']
 
     x_i = shape[0]/2;
     y_i = shape[1]/2;
@@ -68,7 +69,7 @@ def run(regionfile, imagefile, shape=(100,100), stampsfile="pstamp_"):
         
         # Run Sextractor over newly created sanpshot..
         #
-        _Dsex = SE.run_segobj(file_i, PARAMS,preset='HST');   ### SEXTRACTOR IS CALLED HERE!
+        _Dsex = SE.run_segobj(file_i, PARAMS,preset='');   ### SEXTRACTOR IS CALLED HERE!
         segimg = pyfits.getdata(_Dsex['SEGMENTATION']);
         cathdu = pyfits.open(_Dsex['CATALOG'])[1];
         logging.info("Segmentation done.");
@@ -110,6 +111,7 @@ def run(regionfile, imagefile, shape=(100,100), stampsfile="pstamp_"):
         os.mkdir('stamps_'+rootname);
     except:
         os.system('rm -f stamps_%s/*.*'%(rootname));
+        
     os.system('mv %s* stamps_%s/.'%(stampsfile,rootname));
     
     new_tbhdu.writeto(rootname+'_tbarcs.fit');
