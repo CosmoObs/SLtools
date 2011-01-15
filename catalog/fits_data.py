@@ -11,56 +11,59 @@ import re;
 
 # ---
 
-def select_rows(tbhdu, *indices):
-    """ Read rows(indexes) from given HDU (catalog)
+def merge_tbHDU(tbhdu_A, tbhdu_B):
+    """
+    Merge two tables (HDU) columns
     
     Input:
-     - tbhdu : pyfits.open('data.fit')[?]
-        Table HDU, often "?" equals to 1
-     - *indices : int,
-        List of indexes to read from tbhdu
+     - tbhdu_A : pyfits.BinTableHDU
+     - tbhdu_B : pyfits.BinTableHDU
     
     Output:
-     -> (new) BinTableHDU : sub-selection (rows) of tbhdu
+     - tbhdu
     
+    ---
     """
     
-    _inds = [ i for i in indices ];
-    cols = tbhdu.data.take(_inds);
-    names = tbhdu.columns.names;
-    formats = tbhdu.columns.formats;
-    c = [];
-    for i in range(len(names)):
-        c.append(pyfits.Column(name=names[i],format=formats[i],array=list(cols[i])));
+    new_tb = tbhdu_A.columns + tbhdu_B.columns;
     
-    return pyfits.new_table(pyfits.ColDefs(c));
+    return pyfits.new_table(new_tb);
 
 # ---
 
-def select_entries(tbhdu, field, *values):
-    """ Read entries (lines) from given HDU (catalog)
+def extend_tbHDU(tbhdu_A, tbhdu_B):
+    """
+    Extend first tbHDU with second entries
     
     Input:
-     - tbhdu : pyfits.open('data.fit')[?]
-        Table HDU, often "?" equals to 1
-     - field : str
-        Field (column) name that 'values' should match
-     - *values : <tbdata.field(field).dtype>
-        List of values to match in 'field' entries
+     - tbhdu_A : FITS table HDU
+        First table HDU, to be extended
+     - tbhdu_B : FITS table HDU
+        Second table HDU, to be added
     
     Output:
-     -> (new) BinTableHDU : sub-selection (rows) of tbhdu
+     - tbhdu : FITS table HDU
+        Result from extention
     
+    ---
     """
     
-    _inds = [ tbhdu.data.field(field).tolist().index(_v) for _v in values ];
-
-    return select_rows(_inds);
-
+    Nrows_A = tbhdu_A.header['NAXIS2'];
+    Nrows_B = tbhdu_B.header['NAXIS2'];
+    Nrows = Nrows_A + Nrows_B;
+    
+    new_tb = pyfits.new_table(tbhdu_A.columns,nrows=Nrows);
+    
+    for name in tbhdu_A.columns.names:
+        new_tb.data.field(name)[Nrows_A:] = tbhdu_B.data.field(name);
+    
+    return new_tb;
+    
 # ---
 
 def select_columns(tbhdu, *fields): 
-    """ Get a list of variables from a FITS catalog
+    """
+    Get a list of variables from a FITS catalog
 
     Input:
      - tbhdu : pyfits.open('data.fit')[?]
@@ -84,53 +87,94 @@ def select_columns(tbhdu, *fields):
     return pyfits.new_table(coldefs);
 
 # ---
-'''
-def read_SE_data(segimg,tbdata,centroids):
-    """ Read table data for requested objects
 
-    Objects referenced on segmented image 'segimg'
-    by 'centroids' positions are searched for
-    in 'tbdata' (fits hdulist.data).
+def select_rows(tbhdu, *indices):
+    """
+    Read rows(indexes) from given HDU (catalog)
     
     Input:
-     - segimg : <ndarray>
-     - tbdata : <numpy record-array> (fits cat)
-     - centroids : list of tuples [(x,y),]
+     - tbhdu : pyfits.open('data.fit')[?]
+        Table HDU, often "?" equals to 1
+     - *indices : int,
+        List of indexes to read from tbhdu
     
     Output:
-     -> {'*tbdata.names'},{'x','y'}
-     1st dict: cross-checked objects entries/features from 'tbdata'
-     2nd dict: non-checked object centroids
-     
+     -> (new) BinTableHDU : sub-selection (rows) of tbhdu
+    
     """
     
-    # Get the object IDs of selected objects (ds9)..
-    #
-    objIDs = segobjs.centroid2ID(segimg,centroids=centroids);
+    _inds = [ i for i in indices ];
+    data = tbhdu.data.take(_inds);
+
+    return pyfits.BinTableHDU(data);
     
-    # and see how many objects were not deteted.
-    # Store these guys in somewhere, and remove them from objIDs list.
-    Dnon = {};
-    if (objIDs.count(0)):
-        non_detected_centroids = [ centroids[i] for i in range(len(centroids)) if objIDs[i]==0 ];
-        non_detected_indexes = [i for i in range(len(centroids)) if objIDs[i]==0 ];
-    Dnon['x'],Dnon['y'] = zip(*non_detected_centroids);
-    Dnon['ind'] = non_detected_indexes;
+# ---
+
+def select_entries(tbhdu, field, *values):
+    """
+    Read entries (lines) from given HDU (catalog)
     
-    objIDs = filter(lambda x: x, objIDs);
+    Input:
+     - tbhdu : pyfits.open('data.fit')[?]
+        Table HDU, often "?" equals to 1
+     - field : str
+        Field (column) name that 'values' should match
+     - *values : <tbdata.field(field).dtype>
+        List of values to match in 'field' entries
     
-    # Read SE's catalog entries corresponding the ones in DS9's catalog..
-    #
-    params = tbdata.names;
-    tbdata = fts.get_entries(tbdata, 'NUMBER', *objIDs);
-    Ddata = fts.get_columns(tbdata, *params);
+    Output:
+     -> (new) BinTableHDU : sub-selection (rows) of tbhdu
     
-    return (Ddata,Dnon)
-'''
+    """
+    
+    _inds = [ tbhdu.data.field(field).tolist().index(_v) for _v in values ];
+
+    return select_rows(tbhdu,*_inds);
 
 # ---
 
-def dict_to_tbHDU(dic, tbname='', *args):
+def sample_entries(tbhdu, **kwargs):
+    """
+    Retrieve a slice of given table HDU
+    
+    'kwargs' are keyworded arguments to pass threshold
+    parameter values for the filtering. kwargs' keys are
+    expected to be fieldnames in tbhdu, and the values
+    can be just a single number - used as minimum threshold - 
+    or a tuple - for (min,max) thresholds.
+    
+    Input:
+     - tbhdu : table Header D Unit
+        FITS table HDU ( pyfits.open()[1] )
+     - kwargs : {'key1'=number1,}
+        Key=Value, a dictionary
+
+    Output:
+     - tbhdu
+
+    """
+
+    tbsamp = tbhdu.copy();
+
+    for _key in kwargs.keys():
+    
+        try:
+            _min,_max = kwargs[_key];
+            _in = np.where(tbsamp.data.field(_key) >= _min)[0].tolist();
+            _ax = np.where(tbsamp.data.field(_key) <= _max)[0].tolist();
+            inds = list(set.intersection(set(_in),set(_ax)));
+            tbsamp = select_rows(tbsamp,*inds);
+            
+        except:
+            _min = kwargs[_key];
+            inds = np.where(tbsamp.data.field(_key) >= _min)[0].tolist();
+            tbsamp = select_rows(tbsamp,*inds);
+            
+    return tbsamp;
+
+# ---
+
+def dict_to_tbHDU(dic, tbname='', *fieldnames):
     """ Return a table HDU with 'dic' keys|lists
     
     This function is designed to handle lists of number/string
@@ -153,13 +197,17 @@ def dict_to_tbHDU(dic, tbname='', *args):
     
     """
     
+    args = fieldnames;
+    
     if not len(args):
         args = dic.keys();
 
     c = [];
+    to_header = {};
     for _arg in args:
 
         if type(dic[_arg]) == type(str()):
+            to_header[_arg] = dic[_arg];
             continue;
         
         try:
@@ -180,20 +228,23 @@ def dict_to_tbHDU(dic, tbname='', *args):
             elif tipo == 'object':
                 tipo = str(ndim)+'K'
             else:
-                tipo = '10A'
+                tipo = '20A'
         except:
-            tipo = '20A'
+            tipo = '40A'
             
         c.append(pyfits.Column(name=str(_arg).upper(),format=tipo,array=np.asarray(dic[_arg])));
     
     newtable = pyfits.new_table(pyfits.ColDefs(c));
     newtable.name = tbname;
+    
+    for _k in to_header.keys():
+        newtable.header.update('hierarch'+str(_k), to_header[_k], 'Entry automatically added(not a list)');
 
     return newtable;
     
 # ---
 
-def dict_from_tbHDU(tbhdu, *fields):
+def dict_from_tbHDU(tbhdu, *fieldnames):
     """ Get a list of variables from a FITS table HDU
 
     Input:
@@ -203,9 +254,10 @@ def dict_from_tbHDU(tbhdu, *fields):
         Comma separated list of variables to be read from 'hdulist'
 
     Output:
-     -> {*fields} : a dictionary with given *args as keys and their values
+     -> {*fieldnames} : a dictionary with given *args as keys and their values
 
     """
+    fields = fieldnames;
     
     if not len(fields):
         fields = tbhdu.data.names;

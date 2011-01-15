@@ -47,10 +47,31 @@ def centroid2ID(segimg, centroid):
     # Is there an identified object on given (xo,yo) point? If yes, store its ID..
     #
     xo,yo = centroid;
+    xo = int(float(xo));
+    yo = int(float(yo));
     objid = segimg[yo,xo];
 
     return (objid);
 
+
+#=============================================================================
+def readout_IDs(segimg):
+    """ Read segmented image values as object IDs
+    
+    Input:
+     - segimg : ndarray
+        Segmentation image array
+    
+    Output:
+     -> list with object IDs : [int,]
+        List with (typically integers) object IDs in 'segimg'
+        Value "0" is taken off from output list ID
+    
+    """
+
+    objIDs = list(set(seg_img.flatten()) - set([0]))
+
+    return objIDs
 
 #=============================================================================
 def create_mask(segimg, objID):
@@ -73,28 +94,9 @@ def create_mask(segimg, objID):
 
     # For each object (id) scan the respective indices for image mask and 'cutout' params
     #
-    id = objID;
+    id = float(objID);
     mask = np.where(segimg == int(id));
     
     return mask;
 
 create_IDmask = create_mask;
-
-#=============================================================================
-def readout_IDs(segimg):
-    """ Read segmented image values as object IDs
-    
-    Input:
-     - segimg : ndarray
-        Segmentation image array
-    
-    Output:
-     -> list with object IDs : [int,]
-        List with (typically integers) object IDs in 'segimg'
-        Value "0" is taken off from output list ID
-    
-    """
-
-    objIDs = list(set(seg_img.flatten()) - set([0]))
-
-    return objIDs

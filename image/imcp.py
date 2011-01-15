@@ -29,6 +29,7 @@
 
 
 import sys;
+import logging;
 
 import os
 import pyfits
@@ -43,171 +44,175 @@ from sltools.image import header_funcs as _hf_;
 
 
 # =================================================================================================================
-def cutout( image, header=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_size=0, y_size=0, mask=None ):
-	"""
-	Do a snapshot from given fits image.
+def cutout( image, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_size=0, y_size=0, mask=None ):
+    """
+    Do a snapshot from given fits image.
 
-	cutout( image [,...] ) -> (ndarray, header)
+    cutout( image [,...] ) -> (ndarray, header)
 
-	The function can deal with 'pixel' and 'degrees' cordinate units. As input, besides the image FITS 
-	filename (input_file), it receives a central position (xo,yo) and side lengths (x_size,y_size) for
-	output image position and dimensioning. Function returns two values: a numpy.array with resultant 
-	image pixel intensities and respective header object.
+    The function can deal with 'pixel' and 'degrees' cordinate units. As input, besides the image FITS 
+    filename (input_file), it receives a central position (xo,yo) and side lengths (x_size,y_size) for
+    output image position and dimensioning. Function returns two values: a numpy.array with resultant 
+    image pixel intensities and respective header object.
 
-	In addition, an image mask information can be given to use as interest region selection. 'mask' is
-	expected to be a numpy.where like structure (i.e, mask=numpy.where()). If given, returned image will
-	have all pixels null except the ones listed in 'mask' parameter.
+    In addition, an image mask information can be given to use as interest region selection. 'mask' is
+    expected to be a numpy.where like structure (i.e, mask=numpy.where()). If given, returned image will
+    have all pixels null except the ones listed in 'mask' parameter.
 
-	If 'xo=0' and 'yo=0', given image (input_file) central pixel will be chosen as (xo,yo).
-	If 'x_size=0' and 'y_size=0', half length of each side will be used for output dimensions.
+    If 'xo=0' and 'yo=0', given image (input_file) central pixel will be chosen as (xo,yo).
+    If 'x_size=0' and 'y_size=0', half length of each side will be used for output dimensions.
 
-	Input:
-	 - image      : Image (numpy ndarray)
-	 - header     : Image header object
-	 - coord_unit : 'pixel' or 'degrees' for position (xo,yo) values
-	 - xo         : Horizontal central position for output (cut) image
-	 - yo         : Vertical central position for output (cut) image
-	 - size_unit  : 'pixel' or 'degrees' for size (x_size,y_size) values
-	 - x_size     : Horizontal size (in pixels) of output image
-	 - y_size     : Vertical size (in pixels) of output image
-	 - mask       : tuple with arrays (y,x) with image/array indexes of interest
+    Input:
+     - image      : Image (numpy ndarray)
+     - hdr     : Image header object
+     - coord_unit : 'pixel' or 'degrees' for position (xo,yo) values
+     - xo         : Horizontal central position for output (cut) image
+     - yo         : Vertical central position for output (cut) image
+     - size_unit  : 'pixel' or 'degrees' for size (x_size,y_size) values
+     - x_size     : Horizontal size (in pixels) of output image
+     - y_size     : Vertical size (in pixels) of output image
+     - mask       : tuple with arrays (y,x) with image/array indexes of interest
 
-	Output:
-	 - (ndarray, header) : resultant image array and (updated) header instance
+    Output:
+     - (ndarray, header) : resultant image array and (updated) header instance
 
-	"""
+    """
 
-	xo=float(xo);
-	yo=float(xo);
-	x_size=float(x_size);
-	y_size=float(y_size);
+    logging.debug("Input parameters (type(image),header,coord_unit,xo,yo,size_unit,x_size,y_size,mask): %s",(type(image),hdr,coord_unit,xo,yo,size_unit,x_size,y_size,mask));
 
-	imagem = image;
-	hdr = header;
+    xo=float(xo);
+    yo=float(yo);
+    x_size=float(x_size);
+    y_size=float(y_size);
 
-	# Initialize some variables..
-	#
-	x_diff = 0;   x_edge = 0;
-	y_diff = 0;   y_edge = 0;
-	x_fin = 0;   x_ini = 0;
-	y_fin = 0;   y_ini = 0;
-
-
-	if ( hdr ):
-		dimpix = _hf_.read_pixelscale( hdr );
-
-
-	y_img_size, x_img_size = imagem.shape;
+    imagem = image;
+#    if hdr:
+#        hdr = hdr.copy();
+    
+    # Initialize some variables..
+    #
+    x_diff = 0;   x_edge = 0;
+    y_diff = 0;   y_edge = 0;
+    x_fin = 0;   x_ini = 0;
+    y_fin = 0;   y_ini = 0;
 
 
-	# Get the side sides (at least, 1!) and transform for the size_unit if necessary..
-	#
-	x_cut_size = max( 1, int(float(x_size)) );
-	y_cut_size = max( 1, int(float(y_size)) );
+    if ( hdr ):
+        dimpix = _hf_.read_pixelscale( hdr );
+        logging.info("Pixel_scale: %s",dimpix);
 
-	if ( size_unit == 'degrees' ):
-		x_cut_size = int(float(x_cut_size)/dimpix);
-		y_cut_size = int(float(y_cut_size)/dimpix);
+    y_img_size, x_img_size = imagem.shape;
+    logging.debug("Input image shape: %s",(x_img_size,y_img_size));
 
+    # Get the side sides (at least, 1!) and transform for the size_unit if necessary..
+    #
+    x_cut_size = max( 1, int(float(x_size)) );
+    y_cut_size = max( 1, int(float(y_size)) );
 
-	# And if no side size was given, define a default value correspondig to half of original image..
-	#
-	if not ( x_size ):
-		x_cut_size = int(x_img_size/2);
-		print >> sys.stdout, "Warning: 'x_size' not given. Using half of image x side(%d)" % (x_cut_size);
-
-	if not ( y_size ):
-		y_cut_size = int(y_img_size/2);
-		print >> sys.stdout, "Warning: 'y_size' not given. Using half of image y side(%d)" % (x_cut_size);
+    if ( size_unit == 'degrees' ):
+        x_cut_size = int(float(x_cut_size)/dimpix);
+        y_cut_size = int(float(y_cut_size)/dimpix);
 
 
-	# Check requested output.vs.input image sizes..
-	#
-	if ( x_cut_size == x_img_size and y_cut_size == y_img_size ):
-		print >> sys.stdout, "Warning: Requested output sizes are the same as input image. Returning image and header unchanged.";
-		return (imagem,hdr);
+    # And if no side size was given, define a default value correspondig to half of original image..
+    #
+    if not ( x_size ):
+        x_cut_size = int(x_img_size/2);
+        logging.warning("'x_size' not given. Using half of image x side(%d)", x_cut_size);
 
-	# Verify central coordinates values..
-	#
-	if ( coord_unit == 'pixel' and (xo != 0 and yo != 0) ):
-		x_halo = int(float(xo));
-		y_halo = int(float(yo));
+    if not ( y_size ):
+        y_cut_size = int(y_img_size/2);
+        logging.warning("'y_size' not given. Using half of image y side(%d)", y_cut_size);
 
-	elif ( coord_unit == 'degrees' and (xo != 0 and yo != 0) ):
-		_out = commands.getoutput( 'sky2xy %s %s %s' % (input_file, xo, yo) );
-		_out = string.split(_out);
-		x_halo = int(float(_out[-2]))-1;
-		y_halo = int(float(_out[-1]))-1;
+    logging.debug("Output image shape: %s",(x_cut_size,y_cut_size));
 
-	elif ( xo == 0 and yo == 0 ):
-		x_halo = int(x_img_size/2);
-		y_halo = int(y_img_size/2);
-		print >> sys.stdout, "Warning: No central coordinates were given for snapshot.";
-		print >> sys.stdout, "         Using image central pixel as the cut center.";
-	else:
-		print >> sys.stderr, "Error: Central positioning is out of valid values. Exiting.";
-		return (False,False);
+    # Check requested output.vs.input image sizes..
+    #
+    if ( x_cut_size == x_img_size and y_cut_size == y_img_size ):
+        logging.warning("Requested output sizes are the same as input image. Returning image and header unchanged.");
+        return (imagem,hdr);
+
+    # Verify central coordinates values..
+    #
+    if ( coord_unit == 'pixel' and (xo != 0 and yo != 0) ):
+        x_halo = int(float(xo));
+        y_halo = int(float(yo));
+
+    elif ( coord_unit == 'degrees' and (xo != 0 and yo != 0) ):
+        _out = commands.getoutput( 'sky2xy %s %s %s' % (input_file, xo, yo) );
+        _out = string.split(_out);
+        x_halo = int(float(_out[-2]))-1;
+        y_halo = int(float(_out[-1]))-1;
+
+    elif ( xo == 0 and yo == 0 ):
+        x_halo = int(x_img_size/2);
+        y_halo = int(y_img_size/2);
+        logging.warning("No central coordinates were given for snapshot. Using image central pixel as the cut center.");
+    else:
+        logging.error("Central positioning is out of valid values.");
+        return (False,False);
+
+    logging.debug("Central point for output image: %s",(x_halo,y_halo));
+
+    # Define the images (in/out) slices to be copied..
+    #
+    x_ini = x_halo - int(x_cut_size/2) #-1;
+    x_fin = x_ini + x_cut_size;
+    y_ini = y_halo - int(y_cut_size/2) #-1;
+    y_fin = y_ini + y_cut_size;
+
+    x_ini_old = max( 0, x_ini );   x_fin_old = min( x_img_size, x_fin );
+    y_ini_old = max( 0, y_ini );   y_fin_old = min( y_img_size, y_fin );
+
+    x_ini_new = abs( min( 0, x_ini ));   x_fin_new = x_cut_size - (x_fin - x_fin_old);
+    y_ini_new = abs( min( 0, y_ini ));   y_fin_new = y_cut_size - (y_fin - y_fin_old);
+
+    # If header, update pixel<->sky information..
+    #
+    if ( hdr ):
+        hdr = _hf_.update_coordinates(hdr.copy(), x_ini, y_ini);
+        hdr.update('NAXIS1',x_cut_size);
+        hdr.update('NAXIS2',y_cut_size);
+
+    # Initialize new image, and take all index list..
+    #
+    imagemnova = np.zeros( (y_cut_size,x_cut_size), dtype=imagem.dtype );
+    ind_z = np.where(imagemnova == 0);
+
+    # Copy requested image slice..
+    #
+    imagemnova[ y_ini_new:y_fin_new, x_ini_new:x_fin_new ] = imagem[ y_ini_old:y_fin_old, x_ini_old:x_fin_old ];
+
+    # If 'mask', maintain just "central" object on it..
+    #
+    if ( mask ):
+        msk = ( mask[0]-y_ini, mask[1]-x_ini )
+
+        zip_m = zip( msk[0], msk[1] );
+        zip_z = zip( ind_z[0], ind_z[1] );
+
+        L = list(set(zip_z) - set(zip_m));
+
+        try:
+            ind_0, ind_1 = zip(*L);
+            indx = ( np.array(ind_0), np.array(ind_1) );
+            imagemnova[ indx ] = 0;
+        except:
+            pass;
+
+    return (imagemnova, hdr);
 
 
-	# Define the images (in/out) slices to be copied..
-	#
-	x_ini = x_halo - int(x_cut_size/2) #-1;
-	x_fin = x_ini + x_cut_size;
-	y_ini = y_halo - int(y_cut_size/2) #-1;
-	y_fin = y_ini + y_cut_size;
-
-	x_ini_old = max( 0, x_ini );   x_fin_old = min( x_img_size, x_fin );
-	y_ini_old = max( 0, y_ini );   y_fin_old = min( y_img_size, y_fin );
-
-	x_ini_new = abs( min( 0, x_ini ));   x_fin_new = x_cut_size - (x_fin - x_fin_old);
-	y_ini_new = abs( min( 0, y_ini ));   y_fin_new = y_cut_size - (y_fin - y_fin_old);
-
-	# If header, update pixel<->sky information..
-	#
-	if ( hdr ):
-		hdr = _hf_.update_coordinates(hdr.copy(), x_ini, y_ini);
-		hdr.update('NAXIS1',x_cut_size);
-		hdr.update('NAXIS2',y_cut_size);
-
-	# Initialize new image, and take all index list..
-	#
-	imagemnova = np.zeros( (y_cut_size,x_cut_size), dtype=imagem.dtype );
-	ind_z = np.where(imagemnova == 0);
-
-	# Copy requested image slice..
-	#
-	imagemnova[ y_ini_new:y_fin_new, x_ini_new:x_fin_new ] = imagem[ y_ini_old:y_fin_old, x_ini_old:x_fin_old ];
-
-	# If 'mask', maintain just "central" object on it..
-	#
-	if ( mask ):
-		msk = ( mask[0]-y_ini, mask[1]-x_ini )
-
-		zip_m = zip( msk[0], msk[1] );
-		zip_z = zip( ind_z[0], ind_z[1] );
-
-		L = list(set(zip_z) - set(zip_m));
-
-		try:
-			ind_0, ind_1 = zip(*L);
-			indx = ( np.array(ind_0), np.array(ind_1) );
-			imagemnova[ indx ] = 0;
-		except:
-			pass;
-
-	return (imagemnova, hdr);
-
-
-def snapshot( image, header=None, centroid=(0,0), shape=(0,0), coord_unit='pixel', size_unit='pixel', mask=None ):
+def snapshot( image, hdr=None, centroid=(0,0), shape=(0,0), coord_unit='pixel', size_unit='pixel', mask=None ):
     """See 'cutout' help. This is just a definition to interface (xo,yo)<->centroid and (x_size,y_size)<->shape"""
     xo,yo = centroid;
     x_size,y_size= shape;
-    return cutout( image, header, coord_unit,xo, yo, size_unit, x_size, y_size, mask );
+    return cutout( image, hdr, coord_unit, xo, yo, size_unit, x_size, y_size, mask );
     
 # ---
 
 # ==========================================================================================
-def segstamp(obj_img, seg_img, objID, header=None, increase=0, relative_increase=False):
+def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase=False):
     """
     Identify objects on given images by their IDs and return object images
 
@@ -227,7 +232,7 @@ def segstamp(obj_img, seg_img, objID, header=None, increase=0, relative_increase
     Input:
      - obj_img           : image with objects (observed pixel values)
      - seg_img           : image with segmented objects (e.g, SEx's segmentation image)
-     - header            : FITS header to be updated and passed for each poststamp
+     - hdr            : FITS header to be updated and passed for each poststamp
      - increase          : float value for poststamp resizing (>0)
      - relative_increase : Is 'increase' a additive value (default) or multiplicative one(?)
      - objIDs            : List with objects ID(integers) in 'seg_img'. Default is to scan 'seg_img' for IDs
@@ -238,26 +243,9 @@ def segstamp(obj_img, seg_img, objID, header=None, increase=0, relative_increase
     """
 
 
-    # Initialize outputs:
-#    objs_list = [];
-#    hdrs_list = [];
-
-    # If object IDs are not given, scan segmentation image for those ids..
-    #
-#    if ( objIDs == [] ):
-#	    objIDs = list( set( seg_img.flatten() ) - set([0]) );
-
-#    if type(objIDs) is int :
-#        objIDs = [objIDs];
-    
-#    for _id in objIDs:
     _id = objID;
-#    if (_id == 0):
-#        objs_list.append(None);
-#        hdrs_list.append(None);
-#        continue;
-        
-    ind = segobjs.create_IDmask(seg_img, _id);
+
+    ind = segobjs.create_IDmask(segimg, _id);
 
     y_min = min( ind[0] );
     x_min = min( ind[1] );
@@ -280,22 +268,17 @@ def segstamp(obj_img, seg_img, objID, header=None, increase=0, relative_increase
             x_size = x_size + 2*increase;
             y_size = y_size + 2*increase;
 
-    try:
-        hdr = header.copy();
-    except:
-        hdr = None;
-
-
-    # Get the final image from 'cutout' output..
-    #
-    image_out, hdr = cutout( obj_img, header=hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
-
+    if objimg:
+        image_out, hdr = cutout( objimg, hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
+    else:
+        image_out, hdr = cutout( segimg, hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
+    
     return ( image_out, hdr );
 
 # ---
 # To keep compatibility with the old "sextamp" function:
-def sextamp(seg_img, obj_img, header=None, increase=0, relative_increase=False, objIDs=[]):
-	return [ segstamp(obj_img, seg_img, header, increase, relative_increase, ID) for ID in objIDs ]
+def sextamp(seg_img, obj_img, hdr=None, increase=0, relative_increase=False, objIDs=[]):
+	return [ segstamp(seg_img, ID, obj_img, hdr, increase, relative_increase) for ID in objIDs ]
 # ---
 
 #=============================================================================
@@ -361,6 +344,8 @@ if __name__ == "__main__" :
 
     from optparse import OptionParser;
 
+    logging = log.init(debug=True,verbose=False);
+    
     usage="\n  %prog image.fits x y  [options]"
     parser = OptionParser(usage=usage);
 
@@ -411,8 +396,8 @@ if __name__ == "__main__" :
         sys.exit(0);
 
     infits = args[0];
-    x = args[2];
-    y = args[1];
+    x = args[1];
+    y = args[2];
     coord_deg = opts.is_coord_deg;
     shape_deg = opts.is_shape_deg;
     dx,dy = opts.dim;
@@ -437,9 +422,9 @@ if __name__ == "__main__" :
 
     if (segimg):
         IDs = regexp.str2lst(IDs);
-        imglst, hdrlst = segstamp(image, segimg, header=hdr, increase=incr, relative_increase=rel_incr, objIDs=objIDs)
+        imglst, hdrlst = segstamp(image, segimg, hdr=hdr, increase=incr, relative_increase=rel_incr, objIDs=objIDs)
     else:
-        imgcut, hdr = cutout( image, header=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
+        imgcut, hdr = cutout( image, hdr=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
         IDs = ['0'];
         imglst = [imgcut];
         hdrlst = [hdr];
