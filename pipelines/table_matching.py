@@ -17,11 +17,10 @@ def nearest_neighbour(centroids_A, centroids_B):
     """ Function to compute and return the set of nearest point
         
     This function computes for each entry of 'centroids_A', the
-    nearest point in 'centroids_B'. Then, it does the same for
-    'centroids_B', computing the nearest 'centroids_A' to each
-    "B" entry.
-    It is returned, respective to each entry, a "index" and a
-    "distante" measure correspondig to each identified nearest
+    nearest point in 'centroids_B'.
+    
+    Is returned, respective to each entry, the index and the
+    distance measured correspondig to each identified nearest
     point.
     
     Input:
