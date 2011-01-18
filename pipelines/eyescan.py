@@ -70,8 +70,16 @@ def run(regionfile, imagefile, shape=(100,100), stampsfile="pstamp_"):
         # Run Sextractor over newly created sanpshot..
         #
         _Dsex = SE.run_segobj(file_i, PARAMS,preset='');   ### SEXTRACTOR IS CALLED HERE!
-        segimg = pyfits.getdata(_Dsex['SEGMENTATION']);
-        cathdu = pyfits.open(_Dsex['CATALOG'])[1];
+        try:
+            segimg = pyfits.getdata(_Dsex['SEGMENTATION'], header=False);
+        except:
+            segimg = pyfits.getdata(_Dsex['SEGMENTATION'],ignore_missing_end=True, header=False);
+        try:
+            cathdu = pyfits.open(_Dsex['CATALOG'])[1];
+        except:
+            cathdu = pyfits.open(_Dsex['CATALOG'],ignore_missing_end=True)[1];
+    
+    
         logging.info("Segmentation done.");
         logging.debug("Files %s,%s,%s",_Dsex['SEGMENTATION'],_Dsex['OBJECTS'],_Dsex['CATALOG']);
         
