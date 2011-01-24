@@ -275,10 +275,10 @@ def run(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
 
     # Run sex..
     #
+    _dev = '';
     if quiet:
         _dev = '&>/dev/null';
-    else:
-        _dev = '';
+
     status = os.system( 'sex %s %s %s' % (fits_image,cmd_line,_dev));
     if ( status != 0 ):
         print >> sys.stderr, "Error: Sextractor raised and error code '%s' during the run." % (status);
