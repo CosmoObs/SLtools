@@ -359,7 +359,8 @@ Therefore on the critical curves, where $J = 0$, we have
 This is Alard eq.~30. From this last equation, the tangential critical
 curve can be expressed in Cartesian coordinates in parametric form as 
 \beq
-\vec{r}_{\mathrm{crit}}= \left[(\re  +\Delta x_{crit})\cos{\te},(\re+\Delta x_{crit})\sin{\te}\right],\quad
+\vec{r}_{\mathrm{crit}}= \left[(\re  +\Delta x_{crit})\cos{\te},(\re+\Delta
+x_{crit})\sin{\te}\right],\quad
 0 \leq \te < 2\pi.  
 \eeq
 
@@ -398,11 +399,13 @@ are given by
 M}\right)\label{eigenvalues}
 \eeq 
 where $\mbox{tr}\, M$ is the trace of the matrix $M$. Using eqs. \ref{jacobian}
-and \ref{trace}, it is possible to show that the eigenvalues of $J_{L_C\rightarrow
+and \ref{trace}, it is possible to show that the eigenvalues of
+$J_{L_C\rightarrow
 S_C}$ are given by
 \bea
 \lambda_{+}&=&\kt\label{eigenvalue1}\\
-\lambda_{-}&=&-\frac{\scriptf(\te)}{r}=-\frac{\scriptf(\te)}{\re+x}\label{eigenvalue2}
+\lambda_{-}&=&-\frac{\scriptf(\te)}{r}=-\frac{\scriptf(\te)}{\re+x}\label{
+eigenvalue2}
 \eea
 
 
@@ -412,16 +415,99 @@ S_C}$ are given by
 %\label{eigenvalues_division}
 %\eeq
 %with $\tau=\mbox{sgn}\, M$ and $\alpha=4\frac{\det M}{(\mbox{tr}\,M)^2}$. 
-If we set $\left|\frac{\lambda_+}{\lambda_-}\right|=N$ (a condition that will be used to define the
-cross-section), then we can solve for the radius of the frontiers of the deformation cross-section area. The solutions are
+If we set $\left|\frac{\lambda_+}{\lambda_-}\right|=N$ (a condition that will be
+used to define the
+cross-section), then we can solve for the radius of the frontiers of the
+deformation cross-section area. The solutions are
 \bea
-r_{+}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1+\frac{1}{|N|-1}\right)\label{rmax}\\
-r_{-}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1-\frac{1}{|N|+1}\right)\label{rmin}
+r_{+}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1+\frac{1}{|N|-1}
+\right)\label{rmax}\\
+r_{-}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1-\frac{1}{|N|+1}
+\right)\label{rmin}
 \eea
 %\beq
 %\frac{\det M}{(\mbox{tr}\,M)^2}=\frac{N}{(N+1)^2}
 %\eeq
+We can now proceed to the calculation of the deformation cross-section area,
+given by the following definition:
+\bea
+\sigma_{dcs} &\equiv&
+\int_{\left|\frac{\mu_t}{\mu_r}\right|>|N|}\!\!\!\!\!\!\!\!\!d^2y=\int_{
+\left|\frac{\mu_t}{\mu_r}\right|>C}\!\!\!\!\!\!\!\!\!\left|det\;
+\textbf{J}\right| d^2x,\nonumber\\
+&=&\int_0^{2\pi}\int_{r_{-}(\te)}^{r_{+}(\te)}\left|-\kappa_2^2\left(\left|\vec{
+r}_{\mathrm{crit}}\right|-r\right)\right|\,{\rm d}r\,{\rm
+d}\theta\label{sec-choq-pert-app1}
+\eea
+Integrating in the radial coordinate, we obtain the general form for the
+deformation cross-section in the perturbative approach. This form only depends
+on the ``deformation factor`` $N$, on the second derivative of the axisymmetric
+potential at the Einstein radius and on the shape of the critical curve:
+\bea
+\sigma_{dcs}=\kappa_2^2\frac{|N|^2+1}{\left(|N|^2-1\right)^2}\int_0^{2\pi}\left|\vec{
+r}_{\mathrm{crit}}\right|^2\,{\rm
+d}\theta\label{sec-choq-pert-app2}
+\eea
 
+
+\subsection{Deriving Deformation Cross-Section from Magnification and Shear
+Values}
+
+Eigenvalues of the Jacobian Matrix are given by:
+
+\bea
+\mu_r &=& {1 \over 1-\kappa-\gamma} \\
+\mu_t &=& {1 \over 1-\kappa+\gamma}
+\eea
+
+Now we know in Cartesian coordinates:
+
+\bea
+\kappa &=& {1 \over 2} (\Psi_{11} + \Psi_{22}) \\
+\gamma_1 &=&   {1 \over 2} (\Psi_{11} - \Psi_{22}) \\
+\gamma_2 &=&   \Psi_{12}  \\
+\eea
+
+with $\gamma = \sqrt{\gamma_1^2 + \gamma_2^2}$
+
+We need to convert these Cartesian derivatives to polar ones, using:
+
+\bea
+{\partial \over \partial x } &=& \cost \ppr - \sint \oor \ppt \\
+{\partial \over \partial y } &=& \sint \ppr + \cost \oor \ppt
+\eea
+
+Which lead to the expressions
+
+\bea
+{\partial^2 \over \partial x^2 } + {\partial^2 \over \partial y^2 } &=&  \pprsq
++  \oorsq \pptsq + \oor \ppr \\
+{\partial^2 \over \partial x^2 } - {\partial^2 \over \partial y^2 } &=& 
+\costwot \lp \pprsq -  \oorsq \pptsq - \oor \ppr \rp + \sintwot \lp \oorsq \ppt
+- \twoor \pprt \rp \\
+{\partial^2 \over \partial x \partial y }  &=&  \half \sintwot \lp \pprsq - 
+\oorsq \pptsq - \oor \ppr \rp + \costwot \lp - \oorsq \ppt - \oor \pprt \rp
+\eea
+
+Where the first is the standard Laplacian in polar coordinates.
+
+Using now $f_0 = \Psi$, $f_1 = {\prtl \Psi \over \prtl r}$, $f_2 = \half
+{\prtl^2 \Psi \over \prtl r^2}$, we obtain the following:
+
+\bea
+\kappa &=& {1 \over 2} \lp 2 f_2 + \oorsq \pptsqfz + \oor f_1 \rp \\
+\gamma_1 &=&   {1 \over 2} \lp \costwot \lp 2 f_2 - \oorsq \pptsqfz - \oor f_1
+\rp + \sintwot \lp \oorsq \pptfz - \twoor \pptfone \rp \rp \\
+\gamma_2 &=&   \half \sintwot \lp 2 f_2 - \oorsq \pptsqfz - \oor f_1 \rp +
+\costwot \lp - \oorsq \pptfz - \oor \pptfone \rp  \\
+\eea
+
+%So that 
+
+%\beq
+%\gamma &=&   \sqrt \lbracket {1 \over 4}  \lp 2 f_2 - \oorsq \pptsqfz - \oor
+%f_1 \rp^2 + \lp \oorsq \pptfz - \twoor \pptfone \rp \rp \rbracket\\
+%\eeq
 
 \section{Reconstruction of Images}
 

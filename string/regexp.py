@@ -9,35 +9,35 @@ import re;
 ##@package regexp
 
 # =====================
-def str2lst( wort, sep=",", digits="a-zA-Z0-9_\ .", symbols="\-\+\^" ):
-	"""Function to read a string with special chars and return without them
+def str2lst( wort, sep=",", valid_digits="a-zA-Z0-9_\ .", valid_symbols="\-\+\^" ):
+    """Function to read a string with special chars and return without them
 
-        str2lst( 'string' )
+    str2lst( 'string' )
 
-        This function cleans the given string from non-given characters and splits
-	it if 'sep' character is found. A list is returned with resultant string(s).
+    This function cleans the given string from non-given characters and splits
+    it if 'sep' character is found. A list is returned with resultant string(s).
 
-	Character used as "valid ones" are passed through 'digits' and 'symbols' params;
-	These two parameters are concateneted to form one "valid" string for the processing.
+    Character used as "valid ones" are passed through 'digits' and 'symbols' params;
+    These two parameters are concateneted to form one "valid" string for the processing.
 
-	The function flow first split the string and then removes the non-given chars.
+    The function flow first split the string and then removes the non-given chars.
 
-        Input:
-         - wort    : A string
-         - sep     : string separator
-	 - digits  : valid characters
-	 - symbols : valid characters
+    Input:
+     - wort    : A string
+     - sep     : string separator
+     - digits  : valid characters
+     - symbols : valid characters
 
-        Output:
-         - a list with given string content(s)
+    Output:
+    - a list with given string content(s)
 
-        """
+    """
 
-	valid_chars = digits + symbols;
+    valid_chars = digits + symbols;
 
-	lista = [ re.sub( "[^"+valid_chars+"]", "", i )  for i in string.split( wort, sep=sep ) ];
+    lista = [ re.sub( "[^"+valid_chars+"]", "", i )  for i in string.split( wort, sep=sep ) ];
 
-	return ( lista );
+    return ( lista );
 
 # ---
 

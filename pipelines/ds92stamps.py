@@ -17,209 +17,158 @@ import numpy as np;
 from numpy import asarray as ndaa;
 import re;
 
+import logging;
+
 #from sltools.io import check_dependencies as ckdep;
-from sltools.catalog import ds9region as ds9reg;
 from sltools.image import sextractor as se;
 from sltools.image import segobjs;
 from sltools.image import imcp;
-from sltools.catalog import fits_file as fts;
+from sltools.catalog import fits_data as fts;
+from sltools.catalog import ascii_data as asc;
+from sltools.io import log;
 
 
 # GLOBAL variables:
 #
-INSTRUMENT='HST';
-PARAMS=['NUMBER','X_IMAGE','Y_IMAGE','X2_IMAGE','Y2_IMAGE','XY_IMAGE','FWHM_IMAGE','ELONGATION','ELLIPTICITY','ALPHA_J2000','DELTA_J2000'];
+#PARAMS=['NUMBER','X_IMAGE','Y_IMAGE','X2_IMAGE','Y2_IMAGE','XY_IMAGE','FWHM_IMAGE','ELONGATION','ELLIPTICITY','ALPHA_J2000','DELTA_J2000'];
 
-
-# ---
-
-def read_SEcat_data(segimg,tbdata,centroids):
-    """ Read table data for requested objects
-
-    Objects referenced on segmented image 'segimg'
-    by 'centroids' positions are searched for
-    in 'tbdata' (fits hdulist.data).
+def run(D_in, objimg, segimg=None, shape=(100,100), objsfile='pstamp_', hdr=None):
+    """
+    Function to take snapshots from objects listed in a DS9's regions file
+    
+    Sextractor is run over given 'imagename' and take the snapshots from objects listed
+    in DS9's 'regionfile'.
     
     Input:
-     - segimg : <ndarray>
-     - tbdata : <numpy record-array> (fits cat)
-     - centroids : list of tuples [(x,y),]
-    
-    Output:
-     -> {'*tbdata.names'},{'x','y'}
-     1st dict: cross-checked objects entries/features from 'tbdata'
-     2nd dict: non-checked object centroids
+     - regionfile : str
+        DS9' regions file
+     - imagename : str
+        FITS image filename
+     - outname_stamps : str
+        String to add to output name of the poststamp images.
+     - outname_cat : str
      
-    """
-    
-    # Get the object IDs of selected objects (ds9)..
-    #
-    objIDs = segobjs.centroid2ID(segimg,centroids=centroids);
-    
-    # and see how many objects were not deteted.
-    # Store these guys in somewhere, and remove them from objIDs list.
-    Dnon = {};
-    if (objIDs.count(0)):
-        non_detected_centroids = [ centroids[i] for i in range(len(centroids)) if objIDs[i]==0 ];
-    Dnon['x'],Dnon['y'] = zip(*non_detected_centroids);
-    
-    objIDs = filter(lambda x: x, objIDs);
-    
-    # Read SE's catalog entries corresponding the ones in DS9's catalog..
-    #
-    params = tbdata.names;
-    tbdata = fts.get_entries(tbdata, 'NUMBER', *objIDs);
-    Ddata = fts.get_columns(tbdata, *params);
-    
-    return (Ddata,Dnon)
-
-# ---
-
-def write_csvcat(filename, fieldnames, dictionary, mode='w'):
-    """ Write a CSV catalog from dictionary contents
-    
-    Input:
-     - filename : str
-        Name of csv catalog to write
-     - filednames : [str,]
-        Fieldnames to read from 'dictionary'
-     - dictionary : {str,}
-        Contents to be write in csv catalog
-     - mode : str
-        Write a new catalog, 'w', or append to an existing one, 'a'.
-        Default is 'w'.
-    
     Output:
-     <bool>
+     -> <bool>
     
     """
-    import csv;
+
+    from numpy import asarray;
     
-    if not (list(set(fieldnames)-set(dictionary.keys())) == []):
-        print "Error: Given dictionary does not contain every requested fieldnames.";
-        return (False);
 
-    # Initialize csv catalog
-    catFile = open(filename,mode);
-    catObj = csv.writer(catFile, delimiter=',', quotechar='\"');
-    catObj.writerow(fieldnames);
-    
-    LL = [ dictionary[_k] for _k in fieldnames ];
-    for _row in zip(*LL):
-        catObj.writerow(_row);
-    catFile.close();
-
-# ---
-
-def fits2array(imagename,PARAMS):
-    
-    # Run Sextractor for specific params..
-    #
-    Dsex = se.run_segobj(imagename, params=PARAMS, preset=INSTRUMENT);
-    if not Dsex:
-        print >> sys.stderr, "Error: SE's run raised an error. Finishing this thing...";
-        sys.exit(1);
-    
-    # Open the output from Sextractor run, images and catalog..
-    #
-    header = pyfits.getheader(imagename);
-    objimg = pyfits.getdata(Dsex['OBJECTS']);
-    segimg = pyfits.getdata(Dsex['SEGMENTATION']);
-    tbdata = fts.open_catalog(Dsex['CATALOG'])[1].data;
-    
-    return (header,objimg,segimg,tbdata);
-
-# ---
-
-def run(regionfile, imagename, outfits='.pstamp_', catrootname='objectsin_'):
-    
-    # Run sextractor over 'imagename' and take/open their outputs..
-    #
-    hdr,obj,seg,tab = fits2array(imagename,PARAMS);
-
-
-    # Read DS9 regionfile..
-    #
-    Dds9 = ds9reg.read_cat(regionfile);
-
-    centroids = zip(ndaa(Dds9['x'],dtype=int),ndaa(Dds9['y'],dtype=int));
-
-    imagename_ds9 = Dds9['image'];
-    if (imagename != imagename_ds9):
-        print >> sys.stderr,"Image filenames do not match: %s %s" % (imagename,imagename_ds9);
-        print >> sys.stderr,"Continuing with image %s " % (imagename);
-
+    imagename_ds9 = D_in['filename'];
 
     # Detect objects corresponding to given centroids..
     #
-    DSE,non_detected = read_SE_data(seg,tab,centroids);
-
-
-    # Concatenate objects properties from ds9 & SE..
-    #
-    Dout = {};
-    outfits = re.sub(".fits","",imagename)+outfits;
-    objIDs = DSE['NUMBER'];
-    Dout['poststamp'] = [ outfits+"%s.fits" % (objIDs[i]) for i in range(len(objIDs)) ];
-    Dout.update(Dds9);
-    Dout.update(DSE);
-
-    PARAMSout = ['x','y','tag','poststamp'];
-    PARAMSout.extend(PARAMS)
-    catname = re.sub(".fits","",imagename)+"_cat.filtered.csv";
-    write_csvcat(catname,PARAMSout,Dout);
+    XY = zip(asarray(D_in['x']),asarray(D_in['y']));
     
+    logging.debug("Input ['x'],['y'] points: %s" % (XY));
+    
+    if (segimg!=None):
+        logging.info("Segmentation image given, looking for objects for each (x,y) on it.");
+        objIDs = [ segobjs.centroid2ID(segimg,_xy) for _xy in XY ];
+    else:
+        logging.info("No segmentation image given.");
+        objIDs = [0]*len(XY);
+    
+    logging.debug("ObjIDs: %s " % (objIDs));
+
+    D_out = D_in;
+
+    D_out['id'] = objIDs;
+    D_out['segmented'] = [ _id != 0  for _id in objIDs ];
+    D_out['objfile'] = [];
+    del D_out['size'];
 
     # Now lets take the detected objects snapshots..
     #
-    objs,hdrs = imcp.segstamp(obj, seg, header=hdr, increase=2, relative_increase=True, objIDs=objIDs);
-    
-    # OK. End of story. Print/write output..
-    #
-    outfits = re.sub(".fits","",imagename)+outfits;
     for i in range(len(objIDs)):
-        if not objIDs[i]:
-            print "No objects detected at position ",centroids[i];
-            continue;
-        outname = outfits+"%s.fits" % (objIDs[i]);
-        os.system('[ -f %s ] && rm -f %s' % (outname,outname));
-        pyfits.writeto( outname, objs[i], hdrs[i] );
-        print "Object: %d, File: %s, Centroid: " % (objIDs[i],outname),centroids[i];
 
+        outname = objsfile+str(i)+"_id_"+str(objIDs[i])+".fits";
+        D_out['objfile'].append(outname);
+        logging.info("Output objects/files (#,ID,x,y,filename): %s",(i,objIDs[i],XY[i],outname));
+
+        _otmp,_htmp = imcp.snapshot( objimg, hdr, centroid=(XY[i][0],XY[i][1]), shape=shape );
+        try:
+            pyfits.writeto(outname,_otmp,_htmp);
+        except IOError:
+            os.remove(outname);
+            pyfits.writeto(outname,_otmp,_htmp);
+
+    
+    return D_out;
 
 
 # ==========================
 
 if __name__ == '__main__' :
 
-    # Initializing code, command-line options..
-    #
     import optparse;
-    print "";
     
-    usage="Usage:  %prog [options] <ds9regionfile.reg> <image.fits>"
+    usage="\n  %prog [options] <ds9regionfile.reg> <image.fits>"
     parser = optparse.OptionParser(usage=usage);
 
+    parser.add_option('-s', '--seg_image',
+                    dest='segfile', default=None,
+                    help="Segmentation image to verify the points in 'ds9regionfile'");
+    parser.add_option('--shape',
+                    dest='xy_sizes', default='100,100',
+                    help="Output images shape [100,100]");
     parser.add_option('-o',
-                        dest='outPstamp', default='.pstamp_',
-                        help='Output (image) file name appended to image file rootname [".pstamp_"]');
+                    dest='objsname', default='pstamp_',
+                    help="Output object filenames prefix [pstamp_]");
     parser.add_option('-c',
-                        dest='outCatalog', default='objectsin_',
-                        help='Name for output identified objects (csv) catalog ["objectsin_"]');
+                    dest='catname', default='regtable_',
+                    help="Name for output objects catalog [regtable_]");
+    parser.add_option('-t',
+                    dest='cattype', default='fits',
+                    help="Type of output objects catalog (fits|csv) [fits]");
 
     (opts,args) = parser.parse_args();
 
-    outfitsname = opts.outPstamp;
-    catrootname = opts.outCatalog;
+    cattype = opts.cattype;
+    catfile = opts.catname;
+    objsfile = opts.objsname;
+    shape = opts.xy_sizes.split(",");
+    segimg = opts.segfile;
     
     if len(args) < 2 :
         parser.print_help();
-        sys.exit(1);
+        sys.exit(0);
         
     regionfile = args[0];
     imagename = args[1];
 
-    run(regionfile, imagename, outfitsname, catrootname)
+    shape = (int(shape[0]),int(shape[1]));
+    
 
+    # Logging handler:
+    logfile = regionfile+'.log'
+    logging = log.init(logfile,debug=True,verbose=True);
+
+
+    # Read DS9 regionfile..
+    #
+    D_in = asc.read_ds9cat(regionfile);
+    objimg = pyfits.getdata(imagename,header=False);
+    if segimg:
+        segimg = pyfits.getdata(segimg);
+        
+    D_in['filename'] = imagename;
+    
+    D_out = run(D_in, objimg, segimg, shape=shape, objsfile=objsfile, hdr=None);
+
+    if cattype.upper() == 'FITS':
+        outname = catfile+re.sub(".reg",".fit",regionfile);
+        tbhdu = fts.dict_to_tbHDU(D_out, D_out['filename']+"_stamps", 'filename','x','y','color','segmented','id','objfile');
+        try:
+            tbhdu.writeto(outname);
+        except IOError:
+            os.remove(outname);
+            tbhdu.writeto(outname);
+    else:
+        outname = catfile+re.sub(".reg",".csv",regionfile);
+        asc.dict_to_csv(D_out,filename=outname,fieldnames=['filename','x','y','color','segmented','id','objfile']);
+    
     print >> sys.stdout, "Done.";
     sys.exit(0);

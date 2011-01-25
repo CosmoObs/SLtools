@@ -1,0 +1,114 @@
+\chapter{Exact solution for Lens Models}
+
+\section{Axially-Symmetric Models}
+
+\subsection{SIS}
+The most single lens model for galaxies  corresponds to Singular Isothermal
+Sphere. This model, is obtained by assuming a spherical mass distribution
+that behaves as an isothermal gas in hidrostatic equilibrium. In this case,
+the density is given by
+
+\begin{equation}
+ \rho(r)=\dfrac{\sigma_v^2}{2\pi G r^2},
+\end{equation}
+where $\sigma_v$ is the peculiar velocity  and $r=\sqrt{\xi^2+z^2}$ is the
+distance to the center of the sphere. 
+
+Choosing $\xi_0= \dfrac{4\pi \sigma^2_v D_{\rm LS} D_{\rm OS}}{c^2 D_{\rm
+OS}}$ for the dimensionless coordinates $\vec{x}=\frac{\vec{\xi}}{\xi_0}$, the
+lensing potential is given by
+
+\begin{equation}
+ \varphi(x)=x,
+\label{sis_pot}
+\end{equation}
+where $x=\sqrt{x^2_1+x^2_2}$. From the lensing potential above, the lensing
+functions are
+\begin{eqnarray}
+ \alpha(\vec{x}) &=& 1 \label{sis_angle}\\
+\kappa(\vec{x}) &= & \dfrac{1}{2x} \label{sis_convg}\\
+\gamma(\vec{x}) & = &  \dfrac{1}{2x} \label{sis_shear}.
+\end{eqnarray}
+Notice that, the vectorial expression for the deflection angle,
+Eq.~(\ref{sis_angle}), is
+\begin{equation}
+ \vec{\alpha}(\vec{x})=\cos{\phi}\hat{\imath} + \sin{\phi}\hat{\jmath},
+\end{equation}
+where $\phi=\arctan{(x_2/x_1)}$
+
+
+\section{Pseudo-Elliptical Models}
+To distort a circular lensing potential into a elliptical shape, its radial
+coordinate $x$ is replaced by $x_\varepsilon$, where $x_\varepsilon$ is given 
+\begin{equation}
+ x \rightarrow x_\varepsilon = \sqrt{x^2_{1\varepsilon}+x^2_{2\varepsilon}}=
+\sqrt{a_{1\varepsilon}\,x^2_1+a_{2\varepsilon}\,x^2_2}.%
+\label{subti-ellip}
+\end{equation}
+
+\noindent In general, for any choice of $a_{1\varepsilon}$ and
+$a_{2\varepsilon}$, the lensing functions have simple analytical expressions.
+For example, the angle deflection, convergence and the components of the
+shear are 
+\begin{eqnarray}
+\vec{\alpha}_\varepsilon(\vec{x})&=&\alpha(x_\varepsilon)(\sqrt{a_{1\varepsilon}
+} \cos { \phi_ \varepsilon},\sqrt{a_{2\varepsilon}}\sin{\phi_\varepsilon})
+\label{ang_def_pe}\\
+\kappa_\varepsilon(\vec{x})&=&\mathcal{A}(\varepsilon)\kappa(x_\varepsilon)
+-\mathcal{B}(\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon}
+\label{kappa_pe}\\
+\gamma_{1\varepsilon}(\vec{x})& = &
+\mathcal{B}(\varepsilon)\kappa(x_\varepsilon)-\mathcal{A}
+(\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon} \\
+\gamma_{2\varepsilon}(\vec{x})& =
+&-\sqrt{\mathcal{A}^2(\varepsilon)-\mathcal{B}^2(\varepsilon)}
+\gamma(x_\varepsilon)\sin{ 2\phi_\varepsilon}\\
+\gamma^2_\varepsilon(\vec{x}) & = &
+\mathcal{A}^2(\varepsilon)\gamma^2(x_\varepsilon)-2\mathcal{A}
+(\varepsilon)\mathcal {B}
+(\varepsilon)\kappa(x_\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon}
+\nonumber  \\ &  &
++\mathcal{B}^2(\varepsilon)[\kappa^2(x_\varepsilon)-\sin^2{2\phi_\varepsilon}
+\gamma^2(x_\varepsilon) ]\label{gamma_pe}
+\end{eqnarray}
+\noindent where
+$\phi_\varepsilon=\arctan(\frac{x_{2\varepsilon}}{x_{1\varepsilon}})$,
+$\mathcal{A(\varepsilon)}=\frac{1}{2}(a_{1\varepsilon}+a_{2\varepsilon})$ and
+$\mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})$.
+$\kappa(x_\varepsilon)$
+and $\gamma(x_\varepsilon)$ are respectively the convergence and shear of any
+circular model, in
+which $x$ was replaced by $x_\varepsilon$.
+
+
+\subsection{SIEP}
+For this kind of model, from Eq.~(\ref{sis_pot}) and Eq.~(\ref{subti-ellip})
+the lensing potential reads
+\begin{equation}
+ \varphi(\vec{x})=x_\varepsilon,\label{siep_pot}
+\end{equation}
+ and its lensing functions are
+\begin{eqnarray}
+\vec{\alpha}_\varepsilon(\vec{x}) & = & (\sqrt{a_{1\varepsilon}
+} \cos { \phi_ \varepsilon},\sqrt{a_{2\varepsilon}}\sin{\phi_\varepsilon})\\
+\kappa_\varepsilon(\vec{x}) & = &
+\left[\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)\cos{2\phi_\varepsilon}
+\right](2 x_\varepsilon)^{-1}=\gamma_\varepsilon(\vec{x})
+\end{eqnarray}
+
+From the equations above, the components of the lens equation are
+\begin{eqnarray}
+ y_1&=&x_1-\sqrt{a_{1\varepsilon}}\cos{\phi_ \varepsilon}\\
+y_2&=&x_2-\sqrt{a_{2\varepsilon}}\sin{\phi_ \varepsilon},
+\end{eqnarray}
+and the expression for the eigenvalues read
+\begin{eqnarray}
+\lambda_r(\vec{x})&=& 1-\kappa_\varepsilon(\vec{x})+\gamma_\varepsilon(\vec{x}
+)=1\\
+\lambda_t(\vec{x})& =& 1-\kappa_\varepsilon(\vec{x})-\gamma_\varepsilon(\vec{x}
+)=1-\left[\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)\cos{
+2\phi_\varepsilon } \right](x_\varepsilon)^{-1}
+\end{eqnarray}
+
+
+\section{Elliptical Models}
