@@ -132,6 +132,44 @@ def _cstm_args(instrument):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
+
+    elif instrument == 'HST_Arcs':
+        _dic = {
+            'FILTER_NAME' : 'default.conv',
+            'STARNNW_NAME' : 'default.nnw',
+            'DETECT_TYPE' : 'CCD',
+            'DETECT_IMAGE' : 'SAME',
+            'FLAG_IMAGE' : 'NONE',
+            'DETECT_MINAREA' : '20',
+            'THRESH_TYPE' : 'RELATIVE',
+            'DETECT_THRESH' : '2.7',
+            'ANALYSIS_THRESH' : '2.7',
+            'FILTER' : 'Y',
+            'DEBLEND_NTHRESH' : '10',
+            'DEBLEND_MINCONT' : '0.05',
+            'CLEAN' : 'Y',
+            'CLEAN_PARAM' : '1.0',
+            'BLANK' : 'Y',
+            'PHOT_APERTURES' : '5',
+            'PHOT_AUTOPARAMS' : '2.5,3.5',
+            'SATUR_LEVEL' : '50000.0',
+            'MAG_ZEROPOINT' : '21.59',
+            'MAG_GAMMA' : '4.0',
+            'GAIN' : '7.0',
+            'PIXEL_SCALE' : '0.1',
+            'SEEING_FWHM' : '0.22',
+            'BACK_SIZE' : '64',
+            'BACK_FILTERSIZE' : '3',
+            'BACKPHOTO_TYPE' : 'GLOBAL',
+            'BACKPHOTO_THICK' : '24',
+            'MEMORY_OBJSTACK' : '3000',
+            'MEMORY_PIXSTACK' : '300000',
+            'MEMORY_BUFSIZE' : '1024',
+            'SCAN_ISOAPRATIO' : '0.6',
+            'VERBOSE_TYPE' : 'NORMAL'
+            };
+
+
     elif instrument == 'CFHT':
         _dic = {
             'DETECT_TYPE' : 'CCD',
@@ -275,10 +313,10 @@ def run(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
 
     # Run sex..
     #
+    _dev = '';
     if quiet:
         _dev = '&>/dev/null';
-    else:
-        _dev = '';
+
     status = os.system( 'sex %s %s %s' % (fits_image,cmd_line,_dev));
     if ( status != 0 ):
         print >> sys.stderr, "Error: Sextractor raised and error code '%s' during the run." % (status);

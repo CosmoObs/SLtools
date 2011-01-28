@@ -64,37 +64,43 @@ def FindKeydots (p1,p2,image_pixels,image,keydots,Area, method="medium",alpha=1,
             ymed=float(y1+y2)/2.
             pmed=[xmed,ymed]
             if p1 in keydots: 
-                keydots=FindKeydots(p1,pmedimage_pixels,image,keydots,Area, method,alpha,nearDistance)
+                keydots=FindKeydots(p1,pmed,image_pixels,image,keydots,Area, method,alpha,nearDistance)
             if p2 in keydots:
                 keydots=FindKeydots(pmed,p2,image_pixels,image,keydots,Area, method,alpha,nearDistance)
 
     return keydots
 
-def Mediatrix_Decomposition(image_name,PATH='', method="medium",alpha=1,nearDistance=(sqrt(2)/2)):
+def Mediatrix_Decomposition(image_name,directory='', method="medium",alpha=1,nearDistance=(sqrt(2)/2)):
     """
     Function to perform the mediatrix decomposition method on a given object. 
 
     Input:
      - image_name   <str> : the image name. This image is a POST STAMP with a single object
-     - PATH   <str> : the image Path. If it is on the same directory PATH=''
+     - directory   <str> : the image Path. If it is on the same directory directory=''
      - method   <string> : 'medium' if you want to pick as Mediatrix Point the point at same distance from the two most distant points near the bisector. Or 'brightest' if you want to pick as Mediatrix Point the brightest point near the bisector. DEFAULT 'medium'
      - alpha      <float> : the factor alpha=l_i/w to stop the bisection, w is the estimated width and l_i the distance from two neighbours keydots. if l_i<alpha*w the function will not bisect to next Mediatrix level. DEFAULT 1
      - nearDistance      <list> : the hightest distance to consider a point near to the perpendicular bisector. DEFAULT sqrt(2)/2
      
     Output:
-     - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus. The first item from the list has an extra key 'id' wich contains the image_name.
+     - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus. The first item from the list has two extra keys 'id' wich contains the image_name and 'center' that keeps the objet center defined by the first mediatrix point in the first mediatrix level.
          
     """
-    image,hdr = pyfits.getdata(PATH+image_name, header = True )
+    image,hdr = pyfits.getdata(directory+image_name, header = True )
     pixels=numpy.where(image>0)
     E1,E2=get_extrema_2loops( pixels[0], pixels[1], 0 )
     Area=len(pixels[1])
     p1=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
     p2=[pixels[0][E2],pixels[1][E2]]
     keydots=[p1,p2]
-    keydots=FindKeydots(p1,p2,pixels,image,keydots,Area, method="brightest",alpha=1,nearDistance=nearDistance)
+    keydots=FindKeydots(p1,p2,pixels,image,keydots,Area, method=method,alpha=1,nearDistance=nearDistance)
     mediatrix_vectors=Find_Mediatrix_vectors(keydots)
     mediatrix_vectors[0]['id']=image_name
+    medium=int(float(len(keydots))/2)
+    mediatrix_vectors[0]['center']=keydots[medium]
+    L=lenght(keydots)
+    W=len(pixels)/(4*atan(1)*L)
+    mediatrix_vectors[0]['L/W']=L/W
+
     return mediatrix_vectors
 
 

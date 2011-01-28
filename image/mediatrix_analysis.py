@@ -8,6 +8,35 @@ import pyfits
 from scipy.optimize import fmin
 from mediatrix_decomposition import lenght
 
+def Sum_inner_product(mediatrix_data):
+
+    """
+    Function to calculate the sum of scalar products from mediatrix vectors to its 'mirrored' mediatrix vector.
+    
+    Input:
+     - mediatrix_data <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus. The first item from the list has an extra key 'id' wich contains the image file name. It is the output from Mediatrix_Decomposition.
+
+     
+    Output:
+     - <float> : sum of inner product between a mediatrix vector and its neighbour over the number of vectors 
+     
+    """
+    total_inner_prod=0
+    for i in range(0,len(mediatrix_data)-1):
+        
+        component_1=mediatrix_data[i]['end'][0]-mediatrix_data[i]['origin'][0]
+        component_2=mediatrix_data[i]['end'][1]-mediatrix_data[i]['origin'][1]
+        vector1=[component_1,component_2]
+
+        component_1=mediatrix_data[i+1]['end'][0]-mediatrix_data[i+1]['origin'][0]
+        component_2=mediatrix_data[i+1]['end'][1]-mediatrix_data[i+1]['origin'][1]
+
+        vector2=[component_1,component_2]
+        
+        inner_prod=numpy.inner(vector1,vector2)
+        total_inner_prod=total_inner_prod+inner_prod
+    total_inner_prod=total_inner_prod/len(mediatrix_data)
+    return total_inner_prod
 
 def Sum_oposite_inner_product(mediatrix_data):
 

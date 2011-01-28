@@ -268,7 +268,7 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
             x_size = x_size + 2*increase;
             y_size = y_size + 2*increase;
 
-    if objimg:
+    if objimg!=None:
         image_out, hdr = cutout( objimg, hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
     else:
         image_out, hdr = cutout( segimg, hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
