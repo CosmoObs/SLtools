@@ -1,12 +1,5 @@
 """
-sltools - a library of strong lensing tools
-
-sltools is a collection of modules designed to support application for strong lensing 
-
-Tools concerning catalog handling, image processing,
-gravitational lensing simulations and other numerical calculations
-are covered by sltools modules.
-
+The plot package contains modules that produce graphics
 """
 from plot_gravlens_crit import *
 
