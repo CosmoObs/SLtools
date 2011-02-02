@@ -149,12 +149,4 @@ double K(int n, conv_type conv_in,double X1, double X2, double conv_params[], do
 }
 
 
-
-
-
-
-
-
-
-
 #endif

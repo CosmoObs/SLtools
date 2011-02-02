@@ -1,3 +1,14 @@
+/** @file
+* Example of doxygen documentation for C functions FIXME. 
+*/
+
+/** @package elliptical_mass
+*  Package to compute quantities related to the elliptical mass models
+*
+*  Detailed descrition FIXME
+*
+*/
+
 #ifndef ELLIPTICAL_MASS_H
 #define ELLIPTICAL_MASS_H
 
@@ -7,7 +18,17 @@
 
 // g++ -Wall ellip_mass.cpp `pkg-config gsl --cflags --libs`
 
-
+/**  function to compute the \f$ f_1 \f$ for elliptical models
+*
+*  \param conv_type conv_in pointer to the convergencie for the circular model
+*  \param theta angular coordinate in the lens plane
+*  \param conv_params[] vector with the parameters of the circular convergence
+*  \param r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ )
+*  \param a parameter related to ellipticity (see eq 3.30 from report, section General results for elliptical models)
+*  \param b parameter related to ellipticity (see eq 3.30 from report, section General results for elliptical models)
+*  \return \f$ f_1 \f$ for a elliptical model
+*
+*/
 double f_1_ellip_mass(conv_type conv_in,double theta, double conv_params[], double r_e, double a, double b){
   double X1 = r_e*cos(theta);
   double X2 = r_e*sin(theta);
@@ -21,7 +42,17 @@ double f_1_ellip_mass(conv_type conv_in,double theta, double conv_params[], doub
   return out;
 }
 
-
+/**  function to compute the \f$ \frac{df_0}{d\theta} \f$ for elliptical models
+*
+*  \param conv_type conv_in pointer to the convergencie for the circular model
+*  \param theta angular coordinate in the lens plane
+*  \param conv_params[] vector with the parameters of the circular convergence
+*  \param r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ )
+*  \param a parameter related to ellipticity (see eq 3.30 from report, section General results for elliptical models)
+*  \param b parameter related to ellipticity (see eq 3.30 from report, section General results for elliptical models)
+*  \return \f$ \frac{df_0}{d\theta} \f$ for a elliptical model
+*
+*/
 double Df0Dtheta_ellip_mass(conv_type conv_in,double theta, double conv_params[], double r_e, double a, double b){
   double X1 = r_e*cos(theta);
   double X2 = r_e*sin(theta);
@@ -34,7 +65,17 @@ double Df0Dtheta_ellip_mass(conv_type conv_in,double theta, double conv_params[]
   return out;
 }
 
-
+/**  function to compute the \f$ \frac{d^2f_0}{d\theta^2} \f$ for elliptical models
+*
+*  \param conv_type conv_in pointer to the convergencie for the circular model
+*  \param theta angular coordinate in the lens plane
+*  \param conv_params[] vector with the parameters of the circular convergence
+*  \param r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ )
+*  \param a parameter related to ellipticity (see eq 3.30 from report, section General results for elliptical models)
+*  \param b parameter related to ellipticity (see eq 3.30 from report, section General results for elliptical models)
+*  \return \f$ \frac{d^2f_0}{d\theta^2} \f$ for a elliptical model
+*
+*/
 double D2f0Dtheta2_ellip_mass(conv_type conv_in,double theta, double conv_params[], double r_e, double a, double b){
   double X1 = r_e*cos(theta);
   double X2 = r_e*sin(theta);
