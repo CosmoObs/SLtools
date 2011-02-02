@@ -15,12 +15,19 @@ def merge_tbHDU(tbhdu_A, tbhdu_B):
     """
     Merge two tables (HDU) columns
     
+    A new table (HDU) containing table 'A' and 'B'
+    columns is output. It is expected that both tables
+    lines are the same (same order). If one of them 
+    has fewer lines, 0/NULL value is given to complete
+    the lines/columns.
+    
     Input:
      - tbhdu_A : pyfits.BinTableHDU
      - tbhdu_B : pyfits.BinTableHDU
     
     Output:
-     - tbhdu
+     - tbhdu : pyfits.BinTableHDU
+        Result from input tables merge
     
     ---
     """
@@ -34,16 +41,18 @@ def merge_tbHDU(tbhdu_A, tbhdu_B):
 def extend_tbHDU(tbhdu_A, tbhdu_B):
     """
     Extend first tbHDU with second entries
+
+    The output is a table (HDU) with column 'B' lines
+    extending 'A' entries. Column names on both input
+    table need to be the same.
     
     Input:
-     - tbhdu_A : FITS table HDU
-        First table HDU, to be extended
-     - tbhdu_B : FITS table HDU
-        Second table HDU, to be added
+     - tbhdu_A : FITS binary table HDU
+     - tbhdu_B : FITS binary table HDU
     
     Output:
-     - tbhdu : FITS table HDU
-        Result from extention
+     - tbhdu : FITS binary table HDU
+        Result from extention, A+B
     
     ---
     """
@@ -61,9 +70,12 @@ def extend_tbHDU(tbhdu_A, tbhdu_B):
     
 # ---
 
-def select_columns(tbhdu, *fields): 
+def select_columns(tbhdu, *fieldnames): 
     """
-    Get a list of variables from a FITS catalog
+    Select particular columns from given table
+    
+    A new table with only the asked columns ('fieldnames')
+    is output.
 
     Input:
      - tbhdu : pyfits.open('data.fit')[?]
@@ -74,11 +86,12 @@ def select_columns(tbhdu, *fields):
     Output:
      -> (new) BinTableHDU, with just the selected fields
     
+    ---
     """
 	
     coldefs = tbhdu.columns;
     tbdata = tbhdu.data;
-    inds = [ tbdata.names.index(id.upper()) for id in fields ];
+    inds = [ tbdata.names.index(id.upper()) for id in fieldnames ];
     cols = [];
     for i in inds:
         cols.append( pyfits.Column(name=coldefs[i].name, format=coldefs[i].format, array=tbdata.field(i)) );
@@ -92,15 +105,19 @@ def select_rows(tbhdu, *indices):
     """
     Read rows(indexes) from given HDU (catalog)
     
+    A new table with only the asked table indexes,
+    'indices', is output.
+    
     Input:
-     - tbhdu : pyfits.open('data.fit')[?]
-        Table HDU, often "?" equals to 1
+     - tbhdu : pyfits.BinTableHDU
+        FITS table HDU
      - *indices : int,
         List of indexes to read from tbhdu
     
     Output:
      -> (new) BinTableHDU : sub-selection (rows) of tbhdu
-    
+
+    ---
     """
     
     _inds = [ i for i in indices ];
@@ -110,9 +127,13 @@ def select_rows(tbhdu, *indices):
     
 # ---
 
-def select_entries(tbhdu, field, *values):
+def select_entries(tbhdu, fieldname, *values):
     """
     Read entries (lines) from given HDU (catalog)
+    
+    'values' matching entries in column 'fieldname'
+    is used to select rows from given 'tbhdu'. A new
+    table (HDU) is generated from selected lines.
     
     Input:
      - tbhdu : pyfits.open('data.fit')[?]
@@ -125,9 +146,10 @@ def select_entries(tbhdu, field, *values):
     Output:
      -> (new) BinTableHDU : sub-selection (rows) of tbhdu
     
+    ---
     """
     
-    _inds = [ tbhdu.data.field(field).tolist().index(_v) for _v in values ];
+    _inds = [ tbhdu.data.field(fieldname).tolist().index(_v) for _v in values ];
 
     return select_rows(tbhdu,*_inds);
 
@@ -144,14 +166,16 @@ def sample_entries(tbhdu, **kwargs):
     or a tuple - for (min,max) thresholds.
     
     Input:
-     - tbhdu : table Header D Unit
-        FITS table HDU ( pyfits.open()[1] )
-     - kwargs : {'key1'=number1,}
+     - tbhdu : pyfits.BinTableHDU
+        FITS table HDU
+     - kwargs : {'key1'=value1,}
         Key=Value, a dictionary
 
     Output:
-     - tbhdu
-
+     - tbhdu : pyfits.BinTableHDU
+        Binary table HDU with selected lines
+    
+    ---
     """
 
     tbsamp = tbhdu.copy();
@@ -186,15 +210,23 @@ def dict_to_tbHDU(dic, tbname='', *fieldnames):
     Valid data-types: 'int', 'int32', 'int64', 'float', 'float32',
     'float64', 'complex', 'long/object' and string(character)
     Maximum size of string values is 10 characters.
+    
+    If 'fieldnames' are given, only them (from 'dic') are read
+    and written to output (new) table.
 
     Input:
      - dic : {'key':[],}
         Dictionary with a collection of key:column data
+     - tbname : str
+        Output tbale header name
+     - fieldnames : str,
+        [optional] keys to read from 'dic'
     
     Output:
-     - <table HDU>
+     - tbhdu : pyfits.BinTableHDU
       A HDU associated to a table with 'dic' contents
     
+    ---
     """
     
     args = fieldnames;
@@ -250,22 +282,21 @@ def dict_from_tbHDU(tbhdu, *fieldnames):
     Input:
      - tbhdu : pyfits.open('data.fit')[1]
         Table HDU from a FITS catalog
-     - fields : str,
+     - fieldnames : str,
         Comma separated list of variables to be read from 'hdulist'
 
     Output:
      -> {*fieldnames} : a dictionary with given *args as keys and their values
 
     """
-    fields = fieldnames;
     
-    if not len(fields):
-        fields = tbhdu.data.names;
+    if not len(fieldnames):
+        fieldnames = tbhdu.data.names;
 
     dic = {}; 
-    for arg in fields: 
+    for arg in fieldnames: 
         try:
-            dic[arg] = tbdata.field(arg); 
+            dic[arg] = tbhdu.data.field(arg); 
         except KeyError:
             print "Variable %s does not exist in this catalog." % arg
     

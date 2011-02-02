@@ -1,1 +1,1 @@
-../pipelines/eyescan.py
+../pipelines/finders/eyescan.py

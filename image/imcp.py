@@ -282,11 +282,11 @@ def sextamp(seg_img, obj_img, hdr=None, increase=0, relative_increase=False, obj
 # ---
 
 #=============================================================================
-'''
-def copy_objects(obj_img, seg_img, objIDs):
+
+def copy_objects(objimg, segimg, objIDs=[], groundimg=None):
     """
     Returns a image (with same size/shape as given ones) for each object in 
-    'obj_img' found in 'seg_img' with ID in 'objIDs'.
+    'objimg' found in 'segimg' with ID in 'objIDs'.
 
     Function identifies the pixels of each ID(int) in 'objIDs' on segmentation
     image(array) - seg_img. These identified pixels (their values) are copied 
@@ -297,45 +297,53 @@ def copy_objects(obj_img, seg_img, objIDs):
     object, is returned.
 
     Input:
-     - seg_img : image with segmented objects, with pixels values in objIDs
-     - obj_img : image with objects (observed pixel values)
-     - objIDs  : a list with (int) numbers that identify the objects in seg_img
+     - objimg : np.array(ndim=2,dtype=float)
+      Image with objects (observed pixel values)
+     - segimg : np.array(ndim=2,dtype=int)
+      Image with segmented objects, with pixels values in objIDs
+     - objIDs  : [int,]
+      A list with (int) numbers that identify the objects in seg_img
+     - groundimg : np.array(ndim=2,dtype=float)
+      Image array where selected "pixels" will be overwritten.
+      If 'None', a null image is used.
 
     Output:
-     - [ ndarray(ndim=2,dtype=float) , ]
-        A list with numpy arrays containing each identified object
+     - np.array(ndim=2,dtype=float)
+        Array containing selected objects
 
+    ---
     """
 
+    segimg = seg_img;
+    objimg = obj_img;
+
     objs_list = [];
+    
+    if (objimg.shape != segimg.shape):
+        logging.error("Given images (obj|seg) have different shapes.");
+        return False;
 
     if (objIDs == []):
-        objIDs = list(set(seg_img.flatten()) - set([0]))
+        objIDs = list(set(segimg.flatten()) - set([0]))
+    else:
+        objIDs = list(set(objIDs) - set([0]))
         
+    if (type(objIDs) == type(int())):
+        objIDs = [objIDs];
+
+    if not groundimg:
+        groundimg = np.zeros( objimg.shape, dtype = objimg.dtype );
+
     # In case the user just give a number (one object ID..), we deal with that
     # Lets try first the list, if not, use the single ID and do the job..
     #
-    try:
-        for objID in objIDs:
-            merged_img = np.zeros( seg_img.shape, dtype = obj_img.dtype );
-            _ind = np.where(seg_img == objID);
-            merged_img[_ind] = obj_img[_ind];
-
-            objs_list.append( merged_img );
-
-    except:
-        objID = objIDs;
-        # Identify and copy the pixels in obj_img to a new blank image
-        #
-        merged_img = np.zeros( seg_img.shape, dtype = obj_img.dtype );
-        _ind = np.where(seg_img == objID);
-        merged_img[_ind] = obj_img[_ind];
-
-        objs_list.append( merged_img );
+    for objID in objIDs:
+        _ind = np.where(segimg == objID);
+        groundimg[_ind] += objimg[_ind];
 
 
-    return (objs_list);
-'''
+    return (groundimg);
+
 # ---
 
 # \cond

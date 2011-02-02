@@ -396,6 +396,10 @@ def run_segobj(filename, params=[], args={}, preset='', temp_dir='./', quiet=Tru
 
     return ({'OBJECTS':objimgname, 'SEGMENTATION':segimgname, 'CATALOG':catfilename});
 
+# aliases
+run_segment = run_segobj;
+segment = run_segobj;
+
 # ---
 
 def read_config(SE_configfile):

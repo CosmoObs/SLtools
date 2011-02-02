@@ -12,8 +12,8 @@ import sltools;
 from sltools.io import *;
 from sltools.image import sextractor,imcp;
 from sltools.string import *;
-from sltools.catalog import fits_file as fts;
-from sltools.catalog import ascii_file as asc;
+from sltools.catalog import fits_data as fts;
+from sltools.catalog import ascii_data as asc;
 
 #!/usr/bin/env python
 
@@ -50,7 +50,7 @@ list of object IDs (given by SE), header instances and image arrays, respectivel
 #---------------------------------------------------------------------------------------------------
 
 # Checking dependencies..
-stat = check_dependencies( { 'binaries':['sex'] } );
+stat = check_deps( binaries=['sex'] );
 if not stat:
     print >> sys.stderr, "Error: Dependencies check failed. Fix it!";
     sys.exit(2);
