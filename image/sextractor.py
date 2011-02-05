@@ -12,6 +12,7 @@
 
 import sys;
 
+import logging;
 import os;
 import re;
 import string;
@@ -210,8 +211,9 @@ def _cstm_args(instrument):
 # ---
 
 #=======================================================================
-def run(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
-    """ Run Sextractor over given image with optional parameters
+def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
+    """
+    Run Sextractor over given image with optional parameters
 
     run( 'image.fits' )  ->  <bool>
 
@@ -270,10 +272,10 @@ def run(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
      - True|False
 
     """
-
+    
     fits_image = filename;
     if temp_dir != '':
-        temp_dir = temp_dir+'/';
+        temp_dir = str(temp_dir)+'/';
     
     # Object features to output..
     #
@@ -310,7 +312,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
     cmd_line = '';
     for key in cargs:
         cmd_line = cmd_line + ' -' + string.upper(key) + ' ' + re.sub( "\s+","",str(cargs[key]));
-
+    print cmd_line
     # Run sex..
     #
     _dev = '';
@@ -319,7 +321,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
 
     status = os.system( 'sex %s %s %s' % (fits_image,cmd_line,_dev));
     if ( status != 0 ):
-        print >> sys.stderr, "Error: Sextractor raised and error code '%s' during the run." % (status);
+        logging.error("Error: Sextractor raised and error code '%s' during the run.",status);
         return (False);
 
     return (True);
@@ -327,7 +329,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
 # -
 
 #---------------------------------------------------------
-def run_segobj(filename, params=[], args={}, preset='', temp_dir='./', quiet=True):
+def run_segobj(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
     """ Run Sextractor over given image with specific outputs
 
     run_segobj( 'image.fits' )  ->  <dict>
@@ -440,6 +442,9 @@ if __name__ == "__main__" :
     parser.add_option('--preset',
                     dest='instrument', default='',
                     help="Use preset SE's configuration for different instruments: DC4, DC5, HST, CFHT");
+    parser.add_option('--temp_dir',
+                    dest='temp_dir', default='',
+                    help="Temporary directory for run-time files.");
     parser.add_option('-q','--quiet', action='store_true',
                     dest='quiet', default=False,
                     help="Make Sextractor run quiet.");
@@ -451,6 +456,7 @@ if __name__ == "__main__" :
     config_file = opts.config;
     preset = opts.instrument;
     quiet = opts.quiet;
+    temp_dir = opts.temp_dir;
 
     if ( len(args) != 1 ):
         parser.print_usage();
@@ -474,7 +480,7 @@ if __name__ == "__main__" :
     # Run SE:
     #
     if ( run_seg ):
-        _out = run_segobj(infits, params=params, args=config, preset=preset, temp_dir='/tmp', quiet=quiet);
+        _out = run_segobj(infits, params=params, args=config, preset=preset, temp_dir=temp_dir, quiet=quiet);
         if not (_out):
             sys.exit(1);
         else:
@@ -483,7 +489,7 @@ if __name__ == "__main__" :
             print "OBJECTS: %s" % (_out['OBJECTS']);
             print "SEGMENT: %s" % (_out['SEGMENTATION']);
     else:
-        _out = run(infits, params=params, args=config, preset=preset, temp_dir='/tmp', quiet=quiet);
+        _out = run(infits, params=params, args=config, preset=preset, temp_dir=temp_dir, quiet=quiet);
         if not (_out):
             sys.exit(1);
 

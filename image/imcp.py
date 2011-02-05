@@ -314,9 +314,6 @@ def copy_objects(objimg, segimg, objIDs=[], groundimg=None):
     ---
     """
 
-    segimg = seg_img;
-    objimg = obj_img;
-
     objs_list = [];
     
     if (objimg.shape != segimg.shape):
@@ -325,8 +322,6 @@ def copy_objects(objimg, segimg, objIDs=[], groundimg=None):
 
     if (objIDs == []):
         objIDs = list(set(segimg.flatten()) - set([0]))
-    else:
-        objIDs = list(set(objIDs) - set([0]))
         
     if (type(objIDs) == type(int())):
         objIDs = [objIDs];
