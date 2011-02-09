@@ -130,7 +130,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
 
 
-	x1, y1, u1, v1 = loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
+	x1, y1, u1, v1 = np.loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
 
 	#-----------------------------------------------------------------------------------------------------------
 	# redefine gridhi1 according to the CC size
@@ -145,7 +145,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 
-	x1, y1, u1, v1 = loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
+	x1, y1, u1, v1 = np.loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
 
 	# check if the precision is ok (gravlens outputs coordinates with only 6 decimal places)
 	if max( max(np.abs(u1)), max(np.abs(v1)) ) < acceptable_res_limit:
