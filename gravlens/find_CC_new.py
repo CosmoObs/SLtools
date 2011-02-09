@@ -26,34 +26,6 @@ def _critcurves_new(gravinput, caustic_CC_file, gravlens_input_file='gravlens_CC
 	fmag.close()
 	os.system('gravlens %s > /dev/null' % gravlens_input_file )
 
-## get_CC_from_file
-# Reads critical curves file outputed by gravlens (with plotmode=1)
-#
-def get_CC_from_file(caustic_CC_file):
-	"""
-	Reads critical curves file outputed by gravlens (with 
-	plotmode=1). 
-	
-	Input:
-	 - caustic_CC_file   <str> : name of the file to be read
-
-	Output:
-	 - <list>     : [x_caustic, ycaustic], with x_caustic and ycaustic being the lists with the caustic coordinates
-	 - <list>     : [x_CC, y_CC], with x_CC and y_CC being the lists with the CC coordinates
-
-	"""
-	fcrit = open(caustic_CC_file, 'r').readlines()
-	xcritsrc = []
-	ycritsrc = []
-	xcritimg = []
-	ycritimg = []
-	for i in range (10,len(fcrit)): # because the first 10 lines of this file are only comments
-		xcritimg.append(float(fcrit[i].split()[0]))
-		ycritimg.append(float(fcrit[i].split()[1]))
-		xcritsrc.append(float(fcrit[i].split()[2]))
-		ycritsrc.append(float(fcrit[i].split()[3]))
-
-	return [xcritsrc, ycritsrc], [xcritimg, ycritimg]
 
 ## find_CC_new
 # Determines the caustics and CC of a given lens
@@ -158,15 +130,14 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
 
 
-	caustics_xy, crit_curves_xy = get_CC_from_file(caustic_CC_file)
+	x1, y1, u1, v1 = loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
 
 	#-----------------------------------------------------------------------------------------------------------
 	# redefine gridhi1 according to the CC size
-	tan_CC_x = np.array(crit_curves_xy[0])
-	tan_CC_y = np.array(crit_curves_xy[1])
-	index_CC = np.argmax(tan_CC_x**2 + tan_CC_y**2)
 
-	gravlens_params_updated['gridhi1'] =  grid_factor * ( (tan_CC_x[index_CC]**2 + tan_CC_y[index_CC]**2)**0.5 )
+	index_CC = np.argmax(x1**2 + y1**2)
+
+	gravlens_params_updated['gridhi1'] =  grid_factor * ( (x1[index_CC]**2 + y1[index_CC]**2)**0.5 )
 	#-----------------------------------------------------------------------------------------------------------
 	# get CC with best value for the grid
 	lens_par_out = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
@@ -174,13 +145,13 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 
-	caustics_xy, crit_curves_xy = get_CC_from_file(caustic_CC_file)
+	x1, y1, u1, v1 = loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
 
 	# check if the precision is ok (gravlens outputs coordinates with only 6 decimal places)
-	if max( max(np.abs(caustics_xy[0])), max(np.abs(caustics_xy[1])) ) < acceptable_res_limit:
+	if max( max(np.abs(u1)), max(np.abs(v1)) ) < acceptable_res_limit:
 		logging.warning('The caustics seem to be determined with low resolution')
 
-	return caustics_xy, crit_curves_xy, gravlens_params_updated
+	return x1, y1, u1, v1, gravlens_params_updated
 
 
 
@@ -293,7 +264,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
 #
-def run_find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='crit_rad.txt', tan_curves_file 'crit_tan.txt', curves_plot='crit_curves.png'):
+def run_find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='crit_rad.txt', tan_curves_file='crit_tan.txt', curves_plot='crit_curves.png'):
 	""" 
 	This is a pipeline that runs 'find_CC_new', 'separate_CC' and
 	'plot_CC'. For details of these functions, see their documentation.
