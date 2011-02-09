@@ -15,6 +15,7 @@
 #include <cmath>
 
 #include "pot_derivatives.h"
+#include "nfw_circular_model.h"
 
 // g++ -Wall ellip_mass.cpp `pkg-config gsl --cflags --libs`
 
@@ -93,4 +94,32 @@ double D2f0Dtheta2_ellip_mass(conv_type conv_in,double theta, double conv_params
 
   return out1*(out2 + out3);
 }
+
+
+
+
+double nfw_ellip_f1(double theta, double pert_params[],double r_e){
+  double conv_params[]={pert_params[2],pert_params[3]};
+  double eps=pert_params[0], a_1eps,a_2eps;
+  int iflag=pert_params[1];
+
+  if(iflag==1){
+    // printf("You chose the Angle Deflection Parameterization");
+    a_1eps=1.-eps, a_2eps=1.+eps;
+  }
+
+  if(iflag==2){
+    // printf("You chose the standard parameterization");
+    a_1eps=1.-eps,a_2eps=1./a_1eps;
+  }
+
+  if(iflag==3){
+    // printf("You chose the Keeton's parameterization");
+    a_1eps=1.0, a_2eps=1./pow((1.-eps),2);
+  }
+
+  return  f_1_ellip_mass(conv_nfw_circ,theta, conv_params, r_e, a_1eps, a_2eps);
+
+}
+
 #endif
