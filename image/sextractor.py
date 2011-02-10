@@ -312,7 +312,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
     cmd_line = '';
     for key in cargs:
         cmd_line = cmd_line + ' -' + string.upper(key) + ' ' + re.sub( "\s+","",str(cargs[key]));
-    print cmd_line
+
     # Run sex..
     #
     _dev = '';

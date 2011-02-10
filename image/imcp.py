@@ -1,6 +1,10 @@
 #!/usr/bin/env python
+# ==================================
+# Authors:
+# Carlos Brandt - chbrandt@lncc.br
+# ==================================
 
-"""Package to deal with image copy/cuts"""
+"""Package to deal with image's copy/cuts"""
 
 ##@package imcp
 #
@@ -27,7 +31,6 @@
 # output image. These values can be passed in 'pixel' or 'degrees'
 # units.
 
-
 import sys;
 import logging;
 
@@ -44,11 +47,11 @@ from sltools.image import header_funcs as _hf_;
 
 
 # =================================================================================================================
-def cutout( image, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_size=0, y_size=0, mask=None ):
+def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_size=0, y_size=0, mask=None ):
     """
     Do a snapshot from given fits image.
 
-    cutout( image [,...] ) -> (ndarray, header)
+    cutout( img ... ) -> (ndarray, header)
 
     The function can deal with 'pixel' and 'degrees' cordinate units. As input, besides the image FITS 
     filename (input_file), it receives a central position (xo,yo) and side lengths (x_size,y_size) for
@@ -62,22 +65,44 @@ def cutout( image, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', 
     If 'xo=0' and 'yo=0', given image (input_file) central pixel will be chosen as (xo,yo).
     If 'x_size=0' and 'y_size=0', half length of each side will be used for output dimensions.
 
+
     Input:
-     - image      : Image (numpy ndarray)
-     - hdr     : Image header object
-     - coord_unit : 'pixel' or 'degrees' for position (xo,yo) values
-     - xo         : Horizontal central position for output (cut) image
-     - yo         : Vertical central position for output (cut) image
-     - size_unit  : 'pixel' or 'degrees' for size (x_size,y_size) values
-     - x_size     : Horizontal size (in pixels) of output image
-     - y_size     : Vertical size (in pixels) of output image
-     - mask       : tuple with arrays (y,x) with image/array indexes of interest
+     - img : numpy.ndarray(ndim=2,dtype=float)
+        Image array
+
+     - hdr : FITS header instance
+        Image header
+
+     - coord_unit : <str>: 'pixel','degrees'
+         Position (xo,yo) units.
+
+     - xo : int
+        Centroid (horizontal) position for cutting window
+
+     - yo : int
+        Centroid (vertical) position for cutting window
+
+     - size_unit : <str>: 'pixel','degrees'
+        Window sizes (x_size,y_size) units
+
+     - x_size : int
+        Horizontal cutting window size
+
+     - y_size : int
+        Vertical cutting window size
+
+     - mask : numpy.where() output like
+        Tuple with index arrays for particular region of interest
+
 
     Output:
-     - (ndarray, header) : resultant image array and (updated) header instance
-
+     - (ndarray, header) : Resultant image array and (updated) header instance
+    
+    ---
     """
 
+    image = img;
+    
     logging.debug("Input parameters (type(image),header,coord_unit,xo,yo,size_unit,x_size,y_size,mask): %s",(type(image),hdr,coord_unit,xo,yo,size_unit,x_size,y_size,mask));
 
     xo=float(xo);
@@ -216,30 +241,44 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
     """
     Identify objects on given images by their IDs and return object images
 
-    segstamp( seg_img.ndarray, obj_img.ndarray [,...] )
+    segstamp( segimg, objID ... )
 
-    By default, if 'objIDs' is not given, postamp will scan segmentation image ('seg_img') for
-    the list of object ID numbers. If 'objIDs' is given, those IDs will be used for object
-    poststamps creation.
+    By default, if 'objIDs' is not given, postamp will scan segmentation image 
+    'seg_img' for the list of object ID numbers. If 'objIDs' is given, those IDs 
+    will be used for object poststamps creation.
 
-    'increase' and 'relative_increase' define whether the poststamps will have a size different
-    from object-only dimensions or just the object (pixels) itself, and, also, if this increasement
-    value is a multiplicative factor (True) or an additive one (False).
+    'increase' and 'relative_increase' define whether the poststamps will have a 
+    size different from object-only dimensions or just the object (pixels) itself, 
+    and, also, if this increasement value is a multiplicative factor (True) or an 
+    additive one (False).
 
     Since a list with object IDs is given, a list with arrays, with each IDentified
     object, is returned.
 
     Input:
-     - obj_img           : image with objects (observed pixel values)
-     - seg_img           : image with segmented objects (e.g, SEx's segmentation image)
-     - hdr            : FITS header to be updated and passed for each poststamp
-     - increase          : float value for poststamp resizing (>0)
-     - relative_increase : Is 'increase' a additive value (default) or multiplicative one(?)
-     - objIDs            : List with objects ID(integers) in 'seg_img'. Default is to scan 'seg_img' for IDs
+     - segimg : numpy.ndarray(ndim=2,dtype=int)
+        Segmented image (e.g, SEx's segmentation image)
+        
+     - objIDs : [int,]
+        List with object IDs of interest in 'segimg'.
+
+     - objimg : numpy.ndarray(ndim=2,dtype=float)
+        Objects image (e.g, SEx's objects image)
+
+     - hdr : FITS header instance
+        FITS header to be updated for each poststamp
+        
+     - increase : float
+        Value for poststamp resizing (> 0)
+        
+     - relative_increase : bool
+        Is 'increase' a additive value (default,False) or multiplicative one(True)?
+        
 
     Output:
-     - (ndarrays,headers)  : lists with image (poststamps) arrays and corresponding headers
+     - (ndarray,header)  : Image (poststamp) array and corresponding header
 
+    ---
     """
 
 
@@ -285,31 +324,33 @@ def sextamp(seg_img, obj_img, hdr=None, increase=0, relative_increase=False, obj
 
 def copy_objects(objimg, segimg, objIDs=[], groundimg=None):
     """
-    Returns a image (with same size/shape as given ones) for each object in 
-    'objimg' found in 'segimg' with ID in 'objIDs'.
+    Returns an image (with same size/shape as given ones) for each object 
+    in 'objimg' found in 'segimg' (optional: with ID given in 'objIDs').
+    
+    copy_objects( objimg, segimg ...)
 
-    Function identifies the pixels of each ID(int) in 'objIDs' on segmentation
-    image(array) - seg_img. These identified pixels (their values) are copied 
-    from object image, obj_img, to a new blank array with same shape as given images.
-    (BTW, it is clear that seg_img.shape == obj_img.shape, right...)
-
-    Since a list with object IDs is given, a list with arrays, with each IDentified
-    object, is returned.
+    Function identifies the pixels of each ID(int) in 'objIDs' on 
+    segmentation image(array) - segimg. These identified pixels 
+    (their values) are copied from object image, objimg, to a new 
+    blank array with same shape as given images. 
+    
 
     Input:
-     - objimg : np.array(ndim=2,dtype=float)
-      Image with objects (observed pixel values)
+     - objimg : np.ndarray(ndim=2,dtype=float)
+      Objects image
+      
      - segimg : np.array(ndim=2,dtype=int)
-      Image with segmented objects, with pixels values in objIDs
+      Segmented image 
+      
      - objIDs  : [int,]
-      A list with (int) numbers that identify the objects in seg_img
+      A list with numbers that identify segmented objects in 'segimg'
+      
      - groundimg : np.array(ndim=2,dtype=float)
       Image array where selected "pixels" will be overwritten.
       If 'None', a null image is used.
 
     Output:
-     - np.array(ndim=2,dtype=float)
-        Array containing selected objects
+     - np.array(ndim=2,dtype=float) : Array containing objects
 
     ---
     """
