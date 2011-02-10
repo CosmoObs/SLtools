@@ -81,7 +81,7 @@ return f1_tmp;
 //!  \f$ \dfrac{df_0}{d\theta}:= \left[\dfrac{d \psi_E(r,\theta)}{d\theta}\right]_{r=R_{\mathrm{E}}} \f$
 //!
 //!  \param alpha_in : angle deflection for the circular model
-//!  \param R_E: Einstein Radius corresponding to the circular model
+//!  \param R_E : Einstein Radius corresponding to the circular model
 //!  \param theta : angular coordinate in the lens plane
 //!  \param pert_params[] : Pseudo-Elliptical parameters
 //!  \return \f$ \dfrac{df_0}{d\theta}= \frac{1}{2}\dfrac{\alpha(\xi_{\mathrm{E}})}{\xi_{\mathrm{E}}}\mathcal{G}(\eta,\theta) \f$ */
@@ -132,7 +132,7 @@ return df0dte_pe;
 /*!
   \param alpha_in : angle deflection of the circular potential
   \param gamma_in : shear of the circular potential
-  \param R_E: Einstein Radius of the circular potential
+  \param R_E : Einstein Radius of the circular potential
   \param theta : angular coordinate in the lens plane
    \param pert_params[] : Pseudo-Elliptical parameters
   \return \f$ \dfrac{d^2f_0}{d\theta^2}\f$
