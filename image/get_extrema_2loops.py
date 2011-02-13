@@ -9,32 +9,32 @@
 
 ##@package get_extrema_2loops
 #
-# Find the 2 furthest points of an image. It uses a reference point to find the
-# first extreme and then finds the furthest point of this extreme through the 
-# furthest-of-furthest method
-#
+# Find the 2 furthest points of an image. It uses a reference point to find the first extreme and then 
+# finds the furthest point of this extreme through the furthest-of-furthest method.
 
 
 from numpy import argmax, sum
 import numpy as np;
 
 
-#-----------------------------------------------------
+# ======================================================================================================
 def get_extrema_2loops( ximg, yimg, ref_position ):
 	"""
-	Function to determine the two extrema of a set of points through a 
-	reference point.
+	Function to determine the two extrema of a set of points through a reference point. 
+
+	The first extreme point (P1) is found by searching for the point furthest from the reference 
+	point (usually is some definition of center). The second extreme point is the furthest one from 
+	point P1.
+
 
 	Input:
-	 - ximg : x coordinates of the image (list)
-	 - yimg : y coordinates of the image (list)
-	 - ref_position : the (Python) position of the reference point in the 
-			  ximg and yimg lists
+	 - ximg        <list> : x coordinates of the image
+	 - yimg        <list> : y coordinates of the image
+	 - ref_position <int> : the (Python) position of the reference point in the ximg and yimg lists
 
 	Output: 
-	 - (int) : position in the lists ximg and yimg of one extreme point
-	 - (int) : position in the lists ximg and yimg of the other extreme 
-		   point
+	 - <int> : position in the lists ximg and yimg of one extreme point
+	 - <int> : position in the lists ximg and yimg of the other extreme point
 
 	"""
 
@@ -61,4 +61,4 @@ def get_extrema_2loops( ximg, yimg, ref_position ):
 
 
 	return furthest_pt1,furthest_pt2;
-# -
+

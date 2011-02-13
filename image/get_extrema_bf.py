@@ -4,34 +4,32 @@
 # Pedro Ferreira - pferreira@dfte.ufrn.br
 # ==================================
 
-"""Function to determine exactly the two extrema of a set of points"""
+"""Function to determine (exactly) the two extrema of a set of points"""
 
 
 ##@package get_extrema_bf
 #
-# Finds the 2 furthest points of an image comparing the distances between each 
-# pair of points ("brute force" method)
-#
+# Finds the 2 furthest points of an image comparing the distances between each pair of points ("brute 
+# force" method).
 
 
 from numpy import argmax, sum
 
 
-#------------------------------
+# ======================================================================================================
 def get_extrema_bf(ximg, yimg):
 
 	"""
-	Function to determine the two extrema of a set of points through  
-	calculating the distance between every pair of points.
+	Function to determine the two extrema of a set of points through calculating the distance 
+	between every pair of points.
 
 	Input:
-	 - ximg : x coordinates of the image (list)
-	 - yimg : y coordinates of the image (list)
+	 - ximg <list> : x coordinates of the image
+	 - yimg <list> : y coordinates of the image
 
 	Output: 
-	 - (int) : position in the lists ximg and yimg of one extreme point
-	 - (int) : position in the lists ximg and yimg of the other extreme 
-		   point
+	 - <int> : position in the lists ximg and yimg of one extreme point
+	 - <int> : position in the lists ximg and yimg of the other extreme point
 
 	"""
 

@@ -13,7 +13,7 @@
 # Determines the caustics and CC of a given lens
 #
 # Determines the lens curves using a iterating method using gravlens
-#
+
 
 import os
 import logging
@@ -67,18 +67,18 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	output file) is being reached. 
 
 	Input:
-	 - lens_model             <str> : Lens name (see gravlens manual table 3.1)
-	 - mass_scale           <float> : Mass scale of the lens - "parameter 1"
-	 - model_param_8        <float> : misc. lens parameter - often scale radio
-	 - model_param_9        <float> : misc. lens parameter - often scale radio
-	 - model_param_10       <float> : misc. lens parameter - often a power law index
-	 - galaxy_position <list float> : [x,y] position of the lens
-	 - e_L                  <float> : lens ellipticity (default=0)
-	 - theta_L              <float> : lens position angle (in degrees) with respect to the vertical 
+	 - lens_model       <str> : Lens name (see gravlens manual table 3.1)
+	 - mass_scale     <float> : Mass scale of the lens - "parameter 1"
+	 - model_param_8  <float> : misc. lens parameter - often scale radio
+	 - model_param_9  <float> : misc. lens parameter - often scale radio
+	 - model_param_10 <float> : misc. lens parameter - often a power law index
+	 - galaxy_position <list> : [x,y] position of the lens
+	 - e_L            <float> : lens ellipticity (default=0)
+	 - theta_L        <float> : lens position angle (in degrees) with respect to the vertical 
 					  (counterclockwise)
-	 - shear                <float> : external shear amplitude
-	 - theta_shear          <float> : external shear direction (in degrees)
-	 - gravlens_params        <dic> : Contains the keys and values of the gravlens configuration 
+	 - shear          <float> : external shear amplitude
+	 - theta_shear    <float> : external shear direction (in degrees)
+	 - gravlens_params  <dic> : Contains the keys and values of the gravlens configuration 
 					  (see default parameters at function set_gravlens_default,
                                           inside lens_parameters_new)
 	 - caustic_CC_file        <str> : name of the output file with the caustic and CC positions
