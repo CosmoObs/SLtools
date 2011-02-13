@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# ==================================
 
 """Function to determine exactly the two extrema of a set of points"""
 

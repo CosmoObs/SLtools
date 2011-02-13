@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# ==================================
+
+"""       """
+
 from __future__ import division
 import os
 import logging

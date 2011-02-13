@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# ==================================
+
+"""        """
+
 ##@package lens_parameters_new
 # deals with gravlens configuration
 #

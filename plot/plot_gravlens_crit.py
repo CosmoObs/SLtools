@@ -50,7 +50,7 @@ def plot_gravlens_crit(file):
     curves = separate_curves(x1, y1, x2, y2)
     i=0
 
-    for curve in curves:
+    for curve in curves: # plots one curve (radial/tangential) at a time
         x1, y1, x2, y2 = curve
         plot([x1, x2], [y1, y2], color = colors[i])  # plot line segments from (x1,y1) to (x2,y2)
         i=i+1

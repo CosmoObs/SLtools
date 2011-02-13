@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# Carlos Brandt - chbrandt@lncc.br
+# ==================================
 
 ##@package run_SE_on_frames
 #

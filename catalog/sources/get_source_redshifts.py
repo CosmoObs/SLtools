@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# ==================================
+
+""" """
 
 ##@package get_source_redshifts [formerly zsdist] 
 # Returns a distribution of source redshifts and redshift bin widths

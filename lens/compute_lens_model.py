@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# ==================================
+
+""" description """
+
 import compute_nfw_lens_parameters as KSmod # import KSmod (Gabriel's modules); 
 import logging
 

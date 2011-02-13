@@ -1,7 +1,13 @@
-# Output of coordinates of the CC curves (lens curves)
-# By Pedro F.
-# Nov 2010
-# Comment cleanup by MSSG
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# Comments cleanup by MSSG
+# Habib Dumet Montoya - habibdumet@gmail.com
+# ==================================
+
+""" """
+
 
 ##@package find_CC_new
 # Determines the caustics and CC of a given lens
