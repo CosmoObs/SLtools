@@ -1,6 +1,10 @@
 #!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# ==================================
 
-"""Function to determine the points near the bisectrix of the line joining two points"""
+""" Package to determine the points near the bisectrix of the line joining two points"""
 
 
 ##@package get_bisectrix_pts
@@ -9,26 +13,29 @@
 #
 
 
-#-----------------
+
 import numpy as np
 
 
+# ======================================================================================================
 def get_bisectrix_pts( ximg, yimg, ref_position_1, ref_position_2 ):
 	"""
-	Function to determine the points near the bisectrix of the line joining
-	two points.
+	Function to determine the points near the bisectrix of the line joining two points.
+
+	Given a set of an object coordinates (ximg,yimg) and 2 reference points, this function 
+	calculates all points that are closer than \f$ \sqrt{2}/2 \f$ from the bisectrix line (line 
+	perpendicular to the line joinning the 2 input reference points).
 
 	Input:
-	 - ximg : x coordinates of the image (list)
-	 - yimg : y coordinates of the image (list)
-	 - ref_position_1 : the (Python) position of one reference point in the 
-			    ximg and yimg lists
-	 - ref_position_2 : the (Python) position of the other reference point 
-			    in the ximg and yimg lists
+	 - ximg          <list> : x coordinates of the image
+	 - yimg          <list> : y coordinates of the image
+	 - ref_position_1 <int> : the (Python) position of one reference point in the ximg and yimg lists
+	 - ref_position_2 <int> : the (Python) position of the other reference point in the ximg and yimg 
+			    lists
 
 	Output: 
-	 - (list) : x positions of the near bisectrix points
-	 - (list) : y positions of the near bisectrix points
+	 - <list> : x positions of the near bisectrix points
+	 - <list> : y positions of the near bisectrix points
 
 	"""
 
@@ -65,9 +72,26 @@ def get_bisectrix_pts( ximg, yimg, ref_position_1, ref_position_2 ):
 	return xlq, ylq
 
 
-# given 3 points on a plane, returns circunference radius and center
-# see http://en.wikipedia.org/wiki/Circumcircle
+
+# ======================================================================================================
 def circ_3pts(p1, p2, p3):
+	"""
+	Determines the circunference that passes through 3 points 
+
+	Given 3 points (x,y) on a plane, returns circunference radius and center. The method implemented
+	in this funcion is the one described in http://en.wikipedia.org/wiki/Circumcircle
+
+	Input:
+	 - p1 <list> : pair (x,y) of coordinates of the 1st point
+	 - p2 <list> : pair (x,y) of coordinates of the 2nd point
+	 - p3 <list> : pair (x,y) of coordinates of the 3rd point
+
+	Output: 
+	 - <float> : circunference radius
+	 - <float> : x position of the circunference center
+	 - <float> : y position of the circunference center
+
+	"""
 
 	x1, y1 = p1
 	x2, y2 = p2
@@ -97,13 +121,29 @@ def circ_3pts(p1, p2, p3):
 	return R, x0, y0
 
 
-## length_arc_circ
-# given the properties of the object, this function decides if the object is an arc or not
-#
-#@param  L1 (greater distance between 2 points)
-#@param R (radius of the circunference)
-#@return length of the arc of cincunference that crosses the 2 furthest points of the arc plus a 3rd one (defined implicitly on R)
+
+# ======================================================================================================
 def get_length_arc_circ(L1,R):
+	"""
+	Calculates the length of a arc of a circunference.
+
+	Given a circunference of radius R, calculates the length of the arc of circunference between 2
+	points L1 apart from each other.
+	The length L of the arc is calculated through the cosine law:
+	\f$ L = R*arccos(1 - (L1^2)/(2R^2)) \f$
+
+	Input:
+	 - L1 <float> : shortest distance between the 2 extrema points of the desired arc of 
+			circunference
+	 - R  <float> : radius of the circunference
+
+	Output: 
+	 - <float> : length of the arc of circunference
+
+	"""
+
 	L3 = np.arccos(1 - (L1**2)/(2*(R**2)) )*R # this formula is directly shown with the "cosine law" (lei dos cossenos)
 	return L3
+
+
 
