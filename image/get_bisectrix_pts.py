@@ -9,7 +9,7 @@
 
 ##@package get_bisectrix_pts
 #
-# Determines the points of an object closer than (2^0.5)/2 from the bisectrix of the line joining two chosen points of the object
+# Determines the points of an object closer than \f$ \sqrt{2}/2 \f$ from the bisectrix of the line joining two chosen points of the object
 #
 
 
