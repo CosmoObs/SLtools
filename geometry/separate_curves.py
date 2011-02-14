@@ -17,20 +17,35 @@ import numpy as np
 from numpy import * 
 from random import *
 
+
+#=======================================================================================================
 def separate_curves(x1, y1, x2, y2, delta=None):
 
     ''' 
-    @param x1, y1, x2, y2 : are arrays defining line segments from (x1,y1) to (x2,y2)
-
-    When connected, these line segments form curves. The requirement is that the input points are initialy sorted.
- 
-    @param delta : is the criterium to separate one curve from the other. 
+    Separates curves defined by connected line segments.
     
-    Delta is an upper limit to the size of a line segment. If the distance between two consecutive points (x1[i],y1[i]) and (x1[i+1], y1[i+1]) is larger than delta it means we "jumped to another curve".
+    The arrays (x1,y1) and (x2,y2) define line segments, that when connected, form curves. The 
+    requirement is that the input points are initialy sorted. The parameter delta is the criterium to 
+    separate one curve from the other and is an upper limit to the size of a line segment. If the 
+    distance between two consecutive points (x1[i],y1[i]) and (x1[i+1], y1[i+1]) is larger than delta it
+    means we "jumped to another curve". By default, we set delta as 1/10 of a caracteristic curve size 
+    (the diagonal of the curve boundary rectangle).
 
-    By default, we set delta as 1/10 of a caracteristic curve size (the diagonal of the curve boundary rectangle).
-    
-    @return a list of curves.'''
+    This function allows cases where only 2 curves are present in the input coordinates.
+
+    Input:
+     - x1  <list> : x coordinate of a point
+     - y1  <list> : y coordinate of a point
+     - x2  <list> : x coordinate of the point consecutive to (x1,y1)
+     - y2  <list> : y coordinate of the point consecutive to (x1,y1)
+
+    Output:
+     - x1  <list> : x coordinates of points from one curve (in gravlens, is the radial curve)
+     - y1  <list> : y coordinates of points from one curve (in gravlens, is the radial curve)
+     - x2  <list> : x coordinates of points from the other curve (in gravlens, is the tangential curve)
+     - y2  <list> : y coordinates of points from the other curve (in gravlens, is the tangential curve)
+
+    '''
 
     start=[] # the start point and the end point of the separated curves
     end=[]
