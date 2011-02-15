@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
+# ===================================================
+# Authors:
+# Cristina Furlanetto - furlanetto.cristina@gmail.com
+# ===================================================
+
+
 
 """This module convolves images with a gaussian kernel"""
 
