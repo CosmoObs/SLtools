@@ -184,12 +184,10 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.title('CC'  , fontsize = 20)
 	pyplot.savefig(plot_filename)
 
-
-
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
 #
-def run_find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='crit_rad.txt', tan_curves_file='crit_tan.txt', curves_plot='crit_curves.png'):
+def run_find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='crit_rad.txt', tan_curves_file='crit_tan.txt', curves_plot='crit_curves.png',write_to_file='No'):
 	""" 
 	This is a pipeline that runs 'find_CC_new', 'separate_CC' and
 	'plot_CC'. For details of these functions, see their documentation.
@@ -225,9 +223,23 @@ def run_find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_
 	caustics_xy, crit_curves_xy, gravlens_params_updated = find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file)
 
 
-	separate_CC()
+  x1, y1, u1, v1, x2, y2, u2, v2 = loadtxt(file, unpack=True)
 
+# Separating the critical cuves
 
+  curves_critics= separate_curves(x1, y1, x2, y2)
+
+  tan_CC_x, tan_CC_y, rad_CC_x,rad_CC_y=curves_critics
+  
+# separating the caustics curves
+  curves_caustics=separate_curves(u1, v1, u2, v2)
+
+  tan_caustic_x, tan_caustic_y, rad_caustic_x,rad_caustic_y=curves_caustics
+
+  if write_to_file='Yes'
+    "imprimir os arquivos tan_cc_x, tan_cc_y, tan_caustic_x, tan_caustic_y in to a file tang_curves.txt"
+    "imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
+    
 	plot_CC()
 
 
