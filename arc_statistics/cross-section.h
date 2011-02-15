@@ -145,7 +145,7 @@ class CrossSection{//retorna o valor da secao de choque e da magnificacao media 
       }
       else{
         FileIn = fopen("q10_2.txt","r");
-        //printf("You choose elip_in = %f\nelip_in must have the following values: 0.0--0.85.\nNow setting elip_in = 0.0\n",elip_in);
+        printf("You choose elip_in = %f\nelip_in must have the following values: 0.0--0.85.\nNow setting elip_in = 0.0\n",elip_in);
       }
 
       ks_vec      = (double*) malloc(nlinhas*sizeof(double));// aloca o espaco de memoria para o vetor ks_vec

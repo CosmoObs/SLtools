@@ -583,10 +583,10 @@ double Angular_Distance(double z_init, double z_final, double cosmological_param
 
 void Graficos(){
   CrossSection A;
-  A.cross_section_init(0.4);
-  double Om = 0.3;
+  A.cross_section_init(0.5);
+  double Om = 0.258;
   double Ok = 0.0;
-  double Ol = 0.7;
+  double Ol = 0.742;
   double cosmological_params[] = {Om, Ok, Ol};
   
   double zl = 0.0;
@@ -602,6 +602,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 
@@ -612,6 +613,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File2,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 
@@ -621,6 +623,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File3,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 
@@ -630,6 +633,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File4,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 
@@ -639,6 +643,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File5,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 
@@ -648,6 +653,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File6,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 
@@ -657,6 +663,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File7,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 
@@ -666,6 +673,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File8,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 
@@ -675,6 +683,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File9,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 
@@ -684,6 +693,7 @@ void Graficos(){
   printf("M=%f, m_lim=%f\n",M,m_lim);
   for(int i=0;i<500;i++){
     zl+=1.5/500.0;
+    Conc = conc(zl, M, cosmological_params);
     fprintf(File10,"%E\t%E\n",zl,f_arcs_II( zl, M, Conc, m_lim, cosmological_params, A));
   }
 }
@@ -721,7 +731,8 @@ void stat_comp_addarcs(){
 
 
 int main(){
-  double z_l = 0.0;
+//graficos para estudo do parametro de concentração
+/*  double z_l = 0.0;
   double M = 5.0;
 
   double Om = 0.25;
@@ -734,8 +745,9 @@ int main(){
     fprintf(out1,"%E %E\n",z_l,conc(z_l, M, cosmological_params));
     z_l += 3.0/200.0;
   }
-  fclose(out1);
-//Graficos();
+  fclose(out1);*/
+
+Graficos();
 
 // stat_comp_addarcs();
 //stat_bf_Z();
