@@ -37,34 +37,31 @@ def _critcurves_new(gravinput, caustic_CC_file, gravlens_input_file='gravlens_CC
 # Determines the caustics and CC of a given lens
 #
 # Determines the lens curves using a iterating method using gravlens
-#
+
+
+#=======================================================================================================
 def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt'):
 	""" 
-	Determines the caustics and critical curves for a single 
-	component lens model. Uses an iterative procedure to determine 
-	the grid size and the minimum number of points on the curves.
+	Determines the caustics and critical curves for a single component lens model. Uses an iterative
+	procedure to determine the grid size and the minimum number of points on the curves.
 
-	The CC size may vary considerably depending on the lens-source
-	configuration. Because of this, we developed an iterative
-	method to find the CC, that involves the size of the grid used
-	by gravlens (gridhi1). The initial value of gridhi1 must be an
-	upper limit for the size of the CC, and find_CC_new will try
-	to find the CC. Each time gravlens can't find the CC, we lower
-	gridhi1 by a factor of grid_factor (=5), in order to increase 
-	precision. This continues on until gravlens finds the CC or 
-	the number of max_iterations_number (=20) iterations is reached. 
-	After finding the CC, if it is composed of less than min_n_lines
-	(=200) points, the code redefines gridhi1 to a third of it 
-	(grid_factor2=3), usually increasing the number of points. With 
-	this first determination of the CC, the code uses its scale 
-	(gridhi1_CC_factor(=2) times the distance of the furthest CC 
-	point to the origin) to reobtain the CC with the apropriate 
-	value for the grid. If the CC were not found after all these 
-	attempts, this function returns "False" and an error message. 
-	If all caustic points have coordinates < acceptable_res_limit 
-	(=2E-4), a warning message will be generated, meaning that the 
-	precision of gravlens (limited by the number of digits in the 
-	output file) is being reached. 
+	The CC size may vary considerably depending on the lens-source configuration. Because of this, 
+	we developed an iterative method to find the CC, that involves the size of the grid used by 
+	gravlens (gridhi1). The initial value of gridhi1 must be an upper limit for the size of the CC, 
+	and find_CC_new will try to find the CC. Each time gravlens can't find the CC, we lower	gridhi1 
+	by a factor of grid_factor (=5), in order to increase precision. This continues on until 
+	gravlens finds the CC or the number of max_iterations_number (=20) iterations is reached. After 
+	finding the CC, if it is composed of less than min_n_lines (=200) points, the code redefines 
+	gridhi1 to a third of it (grid_factor2=3), usually increasing the number of points. With this 
+	first determination of the CC, the code uses its scale (gridhi1_CC_factor(=2) times the distance
+	of the furthest CC point to the origin) to reobtain the CC with the apropriate value for the 
+	grid. If the CC were not found after all these attempts, this function returns "False" and an 
+	error message. If all caustic points have coordinates < acceptable_res_limit (=2E-4), a warning 
+	message will be generated, meaning that the precision of gravlens (limited by the number of 
+	digits in the output file) is being reached. 
+
+	Example:
+	         x_caustic, y_caustic, x_CC, y_CC, gravlens_config = find_CC_new('nfw',1,1,0,0)
 
 	Input:
 	 - lens_model       <str> : Lens name (see gravlens manual table 3.1)
@@ -85,7 +82,8 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	 - gravlens_input_file    <str> : name of the input file used to run gravlens
 
 	Output:
-	 - <list>     : [x_caustic, ycaustic], with x_caustic and ycaustic being the lists with the caustic coordinates
+	 - <list>     : [x_caustic, ycaustic], with x_caustic and ycaustic being the lists with the 
+			caustic coordinates
 	 - <list>     : [x_CC, y_CC], with x_CC and y_CC being the lists with the CC coordinates
 	 - <dict>     : all configuration variables used for running gravlens (including gridhi1)
 	 - <file>     : file named 'caustic_CC_file' with the caustic and CC positions
@@ -176,12 +174,12 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.plot(tan_caustic_x, tan_caustic_y, color='red',   linestyle='.', marker='.', markersize=2 )
 	pyplot.plot(rad_caustic_x, rad_caustic_y, color='black', linestyle='.', marker='.', markersize=2 )
 	pyplot.axis('equal')
-	pyplot.title('Causticas'  , fontsize = 20)
+	pyplot.title('Caustics'  , fontsize = 20)
 	pyplot.subplot(122) # (numRows,numCols, plotNum)
 	pyplot.plot(tan_CC_x, tan_CC_y, color='red',   linestyle='.', marker='.', markersize=2 )
 	pyplot.plot(rad_CC_x, rad_CC_y, color='black', linestyle='.', marker='.', markersize=2 )
 	pyplot.axis('equal')
-	pyplot.title('CC'  , fontsize = 20)
+	pyplot.title('Critical Curves'  , fontsize = 20)
 	pyplot.savefig(plot_filename)
 
 
