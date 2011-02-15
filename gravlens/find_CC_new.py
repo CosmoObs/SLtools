@@ -19,6 +19,8 @@ import os
 import logging
 #from lens_parameters_new import lens_parameters_new
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
+from sltools.geometry import separate_curves
+
 import numpy as np
 import matplotlib.pyplot as pyplot
 
@@ -171,14 +173,19 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.clf()
 	f1 = pyplot.figure(1,figsize = (15,15) )
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_caustic_x, tan_caustic_y, color='red',   linestyle='.', marker='.', markersize=2 )
-	pyplot.plot(rad_caustic_x, rad_caustic_y, color='black', linestyle='.', marker='.', markersize=2 )
+	pyplot.plot(tan_caustic_x, tan_caustic_y, color='red',   marker='.', markersize=2 )
+	pyplot.plot(rad_caustic_x, rad_caustic_y, color='black', marker='.', markersize=2 )
 	pyplot.axis('equal')
+	pyplot.xlabel('x', fontsize = 15)
+	pyplot.ylabel('y', fontsize = 15)
 	pyplot.title('Caustics'  , fontsize = 20)
+
 	pyplot.subplot(122) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_CC_x, tan_CC_y, color='red',   linestyle='.', marker='.', markersize=2 )
-	pyplot.plot(rad_CC_x, rad_CC_y, color='black', linestyle='.', marker='.', markersize=2 )
+	pyplot.plot(tan_CC_x, tan_CC_y, color='red',   marker='', markersize=2 )
+	pyplot.plot(rad_CC_x, rad_CC_y, color='black', marker='', markersize=2 )
 	pyplot.axis('equal')
+	pyplot.xlabel('x', fontsize = 15)
+	pyplot.ylabel('y', fontsize = 15)
 	pyplot.title('Critical Curves'  , fontsize = 20)
 	pyplot.savefig(plot_filename)
 
@@ -218,27 +225,24 @@ def run_find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_
 	 - <file>     : curves_plot
 	"""
 
-	caustics_xy, crit_curves_xy, gravlens_params_updated = find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file)
+	x_caustic, y_caustic, x_CC, y_CC, gravlens_params_updated = find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file)
 
 
-  x1, y1, u1, v1, x2, y2, u2, v2 = loadtxt(file, unpack=True)
+	x1, y1, u1, v1, x2, y2, u2, v2 = np.loadtxt(caustic_CC_file, comments='#', unpack=True)
 
-# Separating the critical cuves
+	# Separating the critical cuves
 
-  curves_critics= separate_curves(x1, y1, x2, y2)
+	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = separate_curves(x1, y1, x2, y2)
 
-  tan_CC_x, tan_CC_y, rad_CC_x,rad_CC_y=curves_critics
-  
-# separating the caustics curves
-  curves_caustics=separate_curves(u1, v1, u2, v2)
+	# separating the caustics curves
 
-  tan_caustic_x, tan_caustic_y, rad_caustic_x,rad_caustic_y=curves_caustics
+	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y  = separate_curves(u1, v1, u2, v2)
 
-  if write_to_file='Yes'
-    "imprimir os arquivos tan_cc_x, tan_cc_y, tan_caustic_x, tan_caustic_y in to a file tang_curves.txt"
-    "imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
-    
-	plot_CC()
+	plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot)
+
+#	if write_to_file='Yes'
+#	"imprimir os arquivos tan_cc_x, tan_cc_y, tan_caustic_x, tan_caustic_y in to a file tang_curves.txt"
+#	"imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
 
 
 

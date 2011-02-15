@@ -98,8 +98,3 @@ def separate_curves(x1, y1, x2, y2, delta=None):
 
 
 
-
-
-
-
-
