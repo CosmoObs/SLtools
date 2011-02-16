@@ -191,7 +191,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	if show_plot = no:
 	    pyplot.savefig(plot_filename)
 	elif
-	    pylab.show() 
+	    pyplot.show() 
  
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
