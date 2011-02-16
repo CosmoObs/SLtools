@@ -125,7 +125,7 @@ double J(int n, conv_type conv_in,double X1, double X2, double conv_params[], do
   }
  // printf("%f %f %f  %f\n",int_params[5],int_params[6],int_params[7], int_params[8]);
 
-  return IntGaulegSub50_elip_model(AJ_final, int_params, 0.0, 1.0, conv_in);
+  return IntGaulegSub100_elip_model(AJ_final, int_params, 0.0, 1.0, conv_in);
 }
 
 
@@ -145,7 +145,7 @@ double K(int n, conv_type conv_in,double X1, double X2, double conv_params[], do
   }
   //printf("%f %f %f\n",int_params[5],int_params[6],int_params[7]);
 
-  return IntGaulegSub50_elip_model(AK_final, int_params, 0.0, 1.0, conv_in);
+  return IntGaulegSub100_elip_model(AK_final, int_params, 0.0, 1.0, conv_in);
 }
 
 
