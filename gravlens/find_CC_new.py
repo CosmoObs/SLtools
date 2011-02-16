@@ -170,7 +170,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 ## plot_CC
 # Plots the caustics and critical curves
 #
-def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, plot_filename, show_plot='No'):
+def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, plot_filename, show_plot=0):
 	pyplot.clf()
 	f1 = pyplot.figure(1,figsize = (15,15) )
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
@@ -188,15 +188,15 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
 	pyplot.title('Critical Curves'  , fontsize = 20)
-	if show_plot == 'No':
+	if show_plot == 0:
 		pyplot.savefig(plot_filename)
-	else:
+	if show_plot == 1:
 		pyplot.show() 
  
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
 #
-def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='crit_rad.txt', tan_curves_file='crit_tan.txt', curves_plot='crit_curves.png',show_plot='No',write_to_file='No'):
+def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='crit_rad.txt', tan_curves_file='crit_tan.txt', curves_plot='crit_curves.png', show_plot=0, write_to_file='No'):
 	""" 
 	This is a pipeline that runs 'find_CC_new', 'separate_CC' and
 	'plot_CC'. For details of these functions, see their documentation.
@@ -242,7 +242,8 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y  = separate_curves(u1, v1, u2, v2)
 
-	plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, show_plot,curves_plot)
+	if curves_plot != ''
+		plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot)
 
 #	if write_to_file='Yes'
 #	"imprimir os arquivos tan_cc_x, tan_cc_y, tan_caustic_x, tan_caustic_y in to a file tang_curves.txt"
