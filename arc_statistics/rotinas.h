@@ -79,11 +79,16 @@ double conc(double z_l, double M, double cosmological_params[], long int seed = 
   //return (7.03289888)*pow(M,-0.13)*pow(invE(z,Om0,Ol0),0.666666667);
   //Bullock 2001 com E(z)!!!!!
 
-  //return 3.0;
+  //M = M*1e14;
+  //return 61.64851616170159/(pow(M,0.084)*pow(1.0 + z_l,0.47));
+  //Duffy et al. 2008 para halos NAO relachados também, delta=200 e rho_ref=rho_crit
 
+  M = M*1e14;
+  return 88.33163104679328/(pow(M,0.091)*pow(1.0 + z_l,0.44));
+  //Duffy et al. 2008 para halos relachados, delta=200 e rho_ref=rho_crit
 
   //Utiliza os valores dos best-fits de Gao-2008
-  M = M*1e14;
+  /*M = M*1e14;
   double x[5], y[5];
   double A[5];
   double B[5];
@@ -109,17 +114,12 @@ double conc(double z_l, double M, double cosmological_params[], long int seed = 
   x[4] = 3.0;
 
 
-/*  printf("%E %E\n",x[0], y[0] = pow(10.0,2.646)*pow(M,-0.138));
-  printf("%E %E\n",x[1], y[1] = pow(10.0,2.372)*pow(M,-0.125));
-  printf("%E %E\n",x[2], y[2] = pow(10.0,1.891)*pow(M,-0.092));
-  printf("%E %E\n",x[3], y[3] = pow(10.0,0.985)*pow(M,-0.031));
-  printf("%E %E\n",x[4], y[4] = pow(10.0,0.577)*pow(M,-0.004));*/
 
   gsl_interp_accel *acc = gsl_interp_accel_alloc ();
   gsl_spline *spline = gsl_spline_alloc (gsl_interp_polynomial, 5);
   gsl_spline_init (spline, x, y, 5);
 
-  return gsl_spline_eval (spline, z_l, acc);
+  return gsl_spline_eval (spline, z_l, acc);*/
 
   //chama o programa do angelo para calcular conc
 /*  M = M*1e14;

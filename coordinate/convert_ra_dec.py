@@ -1,4 +1,8 @@
 #!/usr/bin/python
+# ==================================
+# Authors:
+# Cristina Furlanetto - furlanetto.cristina@gmail.com
+# ==================================
 
 """Module to convert RA and DEC formats."""
 

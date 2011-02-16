@@ -38,7 +38,7 @@ where $\phi=\arctan{(x_2/x_1)}$
 
 
 \section{Pseudo-Elliptical Models}
-To distort a circular lensing potential into a elliptical shape, its radial
+To distort a circular lensing potential $\varphi(x)$ into a elliptical shape $\varphi_\varepsilon(x)$, its radial
 coordinate $x$ is replaced by $x_\varepsilon$, where $x_\varepsilon$ is given 
 \begin{equation}
  x \rightarrow x_\varepsilon = \sqrt{x^2_{1\varepsilon}+x^2_{2\varepsilon}}=
@@ -85,7 +85,7 @@ which $x$ was replaced by $x_\varepsilon$.
 For this kind of model, from Eq.~(\ref{sis_pot}) and Eq.~(\ref{subti-ellip})
 the lensing potential reads
 \begin{equation}
- \varphi(\vec{x})=x_\varepsilon,\label{siep_pot}
+ \varphi_\varepsilon(\vec{x})=x_\varepsilon,\label{siep_pot}
 \end{equation}
  and its lensing functions are
 \begin{eqnarray}
@@ -95,20 +95,48 @@ the lensing potential reads
 \left[\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)\cos{2\phi_\varepsilon}
 \right](2 x_\varepsilon)^{-1}=\gamma_\varepsilon(\vec{x})
 \end{eqnarray}
-
 From the equations above, the components of the lens equation are
 \begin{eqnarray}
- y_1&=&x_1-\sqrt{a_{1\varepsilon}}\cos{\phi_ \varepsilon}\\
-y_2&=&x_2-\sqrt{a_{2\varepsilon}}\sin{\phi_ \varepsilon},
+ y_1&=&\dfrac{x_\varepsilon\cos{\phi_\varepsilon}}{\sqrt{a_{1\varepsilon}}}-\sqrt{a_{1\varepsilon}}\cos{\phi_ \varepsilon} \label{y1_siep}\\
+y_2&=&\dfrac{x_\varepsilon\sin{\phi_\varepsilon}}{\sqrt{a_{2\varepsilon}}}-\sqrt{a_{2\varepsilon}}\sin{\phi_ \varepsilon} \label{y2_siep},
 \end{eqnarray}
 and the expression for the eigenvalues read
 \begin{eqnarray}
-\lambda_r(\vec{x})&=& 1-\kappa_\varepsilon(\vec{x})+\gamma_\varepsilon(\vec{x}
-)=1\\
+\lambda_r(\vec{x})&=& 1-\kappa_\varepsilon(\vec{x})+\gamma_\varepsilon(\vec{x} )=1 \label{lr_siep}\\
 \lambda_t(\vec{x})& =& 1-\kappa_\varepsilon(\vec{x})-\gamma_\varepsilon(\vec{x}
-)=1-\left[\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)\cos{
-2\phi_\varepsilon } \right](x_\varepsilon)^{-1}
+)=1-\left[\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)\cos{2\phi_\varepsilon } \right](x_\varepsilon)^{-1} \label{lt_siep}
 \end{eqnarray}
 
+From the Eq.~(\ref{lr_siep}) since $\lambda_r=1$ is not null, the radial critical curve is degenerated into a point $x_{rcc}=0$, and therefore the components of the radial caustic is
+ \begin{eqnarray}
+y_{1,rca} &=&-\sqrt{a_{1\varepsilon}}\cos{\phi_ \varepsilon}\\
+y_{2,rca} &=&-\sqrt{a_{2\varepsilon}}\sin{\phi_ \varepsilon},
+\end{eqnarray}
 
+From the Eq.~(\ref{lt_siep}) the pseudo-elliptical radial coordinate of the tangential critical curve  ($\lambda_t=0$) is
+\begin{equation}
+x_{\varepsilon,tcc}= \mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)\cos{2\phi_\varepsilon}, 
+\end{equation}
+then, the cartesian coordinates of the tangential critical are
+\begin{equation}
+x_{1,tcc}=\dfrac{x_{\varepsilon,tcc}\cos{\phi_\varepsilon}}{\sqrt{a_{1\varepsilon}}},\qquad x_{2,tcc}=\dfrac{x_{\varepsilon,tcc}\sin{\phi_\varepsilon}}{\sqrt{a_{2\varepsilon}}},
+\end{equation}
+and the componente of the tangential caustic are
+\begin{eqnarray}
+y_{1,tca} &=&x_{1,tcc}-\sqrt{a_{1\varepsilon}}\cos{\phi_ \varepsilon}\\
+y_{2,tca} &=&x_{2,tcc}-\sqrt{a_{2\varepsilon}}\sin{\phi_ \varepsilon},
+\end{eqnarray}
+
+Besides, the local approximation for the length-to-width ratio of arcs $R_\lambda:=\lambda_r/\lambda_t$ implies
+\begin{equation}
+R_{\rm th}=\dfrac{1}{1-\left[\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)\cos{2\phi_\varepsilon } \right](x_\varepsilon)^{-1}},
+\end{equation}
+and the pseudo-elliptical radial coordinates of the curves of constant distortion (in the lens plane) are
+\begin{equation}
+x_{\varepsilon,R_{\rm th}}=x_{\varepsilon,tcc}\times\left\{\begin{array}{cc} \dfrac{|R_{\rm th}|}{|R_{\rm th}|-1}, & R_{\rm th}>0 \\ & \\
+\dfrac{|R_{\rm th}|}{|R_{\rm th}|+1}, & R_{\rm th}<0 \end{array}\right.
+\end{equation}
+The cartesian components of the cuves of constant distortion in the source plane are given by the Eqs.~(\ref{y1_siep}) and (\ref{y2_siep}) where $x_\varepsilon$ is replaced by $x_{\varepsilon,R_{\rm th}}$.
+
+{\bf to be continued\ldots}
 \section{Elliptical Models}

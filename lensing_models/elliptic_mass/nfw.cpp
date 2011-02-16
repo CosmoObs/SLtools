@@ -27,19 +27,21 @@ double elip(double e, double ks)
 
 int main()
 {
-  double q=0.5;
+
+
+//  double q=0.5;
 //  double M200 = 5;
-  double RAZ = 7.5;
-  double ks = 9.556262E-01;//1.283045E-02;
+//  double RAZ = 7.5;
+//  double ks = 9.556262E-01;//1.283045E-02;
   
-  int I = 1;
-  int Npt = 200;
+//  int I = 1;
+//  int Npt = 200;
 
-  char file1[] = "saida1.txt";
-  char file2[] = "saida2.txt";
-  char file3[] = "saida3.txt";
+//  char file1[] = "saida1.txt";
+//  char file2[] = "saida2.txt";
+//  char file3[] = "saida3.txt";
 
-  graficosF(q,ks,RAZ, I, Npt, file1, file2, file3);
+//  graficosF(q,ks,RAZ, I, Npt, file1, file2, file3);
 
 /*  double *mag_min = new double;
   double *mag_med = new double;

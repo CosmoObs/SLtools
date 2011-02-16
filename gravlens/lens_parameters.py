@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# ==================================
+
+"""        """
+
 ##@package lens_parameters
 # Creates 2 strings that are used as input for gravlens
 #

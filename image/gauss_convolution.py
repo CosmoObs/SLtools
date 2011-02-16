@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
+# ===================================================
+# Authors:
+# Cristina Furlanetto - furlanetto.cristina@gmail.com
+# ===================================================
+
+
 
 """This module convolves images with a gaussian kernel"""
 
@@ -59,7 +65,7 @@ def gauss_kernel(n_sig,sigma,sigmay=None):
 
 def fftconvolve_image(im_array, n_sig, sig, sigy=None) :
     """ 
-    Convolve the image array with a gaussian kernel of size defined as a 
+    Convolves the image array with a gaussian kernel of size defined as a 
     multiple (n_sig) of sigma (sig) using FFT. 
     The optional keyword argument sigy allows for a different
     sigma in the y direction.
@@ -82,7 +88,7 @@ def fftconvolve_image(im_array, n_sig, sig, sigy=None) :
 
 def convolve_image(im_array, n_sig, sig, sigy=None) :
     """ 
-    Convolve the image array with a gaussian kernel of size defined as a 
+    Convolves the image array with a gaussian kernel of size defined as a 
 	multiple (n_sig) of sigma (sig). 
 	The optional keyword argument sigy allows for a different
 	sigma in the y direction.

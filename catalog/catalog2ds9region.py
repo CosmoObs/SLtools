@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+# ====================================================
+# Authors:
+# Angelo Fausti Neto - angelofausti@gmail.com
+# Cristina Furlanetto - furlanetto.cristina@gmail.com
+# ====================================================
+
 
 """Module to create SAO DS9 region files from DES Data Challenge FITS catalogs"""
 
