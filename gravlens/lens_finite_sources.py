@@ -4,15 +4,21 @@
 # Pedro Ferreira - pferreira@dfte.ufrn.br
 # ==================================
 
-"""       """
+""" Lenses a finite source with gravlens. """
+
 
 from __future__ import division
 import os
 import logging
 
+
 ##@package lens_finite_sources
-# lenses sources (centered in source_centers) and measures the resulting images, identifing which ones are arcs
-#
+# 
+# lenses sources (centered in source_centers) with gravlens
+# Treats both sersic and uniform sources (uniform sources do not have sersic parameter 'n').
+# In the case of uniform sources, the flux is set to unity. Always!
+# We increase the resolution of the calculus by increasing Nover (maximum Nover allowed = 3)
+# 
 #@param inputlens (gravlens configuration)
 #@param half_frame_size (half the size of the image plane on arcsec)
 #@param dimpix
@@ -20,13 +26,10 @@ import logging
 #@param ref_magzpt (used to calibrate flux, but only for sersic sources)
 #@param reference_band
 #@param source_model (source properties)
-##
-#
-# This function treats both sersic and uniform sources (uniform sources do not have sersic parameter 'n').
-# In the case of uniform sources, the flux is set to unity. Always!
-# We increase the resolution of the calculus by increasing Nover (maximum Nover allowed = 3)
-#
 #@return list with the names of the arcs
+
+
+#=======================================================================================================
 def lens_finite_sources(inputlens, half_frame_size, dimpix, source_centers, ref_magzpt, reference_band, source_model):
 
 	Npix = int( (2*half_frame_size) / dimpix)
