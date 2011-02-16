@@ -387,7 +387,8 @@ def copy_objects(objimg, segimg, objIDs=[], groundimg=None):
 if __name__ == "__main__" :
 
     from optparse import OptionParser;
-
+    from sltools.io import log;
+    
     logging = log.init(debug=True,verbose=False);
     
     usage="\n  %prog image.fits x y  [options]"
@@ -444,7 +445,7 @@ if __name__ == "__main__" :
     y = args[2];
     coord_deg = opts.is_coord_deg;
     shape_deg = opts.is_shape_deg;
-    dx,dy = opts.dim;
+    dx,dy = string.split(opts.dim,sep=',');
     outfits = opts.sufx;
 
     coord = 'degrees' if coord_deg else 'pixel';
