@@ -9,7 +9,7 @@
 #
 # Runs SExtractor on a list of images
 #
-# For other options of SExtractor modules, see sltools.image.objsshot
+# For other options of SExtractor modules, see sltools.image.objsshot and sltools.image.sextractor
 
 
 import os;

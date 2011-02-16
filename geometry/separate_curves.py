@@ -16,7 +16,7 @@ from matplotlib.pyplot import *
 import numpy as np
 from numpy import * 
 from random import *
-
+import logging
 
 #=======================================================================================================
 def separate_curves(x1, y1, x2, y2, delta=None):
@@ -75,6 +75,10 @@ def separate_curves(x1, y1, x2, y2, delta=None):
 
     for index in range(ncurves):
         curves.append([x1[start[index]:end[index]], y1[start[index]:end[index]], x2[start[index]:end[index]], y2[start[index]:end[index]]])
+
+    if len(curves) == 1:
+        logging.warning('Only one caustic (and CC) was found (usually its the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
+
 
     radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
     tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
