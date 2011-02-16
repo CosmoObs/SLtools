@@ -1,0 +1,272 @@
+\hypertarget{siep__lens__funct_8h}{
+\section{siep\_\-lens\_\-funct.h File Reference}
+\label{siep__lens__funct_8h}\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}}
+}
+{\tt \#include $<$math.h$>$}\par
+{\tt \#include $<$cstdlib$>$}\par
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+double \hyperlink{siep__lens__funct_8h_44f38691549db556394feffd29ff76a0}{alpha\_\-sis} (double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_e1b16cd5f33a7cf96c8534066f7fec55}{kappa\_\-sis} (double r, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_a33d0d6d75d92012dc24e7db5dff45eb}{gamma\_\-sis} (double r, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_68fc0b2bb932f6317969e52eaaba44e4}{kappa\_\-siep} (double xi1, double xi2, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_035cfdfbd965fc3e5e7011ae389791e7}{gamma1\_\-siep} (double xi1, double xi2, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_df71d8d993180227c5c2690a0a1b74bf}{gamma2\_\-siep} (double xi1, double xi2, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_caefe188b0c69c908abf64effb49aa7b}{gamma\_\-siep} (double xi1, double xi2, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_3e05b95e85ba4ac718a43d00d840d1e2}{alpha1\_\-siep} (double xi1, double xi2, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_40d95971e5ae8f810692d00038536ffb}{alpha2\_\-siep} (double xi1, double xi2, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_81bc3f8e6b5353cacf451aa58bb368a1}{y1\_\-siep} (double xi1, double xi2, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\item 
+double \hyperlink{siep__lens__funct_8h_bf20df72b8c0003e9e70e3b7be133d09}{y2\_\-siep} (double xi1, double xi2, double siep\_\-params\mbox{[}$\,$\mbox{]})
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+This module is useful to compute quantities related to the Singular Isothermal Elliptical Potential (SIEP)
+
+See sltools/PerturbativeMethod/writeups/Report\_\-on\_\-Perturbative\_\-Method.pdf
+
+Lensing functions to be considered: angle deflection, convergence, components of the shear.
+
+Lens Equation
+
+Notice: This model have 3 main parameters.
+
+siep\_\-params\mbox{[}0\mbox{]}: Integer useful to choose the flag for the parameterization for the ellipticity
+
+If siep\_\-params\mbox{[}0\mbox{]}=1, It uses $ a_{1\varepsilon}=1-\varepsilon $ and $ a_{2\varepsilon}=1+\varepsilon $
+
+If siep\_\-params\mbox{[}0\mbox{]}=2, It uses $ a_{1\varepsilon}=1$ and $ a_{2\varepsilon}=(1-\varepsilon)^{-2} $
+
+siep\_\-params\mbox{[}1\mbox{]}: Ellipticity value (must be ellipticity parameter or ellipticity by itself whether the angle deflection model is used)
+
+siep\_\-params\mbox{[}2\mbox{]}: Mass of the SIS model, related wit the velocity dispersion. 
+
+\subsection{Function Documentation}
+\hypertarget{siep__lens__funct_8h_3e05b95e85ba4ac718a43d00d840d1e2}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!alpha1\_\-siep@{alpha1\_\-siep}}
+\index{alpha1\_\-siep@{alpha1\_\-siep}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{alpha1\_\-siep}]{\setlength{\rightskip}{0pt plus 5cm}double alpha1\_\-siep (double {\em xi1}, \/  double {\em xi2}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_3e05b95e85ba4ac718a43d00d840d1e2}
+
+
+First component of the deflection angle of the SIEP model
+
+$ \alpha_{1\varepsilon} = \alpha(x_\varepsilon)\sqrt{a_{1\varepsilon}} \cos { \phi_ \varepsilon} $
+
+where $ \phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)$
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em xi1,xi2}]: are the cartesian coordinates \item[{\em siep\_\-params\mbox{[}$\,$\mbox{]}}]: SIEP parameters \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]$ \alpha_{1,\varepsilon}(x)$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_40d95971e5ae8f810692d00038536ffb}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!alpha2\_\-siep@{alpha2\_\-siep}}
+\index{alpha2\_\-siep@{alpha2\_\-siep}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{alpha2\_\-siep}]{\setlength{\rightskip}{0pt plus 5cm}double alpha2\_\-siep (double {\em xi1}, \/  double {\em xi2}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_40d95971e5ae8f810692d00038536ffb}
+
+
+Second component of the deflection angle of the SIEP model
+
+$ \alpha_{2\varepsilon} = \alpha(x_\varepsilon)\sqrt{a_{2\varepsilon}} \sin{\phi_ \varepsilon} $
+
+where $ \phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)$
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em xi1,xi2}]: are the cartesian coordinates \item[{\em siep\_\-params\mbox{[}$\,$\mbox{]}}]: SIEP parameters \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]$ \alpha_{2,\varepsilon}(x)$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_44f38691549db556394feffd29ff76a0}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!alpha\_\-sis@{alpha\_\-sis}}
+\index{alpha\_\-sis@{alpha\_\-sis}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{alpha\_\-sis}]{\setlength{\rightskip}{0pt plus 5cm}double alpha\_\-sis (double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_44f38691549db556394feffd29ff76a0}
+
+
+Module of the Angle deflection of the SIS model.
+
+$ \alpha(r)= 1 $,
+
+\begin{Desc}
+\item[Returns:]$ \alpha(r)$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_035cfdfbd965fc3e5e7011ae389791e7}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!gamma1\_\-siep@{gamma1\_\-siep}}
+\index{gamma1\_\-siep@{gamma1\_\-siep}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{gamma1\_\-siep}]{\setlength{\rightskip}{0pt plus 5cm}double gamma1\_\-siep (double {\em xi1}, \/  double {\em xi2}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_035cfdfbd965fc3e5e7011ae389791e7}
+
+
+First component of the shear of the SIEP model
+
+$ \gamma_{1\varepsilon}(\vec{x}) = \mathcal{B}(\varepsilon)\kappa(x_\varepsilon)-\mathcal{A}(\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon} $
+
+where $ \mathcal{A}(\varepsilon)= \frac{1}{2}(a_{1\varepsilon}+a_{2\varepsilon})$, $ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})$ and $\phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)$
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em xi1,xi2,:}]cartesian coordinates \item[{\em siep\_\-params\mbox{[}$\,$\mbox{]}}]: SIEP parameters \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]
+
+$ \gamma_{1\varepsilon(x)}$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_df71d8d993180227c5c2690a0a1b74bf}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!gamma2\_\-siep@{gamma2\_\-siep}}
+\index{gamma2\_\-siep@{gamma2\_\-siep}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{gamma2\_\-siep}]{\setlength{\rightskip}{0pt plus 5cm}double gamma2\_\-siep (double {\em xi1}, \/  double {\em xi2}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_df71d8d993180227c5c2690a0a1b74bf}
+
+
+Second component of the shear of the SIEP model (see report)
+
+$ \gamma_{2\varepsilon}(\vec{x})=-\sqrt{\mathcal{A}^2(\varepsilon)-\mathcal{B}^2(\varepsilon)}\gamma(x_\varepsilon)\sin{ 2\phi_\varepsilon} $
+
+where $ \mathcal{A}(\varepsilon)= \frac{1}{2}(a_{1\varepsilon}+a_{2\varepsilon})$, $ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})$ and $\phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)$
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em xi1,xi2}]: cartesian coordinates \item[{\em siep\_\-params\mbox{[}$\,$\mbox{]}}]: SIEP parameters \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]
+
+$ \gamma_{2\varepsilon(x)}$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_caefe188b0c69c908abf64effb49aa7b}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!gamma\_\-siep@{gamma\_\-siep}}
+\index{gamma\_\-siep@{gamma\_\-siep}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{gamma\_\-siep}]{\setlength{\rightskip}{0pt plus 5cm}double gamma\_\-siep (double {\em xi1}, \/  double {\em xi2}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_caefe188b0c69c908abf64effb49aa7b}
+
+
+Shear (modulus) of the SIEP model
+
+$ \gamma_\varepsilon(\vec{x})=\mathcal{A}(\varepsilon)\kappa(x_\varepsilon)-\mathcal{B}(\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon} $
+
+where $ \mathcal{A}(\varepsilon)= \frac{1}{2}(a_{1\varepsilon}+a_{2\varepsilon})$, $ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})$ and $\phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)$
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em xi1,xi2}]: are the cartesian coordinates \item[{\em siep\_\-params\mbox{[}$\,$\mbox{]}}]: SIEP parameters \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]$ \gamma_\varepsilon(x)$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_a33d0d6d75d92012dc24e7db5dff45eb}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!gamma\_\-sis@{gamma\_\-sis}}
+\index{gamma\_\-sis@{gamma\_\-sis}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{gamma\_\-sis}]{\setlength{\rightskip}{0pt plus 5cm}double gamma\_\-sis (double {\em r}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_a33d0d6d75d92012dc24e7db5dff45eb}
+
+
+Shear of the SIS model.
+
+$ \gamma(r)= \frac{1}{2x}$,
+
+$ x=b/r $, where $ b $ is the parameter characterizing the mass of the SIS, related with the velocity dispersion
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em r}]: radial distance, \item[{\em b}]: SIS lens parameters, \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]$ \kappa(r)$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_68fc0b2bb932f6317969e52eaaba44e4}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!kappa\_\-siep@{kappa\_\-siep}}
+\index{kappa\_\-siep@{kappa\_\-siep}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{kappa\_\-siep}]{\setlength{\rightskip}{0pt plus 5cm}double kappa\_\-siep (double {\em xi1}, \/  double {\em xi2}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_68fc0b2bb932f6317969e52eaaba44e4}
+
+
+Convergence of the SIEP model
+
+$ \kappa_\varepsilon(\vec{x})=\mathcal{A}(\varepsilon)\kappa(x_\varepsilon)-\mathcal{B}(\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon} $
+
+where $ \mathcal{A}(\varepsilon)= \frac{1}{2}(a_{1\varepsilon}+a_{2\varepsilon})$, $ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})$ and $\phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)$
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em xi1,xi2}]: are the cartesian coordinates \item[{\em siep\_\-params\mbox{[}$\,$\mbox{]}}]: SIEP parameters \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]$ \kappa_\varepsilon(x)$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_e1b16cd5f33a7cf96c8534066f7fec55}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!kappa\_\-sis@{kappa\_\-sis}}
+\index{kappa\_\-sis@{kappa\_\-sis}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{kappa\_\-sis}]{\setlength{\rightskip}{0pt plus 5cm}double kappa\_\-sis (double {\em r}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_e1b16cd5f33a7cf96c8534066f7fec55}
+
+
+Convergence of the SIS model.
+
+$ \kappa(r)= \frac{1}{2x}$,
+
+$ x=b/r $, where $ b $ is the parameter characterizing the mass of the SIS, related with the velocity dispersion
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em r}]: radial distance, \item[{\em b}]: SIS lens parameters, \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]$ \kappa(r)$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_81bc3f8e6b5353cacf451aa58bb368a1}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!y1\_\-siep@{y1\_\-siep}}
+\index{y1\_\-siep@{y1\_\-siep}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{y1\_\-siep}]{\setlength{\rightskip}{0pt plus 5cm}double y1\_\-siep (double {\em xi1}, \/  double {\em xi2}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_81bc3f8e6b5353cacf451aa58bb368a1}
+
+
+First component of the lens equation for the SIEP model
+
+$ y_1(x)=\frac{x_\varepsilon\cos{\phi_\varepsilon}}{\sqrt{a_{1\varepsilon}}}-\sqrt{a_{1\varepsilon}}\cos{\phi_ \varepsilon}$
+
+where $ \phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)$
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em xi1,xi2}]: are the cartesian coordinates \item[{\em siep\_\-params\mbox{[}$\,$\mbox{]}}]: SIEP parameters \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]$ y_{1}(x)$ \end{Desc}
+\hypertarget{siep__lens__funct_8h_bf20df72b8c0003e9e70e3b7be133d09}{
+\index{siep\_\-lens\_\-funct.h@{siep\_\-lens\_\-funct.h}!y2\_\-siep@{y2\_\-siep}}
+\index{y2\_\-siep@{y2\_\-siep}!siep_lens_funct.h@{siep\_\-lens\_\-funct.h}}
+\subsubsection[{y2\_\-siep}]{\setlength{\rightskip}{0pt plus 5cm}double y2\_\-siep (double {\em xi1}, \/  double {\em xi2}, \/  double {\em siep\_\-params}\mbox{[}$\,$\mbox{]})}}
+\label{siep__lens__funct_8h_bf20df72b8c0003e9e70e3b7be133d09}
+
+
+Second component of the lens equation for the SIEP model
+
+$ y_2(x)=\frac{x_\varepsilon\sin{\phi_\varepsilon}}{\sqrt{a_{2\varepsilon}}}-\sqrt{a_{2\varepsilon}}\sin{\phi_ \varepsilon}$
+
+where $ \phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)$
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em xi1,xi2}]: are the cartesian coordinates \item[{\em siep\_\-params\mbox{[}$\,$\mbox{]}}]: SIEP parameters \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]$ y_{2}(x)$ \end{Desc}
