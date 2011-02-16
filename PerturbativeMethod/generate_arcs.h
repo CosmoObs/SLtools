@@ -105,10 +105,10 @@ void plot_arcs_sep(elliptical_source source_in, f_type f1_in, f_type Df0Dtheta_i
   if(arcs[ int(arcs[0][0]) ][1]< arcs[ int(arcs[0][0]) ][0]) arcs[ int(arcs[0][0]) ][1] += 6.283185308;
 
 
-  printf("\%E %E\n",arcs[0][0],arcs[0][1]);
-  printf("\%E %E\n",arcs[1][0],arcs[1][1]);
-  printf("\%E %E\n",arcs[2][0],arcs[2][1]);
-  printf("\%E %E\n",arcs[3][0],arcs[3][1]);
+  //printf("\%E %E\n",arcs[0][0],arcs[0][1]);
+  //printf("\%E %E\n",arcs[1][0],arcs[1][1]);
+  //printf("\%E %E\n",arcs[2][0],arcs[2][1]);
+  //printf("\%E %E\n",arcs[3][0],arcs[3][1]);
 
   double theta_min[int(arcs[0][0])];
   double theta_max[int(arcs[0][0])];

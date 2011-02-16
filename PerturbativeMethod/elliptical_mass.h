@@ -38,9 +38,9 @@ double f_1_ellip_mass(conv_type conv_in,double theta, double pert_params[], doub
   double J0 = J(0, conv_in, X1, X2, pert_params, a, b);
   double J1 = J(1, conv_in, X1, X2, pert_params, a, b);
 
-  double out = r_e* ( a*b*( J0*pow(cos(theta),2) + J1*pow(sin(theta),2)) );
-
-  return out;
+  double out = r_e* ( a*b*( J0*pow(cos(theta),2) + J1*pow(sin(theta),2)));
+  //printf("%f %f\n",out,J(0, conv_in, X1, X2, pert_params, 1.0, 1.0));
+  return out - r_e*J(0, conv_in, X1, X2, pert_params, 1.0, 1.0);
 }
 
 /**  function to compute the \f$ \frac{df_0}{d\theta} \f$ for elliptical models
@@ -84,9 +84,9 @@ double D2f0Dtheta2_ellip_mass(conv_type conv_in,double theta, double pert_params
   double J0 = J(0, conv_in, X1, X2, pert_params, a, b);
   double J1 = J(1, conv_in, X1, X2, pert_params, a, b);
 
-  double K0 = K(0, conv_in, X1, X2, pert_params, a, b);
-  double K1 = K(1, conv_in, X1, X2, pert_params, a, b);
-  double K2 = K(2, conv_in, X1, X2, pert_params, a, b);
+  double K0 = K(0, conv_nfw_circ_prime, X1, X2, pert_params, a, b);
+  double K1 = K(1, conv_nfw_circ_prime, X1, X2, pert_params, a, b);
+  double K2 = K(2, conv_nfw_circ_prime, X1, X2, pert_params, a, b);
 
   double out1 = a*b*r_e*r_e;
   double out2 = (J1 - J0)*cos(2.0*theta);
@@ -96,30 +96,81 @@ double D2f0Dtheta2_ellip_mass(conv_type conv_in,double theta, double pert_params
 }
 
 
-
-
+/***********************************************************************************************/
+/***********************************************************************************************/
 double nfw_ellip_f1(double theta, double pert_params[],double r_e){
   double conv_params[]={pert_params[2],pert_params[3]};
-  double eps=pert_params[0], a_1eps,a_2eps;
+  double eps=pert_params[0];
+  double a_1eps, a_2eps;
   int iflag=pert_params[1];
 
   if(iflag==1){
     // printf("You chose the Angle Deflection Parameterization: a_1eps=1.-eps, a_2eps=1.+eps");
-    a_1eps=1.-eps, a_2eps=1.+eps;
+    a_1eps=sqrt(1.-eps), a_2eps=sqrt(1.+eps);
   }
 
   if(iflag==2){
     // printf("You chose the standard parameterization: a_1eps=1.-eps,a_2eps=1./a_1eps");
-    a_1eps=1.-eps,a_2eps=1./a_1eps;
+    a_1eps=1.0/sqrt(1.0-eps);
+    a_2eps=sqrt(1.0-eps);
   }
 
   if(iflag==3){
     // printf("You chose the Keeton's parameterization: a_1eps=1.0, a_2eps=1./((1.-eps)^2)");
-    a_1eps=1.0, a_2eps=1./pow((1.-eps),2);
+    a_1eps=1.0, a_2eps=1./(1.-eps);
   }
 
   return  f_1_ellip_mass(conv_nfw_circ,theta, conv_params, r_e, a_1eps, a_2eps);
-
 }
 
+
+double nfw_ellip_Df0Dtheta(double theta, double pert_params[],double r_e){
+  double conv_params[]={pert_params[2],pert_params[3]};
+  double eps=pert_params[0];
+  double a_1eps, a_2eps;
+  int iflag=pert_params[1];
+
+  if(iflag==1){
+    // printf("You chose the Angle Deflection Parameterization: a_1eps=1.-eps, a_2eps=1.+eps");
+    a_1eps=sqrt(1.-eps), a_2eps=sqrt(1.+eps);
+  }
+
+  if(iflag==2){
+    // printf("You chose the standard parameterization: a_1eps=1.-eps,a_2eps=1./a_1eps");
+    a_1eps=1.0/sqrt(1.0-eps);
+    a_2eps=sqrt(1.0-eps);
+  }
+
+  if(iflag==3){
+    // printf("You chose the Keeton's parameterization: a_1eps=1.0, a_2eps=1./((1.-eps)^2)");
+    a_1eps=1.0, a_2eps=1./(1.-eps);
+  }
+
+  return  Df0Dtheta_ellip_mass(conv_nfw_circ,theta, conv_params, r_e, a_1eps, a_2eps);
+}
+
+double nfw_ellip_D2f0Dtheta2(double theta, double pert_params[],double r_e){
+  double conv_params[]={pert_params[2],pert_params[3]};
+  double eps=pert_params[0];
+  double a_1eps, a_2eps;
+  int iflag=pert_params[1];
+
+  if(iflag==1){
+    // printf("You chose the Angle Deflection Parameterization: a_1eps=1.-eps, a_2eps=1.+eps");
+    a_1eps=sqrt(1.-eps), a_2eps=sqrt(1.+eps);
+  }
+
+  if(iflag==2){
+    // printf("You chose the standard parameterization: a_1eps=1.-eps,a_2eps=1./a_1eps");
+    a_1eps=1.0/sqrt(1.0-eps);
+    a_2eps=sqrt(1.0-eps);
+  }
+
+  if(iflag==3){
+    // printf("You chose the Keeton's parameterization: a_1eps=1.0, a_2eps=1./((1.-eps)^2)");
+    a_1eps=1.0, a_2eps=1./(1.-eps);
+  }
+
+  return  D2f0Dtheta2_ellip_mass(conv_nfw_circ,theta, conv_params, r_e, a_1eps, a_2eps);
+}
 #endif
