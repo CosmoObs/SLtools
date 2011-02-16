@@ -46,7 +46,8 @@ cwd = os.getcwd()+'/'
 
 def read_input_file(input_file):
 
-	""" Function to read the input file and get the images list and the parameters list.
+	""" 
+	Function to read the input file and get the images list and the parameters list.
 	
 	Input:
 	- input_file: input file name
@@ -75,7 +76,9 @@ def read_input_file(input_file):
 
 
 def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
-    """ Function to compute the value of the surface brightness of the
+
+    """ 
+    Function to compute the value of the surface brightness of the
 	(r,theta) point following the ArcEllipse prescription.
 
 	Input:
@@ -102,7 +105,9 @@ def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
 
 
 def arcellipse_sbmap_x_y(x,y,x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip):
-    """ Function to compute the value of the surface brightness of the
+
+    """ 
+    Function to compute the value of the surface brightness of the
 	(x,y) pixel following the ArcEllipse prescription.
 
 	Input:
@@ -139,7 +144,8 @@ def arcellipse_sbmap_x_y(x,y,x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip):
 
 
 def derivative(f):
-    """ Function to compute the numerical derivative of the arcellipse_sbmap_r_theta function at (r,theta). 
+    """ 
+    Function to compute the numerical derivative of the arcellipse_sbmap_r_theta function at (r,theta). 
 
 	Input:
 	- r: radius (pixel)
@@ -166,7 +172,8 @@ def derivative(f):
 
 def I_0_integral(n,r_e,r_c,theta_0,ellip):
 
-	'''Computes the definite double integral of the Sersic profile (where I_0 = 1) used to define 
+	'''
+	Computes the definite double integral of the Sersic profile (where I_0 = 1) used to define 
 	the profile constant I_0 in terms of the total signal of the arc.
 	The Sersic profile is defined as I = I_0 * exp(-b_n * (r_prof/r_e)**(1/n)), where
 	I_0 is the central surface brightness and r_prof comes from the ArcEllipse prescription.
@@ -185,12 +192,13 @@ def I_0_integral(n,r_e,r_c,theta_0,ellip):
 	b_n = get_b_n(n)
 	
 	return dblquad(lambda r, theta: r * math.exp(- b_n * ( (math.sqrt((r_c * (theta - theta_0) * \
-		(1. - ellip))**2 + (r - r_c)**2 ) ) / r_e)**(1. / n)),theta_0 - math.pi, theta_0 + math.pi, lambda r: 0, lambda r: 5*r_c)[0]
+		(1. - ellip))**2 + (r - r_c)**2 ) ) / r_e)**(1. / n)),theta_0 - math.pi, theta_0 + math.pi, lambda r: 0, lambda r: 7*r_c)[0]
 
 
 
 def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_size,dim_x,dim_y):
-    """	Function to create the surface brightness map following the ArcEllipse prescription 
+    """	
+    Function to create the surface brightness map following the ArcEllipse prescription 
     and digitalize ("pixelize") it to an image with the same size as the input image. 
 
 	Input:
@@ -253,7 +261,8 @@ def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_
 
 
 def digitalize_arc_sbmap(params,image_name):
-    """	Function to create the arc image. 
+    """	
+    Function to create the arc image. 
     
     It computes the arcellipse_sbmap_r_theta derivative to find the size of the "new" pixel for 
     digitalization. Then it calls the function create_arcellipse_sbmap to create the surface 
@@ -326,7 +335,8 @@ def digitalize_arc_sbmap(params,image_name):
 
 
 def run_paint_arcs(input_image,params_list):
-	"""	Function to run PaintArcs and add an arc to an image.
+	"""	
+	Function to run PaintArcs and add an arc to an image.
     
 	It calls the function digitalize_arc_sbmap to digitalize the arc surface brightness map and 
 	create the arc image (with suffix "_arc.fits"). Then it convolves the arc image with a gaussian
