@@ -136,43 +136,84 @@ sltools()
 
 }
 
-
 # Call a specific build function
 
-[ ! -z "$1" ] && opt1="$1" || opt1="null"
-[ ! -z "$2" ] && opt2="$2" || opt2="--all"
-[ ! -z "$3" ] && opt3="$3" || opt3=""
+while test -n "$1"
+do
+	case "$1" in
+		--no-doc)
+			mode="$1"
+		;;
+		--no-pdf)
+			mode="$1"
+		;;
+		--all)
+			mode="$1"
+		;;
+		sltools)
+			opt="sltools"
+		;;
+		--devel)
+			mode="$1"
+			shift
+			destdir="$1"
+			if [ ! -d "$destdir" -o -z "$destdir" ]
+			then
+				echo "Bleh: wrong argument for --devel option."
+				exit 1
+			fi
+		;;
+		-o)
+			shift
+			folder="$1"
+		;;
+		-h | --help)
+			opt="null"
+		;;
+		*)
+			echo "Give an option to work with."
+			opt="null"
+		;;		
+	esac
+	shift
+done
 
-[ "$opt2" == "--devel" -o "$opt2" == "--no-doc" -o "$opt2" == "--no-pdf" -o "$opt2" == "--all" ] && mode=$2 || opt1="null"
-[ "$opt2" == "--devel" -a -z "$opt3" ] && opt1="null" || destdir=$3
+###
+#[ ! -z "$1" ] && opt1="$1" || opt1="null"
+#[ ! -z "$2" ] && opt2="$2" || opt2="--all"
+#[ ! -z "$3" ] && opt3="$3" || opt3=""
 
-if [ "$opt1" == "sltools" ]
+#[ "$opt2" == "--devel" -o "$opt2" == "--no-doc" -o "$opt2" == "--no-pdf" -o "$opt2" == "--all" ] && mode=$2 || opt1="null"
+#[ "$opt2" == "--devel" -a -z "$opt3" ] && opt1="null" || destdir=$3
+
+if [ "$opt" == "sltools" ]
 then
 
 	if [ "$mode" == "--devel" ]; then
 		[ ! -w $destdir -o "$destdir" == "$PWD" ] && { echo "Directory $destdir is not writeable. Try again."; exit 1; }
+		echo "Cloning devel tree into $destdir ..."
 		mkdir -p $destdir/sltools
 		destdir="$destdir/sltools"
 		Link_subtree_Clone $destdir
 		rm -f $destdir/build.sh
 		rm -f $destdir/DIRECTORIES_TO_INCLUDE_IN_BUILD
-		echo "Done devel tree clone"
+		echo "Done."
 		exit 0
 	fi
 	
     # Read package VERSION and exec building function:
     version=$(cat ./etc/version.txt)
-    folder=$opt1-v$version
+    [ -z "$folder" ] && folder=$opt-v$version
 
-    echo "Building $opt1 v$version..."
-    $1 $folder
+    echo "Building $opt version: $version..."
+    sltools $folder
 
     find $folder -name "*.pyc" -delete
 
     if [ "$mode" != "--no-doc" ]; then
 		# compile documentation
 		echo "Generating Doxygen documentation..."
-		GenDoxygenDoc $opt1 $version $mode
+		GenDoxygenDoc $opt $version $mode
     fi
 
     sed "s/%VERSION%/$version/" $folder/install.sh > $folder/install.tmp
@@ -188,12 +229,13 @@ then
 
 else
 
-    echo "Usage: ./build.sh { sltools } [ --devel <DESTINY> | --no-doc | --no-pdf ]"
+    echo "Usage: ./build.sh { sltools } [ --devel <DESTDIR> | --no-doc | --no-pdf  | -o <FILENAME>]"
     echo ""
 	echo " (default: all)     If no argument is given the building system run defaults: build entire package"
 	echo " --devel <path>     clone subtree structure to DESTINY(path). Useful for developing outside Git"
 	echo " --no-doc           No Doxygen documentation is compiled"
 	echo " --no-pdf           No Doxygen PDF pages are generated, just HTML doc"
+	echo " -o <filename>	  Name of output file"
 	echo ""
     exit 1
 
