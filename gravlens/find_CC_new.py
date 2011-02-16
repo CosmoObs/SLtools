@@ -188,10 +188,10 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
 	pyplot.title('Critical Curves'  , fontsize = 20)
-       	if show_plot == 'No':
-	    pyplot.savefig(plot_filename)
-	elif :
-	    pyplot.show() 
+	if show_plot == 'No':
+		pyplot.savefig(plot_filename)
+	else:
+		pyplot.show() 
  
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
