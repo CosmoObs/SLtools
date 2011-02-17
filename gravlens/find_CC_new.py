@@ -172,7 +172,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	instead of saved to a file.
 
 	Input:
-	 -tan_caustic_x   <list> : list of x coordinates of points from the tangencial caustic
+	 - tan_caustic_x  <list> : list of x coordinates of points from the tangencial caustic
          - tan_caustic_y  <list> : list of y coordinates of points from the tangencial caustic
          - rad_caustic_x  <list> : list of x coordinates of points from the radial caustic
          - rad_caustic_y  <list> : list of y coordinates of points from the radial caustic
@@ -240,15 +240,35 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
                                           inside lens_parameters_new)
 	 - caustic_CC_file        <str> : name of the output file with the caustic and CC positions
 	 - gravlens_input_file    <str> : name of the input file used to run gravlens
+	 - rad_curves_file        <str> : 
+	 - tan_curves_file        <str> :  (default='crit_tan.txt')
+	 - curves_plot            <str> : the name of the generated plot file (including the format, ex. 
+			                  'curves_plot.png'). To see the formats available see 
+				          matplotlib.pyplot help (default='crit_curves.png'). If 
+					  curves_plot=0 means no plots.
+	 - show_plot              <int> : use 0 for 'no screen display' (default) and 1 for diaplay on 
+					  the screen
+	 - write_to_file          <int> : Option to write the curves to a file (see rad_curves_file and 
+					  tan_curves_file ). The default is 0, meaning not to write to 
+					  file.
 
 	Output:
-	 - <list>     : [x_caustic, ycaustic], with x_caustic and ycaustic being the lists with the caustic coordinates
+	 - rad_CC_x  <list> : x coordinates of points from the radial CC
+	 - rad_CC_y  <list> : y coordinates of points from the radial CC
+	 - tan_CC_x  <list> : x coordinates of points from the tangential CC
+	 - tan_CC_y  <list> : y coordinates of points from the tangential CC
+	 - rad_caustic_x  <list> : x coordinates of points from the radial caustic
+	 - rad_caustic_y  <list> : y coordinates of points from the radial caustic
+	 - tan_caustic_x  <list> : x coordinates of points from the tangential caustic
+	 - tan_caustic_y  <list> : y coordinates of points from the tangential caustic
+	 - <list>     : [x_caustic, y_caustic], with x_caustic and y_caustic being the lists with the caustic coordinates
 	 - <list>     : [x_CC, y_CC], with x_CC and y_CC being the lists with the CC coordinates
 	 - <dict>     : all configuration variables used for running gravlens (including gridhi1)
 	 - <file>     : file named 'caustic_CC_file' with the caustic and CC positions
 	 - <file>     : separated radial curves (CC + caustics) - rad_curves_file
 	 - <file>     : separated tangential curves (CC + caustics) - tan_curves_file
 	 - <file>     : curves_plot
+
 	"""
 
 	x_caustic, y_caustic, x_CC, y_CC, gravlens_params_updated = find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file)
@@ -278,7 +298,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		np.savetxt(rad_curves_file,(rad_CC_x,rad_CC_y,rad_caustic_x, rad_caustic_y))
 #	"imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
 
-
+	return rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y
 
 
 
