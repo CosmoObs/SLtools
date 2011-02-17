@@ -276,11 +276,11 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	# Separating the critical cuves
 
-	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = separate_curves(x1, y1, x2, y2)
+	tan_CC_x, tan_CC_y,rad_CC_x,rad_CC_y = separate_curves(x1, y1, x2, y2)
 
 	# separating the caustics curves
 
-	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y  = separate_curves(u1, v1, u2, v2)
+	tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y = separate_curves(u1, v1, u2, v2)
 
 	if curves_plot != 0: # curves_plot = 0 means you don't want any plots.
 		plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot)
@@ -292,8 +292,8 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	
 	if write_to_file != 0:
-		np.savetxt(tan_curves_file,(list(tan_CC_x), list(tan_CC_y),list(tan_caustic_x), list(tan_caustic_y)),delimiter=' ')
-		np.savetxt(rad_curves_file,(rad_CC_x,rad_CC_y,rad_caustic_x, rad_caustic_y),delimiter=' ')
+		np.savetxt(tan_curves_file,(tan_CC_x,tan_CC_y,tan_caustic_x,tan_caustic_y))
+		np.savetxt(rad_curves_file,(rad_CC_x,rad_CC_y,rad_caustic_x, rad_caustic_y))
 #	"imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
 
 	return rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y
