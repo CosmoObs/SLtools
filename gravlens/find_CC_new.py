@@ -194,16 +194,20 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.clf()
 	f1 = pyplot.figure(1,figsize = (15,15) )
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_caustic_x, tan_caustic_y, color='red',   marker='.', markersize=2 )
-	pyplot.plot(rad_caustic_x, rad_caustic_y, color='black', marker='.', markersize=2 )
+	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',   marker='.', markersize=2 )
+	pyplot.legend('Tangential')
+	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='.', markersize=2 )
+	pyplot.legend('Radial')
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
 	pyplot.title('Caustics'  , fontsize = 20)
 
 	pyplot.subplot(122) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_CC_x, tan_CC_y, color='red',   marker='', markersize=2 )
-	pyplot.plot(rad_CC_x, rad_CC_y, color='black', marker='', markersize=2 )
+	pyplot.plot(tan_CC_x, tan_CC_y, color='black',   marker='', markersize=2 )
+	pyplot.legend('Tangential')
+	pyplot.plot(rad_CC_x, rad_CC_y, color='red', marker='', markersize=2 )
+	pyplot.legend('Radial')
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
@@ -285,11 +289,16 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 
+	tan_CC_x, tan_CC_y,rad_CC_x,rad_CC_y = separate_curves(x1, y1, x2, y2)
+
 	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
+
 
 	# Repeating the 1st element in the end of each array will make the plot easier
 	# First, convert the array to a list
 	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = list(rad_CC_x), list(rad_CC_y), list(tan_CC_x), list(tan_CC_y)
+
+	tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y = separate_curves(u1, v1, u2, v2)
 
 	rad_CC_x.append(rad_CC_x[0])
 	rad_CC_y.append(rad_CC_y[0])
@@ -335,8 +344,8 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	
 	if write_to_file != 0:
-		np.savetxt(tan_curves_file,(list(tan_CC_x), list(tan_CC_y),list(tan_caustic_x), list(tan_caustic_y)),delimiter=' ')
-		np.savetxt(rad_curves_file,(rad_CC_x,rad_CC_y,rad_caustic_x, rad_caustic_y),delimiter=' ')
+		np.savetxt(tan_curves_file,(tan_CC_x,tan_CC_y,tan_caustic_x,tan_caustic_y))
+		np.savetxt(rad_curves_file,(rad_CC_x,rad_CC_y,rad_caustic_x, rad_caustic_y))
 #	"imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
 
 	return rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y
