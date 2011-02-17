@@ -4,7 +4,14 @@
 # Pedro Ferreira - pferreira@dfte.ufrn.br
 # ==================================
 
-"""      """
+""" Select the position of sources near the tangential caustic """
+
+
+##@package select_source_positions
+#
+#
+#  Select the position of sources near the tangential caustic (documentation in the old style)
+
 
 from __future__ import division
 import os
@@ -14,8 +21,9 @@ import random
 import numpy as np
 import logging
 
-#import tools;
-#from tools.gravlens import lens_parameters
+
+#import stools;
+#from stools.gravlens import lens_parameters
 from lens_parameters import lens_parameters # file with the functions
 
 #---------------------------------------------------------------------------------------------------------------------
@@ -153,18 +161,30 @@ def tang_caustic(inputlens):
 #	a = 3.0*( (tan_CC_x[indice]**2 + tan_CC_y[indice]**2)**0.5 ) # define 'a', which will be the region, in arcsec, to be converted to fits
 	return {'tan_caustic_x': tan_caustic_x, 'tan_caustic_y': tan_caustic_y, 'tan_CC_x': tan_CC_x, 'tan_CC_y': tan_CC_y, 'rad_caustic_x': rad_caustic_x, 'rad_caustic_y': rad_caustic_y}
 
-#---------------------------------------------------------------------------------------------------------------------
 
 
-## compute_deformation_rectangle
-# determines the 4 cusps of the tangential caustic and determines a rectangle that encloses it. The rectangle vertices are on distances proportional to the cusp distance
-#
-#@param thetal (inclination of the lens with respect to the vertical, counterclockwise)
-#@param tan_caustic_x
-#@param tan_caustic_y
-#@param source_selector_control_params
-#@return deformation_rectangle: [x_vert_1,y_vert_1],[x_vert_2, y_vert_2] (vert_1 refers to the upper right corner, while vert_2 refers to the botton left corner)
+#=======================================================================================================
 def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, source_selector_control_params):
+	"""
+	Determines the 4 cusps of the tangential caustic and determines a rectangle that encloses it. 
+
+	The rectangle vertices are on distances proportional to the cusp distance.
+
+	Input:
+	 - thetal  <float>                        : inclination of the lens with respect to the vertical
+						    (counterclockwise)
+	 - tan_caustic_x  <list>                  : list of x coordinates of the tangential caustic
+	 - tan_caustic_y  <list>                  : list of y coordinates of the tangential caustic
+	 - source_selector_control_params  <dict> : dictionary with the key 'control_rectangle'. This 
+						    value determines how many times the vertices of the
+						    losangle (inscribed in the rectangle) will be away 
+						    from the cusps.
+
+	Output:
+	 - deformation_rectangle_pt1  <list> : pair (x,y) of upper right corner of the rectangle
+	 - deformation_rectangle_pt2  <list> : pair (x,y) of lower left corner of the rectangle
+
+	"""
 
 	control_rectangle = float(source_selector_control_params['control_rectangle'])
 	# converts tan_caustic_x and tan_caustic_y to the system of coordinates in which thetal = 0 (to find the 4 cusps)

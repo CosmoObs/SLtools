@@ -270,7 +270,7 @@ double bracketing_lambda_t(double f(double r, double params[]), double params[],
 
 //pot_params[0] = kappas
 //pot_params[1] = rs
-double r_e_nfw_find(double pot_params[], double *est_err_out=NULL, double x_lo = 1E-4, double x_hi = 10.0, int max_iter = 100, double relative_error = 1E-6, int v=1){
+double r_e_nfw_find(double pot_params[], double *est_err_out=NULL, double x_lo = 1E-4, double x_hi = 10.0, int max_iter = 100, double relative_error = 1E-6, int v=0){
   double *params = (double*) malloc(2.0*sizeof(double));
   params[0] = pot_params[0];
   params[1] = pot_params[1];
@@ -284,7 +284,7 @@ double r_e_nfw_find(double pot_params[], double *est_err_out=NULL, double x_lo =
   if(ks>1.0){v_in=1.0*rs;}
   dz=v_in*1.E-3;
   bracketing_lambda_t(re_find_func_nfw, params, out,v_in,dz);
-  printf("the range where the root is [%f , %f]\n", out[0],out[1]);
+  if(v) printf("the range where the root is [%f , %f]\n", out[0],out[1]);
     
   double re = root_find(re_find_func_nfw, params,est_err_out, out[0],out[1],max_iter,relative_error,v);
   return re;

@@ -1,0 +1,64 @@
+\hypertarget{siep__example_8cpp}{
+\section{siep\_\-example.cpp File Reference}
+\label{siep__example_8cpp}\index{siep\_\-example.cpp@{siep\_\-example.cpp}}
+}
+{\tt \#include $<$cstdlib$>$}\par
+{\tt \#include $<$cstdio$>$}\par
+{\tt \#include $<$fstream$>$}\par
+{\tt \#include $<$iostream$>$}\par
+{\tt \#include \char`\"{}siep\_\-curves.h\char`\"{}}\par
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\hypertarget{siep__example_8cpp_995d2fcf924a109ecff3cdbf433a24d0}{
+\#define \textbf{PAR\_\-MAX1}~5}
+\label{siep__example_8cpp_995d2fcf924a109ecff3cdbf433a24d0}
+
+\item 
+\hypertarget{siep__example_8cpp_c0cf2902c27019004022f788b44d0f5e}{
+\#define \textbf{TAM\_\-MAX}~2000}
+\label{siep__example_8cpp_c0cf2902c27019004022f788b44d0f5e}
+
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+\hypertarget{siep__example_8cpp_e66f6b31b5ad750f1fe042a706a4e3d4}{
+int \textbf{main} ()}
+\label{siep__example_8cpp_e66f6b31b5ad750f1fe042a706a4e3d4}
+
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+This code compute:
+
+Critical Curves and Caustics for
+
+Tangential Direction, it uses \char`\"{}cc\_\-tan\_\-siep\char`\"{}
+
+Radial Direction, it uses it uses \char`\"{}cc\_\-tan\_\-siep\char`\"{}
+
+Curves of constant distortion in both planes. It uses \char`\"{}cc\_\-lw\_\-pos\_\-siep\char`\"{} and \char`\"{}cc\_\-lw\_\-neg\_\-siep\char`\"{}
+
+to compile do: g++ -Wall -o exec\_\-siep \hyperlink{siep__example_8cpp}{siep\_\-example.cpp}
+
+to run the program, there is two options:
+
+the first option: we need a text file \char`\"{}input\_\-lens.txt\char`\"{} containing
+
+iflag (integer to choice the parameterization, can be 1 or 2)
+
+ellipticity value
+
+Einstein Radius value
+
+In the second option, in terminal to put the values of iflag, ellipticity value, Einstein Radius Value
+
+\begin{Desc}
+\item[Parameters:]
+\begin{description}
+\item[{\em argv\mbox{[}$\,$\mbox{]}}]: SIEP parameters \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Returns:]vector containing cartesian coordinates of the curves, show the plot in the screen and the data files of the curves if requested by the person. \end{Desc}

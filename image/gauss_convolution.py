@@ -15,7 +15,7 @@
 # multiple of the standard deviation sigma. 
 #
 # The standard deviation sigma can be obtained from the FWHM using the expression 
-# FWHM = 2 \sqrt{2 \ln 2} \sigma 
+# \f$FWHM = 2 \sqrt{2 \ln 2} \sigma \f$
 #
 # The convolution can be done using the function convolve_image (normal convolution) 
 # or the function fftconvolve_image (convolution using Fast Fourier Tranform). Both 
