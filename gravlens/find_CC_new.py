@@ -7,14 +7,16 @@
 # Habib Dumet Montoya - habibdumet@gmail.com
 # ==================================
 
-""" """
+""" Determines, separates and plots the caustics and CC of a given lens model """
 
 
 ##@package find_CC_new
-# Determines the caustics and CC of a given lens
+# 
 #
-# Determines the lens curves using a iterating method using gravlens
-
+# This package has functions to i) get the caustic and CC of a given model (see find_CC_new) and ii) 
+# plot the caustics and CC (plot_CC).
+# The curves are determined using an iterating method using gravlens (see find_CC_new).
+# The curves are identifyed as radial and tangencial using the function sltools.geometry.separate_curves.
 
 import os
 import logging
@@ -25,21 +27,19 @@ from sltools.geometry import separate_curves
 import numpy as np
 import matplotlib.pyplot as pyplot
 
-# given the gravlens 'config file' runs gravlens to generate the 
-# file with caustics and CC
-#
+
 def _critcurves_new(gravinput, caustic_CC_file, gravlens_input_file='gravlens_CC_input.txt'):
+	"""
+	Given the gravlens 'config file' runs gravlens to generate the file with caustics and CC
+
+	"""
+	
 	fmag = open(gravlens_input_file, 'w')
 	fmag.write(gravinput)
 	fmag.write('plotcrit %s\n' % caustic_CC_file )
 	fmag.close()
 	os.system('gravlens %s > /dev/null' % gravlens_input_file )
 
-
-## find_CC_new
-# Determines the caustics and CC of a given lens
-#
-# Determines the lens curves using a iterating method using gravlens
 
 
 #=======================================================================================================
@@ -163,14 +163,34 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 
 
-#===========================================================================
-
-
-
-## plot_CC
-# Plots the caustics and critical curves
-#
+#=======================================================================================================
 def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, plot_filename, show_plot=0):
+	"""
+	Plots given caustics and critical curves
+
+	Plots caustics and CC side by side. It can be chosen if the plot will be displayed in the screen
+	instead of saved to a file.
+
+	Input:
+	 -tan_caustic_x   <list> : list of x coordinates of points from the tangencial caustic
+         - tan_caustic_y  <list> : list of y coordinates of points from the tangencial caustic
+         - rad_caustic_x  <list> : list of x coordinates of points from the radial caustic
+         - rad_caustic_y  <list> : list of y coordinates of points from the radial caustic
+         - tan_CC_x       <list> : list of x coordinates of points from the tangencial CC
+         - tan_CC_y       <list> : list of y coordinates of points from the tangencial CC
+         - rad_CC_x       <list> : list of x coordinates of points from the radial CC
+         - rad_CC_y       <list> : list of y coordinates of points from the radial CC
+	 - plot_filename   <str> : the name of the generated plot file (including the format, ex. 
+			           'curves_plot.png'). To see the formats available see 
+				   matplotlib.pyplot help
+	 - show_plot       <int> : use 0 for 'no screen display' (default) and 1 for diaplay on the 
+				   screen
+
+	Output:
+	 - <file> : the plot file named plot_filename will be generated only if show_plot=0
+
+	"""
+
 	pyplot.clf()
 	f1 = pyplot.figure(1,figsize = (15,15) )
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
@@ -192,7 +212,9 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 		pyplot.savefig(plot_filename)
 	if show_plot == 1:
 		pyplot.show() 
- 
+
+	return True
+
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
 #
