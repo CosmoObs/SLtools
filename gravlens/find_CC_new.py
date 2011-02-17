@@ -196,6 +196,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
 	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',marker='.', markersize=2)
 	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='.', markersize=2)
+	pyplot.legend(('Tangential', 'Radial'),'upper right', shadow=True)
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
@@ -204,6 +205,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.subplot(122) # (numRows,numCols, plotNum)
 	pyplot.plot(tan_CC_x, tan_CC_y, color='black',marker='', markersize=2 )
 	pyplot.plot(rad_CC_x, rad_CC_y, color='red', marker='', markersize=2 )
+	pyplot.legend(('Tangential', 'Radial'),'upper right', shadow=True)	
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
@@ -218,7 +220,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
 #
-def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='crit_rad.txt', tan_curves_file='crit_tan.txt', curves_plot='crit_curves.png', show_plot=0, write_to_file=0):
+def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0):
 	""" 
 	This is a pipeline that runs 'find_CC_new', 'separate_CC' and
 	'plot_CC'. For details of these functions, see their documentation.
@@ -285,7 +287,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 
-	tan_CC_x, tan_CC_y,rad_CC_x,rad_CC_y = separate_curves(x1, y1, x2, y2)
+	rad_CC_x,rad_CC_y,tan_CC_x, tan_CC_y = separate_curves(x1, y1, x2, y2)
 
 	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
 
@@ -294,7 +296,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	# First, convert the array to a list
 	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = list(rad_CC_x), list(rad_CC_y), list(tan_CC_x), list(tan_CC_y)
 
-	tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y = separate_curves(u1, v1, u2, v2)
+	rad_caustic_x, rad_caustic_y,tan_caustic_x, tan_caustic_y = separate_curves(u1, v1, u2, v2)
 
 	rad_CC_x.append(rad_CC_x[0])
 	rad_CC_y.append(rad_CC_y[0])
@@ -334,15 +336,22 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot)
 
 
-#	if write_to_file!=0:
-
-#	"imprimir os arquivos tan_cc_x, tan_cc_y, tan_caustic_x, tan_caustic_y in to a file tang_curves.txt"
-
-	
-	if write_to_file != 0:
-		np.savetxt(tan_curves_file,(tan_CC_x,tan_CC_y,tan_caustic_x,tan_caustic_y))
-		np.savetxt(rad_curves_file,(rad_CC_x,rad_CC_y,rad_caustic_x, rad_caustic_y))
-#	"imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
+	if write_to_file != 0: # wrihte_show =0 means you don't want save the files.
+		outtan = open(tan_curves_file,"w")			
+		outtan.write("# Data file for tangential curves (critical and caustic) \n")
+		outtan.write("# x1 x2 y1 y2 \n")
+		outtan.write("# where (x1, x2) correspond to the critical curve and (y1,y2) correspond to caustic\n")
+		outtan.write("#\n")
+		for i in range(len(tan_CC_x)):
+			outtan.write("%f %f %f %f\n" %(tan_CC_x[i],tan_CC_y[i],tan_caustic_x[i],tan_caustic_y[i]))
+#
+		outrad = open(rad_curves_file,"w")			
+		outrad.write("# Data file for radial curves (critical and caustic) \n")
+		outrad.write("# x1 x2 y1 y2 \n")
+		outrad.write("# where (x1, x2) correspond to the critical curve and (y1,y2) correspond to caustic\n")
+		outrad.write("#\n")
+		for j in range(len(rad_CC_x)):
+			outrad.write("%f %f %f %f\n" %(rad_CC_x[j],rad_CC_y[j],rad_caustic_x[j],rad_caustic_y[j]))
 
 	return rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y
 
