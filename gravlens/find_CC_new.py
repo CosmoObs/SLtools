@@ -247,8 +247,8 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	
 	if write_to_file != 0:
-		np.savetxt(tan_curves_file,(tan_CC_x, tan_CC_y,tan_caustic_x, tan_caustic_y))
-		np.savetxt(rad_curves_file,(rad_CC_x,rad_CC_y,rad_caustic_x, rad_caustic_y))
+		np.savetxt(tan_curves_file,(tan_CC_x, tan_CC_y,tan_caustic_x, tan_caustic_y),delimiter=' ')
+		np.savetxt(rad_curves_file,(rad_CC_x,rad_CC_y,rad_caustic_x, rad_caustic_y),,delimiter=' ')
 #	"imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
 
 
