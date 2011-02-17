@@ -194,20 +194,16 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.clf()
 	f1 = pyplot.figure(1,figsize = (15,15) )
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',   marker='.', markersize=2 )
-	pyplot.legend('Tangential')
-	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='.', markersize=2 )
-	pyplot.legend('Radial')
+	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',marker='.', markersize=2)
+	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='.', markersize=2)
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
 	pyplot.title('Caustics'  , fontsize = 20)
 
 	pyplot.subplot(122) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_CC_x, tan_CC_y, color='black',   marker='', markersize=2 )
-	pyplot.legend('Tangential')
+	pyplot.plot(tan_CC_x, tan_CC_y, color='black',marker='', markersize=2 )
 	pyplot.plot(rad_CC_x, rad_CC_y, color='red', marker='', markersize=2 )
-	pyplot.legend('Radial')
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
@@ -300,7 +296,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		np.savetxt(rad_curves_file,(rad_CC_x,rad_CC_y,rad_caustic_x, rad_caustic_y))
 #	"imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
 
-	return rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y
+#	return rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y
 
 
 
