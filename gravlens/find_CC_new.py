@@ -274,14 +274,57 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	x1, y1, u1, v1, x2, y2, u2, v2 = np.loadtxt(caustic_CC_file, comments='#', unpack=True)
 
-	# Separating the critical cuves
+	# Separating the critical cuves ----------------------------------------------------------------
+	curves = separate_curves(x1, y1, x2, y2)
 
-	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = separate_curves(x1, y1, x2, y2)
+	if len(curves) == 1:
+		logging.warning('Only one critical curve was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
+		radial_curve = [[0],[0],[0],[0]]
+		tang_curve = curves[0]
+	else:
+		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 
-	# separating the caustics curves
+	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
 
-	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y  = separate_curves(u1, v1, u2, v2)
+	# Repeating the 1st element in the end of each array will make the plot easier
+	# First, convert the array to a list
+	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = list(rad_CC_x), list(rad_CC_y), list(tan_CC_x), list(tan_CC_y)
 
+	rad_CC_x.append(rad_CC_x[0])
+	rad_CC_y.append(rad_CC_y[0])
+	tan_CC_x.append(tan_CC_x[0])
+	tan_CC_y.append(tan_CC_y[0])
+
+	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = np.array(rad_CC_x), np.array(rad_CC_y), np.array(tan_CC_x), np.array(tan_CC_y)
+
+	# separating the caustics curves ---------------------------------------------------------------
+	curves = separate_curves(u1, v1, u2, v2)
+	
+	if len(curves) == 1:
+		logging.warning('Only one caustic was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
+		radial_curve = [[0],[0],[0],[0]]
+		tang_curve = curves[0]
+	else:
+		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+
+	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
+
+	# Repeating the 1st element in the end of each array will make the plot easier
+	# First, convert the array to a list
+	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = list(rad_caustic_x), list(rad_caustic_y), list(tan_caustic_x), list(tan_caustic_y)
+
+	rad_caustic_x.append(rad_caustic_x[0])
+	rad_caustic_y.append(rad_caustic_y[0])
+	tan_caustic_x.append(tan_caustic_x[0])
+	tan_caustic_y.append(tan_caustic_y[0])
+
+	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = np.array(rad_caustic_x), np.array(rad_caustic_y), np.array(tan_caustic_x), np.array(tan_caustic_y)
+
+
+
+	# plot
 	if curves_plot != 0: # curves_plot = 0 means you don't want any plots.
 		plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot)
 
