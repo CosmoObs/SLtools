@@ -287,16 +287,12 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 
-	rad_CC_x,rad_CC_y,tan_CC_x, tan_CC_y = separate_curves(x1, y1, x2, y2)
-
 	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
 
 
 	# Repeating the 1st element in the end of each array will make the plot easier
 	# First, convert the array to a list
 	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = list(rad_CC_x), list(rad_CC_y), list(tan_CC_x), list(tan_CC_y)
-
-	rad_caustic_x, rad_caustic_y,tan_caustic_x, tan_caustic_y = separate_curves(u1, v1, u2, v2)
 
 	rad_CC_x.append(rad_CC_x[0])
 	rad_CC_y.append(rad_CC_y[0])
