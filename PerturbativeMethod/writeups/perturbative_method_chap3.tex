@@ -232,10 +232,10 @@ convergence can be obtained using eq. (\ref{variavel-eliptica}):
 \eeq
 where $m$ is given by eq. (\ref{m}). In this case, it is possible to calculate
 the integrals (\ref{Jn}) and (\ref{Kn}) analitically.
-\beq
-J_n(r,\te)=\frac{R_E}{r}\frac{1}{\sqrt{\varepsilon_n+A(\theta)}}\tanh^{-1}
+\bea
+J_n(r,\te)&=&\frac{\re}{r}\frac{1}{\sqrt{\varepsilon_n+A(\theta)}}\tanh^{-1}
 \left(\sqrt{\frac{\varepsilon_n+A(\theta)}{1+A(\theta)}}\right)
-\eeq
+\eea
 where
 \bea
 \varepsilon_0&=&1-a^2\\
@@ -253,13 +253,11 @@ $\left(a=(1-\epsilon)^{-1/2},\,b=(1-\epsilon)^{1/2}\right)$. Then
 \eea
 and
 \bea
-J_0(r,\te)&=&\frac{\sigma}{r}\left(\frac{\tanh^{-1}\left[\sqrt{\frac{\epsilon^2-\epsilon(\epsilon-2)\cos^2\theta}{\epsilon^2-\epsilon(\epsilon-2)\cos^2\theta-1}}\right]}{\sqrt{\frac{\epsilon^2-\epsilon(\epsilon-2)\cos^2\theta}{\epsilon-1}}}\right)\\
-J_1(r,\te)&=&\frac{\sigma}{r}\left(\frac{\tanh^{-1}\left[\sqrt{\frac{2\epsilon^2-2\epsilon-\epsilon(\epsilon-2)\cos^2\theta}{\epsilon
-^2-\epsilon(\epsilon-2)\cos^2\theta-1}}\right]}{\sqrt{\frac{2\epsilon
-^2-2\epsilon-\epsilon(\epsilon-2)\cos^2\theta}{\epsilon-1}}}\right)\\
-K_0&=&\\
-K_1&=&\\
-K_2&=&
+J_0(r,\te)&=&\frac{R_E}{r}\frac{\tanh^{-1}\left[\frac{\sqrt{-\frac{(-2+\epsilon ) \epsilon  \text{Sin}[\theta ]^2}{-1+\epsilon }}}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right]}{\sqrt{-\frac{(-2+\epsilon ) \epsilon  \text{Sin}[\theta ]^2}{-1+\epsilon }}}\\[10pt]
+J_1(r,\te)&=&\frac{R_E}{r}\frac{\tanh^{-1}\left[\frac{\sqrt{\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right]}{\sqrt{\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\\[10pt]
+K_0(r,\te)&=&\frac{R_E}{2r} \left(\frac{\text{Cot}[\theta ]^2}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}-\frac{\text{ArcTanh}\left[\frac{\sqrt{-\frac{(-2+\epsilon ) \epsilon  \text{Sin}[\theta ]^2}{-1+\epsilon }}}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right] \text{Csc}[\theta ]^2}{\sqrt{-\frac{(-2+\epsilon ) \epsilon  \text{Sin}[\theta ]^2}{-1+\epsilon }}}\right)\\[10pt]
+K_1(r,\te)&=&-\frac{R_E}{2r \sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\\[10pt]
+K_2(r,\te)&=&\frac{R_E}{2r} \left(-\frac{\text{ArcTanh}\left[\frac{\sqrt{\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right] \text{Sec}[\theta ]^2}{\sqrt{\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}+\frac{\text{Tan}[\theta ]^2}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right)
 \eea
 With these results, we obtain
 \bea
@@ -272,17 +270,15 @@ d}\te^2}&=&
 For small ellipticity, we can do a series expansion around $\epsilon=0$. At
 linear order, this gives
 \bea
-J_0(r,\te)cos^2\te+J_1(r,\te)sin^2\te&=&\frac{\sigma}{r}\left(1-\frac{
+J_0(R_E,\te)cos^2\te+J_1(R_E,\te)sin^2\te&=&\left(1-\frac{
 \epsilon\cos\,2\theta}{2}\right)\\
 J_1(r,\te)-J_0(r,\te)&=&\frac{2\epsilon}{3}
 \eea
 and
 \bea
-f_1&=&\re\left[\frac{\sigma}{r}\left(1-\frac{\epsilon\cos\,2\theta}{6}
-\right)-1\right]\\[10pt]
+f_1&=&\\[10pt]
 \frac{{\rm d}f_0}{{\rm
-d}\te}&=&\re\sigma\frac{\epsilon}{3}\sin\,
-2\te\\[10pt]
+d}\te}&=&\\[10pt]
 \frac{{\rm d}^2f_0}{{\rm
 d}\te^2}&=&
 \eea
