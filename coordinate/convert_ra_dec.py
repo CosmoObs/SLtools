@@ -24,7 +24,9 @@
 # To run the code, just type:
 #
 # > python convert_ra_dec.py --ra=10 --dec=20
+#
 # or
+#
 # > python convert_ra_dec.py --ra=00:40:00 --dec=20:00:00
 #
 # To see the package help message, type:
