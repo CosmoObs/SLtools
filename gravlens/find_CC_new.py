@@ -245,7 +245,11 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	if curves_plot != 0: # curves_plot = 0 means you don't want any plots.
 		plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot)
 
-#	if write_to_file == 1
+
+
+
+#	if write_to_file!=0:
+
 #	"imprimir os arquivos tan_cc_x, tan_cc_y, tan_caustic_x, tan_caustic_y in to a file tang_curves.txt"
 #	"imprimir os arquivos rad_cc_x, rad_cc_y, rad_caustic_x, rad_caustic_y in to a file rad_curves.txt"
 
