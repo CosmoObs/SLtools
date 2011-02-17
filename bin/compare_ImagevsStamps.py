@@ -1,0 +1,1 @@
+../pipelines/finders/compare_ImagevsStamps.py
