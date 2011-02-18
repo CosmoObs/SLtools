@@ -21,7 +21,7 @@ FUNCOES RELACIONADAS AO MODELO DA LENTE
   \return \f$ \frac{{\rm ArcTanH}(\sqrt{x^2-1})}{\sqrt{x^2-1}} \f$
   \sa k()
 */
-double F(double X)
+/*double F(double X)
 {
     double f;
     double x2;
@@ -47,7 +47,7 @@ double F(double X)
     }
     
     return f;
-}
+}*/
 
 /******************************************************************************/
 //! Spherical NFW convergence
@@ -78,7 +78,7 @@ double k(double X, double ks)
   \return \f$ \frac{dF(x)}{dx} = \frac{1-x^2 F(x)}{x(x^2-1)}\f$
   \sa F()
 */
-double Flinha(double X)
+/*double Flinha(double X)
 {
     double x2;
     double arg;
@@ -91,7 +91,7 @@ double Flinha(double X)
     
     
     return flinha;
-}
+}*/
 /******************************************************************************/
 //! Derivative of K
 /*!

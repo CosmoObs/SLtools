@@ -25,6 +25,12 @@ double b=pot_params[0];
 return b/(2.0*r);
 }
 
+double conv_sis_circ_prime(double r, double pot_params[])
+{
+  double b = pot_params[0];
+  return -b/(4.0*pow(r,3));
+}
+
 //! Angle deflection of the SIS model.
 //!
 //! \f$ \alpha(r)=   b \f$, 
