@@ -80,7 +80,7 @@ int main(){
   FILE *outrthp = fopen ("curves_r_th_pos.dat" , "w");
   FILE *outrthn = fopen ("curves_r_th_neg.dat" , "w");
   
-  plot_arcs(source, f1_pnfw, Df0Dtheta_pnfw, pert_params, kappa_2,_r_e_nfw,npts, outarc);   //func
+  plot_arcs_sep(source, f1_pnfw, Df0Dtheta_pnfw, pert_params, kappa_2,_r_e_nfw,npts, outarc);   //func
   plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npts, outtc);   //func
   plot_rth_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2, _r_e_nfw, 10., npts, outrthp, outrthn);   //func
   plot_sources(source,npts,outsrc);   //func
