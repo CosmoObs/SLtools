@@ -1,26 +1,32 @@
 /** @file
-* Package to generate the curves useful to the perturbative approach, as
+* Module to generate curves useful for the perturbative approach, as
 * 
-*  Tangential Critical Curve 
+*  Tangential Critical Curve and  Tangential Caustic. This function need
+* - main field of the perturbative approach, i.e, \f$ f_n(\theta)\f$ and their derivatives
+* - pert_params[] :a vector that contains all the perturbation parameters
+* - npts: number of theta divisions 
+* - Einstein Radius: \f$ R_{_{\mathrm{E}}}\f$ 
+* - two files to write the tangential curves 
 *
-*  Tangential Caustic 
 *
-*  Source contour plotting
+*  Elliptical source, contour plot. It need
+*  - structure corresponding to the source: size, ellipticity, orientation,etc
+*  - npts: number of theta divisions
+*  - a file to write the plot in a text file
 */
 
 /** @package perturbative_method
-* Package to generate the main curves
-*
-*
-* Detailde description FIXME
-*
+* 
+* To plot the critical and caustic curves (model independent)
+* 
+* To plot of an elliptical source, not aligned to the main axis, in its corresponding plane 
 */
 #ifndef GENERATE_CUVES_H
 #define GENERATE_CURVES_H
 
 #include "perturbative_method.h"
 
-/** A functions to print the curves model (tangential critical curve,tangential caustic curves and source )
+/** A functions to print the curves model (tangential critical curve,tangential caustic curves)
 *
 *  \param Df0Dtheta_in function related to the perturbed potential
 *  \param f1_in function related to the perturbed potential
@@ -28,10 +34,10 @@
 *  \param pert_params[] a vector that contains all the perturbation parameters
 *  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
 *  \param npts number of theta divisions 
-*  \param _r_e Einstein Radius (If not indicated, the code assumes \f$ R_{_{\mathrm{E}}}=1  \f$ )
+*  \param _r_e Einstein Radius (\f$ R_{_{\mathrm{E}}}\f$ )
 *  \param file_in1 a file to write tangential critical curve
 *  \param file_in2 a file to write tangential caustic
-*  \return nothing
+*  \return curve datas in the screen or the curve data in a text file
 *
 *  \sa f_type, r_crit, caustic_y1, caustic_y2, y1_src,y2_src
 */
@@ -70,7 +76,7 @@ void plot_curves(f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, doubl
 *  \param source_in a struct that define elliptical sources
 *  \param npts number of theta divisions (If itsn't given, the code assumes npts=1000)
 *  \param file_in a file to write the source contour
-*  \return nothing
+*  \return source curve data in the screen or the source curve data in a text file
 */
 
 
