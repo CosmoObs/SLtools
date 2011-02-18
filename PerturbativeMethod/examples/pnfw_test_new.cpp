@@ -12,6 +12,7 @@
 #include "../generate_arcs.h"
 #include "../generate_curves.h"
 #include "../arc_properties.h"
+#include "../arc_cross_section.h"
 //#include "gof_per_method.h"
 
 #define TAM_MAX1 20
@@ -118,6 +119,7 @@ int main(){
   system("xmgrace -view 0.15 0.15 0.85 0.85 -block curves_r_th_pos.dat -bxy 3:4  -block tang_curves.dat -bxy 3:4 -block curves_r_th_neg.dat -bxy 3:4 src_plot.dat");
   system("xmgrace -view 0.15 0.15 0.85 0.85 curves_r_th_pos.dat tang_curves.dat curves_r_th_neg.dat  arcs_pnfw.dat");
 //   system("xmgrace -view 0.15 0.15 0.85 0.85 tang_crit.dat arcs_pnfw.dat");
-  
-
+ 
+  double sig_test = sigma_defarcs(f1_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, 10);
+    printf("cross-sec=%E\n",sig_test);
 }
