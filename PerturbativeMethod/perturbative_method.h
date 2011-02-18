@@ -261,43 +261,116 @@ double r_caust(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double 
 }
 
 
-/** First component of the parametric equation for the elliptical souce not allignet to main axis
+/** First components of the lens equation for the perturbative method
 *
-*  \f$ y_{1s}= \dfrac{R_s}{\sqrt{1-\eta_s}}\cos{\theta},\qquad y_{2s}= \dfrac{R_s}{\sqrt{1+\eta_s}}\sin{\theta} \f$
+*  \f$ y_{1_s}= (\kappa_2 x-f_1)\cos{\theta}+\frac{1}{R_{\rm E}}\frac{\partial f_0}{\partial \theta}\sin{\theta}\f$
 *
-*  \param elliptical_source source parameters 
-*  \param theta angular coordinate in the source plane 
-*
-*   \return \f$ y^{\prime}_{1,src}= x_0+y_{1s}\cos{\theta_s}-y_{2s}\sin{\theta_s} \f$ 
-*  \sa elliptical_source
+*  \param x : radial coordinate in the lens plane 
+*  \param theta : angular coordinate in the lens plane 
+*  \param Df0Dtheta_in :function related to the perturbed potential
+*  \param elliptical_source :source parameters 
+*  \param kappa_2 :parameter related with the convergence of the circular model
+*  \param _r_e : Einstein radius of the lens model
+*  \param sflag : Integer to decide wheter the source is needed (sflag=1) or not (sflag=0)	
+*   \return \f$ y^{1_s}(\theta) \f$ 
+*  \sa  f_type, elliptical_source
 */
 
-double y1_src(elliptical_source source_in, double theta){
-      double theta_0 = source_in.theta0;  
-      double y1s=source_in.R0*cos(theta)/sqrt(1.-source_in.eta0);
-      double y2s=source_in.R0*sin(theta)/sqrt(1.+source_in.eta0);
-      double y1_linha_src=y1s*cos(theta_0)-y2s*sin(theta_0)+source_in.x0;
-      return y1_linha_src;
+double y1_leq(f_type f1_in, f_type Df0Dtheta_in, double x, double theta, double kappa2, double pert_params[],double _r_e){
+  double f1_temp, df0dtheta_temp;
+ f1_temp= f1_in(theta,pert_params,_r_e);
+  df0dtheta_temp= Df0Dtheta_in(theta,pert_params,_r_e);
+   return (kappa2*x-f1_temp)*cos(theta)+(1./_r_e)*df0dtheta_temp*sin(theta);
+  
 }
 
 
-/** Second component of the parametric equation for the elliptical souce not allignet to main axis
-*   This caustic line, in polar coordinates, is defined by :
+/** Second components of the lens equation for the perturbative method
 *
-*  \f$ y_{1s}= \dfrac{R_s}{\sqrt{1-\eta_s}}\cos{\theta},\qquad y_{2s}= \dfrac{R_s}{\sqrt{1+\eta_s}}\sin{\theta} \f$
-*  \param elliptical_source source parameters 
-*  \param theta  angular coordinate in the source plane 
-*   \return \f$ y^{\prime}_{2,src}= y_0+y_{1s}\sin{\theta_s}+y_{2s}\cos{\theta_s} \f$ 
-* \sa elliptical_source
+*  \f$ y_{2_s}= (\kappa_2 x-f_1)\sin{\theta}-\frac{1}{R_{\rm E}}\frac{\partial f_0}{\partial \theta}\cos{\theta}\f$
+*
+*  \param x : radial coordinate in the lens plane 
+*  \param theta : angular coordinate in the lens plane 
+*  \param Df0Dtheta_in :function related to the perturbed potential
+*  \param elliptical_source :source parameters 
+*  \param kappa_2 :parameter related with the convergence of the circular model
+*  \param _r_e : Einstein radius of the lens model
+*  \param sflag : Integer to decide wheter the source is needed (sflag=1) or not (sflag=0)	
+*   \return \f$ y_{2_s}(\theta) \f$ 
+*  \sa  f_type, elliptical_source
 */
 
-double y2_src(elliptical_source source_in, double theta){
-      double theta_0 = source_in.theta0;  
-      double y1s=source_in.R0*cos(theta)/sqrt(1.-source_in.eta0);
-      double y2s=source_in.R0*sin(theta)/sqrt(1.+source_in.eta0);
-      double y2_linha_src=y1s*sin(theta_0)+y2s*cos(theta_0)+source_in.y0 ;
-      return y2_linha_src;
+double y2_leq(f_type f1_in, f_type Df0Dtheta_in, double x, double theta, double kappa2, double pert_params[],double _r_e){
+  double f1_temp, df0dtheta_temp;
+  f1_temp=f1_in(theta,pert_params,_r_e);
+  df0dtheta_temp=Df0Dtheta_in(theta,pert_params,_r_e);
+  
+  return (kappa2*x-f1_temp)*sin(theta)-(1./_r_e)*df0dtheta_temp*cos(theta);
+  
 }
+
+
+
+/**  Radial compontent (\f$ x_{\rm th} \f$ ) in the lens plane of the Constant Distortion Curves (take care: \f$ r_{\rm th}=x_{\rm th}+R_{\rm E}\f$ ) 
+*
+*  To plot the tangential critical curve, use  polar coordinates i.e.\f$ x_{c_1}=r_{\mathrm{crit}}*\cos{\theta},x_{c_2}=r_{\mathrm{crit}}*\sin{\theta}\f$  
+*  \param D2f0Dtheta2_in function related to the perturbed potential (second derivative)
+*  \param f1_in function related to the perturbed potential
+*  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
+*  \param theta angular coordinate in the lens plane.
+*  \param pert_params[] a vector containing all the perturbation parameters
+*  \param r_th : length-to-width threshold (could be positive or negative)
+*  \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ ) of the circular model
+*  \return \f$ R_{\mathrm{crit}}= R_{_\mathrm{E}} +\dfrac{1}{\kappa_2}\left[f_1+\dfrac{1}{R_{_\mathrm{E}}}\dfrac{d^2 f_0}{d \theta^2}\right]\f$
+* \sa f_type
+*/
+double x_th(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double theta, double pert_params[], double r_th, double _r_e){
+  double q=1.-1/r_th;
+  double x_cdc=r_crit(f1_in,D2f0Dtheta2_in,kappa2,theta, pert_params, _r_e)/q-_r_e;
+  return x_cdc;
+}
+
+/** First components of the constant distortion curves in the source 
+*
+*  \f$ y_{1{\rm th}}= (\kappa_2 x-f_1)\cos{\theta}+\frac{1}{R_{\rm E}}\frac{\partial f_0}{\partial \theta}\sin{\theta}\f$
+*
+*  \param theta : angular coordinate in the lens plane 
+*  \param f1_in : function related to the perturbed potential
+*  \param Df0Dtheta_in :function related to the perturbed potential
+*  \param D2f0Dtheta2_in :function related to the perturbed potential
+*  \param elliptical_source :source parameters 
+*  \param kappa_2 :parameter related with the convergence of the circular model
+*  \param _r_e : Einstein radius of the lens model
+*  \param sflag : Integer to decide wheter the source is needed (sflag=1) or not (sflag=0)	
+*   \return \f$ y^{1_s}(\theta) \f$ 
+*  \sa  f_type, elliptical_source
+*/
+
+double y1_th(f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double kappa2, double pert_params[],double _r_e, double r_th){
+  double x_cor=x_th(f1_in,D2f0Dtheta2_in, kappa2, theta, pert_params, r_th, _r_e);
+  return y1_leq(f1_in,Df0Dtheta_in, x_cor, theta, kappa2, pert_params,_r_e);
+  
+}
+
+/** Second components of the constant distortion curves in the source 
+*
+*  \f$ y_{2 {\rm th}}= (\kappa_2 x_{\rm th}-f_1)\sin{\theta}-\frac{1}{R_{\rm E}}\frac{\partial f_0}{\partial \theta}\cos{\theta}\f$
+*
+*  \param theta : angular coordinate in the lens plane 
+*  \param Df0Dtheta_in :function related to the perturbed potential
+*  \param D2f0Dtheta2_in :function related to the perturbed potential  
+*  \param kappa_2 :parameter related with the convergence of the circular model
+*  \param _r_e : Einstein radius of the lens model
+*   \return \f$ y^{1_s}(\theta) \f$ 
+*  \sa  f_type, x_th
+*/
+
+double y2_th(f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double kappa2, double pert_params[],double _r_e, double r_th){
+  double x_cor=x_th(f1_in,D2f0Dtheta2_in, kappa2, theta, pert_params, r_th, _r_e);
+  return y2_leq(f1_in,Df0Dtheta_in, x_cor, theta, kappa2, pert_params,_r_e);
+  
+}
+
 
 /** Mean value of the radial distance of the arcs (Eq. 2.68 of the Report) 
 *
@@ -348,4 +421,44 @@ double wr_theta(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
   double wr_temp=r_mean(f1_in,Df0Dtheta_in, kappa2, source_in,theta, pert_params,_r_e)*w_mean(f1_in, Df0Dtheta_in, kappa2, source_in, theta, pert_params, _r_e);
   return wr_temp;  
 }
+
+/** First component of the parametric equation for the elliptical souce not allignet to main axis
+*
+*  \f$ y_{1s}= \dfrac{R_s}{\sqrt{1-\eta_s}}\cos{\theta},\qquad y_{2s}= \dfrac{R_s}{\sqrt{1+\eta_s}}\sin{\theta} \f$
+*
+*  \param f1_in function related to the perturbed potential
+*  \param elliptical_source source parameters 
+*  \param theta angular coordinate in the source plane 
+*   \return \f$ y^{\prime}_{1,src}= x_0+y_{1s}\cos{\theta_s}-y_{2s}\sin{\theta_s} \f$ 
+*  \sa elliptical_source
+*/
+
+double y1_src(elliptical_source source_in, double theta){
+      double theta_0 = source_in.theta0;  
+      double y1s=source_in.R0*cos(theta)/sqrt(1.-source_in.eta0);
+      double y2s=source_in.R0*sin(theta)/sqrt(1.+source_in.eta0);
+      double y1_linha_src=y1s*cos(theta_0)-y2s*sin(theta_0)+source_in.x0;
+      return y1_linha_src;
+}
+
+
+/** Second component of the parametric equation for the elliptical souce not allignet to main axis
+*   This caustic line, in polar coordinates, is defined by :
+*
+*  \f$ y_{1s}= \dfrac{R_s}{\sqrt{1-\eta_s}}\cos{\theta},\qquad y_{2s}= \dfrac{R_s}{\sqrt{1+\eta_s}}\sin{\theta} \f$
+*  \param elliptical_source source parameters 
+*  \param theta  angular coordinate in the source plane 
+*   \return \f$ y^{\prime}_{2,src}= y_0+y_{1s}\sin{\theta_s}+y_{2s}\cos{\theta_s} \f$ 
+* \sa elliptical_source
+*/
+
+double y2_src(elliptical_source source_in, double theta){
+      double theta_0 = source_in.theta0;  
+      double y1s=source_in.R0*cos(theta)/sqrt(1.-source_in.eta0);
+      double y2s=source_in.R0*sin(theta)/sqrt(1.+source_in.eta0);
+      double y2_linha_src=y1s*sin(theta_0)+y2s*cos(theta_0)+source_in.y0 ;
+      return y2_linha_src;
+}
+
+
 #endif

@@ -120,7 +120,7 @@ double conv_nfw_circ(double r, double pot_params[])
 double conv_nfw_circ_prime(double r, double pot_params[])
 {
 
-  double K, ks=pot_params[0];
+  double ks=pot_params[0];
   double rs=pot_params[1];
   double X=r/rs;
   double X2=X*X;
