@@ -11,7 +11,7 @@
 * - pot_params[]={\f$ R_{\rm E}\f$}
 */
 
-*/
+
 /** @package circular_models
 *  Package to compute quantities related to the circular SIS model.
 *
