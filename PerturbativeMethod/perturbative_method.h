@@ -1,11 +1,22 @@
 /** @file
-* Example of doxygen documentation for C functions FIXME. 
+* This module compute or define several quantities related to the Perturbative Approach as
+* - structure for the elliptical source
+* - \f$ \bar{f}_n(\theta)\f$  and their derivatives
+* - \f$ \Delta(\eta_0,\theta) \f$ (argument of the square root, it determines the dark regions) 
+* - \f$ dr_{\pm} \f$ (perturbed position)
+* - \f$ r_{\rm crit}(\theta)\f$  Radial coordinate of the Tangential Critical Curve
+* - \f$ r_{\rm caust}(\theta)\f$ Radial coordinate of the Tangential Caustic
+* - Parametric equation of the tangential caustic
+* - Parametric Equation of an elliptical source not aligned to main axis
+* - Mean value of the radial distance of the arcs
+* - Mean width of the image at some angular position
+* - Unitary area of the image, i.e, is the argument of the integral \f$ W(\theta)\bar{r}(\theta)\f$ 
+*
+* All of these expressions are described in .../sltools/PerturbativeMethod/writeups/Report_on_Perturbative_Method.pdf
 */
 
 /** @package perturbative_method
-*  Package to compute quantities related to the Perturbative Method discussed in  http://adsabs.harvard.edu/abs/2007MNRAS.382L..58A and further works 
-*
-*  Detailed descrition FIXME
+*  To compute quantities related to the Perturbative Method discussed in  http://adsabs.harvard.edu/abs/2007MNRAS.382L..58A and further works 
 *
 */
 

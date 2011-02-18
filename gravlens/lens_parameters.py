@@ -4,10 +4,10 @@
 # Pedro Ferreira - pferreira@dfte.ufrn.br
 # ==================================
 
-"""        """
+""" Package to deal with gravlens configuration (superseded by lens_parameters_new) """
 
 ##@package lens_parameters
-# Creates 2 strings that are used as input for gravlens
+# Creates 2 strings that are used as input for gravlens (superseded by lens_parameters_new)
 #
 #@param lens_model (kappas, xsl,el,thetal) currently a dictionary with the lens model parameters 
 #@param gravlens_params (set of gravlens parameters: gridhi1, maxlev, etc)

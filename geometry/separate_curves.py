@@ -40,10 +40,9 @@ def separate_curves(x1, y1, x2, y2, delta=None):
      - y2  <list> : y coordinate of the point consecutive to (x1,y1)
 
     Output:
-     - x1  <list> : x coordinates of points from one curve (in gravlens, is the radial curve)
-     - y1  <list> : y coordinates of points from one curve (in gravlens, is the radial curve)
-     - x2  <list> : x coordinates of points from the other curve (in gravlens, is the tangential curve)
-     - y2  <list> : y coordinates of points from the other curve (in gravlens, is the tangential curve)
+     - curves  <list> : list of curves. Each element curves[i] is a closed curve with 4 arrays. The 
+                        first 2 arrays being the (x,y) coordinates of the curve points and the 3rd and 
+			4th collumns are the consecutive points to the 1st and 2nd collumns
 
     '''
 
@@ -76,29 +75,8 @@ def separate_curves(x1, y1, x2, y2, delta=None):
     for index in range(ncurves):
         curves.append([x1[start[index]:end[index]], y1[start[index]:end[index]], x2[start[index]:end[index]], y2[start[index]:end[index]]])
 
-    if len(curves) == 1:
-        logging.warning('Only one caustic (and CC) was found (usually its the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
 
-
-    radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
-    tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
-    # connecting each (x1_i,y1_i) to (x2_i,y2_i) will draw a closed curve, but the (x1_i,y1_i)
-    # already contains all the curve points
-
-    x_rad, y_rad, x_tg, y_tg = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
-
-    # repeating the 1st element in the end of each array will make the plot easier
-    # first, convert the array to a list
-    x_rad, y_rad, x_tg, y_tg = list(x_rad), list(y_rad), list(x_tg), list(y_tg)
-
-    x_rad.append(x_rad[0])
-    y_rad.append(y_rad[0])
-    x_tg.append(x_tg[0])
-    y_tg.append(y_tg[0])
-
-    x_rad, y_rad, x_tg, y_tg = np.array(x_rad), np.array(y_rad), np.array(x_tg), np.array(y_tg)
-
-    return x_rad, y_rad, x_tg, y_tg
+    return curves
 
 
 

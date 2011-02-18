@@ -218,23 +218,23 @@ $\psi(r,\te)\equiv\phi(r,\te)-\phi_0(r)$, we arrive at
 f_1&=&\re\left[ab\left(J_0(R_E,\te)\,cos^2\te+J_1(R_E,\te)\,sen^2\te\right)-1\right]\label{f1-sie}
 \\[10pt]
 \frac{{\rm d}f_0}{{\rm
-d}\te}&=&ab\,\frac{\re^2}{2}\left(J_1(R_E,\te)-J_0(R_E,\te)\right)sen\,2\te\label{df0-sie}\\[10pt]
+d}\te}&=&ab\,\frac{\re^2}{2}\left[J_1(R_E,\te)-J_0(R_E,\te)\right]sen\,2\te\label{df0-sie}\\[10pt]
 \frac{{\rm d}^2f_0}{{\rm
-d}\te^2}&=&ab\,\re^2\left[\left(J_1(R_E,\te)-J_0(R_E,\te)\right)cos\,2\te+ \frac{\re^2}{2}
-\left(K_0-2K_1(R_E,\te)+  K_2(R_E,\te)\right)sen^22\te\right]\label{d2f0-sie}
+d}\te^2}&=&ab\,\re^2\Bigg\{\left[J_1(R_E,\te)-J_0(R_E,\te)\right]cos\,2\te +\nonumber\\ 
+&&+\frac{\re^2}{2}\left[K_0-2K_1(R_E,\te)+ K_2(R_E,\te)\right]sen^22\te\Bigg\}\label{d2f0-sie}
 \eea
 \subsection{SIE: CC, caustics and deformation cross-section}
 
 SIE models are the elliptical generalization of the SIS model. As such, the
 convergence can be obtained using eq. (\ref{variavel-eliptica}):
 \beq
-\kappa_{SIE}(m)=\frac{\sigma_V}{2m}\label{convergence-SIE}
+\kappa_{SIE}(m)=\frac{R_E}{2m}\label{convergence-SIE}
 \eeq
 where $m$ is given by eq. (\ref{m}). In this case, it is possible to calculate
 the integrals (\ref{Jn}) and (\ref{Kn}) analitically.
 \beq
-J_n(r,\te)=\frac{\sigma_V}{r}\frac{1}{\sqrt{\varepsilon_n-A(\theta)}}\tanh^{-1}
-\left(\sqrt{\frac{\varepsilon_n-A(\theta)}{1-A(\theta)}}\right)
+J_n(r,\te)=\frac{R_E}{r}\frac{1}{\sqrt{\varepsilon_n+A(\theta)}}\tanh^{-1}
+\left(\sqrt{\frac{\varepsilon_n+A(\theta)}{1+A(\theta)}}\right)
 \eeq
 where
 \bea
@@ -273,8 +273,8 @@ For small ellipticity, we can do a series expansion around $\epsilon=0$. At
 linear order, this gives
 \bea
 J_0(r,\te)cos^2\te+J_1(r,\te)sin^2\te&=&\frac{\sigma}{r}\left(1-\frac{
-\epsilon\cos\,2\theta}{6}\right)\\
-J_1(r,\te)-J_0(r,\te)&=&\frac{\sigma}{r}\frac{2\epsilon}{3}
+\epsilon\cos\,2\theta}{2}\right)\\
+J_1(r,\te)-J_0(r,\te)&=&\frac{2\epsilon}{3}
 \eea
 and
 \bea

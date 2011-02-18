@@ -9,7 +9,9 @@
 
 ##@package get_bisectrix_pts
 #
-# Determines the points of an object closer than \f$ \sqrt{2}/2 \f$ from the bisectrix of the line joining two chosen points of the object
+#
+# Determines the points of an object closer than \f$ \sqrt{2}/2 \f$ from the bisectrix of the line 
+# joining two chosen points of the object. 
 #
 
 
@@ -18,7 +20,7 @@ import numpy as np
 
 
 # ======================================================================================================
-def get_bisectrix_pts( ximg, yimg, ref_position_1, ref_position_2 ):
+def get_bisectrix_pts(ximg, yimg, ref_position_1, ref_position_2):
 	"""
 	Function to determine the points near the bisectrix of the line joining two points.
 
@@ -27,8 +29,8 @@ def get_bisectrix_pts( ximg, yimg, ref_position_1, ref_position_2 ):
 	perpendicular to the line joinning the 2 input reference points).
 
 	Input:
-	 - ximg          <list> : x coordinates of the image
-	 - yimg          <list> : y coordinates of the image
+	 - ximg          <list> : list with x coordinates of the image
+	 - yimg          <list> : list with y coordinates of the image
 	 - ref_position_1 <int> : the (Python) position of one reference point in the ximg and yimg lists
 	 - ref_position_2 <int> : the (Python) position of the other reference point in the ximg and yimg 
 			    lists
@@ -76,10 +78,11 @@ def get_bisectrix_pts( ximg, yimg, ref_position_1, ref_position_2 ):
 # ======================================================================================================
 def circ_3pts(p1, p2, p3):
 	"""
-	Determines the circunference that passes through 3 points 
+	Determines the circunference that passes through 3 points.
 
 	Given 3 points (x,y) on a plane, returns circunference radius and center. The method implemented
-	in this funcion is the one described in http://en.wikipedia.org/wiki/Circumcircle
+	in this funcion is the one described in <A HREF="http://en.wikipedia.org/wiki/Circumcircle"> 
+	CircumcircleWikipedia</A> .
 
 	Input:
 	 - p1 <list> : pair (x,y) of coordinates of the 1st point
@@ -125,20 +128,19 @@ def circ_3pts(p1, p2, p3):
 # ======================================================================================================
 def get_length_arc_circ(L1,R):
 	"""
-	Calculates the length of a arc of a circunference.
+	Calculates the length of an arc of a circle.
 
-	Given a circunference of radius R, calculates the length of the arc of circunference between 2
+	Given a circle of radius R, calculates the length of the arc of circle between 2
 	points L1 apart from each other.
 	The length L of the arc is calculated through the cosine law:
 	\f$ L = R*arccos(1 - (L1^2)/(2R^2)) \f$
 
 	Input:
-	 - L1 <float> : shortest distance between the 2 extrema points of the desired arc of 
-			circunference
-	 - R  <float> : radius of the circunference
+	 - L1 <float> : shortest distance between the 2 extrema points of the desired arc of circle
+	 - R  <float> : radius of the circle
 
 	Output: 
-	 - <float> : length of the arc of circunference
+	 - <float> : length of the arc of circle
 
 	"""
 

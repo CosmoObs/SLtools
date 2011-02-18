@@ -17,9 +17,7 @@
 /** @package pseudo_elliptical_models
 * Package to compute quantities related to Pseudo-Elliptical Models in the framework of Perturbative Approach
 *
-* Detailed description FIXME
-*
-*
+* Detailed description we find in .../sltools/PerturbativeMethod/writeups/Report_on_Perturbative_Method.pdf
 */
 # ifndef PE_MODEL_H
 # define PE_MODEL_H
@@ -34,13 +32,13 @@ typedef double (*f_type2)   (double r, double pert_params[]);
 //!  \f$ \xi=r\sqrt{a_{1\eta}\cos^2{\theta}+a_{2\eta}\sin^2{\theta}}\f$ 
 //!        (\f$ \xi_E\f$ is the elliptical variable \f$ \xi(r,\theta)\f$ for \f$ r=R_{E}\f$) 
 //!
-//!  \f$ f_{1}(\theta) := \left[\dfrac{\partial\psi_E(r,\theta)}{\partial r}\right]_{r=R_{E}}\f$
+//!  \f$ f_{1}(\theta) := \left[\frac{\partial\psi_E(r,\theta)}{\partial r}\right]_{r=R_{E}}\f$
 /*!
 \param alpha_in : angle deflection of the circular potential
 \param R_E: Einstein Radius
 \param theta : angular coordinate in the lens plane,
  \param pert_params[] : Pseudo-Elliptical parameters 
-  \return \f$ f_{1}(\theta) = \dfrac{\xi_{\mathrm{E}}}{R_{\mathrm{E}}}\alpha(\xi_{\mathrm{E}})-\alpha(R_{\mathrm{E}}) \f$
+  \return \f$ f_{1}(\theta) = \frac{\xi_{\mathrm{E}}}{R_{\mathrm{E}}}\alpha(\xi_{\mathrm{E}})-\alpha(R_{\mathrm{E}}) \f$
 */
 
 double f1_pe(f_type2 alpha_in, double R_E, double theta, double pert_params[]){
@@ -78,13 +76,13 @@ return f1_tmp;
 //!
 //!  \f$ \mathcal{G}(\eta)=R^2_{\mathrm{E}}\mathcal{A}(\eta)\sin{(2\theta)},\qquad \mathcal{A}=a_{2\eta}-a_{1\eta}\f$
 //!
-//!  \f$ \dfrac{df_0}{d\theta}:= \left[\dfrac{d \psi_E(r,\theta)}{d\theta}\right]_{r=R_{\mathrm{E}}} \f$
+//!  \f$ \frac{df_0}{d\theta}:= \left[\frac{d \psi_E(r,\theta)}{d\theta}\right]_{r=R_{\mathrm{E}}} \f$
 //!
 //!  \param alpha_in : angle deflection for the circular model
 //!  \param R_E : Einstein Radius corresponding to the circular model
 //!  \param theta : angular coordinate in the lens plane
 //!  \param pert_params[] : Pseudo-Elliptical parameters
-//!  \return \f$ \dfrac{df_0}{d\theta}= \frac{1}{2}\dfrac{\alpha(\xi_{\mathrm{E}})}{\xi_{\mathrm{E}}}\mathcal{G}(\eta,\theta) \f$ */
+//!  \return \f$ \frac{df_0}{d\theta}= \frac{1}{2}\frac{\alpha(\xi_{\mathrm{E}})}{\xi_{\mathrm{E}}}\mathcal{G}(\eta,\theta) \f$ */
 
 double df0dtheta_pe(f_type2 alpha_in,double R_E, double theta, double pert_params[]){
 double pot_params[]={pert_params[2],pert_params[3]};
@@ -122,20 +120,20 @@ return df0dte_pe;
 //!  \f$ \xi=r\sqrt{a_{1\eta}\cos^2{\theta}+a_{2\eta}\sin^2{\theta}}\f$
 //!                  (\f$ \xi_\mathrm{E}\f$ is the elliptical variable \f$ \xi(r,\theta)\f$ for \f$ r=R_{\mathrm{E}})\f$ 
 //!
-//! \f$ \dfrac{d^2f_0}{d\te^2}=\frac{1}{2}\mathcal{G}_\te(\eta,\theta)\dfrac{\alpha(\xi_{\mathrm{E}})}{\xi_{\mathrm{E}}}-\frac{\gamma(\xi_{\mathrm{E}})}{2}\left[ \dfrac{\mathcal{G}(\eta,\theta)}{\xi_{\mathrm{E}}}\right]^2 \f$
+//! \f$ \frac{d^2f_0}{d\theta^2}=\frac{1}{2}\mathcal{G}_\theta(\eta,\theta)\frac{\alpha(\xi_{\mathrm{E}})}{\xi_{\mathrm{E}}}-\frac{\gamma(\xi_{\mathrm{E}})}{2}\left[ \frac{\mathcal{G}(\eta,\theta)}{\xi_{\mathrm{E}}}\right]^2 \f$
 //! 
 //!  \f$ \mathcal{G}(\eta)=R^2_{\mathrm{E}}\mathcal{A}(\eta)\sin{(2\theta)},\qquad \mathcal{A}=a_{2\eta}-a_{1\eta}\f$
 //!
 //!  \f$ \mathcal{G}_{\theta}(\eta)= 2\,R^2_{\mathrm{E}}\mathcal{A}(\eta)\cos{(2\theta)}\f$
 //!
-//! \f$ \gamma(\xi_{\mathrm{E}})=\kappa(\xi_{\mathrm{E}})-\dfrac{\alpha(\xi_{\mathrm{E}})}{\xi_{\mathrm{E}}} \f$
+//! \f$ \gamma(\xi_{\mathrm{E}})=\kappa(\xi_{\mathrm{E}})-\frac{\alpha(\xi_{\mathrm{E}})}{\xi_{\mathrm{E}}} \f$
 /*!
   \param alpha_in : angle deflection of the circular potential
   \param gamma_in : shear of the circular potential
   \param R_E : Einstein Radius of the circular potential
   \param theta : angular coordinate in the lens plane
    \param pert_params[] : Pseudo-Elliptical parameters
-  \return \f$ \dfrac{d^2f_0}{d\theta^2}\f$
+  \return \f$ \frac{d^2f_0}{d\theta^2}\f$
 */
 
 double d2f0dtheta2_pe(f_type2 alpha_in,f_type2 shear_in, double R_E, double theta, double pert_params[]){
