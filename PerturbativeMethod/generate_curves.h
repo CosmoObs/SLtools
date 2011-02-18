@@ -100,4 +100,57 @@ void plot_sources(elliptical_source source_in, int npts=1000, FILE *file_in=NULL
 }
 }
 
+/** A functions to print the curves model (tangential critical curve,tangential caustic curves)
+*
+*  \param Df0Dtheta_in function related to the perturbed potential
+*  \param f1_in function related to the perturbed potential
+*  \param D2f0Dtheta2_in function related to the perturbed potential
+*  \param pert_params[] a vector that contains all the perturbation parameters
+*  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
+*  \param npts number of theta divisions 
+*  \param _r_e Einstein Radius (\f$ R_{_{\mathrm{E}}}\f$ )
+*  \param file_in1 a file to write the constant distortion curve for \f$ R_{\rm th}>0 \f$ 
+*  \param file_in2 a file to write the constant distortion curve for \f$ R_{\rm th}<0 \f$ 
+*  \return curve datas in the screen or the curve data in a text file
+*
+*  \sa f_type, x_th, y1_th,y2_th
+*/
+
+void plot_rth_curves(f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double pert_params[], double kappa2, double _r_e, double r_th, int npts=1000, FILE *file_in1=NULL, FILE *file_in2=NULL){
+  
+  double theta = 0.0;
+  double r_thp=0.0;
+  double y1_rthp=0.0;
+  double y2_rthp=0.0;
+  double r_thn=0.0;
+  double y1_rthn=0.0;
+  double y2_rthn=0.0;
+  
+  for(int i=0;i<=npts;i++){
+    
+  r_thp= x_th(f1_in,D2f0Dtheta2_in, kappa2, theta,pert_params,r_th,_r_e)+_r_e; 
+  y1_rthp=y1_th(f1_in,Df0Dtheta_in,D2f0Dtheta2_in,theta,kappa2,pert_params,_r_e,r_th);
+  y2_rthp=y2_th(f1_in,Df0Dtheta_in,D2f0Dtheta2_in,theta,kappa2,pert_params,_r_e,r_th);
+
+  r_thn= x_th(f1_in,D2f0Dtheta2_in, kappa2, theta,pert_params,-r_th,_r_e)+_r_e; 
+  y1_rthn=y1_th(f1_in,Df0Dtheta_in,D2f0Dtheta2_in,theta,kappa2,pert_params,_r_e,-r_th);
+  y2_rthn=y2_th(f1_in,Df0Dtheta_in,D2f0Dtheta2_in,theta,kappa2,pert_params,_r_e,-r_th);
+  
+  if(file_in1==NULL){
+        printf("%f %f %f %f\n",r_thp*cos(theta),r_thp*sin(theta), y1_rthp,y2_rthp);
+      } else {
+        fprintf(file_in1,"%f %f %f %f \n",r_thp*cos(theta),r_thp*sin(theta), y1_rthp,y2_rthp);
+      }
+
+  if(file_in2==NULL){
+        printf("%f %f %f %f\n",r_thn*cos(theta),r_thn*sin(theta), y1_rthn,y2_rthn);
+      } else {
+        fprintf(file_in2,"%f %f %f %f \n",r_thn*cos(theta),r_thn*sin(theta), y1_rthn,y2_rthn);
+      }
+
+   theta+= 6.283185308/npts;
+}
+
+}
+
 #endif
