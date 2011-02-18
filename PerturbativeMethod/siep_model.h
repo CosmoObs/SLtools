@@ -6,7 +6,6 @@
 * - pert_params[]={\f$ \eta \f$ ,flag, \f$ R_{\rm E} \f$}, where flag is a integer to choice the parametrization of the ellipticity
 * - Einstein Radius of the SIS model, i.e.,  \f$ R_{\rm E}\f$ 
 */
-*/
 /** @package pseudo_elliptical_models
 *  Package to compute quantities related to Singular Isothermal Elliptical Potential (SIEP) model.
 *
@@ -46,8 +45,9 @@ double f1_psis(double theta, double pert_params[],double _r_e_sis){
 *
   \param theta : angular coordinate in the lens plane
   \param pert_params[] : SIEP lens parameters
-  \return \f$ \frac{df_0}{d\theta}\f$ */
-*//
+  \return \f$ \frac{df_0}{d\theta}\f$ 
+*/
+
 double Df0Dtheta_psis( double theta, double pert_params[],double _r_e_sis){
   return df0dtheta_pe(alpha_sis_circ, _r_e_sis, theta, pert_params);
 }
@@ -62,7 +62,8 @@ double Df0Dtheta_psis( double theta, double pert_params[],double _r_e_sis){
 *
   \param theta : angular coordinate in the lens plane
   \param pert_params[] : SIEP lens parameters
-  \return \f$ \frac{df_0}{d\theta}\f$ */
+  \return \f$ \frac{df_0}{d\theta}\f$ 
+*/
 
 double D2f0Dtheta2_psis( double theta, double pert_params[],double _r_e_sis){
   return d2f0dtheta2_pe(alpha_sis_circ,shear_sis_circ, _r_e_sis, theta, pert_params);
