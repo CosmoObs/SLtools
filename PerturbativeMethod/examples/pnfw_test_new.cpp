@@ -74,14 +74,13 @@ int main(){
 
   FILE *outarc = fopen ("arcs_pnfw.dat" , "w");
   FILE *outls = fopen ("lensing_data.txt" , "w");  
-  FILE *outtc = fopen ("tang_crit.dat" , "w");
-  FILE *outcau = fopen ("tang_caust.dat" , "w");
+  FILE *outtc = fopen ("tang_curves.dat" , "w");
   FILE *outsrc = fopen ("src_plot.dat" , "w");
   FILE *outrthp = fopen ("curves_r_th_pos.dat" , "w");
   FILE *outrthn = fopen ("curves_r_th_neg.dat" , "w");
   
   plot_arcs(source, f1_pnfw, Df0Dtheta_pnfw, pert_params, kappa_2,_r_e_nfw,npts, outarc);   //func
-  plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npts, outtc, outcau);   //func
+  plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npts, outtc);   //func
   plot_rth_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2, _r_e_nfw, 10., npts, outrthp, outrthn);   //func
   plot_sources(source,npts,outsrc);   //func
 
@@ -112,13 +111,12 @@ int main(){
    fclose(outarc);
    fclose(outls); 
    fclose(outtc); 
-   fclose(outcau); 
    fclose(outsrc); 
    fclose(outrthp); 
    fclose(outrthn);
    
-  system("xmgrace -view 0.15 0.15 0.85 0.85 -block curves_r_th_pos.dat -bxy 3:4  tang_caust.dat -block curves_r_th_neg.dat -bxy 3:4 src_plot.dat");
-  system("xmgrace -view 0.15 0.15 0.85 0.85 curves_r_th_pos.dat tang_crit.dat curves_r_th_neg.dat  arcs_pnfw.dat");
+  system("xmgrace -view 0.15 0.15 0.85 0.85 -block curves_r_th_pos.dat -bxy 3:4  -block tang_curves.dat -bxy 3:4 -block curves_r_th_neg.dat -bxy 3:4 src_plot.dat");
+  system("xmgrace -view 0.15 0.15 0.85 0.85 curves_r_th_pos.dat tang_curves.dat curves_r_th_neg.dat  arcs_pnfw.dat");
 //   system("xmgrace -view 0.15 0.15 0.85 0.85 tang_crit.dat arcs_pnfw.dat");
   
 

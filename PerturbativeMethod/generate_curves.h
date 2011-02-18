@@ -54,7 +54,7 @@
 *  \sa f_type, r_crit, caustic_y1, caustic_y2, y1_src,y2_src
 */
 
-void plot_curves(f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double pert_params[], double kappa2, double _r_e, int npts=1000, FILE *file_in1=NULL, FILE *file_in2=NULL){
+void plot_curves(f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double pert_params[], double kappa2, double _r_e, int npts=1000, FILE *file_in1=NULL){
   
   double theta = 0.0;
   double r_tcrit=0.0;
@@ -67,15 +67,9 @@ void plot_curves(f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, doubl
   y2_caust=caustic_y2(Df0Dtheta_in,D2f0Dtheta2_in,theta,pert_params,_r_e);
 
   if(file_in1==NULL){
-        printf("%E %E\n",r_tcrit*cos(theta),r_tcrit*sin(theta));
+        printf("%f %f %f %f \n",r_tcrit*cos(theta),r_tcrit*sin(theta),y1_caust,y2_caust);
       } else {
-        fprintf(file_in1,"%f %f\n",r_tcrit*cos(theta),r_tcrit*sin(theta));
-      }
-
-  if(file_in2==NULL){
-        printf("%E %E\n",y1_caust,y2_caust);
-      } else {
-        fprintf(file_in2,"%f %f\n",y1_caust,y2_caust);
+        fprintf(file_in1,"%f %f %f %f\n",r_tcrit*cos(theta),r_tcrit*sin(theta),y1_caust,y2_caust);
       }
 
    theta+= 6.283185308/npts;
