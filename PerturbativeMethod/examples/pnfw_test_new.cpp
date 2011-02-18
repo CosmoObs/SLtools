@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "../perturbative_method.h"
-#include "../pnfw_model2.h"
+#include "../pnfw_model.h"
 #include "../nfw_circular_model.h"
 #include "../theta_find.h"
 #include "../generate_arcs.h"

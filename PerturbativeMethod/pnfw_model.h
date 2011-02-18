@@ -12,8 +12,8 @@
 *
 */
 
-#ifndef PNFW_MODEL2_H
-#define PNFW_MODEL2_H
+#ifndef PNFW_MODEL_H
+#define PNFW_MODEL_H
 
 #include "nfw_circular_model.h"
 #include "pseudo_elliptical_model.h"
