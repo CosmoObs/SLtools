@@ -13,6 +13,18 @@
 *  - structure corresponding to the source: size, ellipticity, orientation,etc
 *  - npts: number of theta divisions
 *  - a file to write the plot in a text file
+*
+*
+*  Curves of Constant Distortion. This function need
+* - main field of the perturbative approach, i.e, \f$ f_n(\theta)\f$ and their derivatives
+* - pert_params[] :a vector that contains all the perturbation parameters
+* - npts: number of theta divisions 
+* - Einstein Radius: \f$ R_{_{\mathrm{E}}}\f$ 
+* - A POSITIVE VALUE of the length-to-width ratio threshold, i.e \f$ R_{\rm th} \f$
+* - two files to write theses curves in a text file (with the following format x1, x2, y1, y2), each for both value of \f$ R_{\rm th}\f$
+*
+* This function computes automatically both positive and negative constant distortion curves
+*
 */
 
 /** @package perturbative_method
@@ -100,10 +112,10 @@ void plot_sources(elliptical_source source_in, int npts=1000, FILE *file_in=NULL
 }
 }
 
-/** A functions to print the curves model (tangential critical curve,tangential caustic curves)
+/** A functions to print the constant distortion curves in both planes
 *
-*  \param Df0Dtheta_in function related to the perturbed potential
 *  \param f1_in function related to the perturbed potential
+*  \param Df0Dtheta_in function related to the perturbed potential
 *  \param D2f0Dtheta2_in function related to the perturbed potential
 *  \param pert_params[] a vector that contains all the perturbation parameters
 *  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
