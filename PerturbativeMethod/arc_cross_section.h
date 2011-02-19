@@ -18,9 +18,11 @@ double sigma_defarcs(f_type f1_in, f_type D2f0Dtheta2_in, double pert_params[], 
   gauleg(0, 2.0*Pi, x, w, npts);
 
   double out = 0.0;
+  double r_crit_tmp = 0.0;
   
   for(int i=0;i<npts;i++){
-    out+=w[i]*r_crit(f1_in, D2f0Dtheta2_in, kappa2, x[i], pert_params, _r_e);
+    r_crit_tmp = r_crit(f1_in, D2f0Dtheta2_in, kappa2, x[i], pert_params, _r_e);
+    out+=w[i]*r_crit_tmp*r_crit_tmp;
   }
   return kappa2*kappa2*rth_fact*out;
 }

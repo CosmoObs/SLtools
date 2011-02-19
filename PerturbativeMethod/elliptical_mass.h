@@ -40,7 +40,7 @@ double f_1_ellip_mass(conv_type conv_in,double theta, double pert_params[], doub
 
   double out = r_e* ( a*b*( J0*pow(cos(theta),2) + J1*pow(sin(theta),2)));
   //printf("%f %f\n",out,J(0, conv_in, X1, X2, pert_params, 1.0, 1.0));
-  return out - r_e*J(0, conv_in, X1, X2, pert_params, 1.0, 1.0);
+  return out - r_e;//*J(0, conv_in, X1, X2, pert_params, 1.0, 1.0);
 }
 
 /**  function to compute the \f$ \frac{df_0}{d\theta} \f$ for elliptical models
