@@ -28,8 +28,8 @@ double sigma_defarcs(f_type f1_in, f_type D2f0Dtheta2_in, double pert_params[], 
 }
 
 double sigma_defarcs_sis(double _r_e, double r_th){
-double Pi = 3.1415926535897932384626433832795;
-double factor=(fabs(r_th*r_th)+1)/pow(fabs(r_th*r_th)-1 ,2);
+  double Pi = 3.1415926535897932384626433832795;
+  double factor=(fabs(r_th*r_th)+1)/pow(fabs(r_th*r_th)-1 ,2);
 return 2.*Pi*_r_e*_r_e*factor;
 }
 #endif 
