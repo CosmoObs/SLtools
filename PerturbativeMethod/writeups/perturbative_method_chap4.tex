@@ -196,10 +196,10 @@ However, as we are working with dimensionless coordinates $ \vec{y}=\frac{\eta}{
 \sigma_{\rm dcs} = \xi_0^2\tilde{\sigma}_{\rm dcs}= \xi_0^2 \int_{ \frac{\lambda_r}{\lambda_t} > |R_{\rm th}|} \left |{\rm det}\,\textbf{J}(\vec{x}) \right| d^2\!x. \label{dcs_dimensionless}
 \end{equation}
 
-In general, the calculation of theses expression requires numerical method, unless for a few kind of lens model.  For example, for the SIS model, $\mathbf{J}(\vec{x})=1-\frac{1}{x}$ and hence we have
+In general, the calculation of theses expression requires numerical method, unless for a few kind of lens model.  For example, for the SIS model, $\mathbf{J}(\vec{x})=1-\frac{1}{x}$, $\xi_0=\re$ and, hence we have
 
 \begin{equation}
-\sigma_{dcs}=2\pi\,{\re}^2 \dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \label{dcs_sis}
+\sigma_{dcs}=2\pi\,R^2_{\rm E} \dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \label{dcs_sis}
 \end{equation}
 
 Note that the last equation is the same as the Eq.~(\ref{dcs_sis_pertapp}). The other model that offers an analytical expression for the cross section for deformation arcs is the SIEP. For this model, first we have that the determinant of the Jacobian matrix is
@@ -217,5 +217,6 @@ As in polar coordinates $x_{\varepsilon}=xf(\phi)$, where $f(\phi)=\sqrt{a_{1\va
 \end{equation}
 Therefore, the analytical expression for the deformation cross section for the SIEP is
  \begin{equation}
-\tilde{\sigma}_{\rm siep}= \dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \left[2\pi\left[\mathcal{A}(\varepsilon)+\mathcal{B}(\varepsilon)\right]-2\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\mathcal{B}(\varepsilon)\arctan{\left(2\pi\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\right)} \right]
+\sigma_{\rm siep}= R^2_{\rm E}\dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \left[2\pi\left[\mathcal{A}(\varepsilon)+\mathcal{B}(\varepsilon)\right]-2\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\mathcal{B}(\varepsilon)\arctan{\left(2\pi\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\right)} \right]
 \end{equation}
+In the limit $\varepsilon \rightarrow 0$, we have that $\mathcal{A}(\varepsilon)=1$, $\mathcal{B}(\varepsilon)=0$, and the expression above is the same as Eq.~(\ref{dcs_sis})
