@@ -4,6 +4,7 @@
 //#include <cstdio>
 #include <iostream>
 
+
 #include "../perturbative_method.h"
 #include "../siep_model.h"
 #include "../sis_model.h"
@@ -76,8 +77,11 @@ int main(){
 		kappa_2=kappa2_sis(pot_params2,re_sis);
 		sig1=sigma_defarcs(f1_psis, D2f0Dtheta2_psis, pert_params2, kappa_2, re_sis, 10.0);
 		sig2=sigma_defarcs_sis(re_sis,10);
-		fprintf(outcsda,"%f %f %f \n", re_sis, sig1, sig2);
-	}	
-		
+		fprintf(outcsda,"%f %f %f %E\n", re_sis, sig1, sig2, fabs(sig1-sig2));
+	}
 
+
+  std::cout << "tempo decorrido: " << double(clock())/(double(CLOCKS_PER_SEC)*60.0) << " minutos" << std::endl;
+  std::cout << "FIM!" << std::endl;
+  return 0.0;
 }

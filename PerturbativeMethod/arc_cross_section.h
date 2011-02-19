@@ -11,7 +11,7 @@
 #include "perturbative_method.h"
 #include "general_methods.h"
 
-double sigma_defarcs(f_type f1_in, f_type D2f0Dtheta2_in, double pert_params[], double kappa2, double _r_e, double r_th, int npts=1000){
+double sigma_defarcs(f_type f1_in, f_type D2f0Dtheta2_in, double pert_params[], double kappa2, double _r_e, double r_th, int npts=50){
   double rth_fact=(fabs(r_th)*fabs(r_th)+1.)/(pow(fabs(r_th)*fabs(r_th)-1,2));
   double x[npts], w[npts];
   double Pi = 3.1415926535897932384626433832795;
