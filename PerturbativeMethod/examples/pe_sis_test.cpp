@@ -4,7 +4,6 @@
 //#include <cstdio>
 #include <iostream>
 
-
 #include "../perturbative_method.h"
 #include "../siep_model.h"
 #include "../sis_model.h"
@@ -27,14 +26,14 @@ int main(){
   FILE *outtc = fopen ("tang_crit_pesis.dat" , "w");
   FILE *outcau = fopen ("tang_caust_pesis.dat" , "w");
   FILE *outsrc = fopen ("src_plot_pesis.dat" , "w");
-  FILE *outcsda = fopen ("sigma_dcs_pesis.dat" , "w");	
+  FILE *outcsda = fopen ("sigma_dcs_pesis_pa.dat" , "w");	
 
    int npts = 4000;
 
   double twpi= 6.283185308;  
 //   double pert_params[]={0.64,1.5, 0.1};
 //   double pot_params[]={pert_params[0],pert_params[1],pert_params[2]};
-   double pert_params[]={0.0,3,0.64};
+   double pert_params[]={0.0,1,1.0};
   double pot_params[] = {pert_params[2]};
   
   double _r_e_sis= pot_params[0];
@@ -63,25 +62,20 @@ int main(){
   arc_measures(f1_psis, Df0Dtheta_psis, kappa_2, source, pert_params, _r_e_sis, npts,outls);   
 */
  // runing the cross section
-	double re_sis;
+	double re_sis, epsi;
 	double sig1,sig2;
 	double pert_params2[3];
 	double pot_params2[1];
-	pert_params2[0]=0.;
+	pert_params2[2]=pert_params[2];
 	pert_params2[1]=1;
 
-	for(int j=0; j<=500; j++){
-		re_sis=0.1+0.01*j;
-		pert_params2[3]=re_sis;	
-		pot_params2[0]=re_sis;
-		kappa_2=kappa2_sis(pot_params2,re_sis);
-		sig1=sigma_defarcs(f1_psis, D2f0Dtheta2_psis, pert_params2, kappa_2, re_sis, 10.0);
-		sig2=sigma_defarcs_sis(re_sis,10);
-		fprintf(outcsda,"%f %f %f %E\n", re_sis, sig1, sig2, fabs(sig1-sig2));
-	}
+	for(int j=0; j<100; j++){
+		epsi=0.0+0.01*j;
+		pert_params2[0]=epsi;	
+		kappa_2=kappa2_sis(pot_params2,_r_e_sis);
+		sig1=sigma_defarcs(f1_psis, D2f0Dtheta2_psis, pert_params2, kappa_2, _r_e_sis, 10.0);
+		fprintf(outcsda,"%f %f \n", epsi, sig1);
+	}	
+		
 
-
-  std::cout << "tempo decorrido: " << double(clock())/(double(CLOCKS_PER_SEC)*60.0) << " minutos" << std::endl;
-  std::cout << "FIM!" << std::endl;
-  return 0.0;
 }

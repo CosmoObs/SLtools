@@ -79,7 +79,7 @@ int i=0;
 
       double siep_params[]={lens_par[1],lens_par[2],lens_par[3]};
       int npts = 251;
-      double ratio=5.0;
+      double ratio=10.0;
 
       FILE *outtc = fopen ("tang_curves.dat" , "w");
       
@@ -107,4 +107,24 @@ int i=0;
       
       system("xmgrace -view 0.15 0.15 0.85 0.85 tang_curves.dat rad_curves.dat lw_pos_curves.dat lw_neg_curves.dat -saveall curvas.agr ");
       system("xmgrace -view 0.15 0.15 0.85 0.85 -block tang_curves.dat -bxy 3:4 -block rad_curves.dat -bxy 3:4  -block lw_pos_curves.dat -bxy 3:4 -block  lw_neg_curves.dat -bxy 3:4 -saveall curvas2.agr ");
+      
+      FILE *outcsda = fopen ("dcs_siep_vs_e.dat" , "w");
+      double sig1,re_sis;
+     /* 
+      for(int j=0; j<=500; j++){
+		re_sis=0.+0.01*j;
+		siep_params[2]=re_sis;
+		sig1=cross_section_siep(siep_params,ratio);
+		fprintf(outcsda,"%f %f \n", re_sis, sig1);
+	}
+	*/
+	for(int j=0; j<=100; j++){
+		re_sis=0.+0.01*j;
+		siep_params[1]=re_sis;
+		sig1=cross_section_siep(siep_params,ratio);
+		fprintf(outcsda,"%f %f \n", re_sis, sig1);
+	}
+	
+    fclose(outcsda);
+    
 }
