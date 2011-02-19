@@ -2,6 +2,8 @@
 
 \section{Axially-Symmetric Models}
 
+Include general description for this kind of models
+
 \subsection{SIS}
 The most single lens model for galaxies  corresponds to Singular Isothermal
 Sphere. This model, is obtained by assuming a spherical mass distribution
@@ -34,8 +36,29 @@ Eq.~(\ref{sis_angle}), is
 \begin{equation}
  \vec{\alpha}(\vec{x})=\cos{\phi}\hat{\imath} + \sin{\phi}\hat{\jmath},
 \end{equation}
-where $\phi=\arctan{(x_2/x_1)}$
+where $\phi=\arctan{(x_2/x_1)}$.
 
+For this model, the eigenvalues of the Jacobian matrix of lens mapping are:
+\begin{eqnarray}
+\lambda_r(x)&=&1 \label{lr_sis}\\
+\lambda_t(x)&=&1-\dfrac{1}{x} \label{lt_sis}.
+\end{eqnarray}
+
+This is, the SIS model does not produce image elongated in the radial direction, therefore $x_{rcc}=0$ (the radial critical curve is degenerated into a point). The parametric equation of the radial caustic is
+\begin{equation}
+y_{1{\rm rca}}=-\cos{\phi}, \quad y_{2{\rm rca}}-\sin{\phi} \qquad \textrm{where\ } 0\leq \phi \leq 2\pi 
+\end{equation}
+
+However, the SIS produces images elongated in the tangential direction. The tangential critical curve is a circle of radius $x_{\rm tcc}=1$ (in dimension coordinates is a circle with radius $R_{\rm E}$). Then the parametric equation of the tangential critical curve is
+\begin{equation}
+x_{1{\rm tcc}}=x_{\rm tcc}\cos{\phi}, \quad x_{2{\rm tcc}}=x_{\rm tcc}\sin{\phi} \qquad \textrm{where\ } 0\leq \phi \leq 2\pi 
+\end{equation}
+And the tangential caustic is degenerated into a point, i.e.,
+\begin{equation}
+y_{1{\rm tca}}=0, \quad y_{2{\rm tcc}}=0 
+\end{equation}
+
+\subsection{NFW}
 
 \section{Pseudo-Elliptical Models}
 To distort a circular lensing potential $\varphi(x)$ into a elliptical shape $\varphi_\varepsilon(x)$, its radial
@@ -154,5 +177,7 @@ th}|=5$ and the Keeton's parametrization,i.e,  $a_{1\varepsilon}=1$ and
 $a_{2\varepsilon}=(1-\varepsilon)^{-2}$ for $\varepsilon=0.4$, }
 \end{figure*}
 
-{\bf to be continued\ldots}
+
 \section{Elliptical Models}
+
+\section{Arc Cross Section}

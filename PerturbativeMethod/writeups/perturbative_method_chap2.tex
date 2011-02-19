@@ -420,9 +420,9 @@ used to define the
 cross-section), then we can solve for the radius of the frontiers of the
 deformation cross-section area. The solutions are
 \bea
-r_{+}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1+\frac{1}{|N|-1}
+r_{+}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1+\frac{1}{|R_{\rm th}|-1}
 \right)\label{rmax}\\
-r_{-}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1-\frac{1}{|N|+1}
+r_{-}(\te)&=&\left|\vec{r}_{\mathrm{crit}}\right|\left(1-\frac{1}{|R_{\rm th}|+1}
 \right)\label{rmin}
 \eea
 %\beq
@@ -432,11 +432,11 @@ We can now proceed to the calculation of the deformation cross-section area,
 given by the following definition:
 \bea
 \sigma_{dcs} &\equiv&
-\int_{\left|\frac{\mu_t}{\mu_r}\right|>|N|}\!\!\!\!\!\!\!\!\!d^2y=\int_{
+\int_{\left|\frac{\mu_t}{\mu_r}\right|>|R_{\rm th}|}\!\!\!\!\!\!\!\!\!d^2y=\int_{
 \left|\frac{\mu_t}{\mu_r}\right|>C}\!\!\!\!\!\!\!\!\!\left|det\;
 \textbf{J}\right| d^2x,\nonumber\\
 &=&\int_0^{2\pi}\int_{r_{-}(\te)}^{r_{+}(\te)}\left|-\kappa_2^2\left(\left|\vec{
-r}_{\mathrm{crit}}\right|-r\right)\right|\,{\rm d}r\,{\rm
+r}_{\mathrm{crit}}\right|-r\right)\right|\,r{\rm d}r\,{\rm
 d}\theta\label{sec-choq-pert-app1}
 \eea
 Integrating in the radial coordinate, we obtain the general form for the
@@ -444,10 +444,16 @@ deformation cross-section in the perturbative approach. This form only depends
 on the ``deformation factor`` $N$, on the second derivative of the axisymmetric
 potential at the Einstein radius and on the shape of the critical curve:
 \bea
-\sigma_{dcs}=\kappa_2^2\frac{|N|^2+1}{\left(|N|^2-1\right)^2}\int_0^{2\pi}\left|\vec{
+\sigma_{dcs}=\kappa_2^2\frac{|R_{\rm th}|^2+1}{\left(|R_{\rm th}|^2-1\right)^2}\int_0^{2\pi}\left|\vec{
 r}_{\mathrm{crit}}\right|^2\,{\rm
 d}\theta\label{sec-choq-pert-app2}
 \eea
+
+For example, for the SIS model (for which $\kappa_2=1$ and $r_{\rm crit}=R_{\rm E}$) the cross section for deformation arcs is:
+\begin{equation}
+\sigma_{dcs}=2\pi\,{\re}^2 \dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2}
+\end{equation}
+
 
 
 \subsection{Deriving Deformation Cross-Section from Magnification and Shear
