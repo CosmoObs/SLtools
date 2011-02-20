@@ -13,10 +13,8 @@
 
 
 from matplotlib.pyplot import *
-import numpy as np
 from numpy import * 
 from random import *
-import logging
 
 #=======================================================================================================
 def separate_curves(x1, y1, x2, y2, delta=None):
