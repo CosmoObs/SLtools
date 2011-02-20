@@ -147,7 +147,7 @@ return gama2;
 //!
 //! \f$ \gamma_\varepsilon(\vec{x})=\mathcal{A}(\varepsilon)\kappa(x_\varepsilon)-\mathcal{B}(\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon} \f$
 //!
-//! where \f$ \mathcal{A}(\varepsilon)= \frac{1}{2}(a_{1\varepsilon}+a_{2\varepsilon})\f$, \f$ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})\f$ and \f$\phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)\f$
+//! where \f$ \mathcal{A}(\varepsilon)= \frac{1}{2}(a_{1\varepsilon}+a_{2\varepsilon})\f$, \f$ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})\f$ and \f$ \phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)\f$
 /*!
 \param  xi1,xi2 : are the cartesian coordinates
 \param siep_params[] : SIEP parameters  

@@ -89,3 +89,9 @@
 \form#88:$ y_{2,rca} =-\sqrt{a_{2\varepsilon}}\sin{\phi_\varepsilon} $
 \form#89:$ \gamma_\varepsilon(\vec{x})=\mathcal{A}(\varepsilon)\kappa(x_\varepsilon)-\mathcal{B}(\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon} $
 \form#90:$ \kappa_\varepsilon(\vec{x})=\mathcal{A}(\varepsilon)\kappa(x_\varepsilon)-\mathcal{B}(\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon} $
+\form#91:$ x_{\varepsilon,R_{\rm th}}=x_{\varepsilon,tcc}\times\left\{\begin{array}{cc} \dfrac{|R_{\rm th}|}{|R_{\rm th}|-1}, & R_{\rm th}>0 \\ & \\ *\dfrac{|R_{\rm th}|}{|R_{\rm th}|+1}, & R_{\rm th}<0 \end{array}\right.$
+\form#92:$ \sigma_{\rm siep}= R^2_{\rm E}\frac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \left[2\pi\left[\mathcal{A}(\varepsilon)+\mathcal{B}(\varepsilon)\right]-2\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\mathcal{B}(\varepsilon)\arctan{\left(2\pi\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\right)} \right] $
+\form#93:$ \sigma_{\rm siep} $
+\form#94:$ \mathcal{A}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}+a_{2\varepsilon})$
+\form#95:$ \mathcal{B}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}-a_{2\varepsilon})$
+\form#96:$ x_{\varepsilon,R_{\rm th}}=x_{\varepsilon,tcc}\times\left\{\begin{array}{cc} \dfrac{|R_{\rm th}|}{|R_{\rm th}|-1}, & R_{\rm th}>0 \\ & \\ \dfrac{|R_{\rm th}|}{|R_{\rm th}|+1}, & R_{\rm th}<0 \end{array}\right.$
