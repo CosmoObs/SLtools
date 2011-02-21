@@ -27,6 +27,10 @@
 * In the second option, in terminal to put the values of iflag, ellipticity value, Einstein Radius Value 
 *
 */
+/** @package siep_model
+*
+**/
+
 
 //! The main program
 /*!
@@ -79,7 +83,7 @@ int i=0;
 
       double siep_params[]={lens_par[1],lens_par[2],lens_par[3]};
       int npts = 251;
-      double ratio=5.0;
+      double ratio=10.0;
 
       FILE *outtc = fopen ("tang_curves.dat" , "w");
       
@@ -105,6 +109,36 @@ int i=0;
 
       fclose(ollwn);
       
-      system("xmgrace -view 0.15 0.15 0.85 0.85 tang_curves.dat rad_curves.dat lw_pos_curves.dat lw_neg_curves.dat -saveall curvas.agr ");
-      system("xmgrace -view 0.15 0.15 0.85 0.85 -block tang_curves.dat -bxy 3:4 -block rad_curves.dat -bxy 3:4  -block lw_pos_curves.dat -bxy 3:4 -block  lw_neg_curves.dat -bxy 3:4 -saveall curvas2.agr ");
+//       system("xmgrace -view 0.15 0.15 0.85 0.85 tang_curves.dat rad_curves.dat lw_pos_curves.dat lw_neg_curves.dat -saveall curvas.agr ");
+//       system("xmgrace -view 0.15 0.15 0.85 0.85 -block tang_curves.dat -bxy 3:4 -block rad_curves.dat -bxy 3:4  -block lw_pos_curves.dat -bxy 3:4 -block  lw_neg_curves.dat -bxy 3:4 -saveall curvas2.agr ");
+      
+//       FILE *outcsda = fopen ("dcs_siep_vs_e.dat" , "w");
+//       FILE *outcsda = fopen ("dcs_siep_vs_re.dat" , "w");
+      FILE *outcsda = fopen ("dcs_siep_vs_rth.dat" , "w");
+      double sig1,re_sis;
+ /*
+      for(int j=0; j<=1000; j++){
+          re_sis=0.+0.01*j;
+          siep_params[2]=re_sis;
+          sig1=cross_section_siep(siep_params,ratio);
+          fprintf(outcsda,"%f %f \n", re_sis, sig1);
+      }
+
+      for(int j=0; j<100; j++){
+        re_sis=0.+0.01*j;
+        siep_params[1]=re_sis;
+        sig1=cross_section_siep(siep_params,ratio);
+        fprintf(outcsda,"%f %f \n", re_sis, sig1);
+      }
+            
+*/	
+      double r_th;
+      for(int j=0; j<=2000; j++){
+          r_th=1.1+0.01*j;
+          sig1=cross_section_siep(siep_params,r_th);
+          fprintf(outcsda,"%f %f \n", r_th, sig1);
+      }
+
+    fclose(outcsda);
+    
 }

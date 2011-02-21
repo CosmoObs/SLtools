@@ -1,18 +1,21 @@
 /** @file
 * Package useful to calculate some function related to the NFW lensing model
 *
-* Lensing Function (Angle Deflection, Convergence, Shear)
+* - Lensing Function (Angle Deflection, Convergence, Shear)
 *
-* Einstein Radius (Use bracketing_lambda_t and gsl functions)
+* - Einstein Radius (Use bracketing_lambda_t and gsl functions)
 *
-* Function useful to the Perturbative Approach \f$ \kappa_2 \f$
+* - Function useful to the Perturbative Approach \f$ \kappa_2 \f$
 *
+* - Function related with the third derivative of the lensing potential \f$ c_3 \f$ 
+* 
+*  This module need 
+* - pot_params[]={\f$\kappa_s, r_s \f$}
 */
 
-/** @package nfw_circular_model
+/** @package circular_models
 *  Package to compute quantities related to the circular NFW model.
 *
-*  Detailed descrition FIXME
 *
 */
 #ifndef NFW_CIRCULAR_MODEL_H
@@ -117,7 +120,7 @@ double conv_nfw_circ(double r, double pot_params[])
 double conv_nfw_circ_prime(double r, double pot_params[])
 {
 
-  double K, ks=pot_params[0];
+  double ks=pot_params[0];
   double rs=pot_params[1];
   double X=r/rs;
   double X2=X*X;

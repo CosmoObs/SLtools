@@ -14,13 +14,21 @@
 *
 * siep_params[0]: Integer useful to choose the flag for the parameterization for the ellipticity
 *
-* If siep_params[0]=1, It uses \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=1+\varepsilon \f$
+* If siep_params[0]=1 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=1+\varepsilon \f$ (Angle Deflection Model)
 *
-* If siep_params[0]=2, It uses \f$ a_{1\varepsilon}=1\f$ and \f$ a_{2\varepsilon}=(1-\varepsilon)^{-2} \f$
+* If siep_params[0]=2 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=\frac{1}{1-\varepsilon} \f$ (Standard parametrization)
+*
+* If siep_params[0]=3 : \f$ a_{1\varepsilon}=1 \f$ and and \f$ a_{2\varepsilon}=\frac{1}{(1-\varepsilon)^{2}} \f$ (Keeton's Parametrization)
 *  
 * siep_params[1]: Ellipticity value (must be ellipticity parameter or ellipticity by itself whether the angle deflection model is used)
 *
 * siep_params[2]: Mass of the SIS model, related wit the velocity dispersion.
+*
+*/
+
+/** @package siep_model
+*
+*
 */
 
 #ifndef SIEP_MODEL_H
@@ -81,7 +89,8 @@ elp=siep_params[1];
 b=siep_params[2];
 x1=b*xi1, x2=b*xi2;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.;a2e=1./pow(1.-elp,2);}
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 double theta_e,xe,Ae,Be;
 theta_e=atan(sqrt(a2e/a1e)*(x2/x1));  
 xe=sqrt(a1e*pow(x1,2)+a2e*pow(x2,2));
@@ -108,7 +117,8 @@ double b=siep_params[2];
 double x1=b*xi1, x2=b*xi2;
 double a1e, a2e;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.;a2e=1./pow(1.-elp,2);}
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 double theta_e=atan(sqrt(a2e/a1e)*(x2/x1));  
 double xe=sqrt(a1e*pow(x1,2)+a2e*pow(x2,2));
 double Ae=0.5*(a1e+a2e);
@@ -134,7 +144,8 @@ double b=siep_params[2];
 double x1=b*xi1, x2=b*xi2;
 double a1e, a2e;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.;a2e=1./pow(1.-elp,2);}
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 double theta_e=atan(sqrt(a2e/a1e)*(x2/x1));  
 double xe=sqrt(a1e*pow(x1,2)+a2e*pow(x2,2));
 double Ae=0.5*(a1e+a2e);
@@ -147,7 +158,7 @@ return gama2;
 //!
 //! \f$ \gamma_\varepsilon(\vec{x})=\mathcal{A}(\varepsilon)\kappa(x_\varepsilon)-\mathcal{B}(\varepsilon)\gamma(x_\varepsilon)\cos{2\phi_\varepsilon} \f$
 //!
-//! where \f$ \mathcal{A}(\varepsilon)= \frac{1}{2}(a_{1\varepsilon}+a_{2\varepsilon})\f$, \f$ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})\f$ and \f$\phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)\f$
+//! where \f$ \mathcal{A}(\varepsilon)= \frac{1}{2}(a_{1\varepsilon}+a_{2\varepsilon})\f$, \f$ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})\f$ and \f$ \phi_\varepsilon=\arctan \left(\frac{\sqrt{a_{2\varepsilon}}x_{2}}{\sqrt{a_{1\varepsilon}}x_{1}}\right)\f$
 /*!
 \param  xi1,xi2 : are the cartesian coordinates
 \param siep_params[] : SIEP parameters  
@@ -177,7 +188,8 @@ elp=siep_params[1];
 b=siep_params[2];
 x1=b*xi1, x2=b*xi2;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.; a2e=1./pow(1.-elp,2);}
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 double theta_e=atan(sqrt(a2e/a1e)*(x2/x1));  
 double alpha1=alpha_sis(siep_params)*sqrt(a1e)*cos(theta_e);
 return alpha1;
@@ -205,7 +217,8 @@ elp=siep_params[1];
 b=siep_params[2];
 x1=b*xi1, x2=b*xi2;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.;a2e=1./pow(1.-elp,2);}
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 theta_e=atan(sqrt(a2e/a1e)*(x2/x1));  
 alpha2=alpha_sis(siep_params)*sqrt(a2e)*sin(theta_e);
 return alpha2;
@@ -248,8 +261,5 @@ double x2=b*xi2;
 double y2=x2-alpha2_siep(xi1,xi2,siep_params);
 return y2;
 }
-
-
-
 
 #endif

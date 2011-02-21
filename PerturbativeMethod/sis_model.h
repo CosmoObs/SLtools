@@ -1,10 +1,20 @@
 /** @file
-* Example of doxygen documentation for C function FIXME
+* Module useful to calculate some function related to the SIS lensing model
+*
+* - Lensing Function (Angle Deflection, Convergence, Shear)
+*
+* - Function useful to the Perturbative Approach \f$ \kappa_2 \f$
+*
+* - Function related with the third derivative of the lensing potential \f$ c_3 \f$ 
+* 
+*  This module need 
+* - pot_params[]={\f$ R_{\rm E}\f$}
 */
-/** @package nfw_circular_model
+
+
+/** @package circular_models
 *  Package to compute quantities related to the circular SIS model.
 *
-*  Detailed descrition FIXME
 *
 */
 #ifndef SIS_MODEL_H
@@ -25,12 +35,18 @@ double b=pot_params[0];
 return b/(2.0*r);
 }
 
+double conv_sis_circ_prime(double r, double pot_params[])
+{
+  double b = pot_params[0];
+  return -b/(4.0*pow(r,3));
+}
+
 //! Angle deflection of the SIS model.
 //!
 //! \f$ \alpha(r)=   b \f$, 
 //!  where \f$ b \f$ is defined in the function above (Note: we only considerer the magnitude of the angle deflection)
 /*!
-  \param r : radial distance,\param pot_params[] : NFW lens parameters 
+  \param r : radial distance,\param pot_params[] : SIS lens parameters 
   \return \f$ \alpha(r)\f$
 */
 double alpha_sis_circ(double r, double pot_params[]){
@@ -55,7 +71,7 @@ return b/(2.0*r);
 //!
 //! where \f$ \kappa(R_{\mathrm{E}})\f$ is the convergence for evaluated at the Einstein Radius
 //!
-/*!   \param r_e : Einstein Radius, \param pot_params[] : NFW lens parameters,\return \f$ \kappa_2 \f$ */
+/*!   \param r_e : Einstein Radius, \param pot_params[] : SIS lens parameters,\return \f$ \kappa_2 \f$ */
 double kappa2_sis(double pot_params[],double _r_e_sis){
   double k2,r=_r_e_sis;
 
