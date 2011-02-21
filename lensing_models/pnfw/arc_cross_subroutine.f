@@ -1,5 +1,5 @@
       subroutine c_section(nptx,v_input,ks,e,lw_u,muth,iflag,v_out,
-     &	sigma_q,sigma_u,u_min)
+     &	sigma_q,sigma_u,u_min,eflag)
 c     This subroutine calculate:
 c     If  iflag=2  	
 c     	-Dimensionless arc cross section
@@ -36,7 +36,7 @@ c	External functions
       double precision det_j,wl,s_area,sum_x2
       double precision det_j2,det_jmax
       double precision x1m,x2p,x2n
-      integer nptx,iflag,i,j,eixo,npt1,npt2
+      integer nptx,iflag,i,j,eixo,npt1,npt2,eflag
       dimension x1m(nptx),x2p(nptx),x2n(nptx)
       external det_j,wl
 c     Defining the input values
@@ -49,16 +49,16 @@ c     Calculating the intersections of the R_lambda curves
       eixo=1
       x2=0.d0
 c     Calculating the intersection R_lambda=infty curve with x1 axis
-      call raiz_lt(eixo,iv_lt,ks,e,x1_lt,x2)
+      call raiz_lt(eixo,iv_lt,ks,e,x1_lt,x2,eflag)
 cc    Calculating the intersection of the R_l> 0 with x1 axis
       iv_lwp=x1_lt
-      call raiz_lw(eixo,lw_u,iv_lwp,ks,e,x1q_p,x2)
+      call raiz_lw(eixo,lw_u,iv_lwp,ks,e,x1q_p,x2,eflag)
       x1m(nptx)=x1q_p
       x2p(nptx)=0.0d0
       x2n(nptx)=0.d0
 c     Calculating the intersection of   R_l<0	with x1 axis
       iv_lwn=x1_lt
-      call raiz_lw(eixo,-lw_u,iv_lwn,ks,e,x1q_n,x2)
+      call raiz_lw(eixo,-lw_u,iv_lwn,ks,e,x1q_n,x2,eflag)
       write(*,*)'intersections :',x1q_n,x1_lt,x1q_p
       npt1=nptx
       dx1=(x1q_p)/dfloat(npt1-1)
@@ -70,7 +70,7 @@ c
       do i=npt1-1,1,-1
           x1=0.d0+dx1*(i-1)
           x1m(i)=x1
-          call raiz_lw(2,lw_u,iv_lwp,ks,e,x1,x2q_p)
+          call raiz_lw(2,lw_u,iv_lwp,ks,e,x1,x2q_p,eflag)
           x2p(i)=x2q_p
           iv_lwp=x2q_p
           if(x1.gt.x1q_n)then
@@ -78,9 +78,9 @@ c
               x2n(i)=x2q_n
           else
               iv_lt=x2q_p
-              call raiz_lt(2,iv_lt,ks,e,x1,x2)
+              call raiz_lt(2,iv_lt,ks,e,x1,x2,eflag)
               iv_lwn=x2	
-              call raiz_lw(2,-lw_u,iv_lwn,ks,e,x1,x2q_n)
+              call raiz_lw(2,-lw_u,iv_lwn,ks,e,x1,x2q_n,eflag)
               x2n(i)=x2q_n
               iv_lwn=x2q_n
           endif   
@@ -94,7 +94,7 @@ c     Calculating the sum along the x2 axis
           sum_x2=0.0d0
           do j=1,npt2
               x2=x2q_n+(j-1)*dx2
-              sum_x2=sum_x2+det_j(ks,e,x1,x2)*dx2
+              sum_x2=sum_x2+det_j(ks,e,x1,x2,eflag)*dx2
           end do
           if(i.gt.1)s_area=s_area+dx1*sum_x2
       end do    
@@ -105,7 +105,7 @@ c     Finding the minimum value of the magnification
       npt1=nptx	
       det_j2=0.d0
       do i=1,npt1
-          det_j1=det_j(ks,e,x1m(i),x2p(i))
+          det_j1=det_j(ks,e,x1m(i),x2p(i),eflag)
           if(det_j1.gt.det_j2)then
               det_j2=det_j1
           endif
@@ -129,8 +129,8 @@ c     Calculating the dimensionless arc cross section with the constraint u>u_th
           sum_x2=0.d0
           do j=1,npt2
               x2_u=x2n(i)+(j-1)*dx2
-	if(det_j(ks,e,x1m(i),x2_u).le.1.0d0/muth)then !(si mu >= mu_th)
-	    sum_x2=sum_x2+det_j(ks,e,x1m(i),x2_u)*dx2
+	if(det_j(ks,e,x1m(i),x2_u,eflag).le.1.0d0/muth)then !(si mu >= mu_th)
+	    sum_x2=sum_x2+det_j(ks,e,x1m(i),x2_u,eflag)*dx2
 	endif
           end do
           s_area=s_area+sum_x2*dx1
