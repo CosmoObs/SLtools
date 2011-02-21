@@ -4,6 +4,11 @@
 }
 {\ttfamily \#include $<$math.h$>$}\par
 {\ttfamily \#include $<$cstdlib$>$}\par
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacesiep__model}{siep\_\-model}
+\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -44,9 +49,11 @@ Notice: This model have 3 main parameters.
 
 siep\_\-params\mbox{[}0\mbox{]}: Integer useful to choose the flag for the parameterization for the ellipticity
 
-If siep\_\-params\mbox{[}0\mbox{]}=1, It uses $ a_{1\varepsilon}=1-\varepsilon $ and $ a_{2\varepsilon}=1+\varepsilon $
+If siep\_\-params\mbox{[}0\mbox{]}=1 : $ a_{1\varepsilon}=1-\varepsilon $ and $ a_{2\varepsilon}=1+\varepsilon $ (Angle Deflection Model)
 
-If siep\_\-params\mbox{[}0\mbox{]}=2, It uses $ a_{1\varepsilon}=1$ and $ a_{2\varepsilon}=(1-\varepsilon)^{-2} $
+If siep\_\-params\mbox{[}0\mbox{]}=2 : $ a_{1\varepsilon}=1-\varepsilon $ and $ a_{2\varepsilon}=\frac{1}{1-\varepsilon} $ (Standard parametrization)
+
+If siep\_\-params\mbox{[}0\mbox{]}=3 : $ a_{1\varepsilon}=1 $ and and $ a_{2\varepsilon}=\frac{1}{(1-\varepsilon)^{2}} $ (Keeton's Parametrization)
 
 siep\_\-params\mbox{[}1\mbox{]}: Ellipticity value (must be ellipticity parameter or ellipticity by itself whether the angle deflection model is used)
 

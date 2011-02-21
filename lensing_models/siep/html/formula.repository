@@ -95,3 +95,8 @@
 \form#94:$ \mathcal{A}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}+a_{2\varepsilon})$
 \form#95:$ \mathcal{B}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}-a_{2\varepsilon})$
 \form#96:$ x_{\varepsilon,R_{\rm th}}=x_{\varepsilon,tcc}\times\left\{\begin{array}{cc} \dfrac{|R_{\rm th}|}{|R_{\rm th}|-1}, & R_{\rm th}>0 \\ & \\ \dfrac{|R_{\rm th}|}{|R_{\rm th}|+1}, & R_{\rm th}<0 \end{array}\right.$
+\form#97:$ a_{2\varepsilon}=\frac{1}{1-\varepsilon} $
+\form#98:$ a_{1\varepsilon}=1 $
+\form#99:$ a_{2\varepsilon}=\frac{1}{(1-\varepsilon)^2} $
+\form#100:$ \sigma_{\rm siep}= R^2_{\rm E}\frac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2}\times \left\{2\pi\left[ [\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)]^2+\frac{2\,a_{1\varepsilon}\mathcal{B}^2(\varepsilon)}{a_{1\varepsilon}+4\,a_{2\varepsilon}\pi^{2}} \right]+ 2[2\mathcal{A}(\varepsilon)\mathcal{B}(\varepsilon)-\mathcal{B}^2(\varepsilon)]\sqrt{\frac{a_{1\varepsilon}}{a_{2\varepsilon}}}\arctan{\left( 2\pi\sqrt{\frac{a_{2\varepsilon}}{a_{1\varepsilon}}}\right)} \right\} $
+\form#101:$ a_{2\varepsilon}=\frac{1}{(1-\varepsilon)^{2}} $
