@@ -171,14 +171,85 @@ From the first-order derivatives in Cartesian coordinates, we can obtain the one
 \eea
 Then it is easy to obtain
 \bea
+<<<<<<< HEAD
+\frac{\partial \phi}{\partial
+r}&=&abr\left[J_0(r,\te)cos^2\te+J_1(r,\te)sin^2\te\right]\\
+\frac{\partial \phi}{\partial \te}&=&abr^2sin\,\te
+cos\,\te\left[J_1(r,\te)-J_0(r,\te)\right]
+\eea
+In order to get the coefficients in Alard's expansion, we need to extract the
+axisymmetric part of the potential. Defining
+$\psi(r,\te)\equiv\phi(r,\te)-\phi_0(r)$, we arrive at
+\bea
+f_1&=&\re\left[ab\left(J_0(R_E,\te)\,cos^2\te+J_1(R_E,\te)\,sen^2\te\right)-1\right]\label{f1-sie}
+\\[10pt]
+\frac{{\rm d}f_0}{{\rm
+d}\te}&=&ab\,\frac{\re^2}{2}\left[J_1(R_E,\te)-J_0(R_E,\te)\right]sen\,2\te\label{df0-sie}\\[10pt]
+\frac{{\rm d}^2f_0}{{\rm
+d}\te^2}&=&ab\,\re^2\Bigg\{\left[J_1(R_E,\te)-J_0(R_E,\te)\right]cos\,2\te +\nonumber\\ 
+&&+\frac{\re^2}{2}\left[K_0-2K_1(R_E,\te)+ K_2(R_E,\te)\right]sen^22\te\Bigg\}\label{d2f0-sie}
+\eea
+\subsection{SIE: CC, caustics and deformation cross-section}
+
+SIE models are the elliptical generalization of the SIS model. As such, the
+convergence can be obtained using eq. (\ref{variavel-eliptica}):
+\beq
+\kappa_{SIE}(m)=\frac{R_E}{2m}\label{convergence-SIE}
+\eeq
+where $m$ is given by eq. (\ref{m}). In this case, it is possible to calculate
+the integrals (\ref{Jn}) and (\ref{Kn}) analitically.
+\bea
+J_n(r,\te)&=&\frac{\re}{r}\frac{1}{\sqrt{\varepsilon_n+A(\theta)}}\tanh^{-1}
+\left(\sqrt{\frac{\varepsilon_n+A(\theta)}{1+A(\theta)}}\right)
+\eea
+where
+\bea
+\varepsilon_0&=&1-a^2\\
+\varepsilon_1&=&1-b^2\\
+A(\theta)&=&b^2-1+(a^2-b^2)\cos^2\theta
+\eea
+It will be useful to express eqs. (\ref{Jn}) and (\ref{Kn}) in terms of the
+ellipticity. Let us choose the prescription
+$\left(a=(1-\epsilon)^{-1/2},\,b=(1-\epsilon)^{1/2}\right)$. Then
+\bea
+\bar{\varepsilon}_0&=&\frac{\epsilon}{\epsilon-1}\\
+\bar{\varepsilon}_1&=&\epsilon\\
+\bar{A}(\theta)&=&\epsilon\left[-1+\left(\frac{\epsilon-2}{\epsilon-1}
+\right)\cos^2\theta\right]
+\eea
+and
+\bea
+J_0(r,\te)&=&\frac{R_E}{r}\frac{\tanh^{-1}\left[\frac{\sqrt{-\frac{(-2+\epsilon ) \epsilon  \text{Sin}[\theta ]^2}{-1+\epsilon }}}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right]}{\sqrt{-\frac{(-2+\epsilon ) \epsilon  \text{Sin}[\theta ]^2}{-1+\epsilon }}}\\[10pt]
+J_1(r,\te)&=&\frac{R_E}{r}\frac{\tanh^{-1}\left[\frac{\sqrt{\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right]}{\sqrt{\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\\[10pt]
+K_0(r,\te)&=&\frac{R_E}{2r} \left(\frac{\text{Cot}[\theta ]^2}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}-\frac{\text{ArcTanh}\left[\frac{\sqrt{-\frac{(-2+\epsilon ) \epsilon  \text{Sin}[\theta ]^2}{-1+\epsilon }}}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right] \text{Csc}[\theta ]^2}{\sqrt{-\frac{(-2+\epsilon ) \epsilon  \text{Sin}[\theta ]^2}{-1+\epsilon }}}\right)\\[10pt]
+K_1(r,\te)&=&-\frac{R_E}{2r \sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\\[10pt]
+K_2(r,\te)&=&\frac{R_E}{2r} \left(-\frac{\text{ArcTanh}\left[\frac{\sqrt{\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right] \text{Sec}[\theta ]^2}{\sqrt{\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}+\frac{\text{Tan}[\theta ]^2}{\sqrt{1-\epsilon +\frac{(-2+\epsilon ) \epsilon  \text{Cos}[\theta ]^2}{-1+\epsilon }}}\right)
+=======
 \frac{\partial \phi}{\partial r}&=&abr\left[J_0(r,\te)cos^2\te+J_1(r,\te)sin^2\te\right]\\
 \frac{\partial \phi}{\partial \te}&=&abr^2sin\,\te cos\,\te\left[J_1(r,\te)-J_0(r,\te)\right]
+>>>>>>> 7a47ec65584f4d75ece29cc7fe1934fdeeead50a
 \eea
 In order to get the coefficients in Alard's expansion, we need to extract the axisymmetric part of the potential. Defining $\psi(r,\te)\equiv\phi(r,\te)-\phi_0(r)$, we arrive at
 \bea
 f_1&=&\re\left[ab\left(J_0\,cos^2\te+J_1\,sen^2\te\right)-1\right]\\[10pt]
 \frac{{\rm d}f_0}{{\rm d}\te}&=&ab\,\frac{\re^2}{2}\left(J_1-J_0\right)sen\,2\te\\[10pt]
 \frac{{\rm d}^2f_0}{{\rm d}\te^2}&=&ab\,\re^2\left[\left(J_1-J_0\right)cos\,2\te+\frac{\re^2}{2}\left(K_0-2K_1+K_2\right)sen^22\te\right]
+\eea
+<<<<<<< HEAD
+For small ellipticity, we can do a series expansion around $\epsilon=0$. At
+linear order, this gives
+\bea
+J_0(R_E,\te)cos^2\te+J_1(R_E,\te)sin^2\te&=&\left(1-\frac{
+\epsilon\cos\,2\theta}{2}\right)\\
+J_1(r,\te)-J_0(r,\te)&=&\frac{2\epsilon}{3}
+\eea
+and
+\bea
+f_1&=&\\[10pt]
+\frac{{\rm d}f_0}{{\rm
+d}\te}&=&\\[10pt]
+\frac{{\rm d}^2f_0}{{\rm
+d}\te^2}&=&
 \eea
 \subsection{SIE: CC, caustics and arcs}
 \subsection{ENFW: CC, caustics and arcs}
