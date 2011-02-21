@@ -25,7 +25,6 @@
 </div>
 <div class="contents">
 <h1>siep_curves.h File Reference</h1><code>#include &lt;math.h&gt;</code><br/>
-<code>#include &lt;cstdlib&gt;</code><br/>
 <code>#include &quot;<a class="el" href="siep__lens__funct_8h_source.html">siep_lens_funct.h</a>&quot;</code><br/>
 
 <p><a href="siep__curves_8h_source.html">Go to the source code of this file.</a></p>
@@ -52,7 +51,14 @@
 <p>Tangential and Radial Critical Curves</p>
 <p>Tangential and Radial Caustics</p>
 <p>Curves of constant distortion in both planes.</p>
-<p>Cross section for deformation arcs (Analytical Expression) </p>
+<p>Cross section for deformation arcs (Analytical Expression)</p>
+<p>Notice: This model have 3 main parameters.</p>
+<p>siep_params[0]: Integer useful to choose the flag for the parameterization for the ellipticity</p>
+<p>If siep_params[0]=1 : <img class="formulaInl" alt="$ a_{1\varepsilon}=1-\varepsilon $" src="form_31.png"/> and <img class="formulaInl" alt="$ a_{2\varepsilon}=1+\varepsilon $" src="form_32.png"/> (Angle Deflection Model)</p>
+<p>If siep_params[0]=2 : <img class="formulaInl" alt="$ a_{1\varepsilon}=1-\varepsilon $" src="form_31.png"/> and <img class="formulaInl" alt="$ a_{2\varepsilon}=\frac{1}{1-\varepsilon} $" src="form_97.png"/> (Standard parametrization)</p>
+<p>If siep_params[0]=3 : <img class="formulaInl" alt="$ a_{1\varepsilon}=1 $" src="form_98.png"/> and <img class="formulaInl" alt="$ a_{2\varepsilon}=\frac{1}{(1-\varepsilon)^2} $" src="form_99.png"/> (Keeton's Parametrization)</p>
+<p>siep_params[1]: Ellipticity value (must be ellipticity parameter or ellipticity by itself whether the angle deflection model is used)</p>
+<p>siep_params[2]: Mass of the SIS model, related wit the velocity dispersion. </p>
 <hr/><h2>Function Documentation</h2>
 <a class="anchor" id="abb975e8f3f17a3a66378d5c5cc3fb33b"></a><!-- doxytag: member="siep_curves.h::cc_lw_neg_siep" ref="abb975e8f3f17a3a66378d5c5cc3fb33b" args="(double siep_params[], double lw_th, double xlwn[], double ylwn[], int npts=1000, FILE *file_in1=NULL)" -->
 <div class="memitem">
@@ -342,9 +348,9 @@
       </table>
 </div>
 <div class="memdoc">
-<p>A functions to compute the cross section for arc formation for the SIE model</p>
-<p><img class="formulaInl" alt="$ \sigma_{\rm siep}= R^2_{\rm E}\frac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \left[2\pi\left[\mathcal{A}(\varepsilon)+\mathcal{B}(\varepsilon)\right]-2\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\mathcal{B}(\varepsilon)\arctan{\left(2\pi\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\right)} \right] $" src="form_92.png"/></p>
-<p>where <img class="formulaInl" alt="$ \mathcal{A}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}+a_{2\varepsilon})$" src="form_94.png"/> and <img class="formulaInl" alt="$ \mathcal{B}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}-a_{2\varepsilon})$" src="form_95.png"/> </p>
+<p>A functions to compute the cross section for arc formation for the SIEP model</p>
+<p><img class="formulaInl" alt="$ \sigma_{\rm siep}= R^2_{\rm E}\frac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2}\times \left\{2\pi\left[ [\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)]^2+\frac{2\,a_{1\varepsilon}\mathcal{B}^2(\varepsilon)}{a_{1\varepsilon}+4\,a_{2\varepsilon}\pi^{2}} \right]+ 2[2\mathcal{A}(\varepsilon)\mathcal{B}(\varepsilon)-\mathcal{B}^2(\varepsilon)]\sqrt{\frac{a_{1\varepsilon}}{a_{2\varepsilon}}}\arctan{\left( 2\pi\sqrt{\frac{a_{2\varepsilon}}{a_{1\varepsilon}}}\right)} \right\} $" src="form_100.png"/></p>
+<p>where <img class="formulaInl" alt="$ \mathcal{A}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}+a_{2\varepsilon})$" src="form_94.png"/> and <img class="formulaInl" alt="$ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})$" src="form_37.png"/></p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>siep_params[]</em>&nbsp;</td><td>: SIEP parameters </td></tr>
@@ -461,7 +467,7 @@
 </div>
 </div>
 </div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on Sat Feb 19 20:17:30 2011 for SIEP by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on Mon Feb 21 11:34:56 2011 for SIEP by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

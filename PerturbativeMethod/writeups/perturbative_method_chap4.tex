@@ -169,7 +169,7 @@ In Fig.~\ref{siep_curves} we show an example for the main curves of the SIEP mod
 \hspace{3.cm}
 \subfigure{\includegraphics{graphics/siep_lens_plane.pdf}}}
 \caption{\label{siep_curves}  SIEP lensing model curves. Left Panel:
-Tangential($R_\lambda=\infty$) and Radial Caustics and Curves of Constant
+Tangential ($R_\lambda=\infty$) and Radial Caustics and Curves of Constant
 Distortion ($R_\lambda=\pm R_{\rm th}$) . Right Panel: Tangential
 ($R_\lambda=\infty$) and Radial Critical Curves and  Constant Distortion Curves
 ($R_\lambda=\pm R_{\rm th}$). Here, we used $R_{\rm E}=1$ and $|R_{\rm
@@ -177,11 +177,52 @@ th}|=5$ and the Keeton's parametrization,i.e,  $a_{1\varepsilon}=1$ and
 $a_{2\varepsilon}=(1-\varepsilon)^{-2}$ for $\varepsilon=0.4$, }
 \end{figure*}
 
+\subsection{PNFW}
+As example, we compare the result of our numerical code implemented by us,
+against the solution obtained with the Gravlens Software.
+
+
+\begin{figure*}[!ht]
+\resizebox{\hsize}{!}{
+\subfigure{\includegraphics{graphics/compar1_src.pdf}}\hspace{3.cm}
+\subfigure{\includegraphics{graphics/compar1_lens.pdf}}}
+\caption{\label{pnfw_curves1}  PNFW lensing model curves for some combination of
+lens parameters. Solid lines correspond to our Fortran code and Dashed-Lines
+correspond to Gravlens Software. Left Panel: Tangential and Radial Caustics.
+Right Panel: Tangential and Radial Critical Curves. ($R_\lambda=\infty$:
+Tangential Curves. $R_\lambda=0$: Radial Curves)}
+\end{figure*}
+
+\begin{figure*}[!ht]
+\resizebox{\hsize}{!}{
+\subfigure{\includegraphics{graphics/compar2_src.pdf}}\hspace{3.cm}
+\subfigure{\includegraphics{graphics/compar2_lens.pdf}}}
+\caption{\label{pnfw_curves2}  PNFW lensing model curves for some combination of
+lens parameters. Solid lines correspond to our Fortran code and Dashed-Lines
+correspond to Gravlens Software. Left Panel: Tangential and Radial Caustics.
+Right Panel: Tangential and Radial Critical Curves. ($R_\lambda=\infty$:
+Tangential Curves. $R_\lambda=0$: Radial Curves)}
+\end{figure*}
+
+\begin{figure*}[!ht]
+\resizebox{\hsize}{!}{
+\subfigure{\includegraphics{graphics/compar3_src.pdf}}\hspace{3.cm}
+\subfigure{\includegraphics{graphics/compar3_lens.pdf}}}
+\caption{\label{pnfw_curves3}  PNFW lensing model curves for some combination of
+lens parameters. Solid lines correspond to our Fortran code and Dashed-Lines
+correspond to Gravlens Software. Left Panel: Tangential and Radial Caustics.
+Right Panel: Tangential and Radial Critical Curves. ($R_\lambda=\infty$:
+Tangential Curves. $R_\lambda=0$: Radial Curves)}
+\end{figure*}
+
+
+
 
 \section{Elliptical Models}
 
 \section{Arc Cross Section}
-In this work, we compute the Arc Cross Section by using the local approximation for the length-to-width ratio of arcs, we substitute $L/W$ by 
+In this work, we compute the Arc Cross Section by using the local approximation
+for the length-to-width ratio of arcs i.e., we substitute $L/W$ by 
 \begin{equation}
 R_\lambda:=\dfrac{\lambda_r}{\lambda_t},
 \end{equation}
@@ -196,38 +237,123 @@ However, as we are working with dimensionless coordinates $ \vec{y}=\frac{\eta}{
 \sigma_{\rm dcs} = \xi_0^2\tilde{\sigma}_{\rm dcs}= \xi_0^2 \int_{ \frac{\lambda_r}{\lambda_t} > |R_{\rm th}|} \left |{\rm det}\,\textbf{J}(\vec{x}) \right| d^2\!x. \label{dcs_dimensionless}
 \end{equation}
 
-In general, the calculation of theses expression requires numerical method, unless for a few kind of lens model.  For example, for the SIS model, $\mathbf{J}(\vec{x})=1-\frac{1}{x}$, $\xi_0=\re$ and, hence we have
+In general, the calculation of this expression requires numerical method,
+unless for a few kind of lens model.  For example, for the SIS model,
+$\mathbf{J}(\vec{x})=1-\frac{1}{x}$, $\xi_0=\re$ and, hence we have
 
 \begin{equation}
 \sigma_{dcs}=2\pi\,R^2_{\rm E} \dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \label{dcs_sis}
 \end{equation}
 
-Note that the last equation is the same as the Eq.~(\ref{dcs_sis_pertapp}). The other model that offers an analytical expression for the cross section for deformation arcs is the SIEP. For this model, first we have that the determinant of the Jacobian matrix is
+Note that the last equation is the same as the Eq.~(\ref{dcs_sis_pertapp}). The
+other  model that offers an analytical expression for the cross section for
+deformation arcs is the SIEP. For this model, first we have that the determinant
+of the Jacobian matrix is
 \begin{equation}
 \mathbf{J}(\vec{x})=1-\dfrac{x_{\varepsilon,tcc}}{x_{\varepsilon}}, \label{jacob_siep}
 \end{equation}
-where $x_{\varepsilon,tcc}$ corresponds to the radial coordinate of the tangential critical curve. Then, by inserting the last equation in Eq.~(\ref{dcs_dimensionless}), and $d^2\,x=xdx d\phi$, we have
+where $x_{\varepsilon,tcc}$ corresponds to the pseudo-elliptical radial
+coordinate of the tangential critical curve. Then, by inserting the last
+equation in Eq.~(\ref{dcs_dimensionless}), and $d^2 x=xdx d\phi$, we have
 
 \begin{equation}
 \tilde{\sigma}_{\rm siep}= \int_{0}^{2\pi}\int_{x_{_{-R_{\rm th}}}}^{x_{_{R_{\rm th}}}}\left| 1-\dfrac{x_{\varepsilon,tcc}}{x_{\varepsilon}}\right| x dx d\phi 
 \end{equation}
 As in polar coordinates $x_{\varepsilon}=xf(\phi)$, where $f(\phi)=\sqrt{a_{1\varepsilon}\cos^2{\phi}+a_{2\varepsilon}\sin^2{\phi}}$, the result integration in the radial coordinate is
 \begin{equation}
-\tilde{\sigma}_{\rm siep}= \dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \int_{0}^{2\pi}\left[\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)\cos{(2\phi_\varepsilon)} \right] d\phi 
+\tilde{\sigma}_{\rm siep}= \dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2}
+\int_{0}^{2\pi}\left[\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)\cos{
+(2\phi_\varepsilon)} \right]^2 d\phi 
 \end{equation}
 Therefore, the analytical expression for the deformation cross section for the SIEP is
- \begin{equation}
-\sigma_{\rm siep}= R^2_{\rm E}\dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \left[2\pi\left[\mathcal{A}(\varepsilon)+\mathcal{B}(\varepsilon)\right]-2\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\mathcal{B}(\varepsilon)\arctan{\left(2\pi\sqrt{\dfrac{a_{2\varepsilon}}{a_{1\varepsilon}}}\right)} \right]
-\end{equation}
-In the limit $\varepsilon \rightarrow 0$, we have that $\mathcal{A}(\varepsilon)=1$, $\mathcal{B}(\varepsilon)=0$, and the expression above is the same as Eq.~(\ref{dcs_sis})
+\begin{eqnarray}
+\sigma_{\rm siep}&=& R^2_{\rm E}\dfrac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2}\times \nonumber \\
+& & \left\{2\pi\left[ [\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)]^2+\frac{2\,a_{1\varepsilon}\mathcal{B}^2(\varepsilon)}{a_{1\varepsilon}+4\,a_{2\varepsilon}\pi^{2}} \right]+ 2[2\mathcal{A}(\varepsilon)\mathcal{B}(\varepsilon)-\mathcal{B}^2(\varepsilon)]\sqrt{\frac{a_{1\varepsilon}}{a_{2\varepsilon}}}\arctan{\left( 2\pi\sqrt{\frac{a_{2\varepsilon}}{a_{1\varepsilon}}}\right)} \right\} \nonumber \\
+\end{eqnarray}
+
+In the limit $\varepsilon \rightarrow 0$, we have that $\mathcal{A}(\varepsilon)=1$, $\mathcal{B}(\varepsilon)=0$,  and the expression above is the same as Eq.~(\ref{dcs_sis}). In the Figs.~\ref{dcs_siep_re},~\ref{dcs_siep_e},~\ref{dcs_siep_rth} we show the deformation cross section for the SIEP model considering 
+\begin{eqnarray}
+ a_{1\varepsilon}&=&1-\varepsilon, a_{2\varepsilon}=1+\varepsilon \quad
+\textrm{Angle Deflection Model} \\ 
+a_{1\varepsilon} &=&1-\varepsilon,a_{2\varepsilon}=(1-\varepsilon_\varphi)^{-1} 
+\quad
+\textrm{Standard Parametrization} \\
+a_{1\varepsilon} &=& 1, a_{2\varepsilon}=(1-\varepsilon_\varphi)^{-2}
+\quad
+\textrm{Keeton's Parametrization} 
+\end{eqnarray}
+
+
 
 \begin{figure*}[!ht]
 \resizebox{\hsize}{!}{
-\subfigure{\includegraphics{graphics/dcs_siep_vs_re.pdf}}
-\hspace{3.cm}
-\subfigure{\includegraphics{graphics/dcs_siep_vs_e.pdf}}}
-\caption{\label{dcs_siep} Deformation cross section for the  SIEP lensing model. Left Panel:
-$\sigma$ as a function of $R_{\rm E}$. Right Panel: $\sigma$ as a function of $\varepsilon$.
-The calculation were made for $R_{\rm th}=10$.
-}
+\subfigure{\includegraphics{graphics/dcs_siep_vs_re-gk.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_siep_vs_re-st.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_siep_vs_re-k.pdf}}}
+\caption{\label{dcs_siep_re} Deformation cross section for the  SIEP lensing model as a function of $R_{\rm E}$ . Left Panel:
+Parametrization of the Angle Deflection Model. Middle Panel: Standard
+Parametrization. Right Panel: The Keeton's parametrization.  The calculations
+were done for $R_{\rm th}=10$.}
+\end{figure*}
+
+\begin{figure*}[!ht]
+\resizebox{\hsize}{!}{
+\subfigure{\includegraphics{graphics/dcs_siep_vs_e-gk.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_siep_vs_e-st.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_siep_vs_e-k.pdf}}}
+\caption{\label{dcs_siep_e} Deformation cross section for the  SIEP lensing
+model as a function of the ellipticity. Left Panel:
+Parametrization of the Angle Deflection Model. Middle Panel: Standard
+Parametrization. Right Panel: The Keeton's parametrization. The calculations
+were done for $R_{\rm th}=10$.}
+\end{figure*}
+
+\begin{figure*}[!ht]
+\resizebox{\hsize}{!}{
+\subfigure{\includegraphics{graphics/dcs_siep_vs_rth-gk.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_siep_vs_rth-st.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_siep_vs_rth-k.pdf}}}
+\caption{\label{dcs_siep_rth} Deformation cross section for the  SIEP lensing
+model as a function of $R_{\rm th}$. Left Panel:
+Parametrization of the Angle Deflection Model. Middle Panel: Standard
+Parametrization. Right Panel: The Keeton's parametrization. The calculations
+were done for $R_{\rm E}=2$.}
+\end{figure*}
+
+
+
+\begin{figure*}[!ht]
+\resizebox{\hsize}{!}{
+\subfigure{\includegraphics{graphics/dcs_pnfw_vs_ks-gk.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_pnfw_vs_ks-st.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_pnfw_vs_ks-k.pdf}}}
+\caption{\label{dcs_pnfw_ks} Deformation cross section for the  PNFW lensing
+model as a function of $\kappa_s$ . Left Panel:
+Parametrization of the Angle Deflection Model. Middle Panel: Standard
+Parametrization. Right Panel: The Keeton's parametrization.  The calculations
+were done for $R_{\rm th}=10$ and $r_s=1$.}
+\end{figure*}
+
+\begin{figure*}[!ht]
+\resizebox{\hsize}{!}{
+\subfigure{\includegraphics{graphics/dcs_pnfw_vs_e-gk.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_pnfw_vs_e-st.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_pnfw_vs_e-k.pdf}}}
+\caption{\label{dcs_pnfw_e} Deformation cross section for the  PNFW lensing
+model as a function of the ellipticity. Left Panel: 
+Parametrization of the Angle Deflection Model. Middle Panel: Standard
+Parametrization. Right Panel: The Keeton's parametrization. The calculations
+were done for $R_{\rm th}=10$ and $r_s=1$.}
+\end{figure*}
+
+\begin{figure*}[!ht]
+\resizebox{\hsize}{!}{
+\subfigure{\includegraphics{graphics/dcs_pnfw_vs_rth-gk.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_pnfw_vs_rth-st.pdf}}\hspace{1.cm}
+\subfigure{\includegraphics{graphics/dcs_pnfw_vs_rth-k.pdf}}}
+\caption{\label{dcs_siep_rth} Deformation cross section for the  PNFW lensing
+model as a function of $R_{\rm th}$. Left Panel:
+Parametrization of the Angle Deflection Model. Middle Panel: Standard
+Parametrization. Right Panel: The Keeton's parametrization. The calculations
+were done for $\kappa_s=0.5$ and $r_s=1$.}
 \end{figure*}
