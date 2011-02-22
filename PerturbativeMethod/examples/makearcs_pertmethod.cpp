@@ -60,6 +60,9 @@ double Df0_bar_Dtheta(double theta, double x_0, double y_0){
 double x_plus(double theta, double x_0, double y_0, double R0){
   double DfbDt = Df0_bar_Dtheta(theta, x_0, y_0);
   double sqrtarg = R0*R0 - DfbDt*DfbDt;
+  
+  if (R0==0 && DfbDt>0 ){sqrtarg=DfbDt;}  
+  if (R0==0 && DfbDt<0 ){sqrtarg=(-DfbDt);}
   if (sqrtarg < 0.0) return 0.0;
 
   return 1.0/k2() * ( f1_bar(theta,x_0,y_0) +  sqrt(sqrtarg) );
@@ -69,6 +72,9 @@ double x_plus(double theta, double x_0, double y_0, double R0){
 double x_minus(double theta, double x_0, double y_0, double R0){
   double DfbDt = Df0_bar_Dtheta(theta, x_0, y_0);
   double sqrtarg = R0*R0 - DfbDt*DfbDt;
+
+  if (R0==0 && DfbDt>0 ){sqrtarg=DfbDt;}  
+  if (R0==0 && DfbDt<0 ){sqrtarg=(-DfbDt);}  
   if (sqrtarg < 0.0) return 0.0;
 
   return 1.0/k2() * ( f1_bar(theta,x_0,y_0) -  sqrt(sqrtarg) );
@@ -81,9 +87,9 @@ int nsteps = 500;
 int main(){
 
   // Define some numbers, same as what MM has in his code
-  double x_0 = 0.05;
-  double y_0 = 0.15; 
-  double R_0 = 1.0/15.0;
+  double x_0 = 0.02;
+  double y_0 = 0.0; 
+  double R_0 = 0.01;
 
   // We'll need this
   double theta = 0.0;

@@ -62,7 +62,7 @@ double x_plus(double theta, double x_0, double y_0, double R0){
   double DfbDt = Df0_bar_Dtheta(theta, x_0, y_0);
   double sqrtarg = R0*R0 - DfbDt*DfbDt;
   
-  if (R0==0){sqrtarg=(DfbDt);}
+  if (R0==0 && DfbDt>0 ){sqrtarg=DfbDt;}  
   if (R0==0 && DfbDt<0 ){sqrtarg=(-DfbDt);}
 
     printf("x_plus  sqrtarg = %f \n", sqrtarg);
@@ -78,7 +78,7 @@ double x_minus(double theta, double x_0, double y_0, double R0){
 
     printf("x_minus DfbDt = %f \n", DfbDt);
     printf("x_minus R0 = %f \n", R0);
-  if (R0==0){sqrtarg=abs(DfbDt);}  
+  if (R0==0 && DfbDt>0 ){sqrtarg=DfbDt;}  
   if (R0==0 && DfbDt<0 ){sqrtarg=(-DfbDt);}
 
     printf("x_minus  sqrtarg = %f \n", sqrtarg);
