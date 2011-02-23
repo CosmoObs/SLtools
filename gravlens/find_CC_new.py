@@ -273,6 +273,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	x1, y1, u1, v1, x2, y2, u2, v2 = np.loadtxt(caustic_CC_file, comments='#', unpack=True)
 
 	# Separating the critical cuves ----------------------------------------------------------------
+	
 	curves = separate_curves(x1, y1, x2, y2)
 
 	if len(curves) == 1:
@@ -299,6 +300,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	# separating the caustics curves ---------------------------------------------------------------
 	curves = separate_curves(u1, v1, u2, v2)
+	
 	
 	if len(curves) == 1:
 		logging.warning('Only one caustic was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')

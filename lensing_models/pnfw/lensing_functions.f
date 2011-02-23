@@ -1,3 +1,17 @@
+!>  @file
+!> This module is useful to compute quantities related to the Singular Isothermal Elliptical Potential (SIEP) 
+!>
+!> See sltools/PerturbativeMethod/writeups/Report_on_Perturbative_Method.pdf
+!>
+!>   Lensing functions to be considered: angle deflection, convergence, components of the shear.
+!>
+!>  
+!> 
+!> @package pnfw_model
+!>
+
+
+!*
 ! THIS FILE CONTAINS ALL THE BASIC LENSING FUNCTION OF THE PNFW LENS MODEL:
 ! ALMOST OF THESE FUNCTIONS ARE DEFINED IN Golse & Kneib A&A 390,821-827 (2002)
 ! FUNCTION f(x)     --> Eq. (4)
@@ -21,6 +35,15 @@
 ! FUNCTION y1_s: Mapping the ¨x2¨ points of the lens plane into the source plane points
 ! FUNCTION y2_s : Mapping the ¨x1¨ points  of the lens plane into the source plane points
 !
+
+!
+!>Function useful to define the mass distribution of the PNFW Model
+!>
+!> \f$ \mathcal{F}(x)= 1 \f$
+!>
+!> @param  x : Radial Coordiante
+!>
+!> @return \f$F(x)\f$
       FUNCTION F(x)
 !     Hint: arccosh(x)=ln(x+sqrt(x^2-1))
 !     arcosh(1/x)=ln(1/x+sqrt(1/x^2-1))
@@ -45,6 +68,13 @@
       END
 ****************************************************************************	
 ****************************************************************************
+!> Function related to the mean surface mass density. It computes
+!>
+!> \f$ g(x)= \f$
+!> 
+!> @param x : radial coordinate
+!> @return \f$ g(x)= \f$
+
       FUNCTION G(X)
 !
       double precision d12,arg,x,g
@@ -68,6 +98,14 @@
       END
 ****************************************************************************	
 ****************************************************************************      
+!> Function to compute the dimensionless angle deflection of the NFW model
+!>
+!>  \f$ \alpha(x)=4\frac{g(x)}{x}\f$
+!>
+!>  @param x : radial coordinate
+!>
+!> @return  \f$ \alpha(x)g(x)\f$
+
       FUNCTION alpha(x)
 !
       double precision alpha,x,g
