@@ -29,8 +29,6 @@ def separate_curves(x1, y1, x2, y2, delta=None):
     means we "jumped to another curve". By default, we set delta as 1/10 of a caracteristic curve size 
     (the diagonal of the curve boundary rectangle).
 
-    This function allows cases where only 2 curves are present in the input coordinates.
-
     Input:
      - x1  <list> : x coordinate of a point
      - y1  <list> : y coordinate of a point
