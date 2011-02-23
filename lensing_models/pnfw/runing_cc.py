@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 import os 
 from sltools.gravlens.find_CC_new import run_find_CC as run
 
 ks=2.0
 rs=1.0
-el=0.3
+el=0.5
 thetal=90
 #	
 lw=10
@@ -11,8 +12,8 @@ iflag=3
 eflag=3
 npt=251
 
-outpar = open("in_pnfw_par.txt","w")
-outpar.write("%f %f %f %f %i %i %i\n" %(ks,rs,el,lw,iflag,npt,eflag))
+outpar = open('in_pnfw_par.txt','w')
+outpar.write(" %f %f %f %f %i %i %i\n " %(ks,rs,el,lw,iflag,npt,eflag))
 outpar.close()
 
 

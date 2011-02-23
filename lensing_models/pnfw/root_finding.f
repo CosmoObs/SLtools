@@ -1,3 +1,10 @@
+!> @file
+!> This module contain the root findings subroutines 
+!>
+!>
+!>
+!> @package pnfw_model
+
 !   THIS FILE CONTAINT ALL THE USEFUL FINDING-ROOT SUBROUTINES.
 !   IN THEIR WE USE TWO METHOD*  HELPED WITH A SUBROUTINES THAT
 !   FIND THE INTERVAL  WHERE THE POSSIBLE ROOT EXISTS.
