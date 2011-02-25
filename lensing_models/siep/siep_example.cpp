@@ -64,7 +64,7 @@ int i=0;
   if (entrada1== NULL) 
     {
       printf("Nao foi possivel abrir o arquivo... then \n");
-      printf("Enter the flag, ellipticity and Einstein radius: ");
+      printf("Enter the ellipticity, e_flag and Einstein radius: ");
       scanf("%f %f %f",&argv[0],&argv[1], &argv[2]);
       lens_par[1]=argv[0];
       lens_par[2]=argv[1];
@@ -109,13 +109,14 @@ int i=0;
 
       fclose(ollwn);
       
-//       system("xmgrace -view 0.15 0.15 0.85 0.85 tang_curves.dat rad_curves.dat lw_pos_curves.dat lw_neg_curves.dat -saveall curvas.agr ");
-//       system("xmgrace -view 0.15 0.15 0.85 0.85 -block tang_curves.dat -bxy 3:4 -block rad_curves.dat -bxy 3:4  -block lw_pos_curves.dat -bxy 3:4 -block  lw_neg_curves.dat -bxy 3:4 -saveall curvas2.agr ");
+      system("xmgrace -view 0.15 0.15 0.85 0.85 tang_curves.dat rad_curves.dat lw_pos_curves.dat lw_neg_curves.dat -saveall curvas.agr ");
+      system("xmgrace -view 0.15 0.15 0.85 0.85 -block tang_curves.dat -bxy 3:4 -block rad_curves.dat -bxy 3:4  -block lw_pos_curves.dat -bxy 3:4 -block  lw_neg_curves.dat -bxy 3:4 -saveall curvas2.agr ");
       
 //       FILE *outcsda = fopen ("dcs_siep_vs_e.dat" , "w");
 //       FILE *outcsda = fopen ("dcs_siep_vs_re.dat" , "w");
       FILE *outcsda = fopen ("dcs_siep_vs_rth.dat" , "w");
-      double sig1,re_sis;
+//       double sig1,re_sis;
+      double sig1;
  /*
       for(int j=0; j<=1000; j++){
           re_sis=0.+0.01*j;

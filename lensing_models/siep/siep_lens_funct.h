@@ -12,15 +12,15 @@
 *
 *  Notice: This model have 3 main parameters.
 *
-* siep_params[0]: Integer useful to choose the flag for the parameterization for the ellipticity
+* siep_params[0]: Ellipticity value (must be ellipticity parameter or ellipticity by itself whether the angle deflection model is used)
 *
-* If siep_params[0]=1 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=1+\varepsilon \f$ (Angle Deflection Model)
+* siep_params[1]: Integer useful to choose the flag for the parameterization for the ellipticity
 *
-* If siep_params[0]=2 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=\frac{1}{1-\varepsilon} \f$ (Standard parametrization)
+* If siep_params[1]=1 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=1+\varepsilon \f$ (Angle Deflection Model)
 *
-* If siep_params[0]=3 : \f$ a_{1\varepsilon}=1 \f$ and and \f$ a_{2\varepsilon}=\frac{1}{(1-\varepsilon)^{2}} \f$ (Keeton's Parametrization)
-*  
-* siep_params[1]: Ellipticity value (must be ellipticity parameter or ellipticity by itself whether the angle deflection model is used)
+* If siep_params[1]=2 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=\frac{1}{1-\varepsilon} \f$ (Standard parametrization)
+*
+* If siep_params[1]=3 : \f$ a_{1\varepsilon}=1 \f$ and and \f$ a_{2\varepsilon}=\frac{1}{(1-\varepsilon)^{2}} \f$ (Keeton's Parametrization)
 *
 * siep_params[2]: Mass of the SIS model, related wit the velocity dispersion.
 *
@@ -83,10 +83,10 @@ return kappa_sis(r,siep_params);
 \return \f$ \kappa_\varepsilon(x)\f$
 */
 double kappa_siep(double xi1, double xi2, double siep_params[]){
-int pflag=siep_params[0];
-double elp,b,x1,x2,a1e,a2e;
-elp=siep_params[1];
-b=siep_params[2];
+double elp=siep_params[0];
+int pflag=siep_params[1];
+double b=siep_params[2];
+double x1,x2,a1e,a2e;
 x1=b*xi1, x2=b*xi2;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
 if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
@@ -181,11 +181,10 @@ return gamma;
 */
 
 double alpha1_siep(double xi1, double xi2, double siep_params[]){
-int pflag;
-double elp,b,x1,x2,a1e,a2e;
-pflag=siep_params[0];
-elp=siep_params[1];
-b=siep_params[2];
+double elp=siep_params[0];
+int pflag=siep_params[1];
+double b=siep_params[2];
+double x1,x2,a1e,a2e;
 x1=b*xi1, x2=b*xi2;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
 if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
@@ -209,11 +208,12 @@ return alpha1;
 */
 
 double alpha2_siep(double xi1, double xi2, double siep_params[]){
-int pflag;
-pflag=siep_params[0];
-double elp,b,x1,x2,a1e,a2e;
+double elp=siep_params[0];
+int pflag=siep_params[1];
+double b=siep_params[2];
+double x1,x2,a1e,a2e;
 double theta_e,alpha2;
-elp=siep_params[1];
+elp=siep_params[0];
 b=siep_params[2];
 x1=b*xi1, x2=b*xi2;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
