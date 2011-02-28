@@ -437,12 +437,16 @@ double cross_section_siep(double siep_params[], double r_th){
   if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
   if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
   if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
-  double Ae,Be,B2e,fterm,mterm,lterm;
-  Ae=0.5*(a1e+a2e), Be=0.5*(a1e-a2e), B2e=Be*Be ;
-  fterm = (Ae-Be)*(Ae-Be);
-  mterm = 2.*a1e*B2e/(a1e+4.*a2e*PI*PI); 
-  lterm=  (2.*Ae*Be-B2e)*sqrt(a1e/a2e); 
-  double sig_temp=r_e*r_e*rth_fact*(2*PI*(fterm+mterm)+ 2.*lterm*atan(2*PI*sqrt(a2e/a1e)));
-  return sig_temp;  
+  double term1,term2,term3;
+//   double arg1=pow(10,-8)*sqrt(a2e/a1e);
+  double arg2=pow(10,8)*sqrt(a2e/a1e);
+//   term1=(0.75*a1e*a1e+0.5*a1e*a2e+0.75*a2e*a2e)*(2.*atan(arg2)-atan(arg1));
+//   term2=0.5*(a1e*a1e-a2e*a2e)*(sin(2.*atan(arg1))-2.*sin(2.*atan(arg2)));
+//   term3=-0.0625*(a1e-a2e)*(a1e-a2e)*(sin(4.*atan(arg1))-2.*sin(4.*atan(arg2)));
+  term1=(0.75*a1e*a1e+0.5*a1e*a2e+0.75*a2e*a2e)*(2.*atan(arg2));
+  term2=(a1e*a1e-a2e*a2e)*sin(2.*atan(arg2));
+  term3=0.0625*(a1e-a2e)*(a1e-a2e)*2.*sin(4.*atan(arg2));
+  double sig_tmp=(1./sqrt(a1e*a2e))*rth_fact*r_e*r_e*(term1+term2+term3);
+  return sig_tmp;
 }
 #endif
