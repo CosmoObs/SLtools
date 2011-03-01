@@ -97,12 +97,12 @@ def separate_curves(x1,y1,x2,y2,nodes=[]):
     if nodes==[]:
         nodes.extend(np.where(x1==x1[0])[0].tolist()); # gets 4 points for which y=0. The method 'extend' appends a whole list
     
-    x_interna = list(x1[:nodes[2]]); # Teria que ter colocado zero to nodes[2] 
+    x_interna = list(x1[:nodes[2]]); 
     x_interna.extend(x2[:nodes[2]]);
     y_interna = list(y1[:nodes[2]]);
     y_interna.extend(y2[:nodes[2]]);
     
-    x_externa = list(x1[nodes[2]:]); # Indo até o final da lista.
+    x_externa = list(x1[nodes[2]:]); 
     x_externa.extend(x2[nodes[2]:]);
     y_externa = list(y1[nodes[2]:]);
     y_externa.extend(y2[nodes[2]:]);
