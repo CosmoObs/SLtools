@@ -39,7 +39,7 @@ from functions import get_b_n,convert_arcsec_pix,convert_pix_arcsec # substituir
 from sltools.image import get_image_limits_pywcs
 from sltools.coordinate import *
 import pywcs
-
+from scipy.integrate import dblquad, quad
 
 sys.path.append( os.path.abspath( '.' ))
 cwd = os.getcwd()+'/'
@@ -77,8 +77,8 @@ def read_input_file(input_file):
 
 def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
 
-    """ 
-    Function to compute the value of the surface brightness of the
+	""" 
+	Function to compute the value of the surface brightness of the
 	(r,theta) point following the ArcEllipse prescription.
 
 	Input:
@@ -95,7 +95,7 @@ def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
 
 	Output:
 	- the value of the surface brightness of the (r,theta) point following the ArcEllipse prescription
-    """
+	"""
 
 	r_prof = math.sqrt((r_c * theta_diff * (1. - ellip))**2 + (r - r_c)**2 )
 
@@ -106,8 +106,8 @@ def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
 
 def arcellipse_sbmap_x_y(x,y,x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip):
 
-    """ 
-    Function to compute the value of the surface brightness of the
+	""" 
+	Function to compute the value of the surface brightness of the
 	(x,y) pixel following the ArcEllipse prescription.
 
 	Input:
@@ -144,8 +144,8 @@ def arcellipse_sbmap_x_y(x,y,x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip):
 
 
 def derivative(f):
-    """ 
-    Function to compute the numerical derivative of the arcellipse_sbmap_r_theta function at (r,theta). 
+	""" 
+	Function to compute the numerical derivative of the arcellipse_sbmap_r_theta function at (r,theta). 
 
 	Input:
 	- r: radius (pixel)
@@ -185,7 +185,7 @@ def I_0_integral(n,r_e,r_c,theta_0,ellip):
 	- theta_0: orientation of the arc center related to x-axis 
 	- ellip: ellipticity of the arc
 
-    Output:
+	Output:
 	- value of the definite double integral of the Sersic profile (where I_0 = 1)
 	'''
 
@@ -197,9 +197,9 @@ def I_0_integral(n,r_e,r_c,theta_0,ellip):
 
 
 def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_size,dim_x,dim_y):
-    """	
-    Function to create the surface brightness map following the ArcEllipse prescription 
-    and digitalize ("pixelize") it to an image with the same size as the input image. 
+	"""	
+	Function to create the surface brightness map following the ArcEllipse prescription 
+	and digitalize ("pixelize") it to an image with the same size as the input image. 
 
 	Input:
 	- x_0: x position of the point where the arc is centered (pixel)
@@ -261,16 +261,16 @@ def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_
 
 
 def digitalize_arc_sbmap(params,image_name):
-    """	
-    Function to create the arc image. 
+	"""	
+	Function to create the arc image. 
     
-    It computes the arcellipse_sbmap_r_theta derivative to find the size of the "new" pixel for 
-    digitalization. Then it calls the function create_arcellipse_sbmap to create the surface 
-    brightness map and digitalize it. 
+	It computes the arcellipse_sbmap_r_theta derivative to find the size of the "new" pixel for 
+	digitalization. Then it calls the function create_arcellipse_sbmap to create the surface 
+	brightness map and digitalize it. 
     
-    The arc image is written in a fits file with suffix "_arc.fits" and the arc properties are 
-    written in a ascii file with suffix "_arc.txt". This function returns the array resultant of 
-    the digitalization of the surface brightness map.
+	The arc image is written in a fits file with suffix "_arc.fits" and the arc properties are 
+	written in a ascii file with suffix "_arc.txt". This function returns the array resultant of 
+	the digitalization of the surface brightness map.
 
 	The arc image has the same size as the input image.
 
@@ -373,22 +373,22 @@ def run_paint_arcs(input_image,params_list):
 	#Adding noise
 	pyfits.writeto("arc_conv2.fits",fftconv_image)	
 	noise_file_list = ["arc_conv2.fits"]
-	noisy_files_list = add_noise_2_image.add_noise_2_image(noise_file_list)
+	noisy_files_list = add_noise(noise_file_list)
 	
 	for filename in noisy_files_list:
 		arc_array = pyfits.getdata(filename)
 				
-		img_array = img_array + arc_array
+		image_array = image_array + arc_array
 	
 
 	#Writing final image to a fits file
 	final_image = paths['output'] + image_root + "_final" + image_extension
 
-	pyfits.writeto(final_image,img_array_conv,image_header)
+	pyfits.writeto(final_image,image_array,image_header)
 	
 	os.system("rm arc_conv2.fits")
 	
-	return img_array
+	return image_array
 
 
 #-----------------------------------------------------------------------------		

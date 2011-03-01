@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-# ==================================
+# -*- coding: utf-8 -*-
+# =================================================
 # Authors:
-# Angelo Fausti Neto, Pedro Ferreira
-# ==================================
+# Angelo Fausti Neto, Pedro Ferreira,Carlos Brandt
+# =================================================
   
 """Module to separate curves defined by connected line segments"""
 
@@ -13,13 +14,12 @@
 
 
 from matplotlib.pyplot import *
-import numpy as np
 from numpy import * 
 from random import *
-import logging
+import numpy as np
 
 #=======================================================================================================
-def separate_curves(x1, y1, x2, y2, delta=None):
+def separate_curves_a(x1, y1, x2, y2, delta=None):
 
     ''' 
     Separates curves defined by connected line segments.
@@ -30,8 +30,6 @@ def separate_curves(x1, y1, x2, y2, delta=None):
     distance between two consecutive points (x1[i],y1[i]) and (x1[i+1], y1[i+1]) is larger than delta it
     means we "jumped to another curve". By default, we set delta as 1/10 of a caracteristic curve size 
     (the diagonal of the curve boundary rectangle).
-
-    This function allows cases where only 2 curves are present in the input coordinates.
 
     Input:
      - x1  <list> : x coordinate of a point
@@ -79,4 +77,36 @@ def separate_curves(x1, y1, x2, y2, delta=None):
     return curves
 
 
+#=======================================================================================================
+def separate_curves(x1,y1,x2,y2,nodes=[]):
+    """  Function to separate curves, considering the value of the first coordinate of the
+	 Gravlens's output 
 
+	Input:
+     - x1  <list> : x coordinate of a point
+     - y1  <list> : y coordinate of a point
+     - x2  <list> : x coordinate of the point consecutive to (x1,y1)
+     - y2  <list> : y coordinate of the point consecutive to (x1,y1)
+
+    Output:
+     - curves  <list> : list of curves. Each element curves[i] is a closed curve with 4 arrays. The 
+                        first 2 arrays being the (x,y) coordinates of the tangential curve points and the 3rd and 
+			4th collumns corresponds to the radial curves 
+      """
+
+    if nodes==[]:
+        nodes.extend(np.where(x1==x1[0])[0].tolist()); # gets 4 points for which y=0. The method 'extend' appends a whole list
+    
+    x_interna = list(x1[:nodes[2]]); 
+    x_interna.extend(x2[:nodes[2]]);
+    y_interna = list(y1[:nodes[2]]);
+    y_interna.extend(y2[:nodes[2]]);
+    
+    x_externa = list(x1[nodes[2]:]); 
+    x_externa.extend(x2[nodes[2]:]);
+    y_externa = list(y1[nodes[2]:]);
+    y_externa.extend(y2[nodes[2]:]);
+    
+    curves = [ [x_interna,y_interna],[x_externa,y_externa] ];
+    
+    return curves;

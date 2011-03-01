@@ -11,35 +11,55 @@
 * Curves of constant distortion in both planes.
 *
 * Cross section for deformation arcs (Analytical Expression)
+*
+* Notice: This model have 3 main parameters.
+*
+* siep_params[0]: Ellipticity value (must be ellipticity parameter or ellipticity by itself whether the angle deflection model is used)
+*
+* siep_params[1]: Integer useful to choose the flag for the parameterization for the ellipticity
+*
+* If siep_params[1]=1 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=1+\varepsilon \f$ (Angle Deflection Model)
+*
+* If siep_params[1]=2 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=\frac{1}{1-\varepsilon} \f$ (Standard parametrization)
+*
+* If siep_params[1]=3 : \f$ a_{1\varepsilon}=1 \f$ and and \f$ a_{2\varepsilon}=\frac{1}{(1-\varepsilon)^{2}} \f$ (Keeton's Parametrization)
+*
+* siep_params[2]: Mass of the SIS model, related wit the velocity dispersion.*
+*
 */
+
 /** @package siep_model
 *
-*  Package to compute the main lensing functions, critical curves, caustics  and constant distortion curves for the  SIEP (Singular Isothermal Elliptical Potential) model 
+*  Package to compute the main lensing functions, critical curves, caustics, constant distortion curves  and cross section for deformation arcs for the SIEP (Singular Isothermal Elliptical Potential) model 
 *
 * See Chap.4 in ...sltools/PerturbativeMethod/writeups/Report_on_Perturbative_Method.pdf
 *
 *   Notice: This model have 3 main parameters.
 *
-*   siep_params[0]: Integer useful to choose the parameterization for the ellipticity
+* siep_params[0]: Ellipticity value (must be ellipticity parameter or ellipticity by itself whether the angle deflection model is used)
 *
-*  If siep_params[0]=1, It uses the Angle Deflection Model, i.e., \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=1+\varepsilon \f$
+* siep_params[1]: Integer useful to choose the flag for the parameterization for the ellipticity
 *
-*  If siep_params[0]=2, It uses the Keeton´s parametrization, i.e., \f$ a_{1\varepsilon}=1\f$ and \f$ a_{2\varepsilon}=(1-\varepsilon)^{-2} \f$
-*  
-*   siep_params[1]: Ellipticity value (must be ellipticity parameter or the ellipticity by itself whether the angle deflection is used)
+* If siep_params[1]=1 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=1+\varepsilon \f$ (Angle Deflection Model)
 *
-*   siep_params[2]: Mass of the SIS model, related wit the velocity dispersion.
+* If siep_params[1]=2 : \f$ a_{1\varepsilon}=1-\varepsilon \f$ and \f$ a_{2\varepsilon}=\frac{1}{1-\varepsilon} \f$ (Standard parametrization)
+*
+* If siep_params[1]=3 : \f$ a_{1\varepsilon}=1 \f$ and  \f$ a_{2\varepsilon}=\frac{1}{(1-\varepsilon)^2} \f$ (Keeton's Parametrization)
+*
+* siep_params[2]: Mass of the SIS model, related wit the velocity dispersion.
 *
 */
+
+
 #ifndef SIEP_CURVES_H
 #define SIEP_CURVES_H
 
 #include <math.h>
-#include <cstdlib>
+//#include <cstdlib>
 #include "siep_lens_funct.h" 
 
 #define PI 3.1415926535897932384626433832795 
-#define TAM_MAX 2000
+// #define TAM_MAX 2000
 
 /** Pseudo-Elliptical Radial Coordinate of the Tangential Critical Curve of the SIEP model
 *
@@ -51,12 +71,13 @@
 * \return \f$ x_{\varepsilon,tcc}(x)\f$
 */
 double r_cct_siep(double theta,double siep_params[]){
-int pflag=siep_params[0];
-double elp,b,a1e,a2e,theta_e,Ae,Be;
-elp=siep_params[1];
-b=siep_params[2];
+double elp=siep_params[0];
+int pflag=siep_params[1];
+// double b=siep_params[2];
+double a1e,a2e,theta_e,Ae,Be;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.;a2e=pow(1.-elp,-2);}
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 theta_e=atan(sqrt(a2e/a1e)*tan(theta));  
 Ae=0.5*(a1e+a2e), Be=0.5*(a1e-a2e);
 double r_crit=Ae-Be*cos(2.*theta_e);
@@ -114,18 +135,18 @@ return 0.0;
 *\see r_cct_siep
 */
 
-void cc_tan_siep(double siep_params[],double xtcc[], double ytcc[], int npts=1000,  FILE *file_in1=NULL){
+void cc_tan_siep(double siep_params[],double xtcc[], double ytcc[], int npts=1000,  FILE *file_in1=NULL, FILE *file_in2=NULL ,FILE *file_in3=NULL){
 
 double theta = 0.0, theta_e=0.0;
 double x1_cct[npts],x2_cct[npts];
 double y1_cct[npts],y2_cct[npts];
-int pflag=siep_params[0];
-double elp=siep_params[1];
+double elp=siep_params[0];
+int pflag=siep_params[1];
 double b=siep_params[2];
 double a1e,a2e;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.; a2e=1./pow(1.-elp,2);}
-
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 for(int i=0;i<npts;i++){
 
   theta_e=atan(sqrt(a2e/a1e)*tan(theta));  
@@ -145,12 +166,18 @@ for(int i=0;i<npts;i++){
       
    theta+= PI/(2.*npts); 
 }
+  
 // writting in the second quadrant
 for(int i=npts-1;i>0;i--){
      if(file_in1==NULL){
       printf("%lg %lg %lg %lg \n",-x1_cct[i]*b, x2_cct[i]*b,-y1_cct[i]*b, y2_cct[i]*b);
    } else {
     fprintf(file_in1,"%lg %lg %lg %lg \n", -x1_cct[i]*b, x2_cct[i]*b,-y1_cct[i]*b, y2_cct[i]*b);}
+    
+    if((file_in2 != NULL) && (file_in3 != NULL)){
+      fprintf(file_in2,"%lg %lg \n", x1_cct[i]*b, x2_cct[i]*b);
+      fprintf(file_in3,"%lg %lg\n", y1_cct[i]*b, y2_cct[i]*b);  
+   }
 }
 for(int i=0; i<npts; i++){
     if(file_in1==NULL){
@@ -195,13 +222,13 @@ void cc_lw_pos_siep(double siep_params[], double lw_th, double xlwp[], double yl
 double theta = 0.0, theta_e=0.0;
 double x1_cct[npts],x2_cct[npts];
 double y1_cct[npts],y2_cct[npts];
-int pflag=siep_params[0];
-double elp=siep_params[1];
+double elp=siep_params[0];
+int pflag=siep_params[1];
 double b=siep_params[2];
 double a1e,a2e;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.; a2e=1./pow(1.-elp,2);}
-
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 
 for(int i=0;i<npts;i++){
 
@@ -268,13 +295,13 @@ void cc_lw_neg_siep(double siep_params[], double lw_th, double xlwn[], double yl
 double theta = 0.0, theta_e=0.0;
 double x1_cct[npts],x2_cct[npts];
 double y1_cct[npts],y2_cct[npts];
-int pflag=siep_params[0];
-double elp=siep_params[1];
+double elp=siep_params[0];
+int pflag=siep_params[1];
 double b=siep_params[2];
 double a1e,a2e;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.; a2e=1./pow(1.-elp,2);}
-
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 for(int i=0;i<npts;i++){
 
   theta_e=atan(sqrt(a2e/a1e)*tan(theta));  
@@ -340,13 +367,13 @@ void cc_rad_siep(double siep_params[], double xrad[], double yrad[], int npts=10
 double theta = 0.0, theta_e=0.0;
 double x1_ccr[npts],x2_ccr[npts];
 double y1_ccr[npts],y2_ccr[npts];
-int pflag=siep_params[0];
-double elp=siep_params[1];
+double elp=siep_params[0];
+int pflag=siep_params[1];
 double b=siep_params[2];
 double a1e,a2e;
 if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-if(pflag==2){a1e=1.; a2e=1./pow(1.-elp,2);}
-
+if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
 
 for(int i=0;i<npts;i++){
 
@@ -386,32 +413,40 @@ for(int i=npts-1;i>=0;i--){
     if(file_in1==NULL){
     printf("%lg %lg %lg %lg \n",x1_ccr[i]*b, -x2_ccr[i]*b, y1_ccr[i]*b, -y2_ccr[i]*b);
    } else {
-    fprintf(file_in1,"%lg %lg %lg %lg \n", x1_ccr[i]*b, -x2_ccr[i]*b, y1_ccr[i]*b, -y2_ccr[i]*b);}
+    fprintf(file_in1,"%lg %lg %lg %lg \n", x1_ccr[i]*b, -x2_ccr[i]*b, y1_ccr[i]*b, -y2_ccr[i]*b);}}
 
-}
 }
 /** A functions to compute the cross section for arc formation for the SIE model
 *
-* \f$ \sigma_{\rm siep}= R^2_{\rm E}\frac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2} \left[2\pi\left[\mathcal{A}(\varepsilon)+\mathcal{B}(\varepsilon)\right]-2\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\mathcal{B}(\varepsilon)\arctan{\left(2\pi\sqrt{\dfrac{a_{1\varepsilon}}{a_{2\varepsilon}}}\right)} \right] \f$
+* 
+* \f$ \sigma_{\rm siep}= R^2_{\rm E}\frac{|R_{\rm th}|^2+1}{(|R_{\rm th}|^2-1)^2}\times \left\{2\pi\left[ [\mathcal{A}(\varepsilon)-\mathcal{B}(\varepsilon)]^2+\frac{2\,a_{1\varepsilon}\mathcal{B}^2(\varepsilon)}{a_{1\varepsilon}+4\,a_{2\varepsilon}\pi^{2}} \right]+ 2[2\mathcal{A}(\varepsilon)\mathcal{B}(\varepsilon)-\mathcal{B}^2(\varepsilon)]\sqrt{\frac{a_{1\varepsilon}}{a_{2\varepsilon}}}\arctan{\left( 2\pi\sqrt{\frac{a_{2\varepsilon}}{a_{1\varepsilon}}}\right)} \right\} \f$
 *
-* where \f$ \mathcal{A}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}+a_{2\varepsilon})\f$ and \f$ \mathcal{B}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}-a_{2\varepsilon})\f$
+* where \f$ \mathcal{A}(\varepsilon)=\frac{1}{2} (a_{1\varepsilon}+a_{2\varepsilon})\f$ and \f$ \mathcal{B}(\varepsilon)=\frac{1}{2}(a_{1\varepsilon}-a_{2\varepsilon})\f$
+*
+*
 * \param siep_params[] : SIEP parameters
-* \param r_th: length-to-width ratio threshold
+* \param r_th: length-to-width ratio threshold 
 * \return \f$ \sigma_{\rm siep} \f$ 
 */
 double cross_section_siep(double siep_params[], double r_th){
   double rth_fact=(fabs(r_th)*fabs(r_th)+1.)/(pow(fabs(r_th)*fabs(r_th)-1,2));
-  int pflag=siep_params[0];
-  double elp=siep_params[1];
+  double elp=siep_params[0];
+  int pflag=siep_params[1];
   double r_e=siep_params[2];
   double a1e,a2e;
   if(pflag==1){a1e=1.-elp;a2e=1.+elp;}
-  if(pflag==2){a1e=1.; a2e=1./pow(1.-elp,2);}
-  double Ae,Be;
-  Ae=0.5*(a1e+a2e), Be=0.5*(a1e-a2e);
-  double sig_temp=r_e*r_e*rth_fact*(2*PI*(Ae+Be)-2.*Be*sqrt(a1e/a2e)*atan(2*PI*sqrt(a2e/a1e)));
-  return sig_temp;
-  
+  if(pflag==2){a1e=1.-elp;a2e=1./a1e;}
+  if(pflag==3){a1e=1.;a2e=1./pow(1.-elp,2);}
+  double term1,term2,term3;
+//   double arg1=pow(10,-8)*sqrt(a2e/a1e);
+  double arg2=pow(10,8)*sqrt(a2e/a1e);
+//   term1=(0.75*a1e*a1e+0.5*a1e*a2e+0.75*a2e*a2e)*(2.*atan(arg2)-atan(arg1));
+//   term2=0.5*(a1e*a1e-a2e*a2e)*(sin(2.*atan(arg1))-2.*sin(2.*atan(arg2)));
+//   term3=-0.0625*(a1e-a2e)*(a1e-a2e)*(sin(4.*atan(arg1))-2.*sin(4.*atan(arg2)));
+  term1=(0.75*a1e*a1e+0.5*a1e*a2e+0.75*a2e*a2e)*(2.*atan(arg2));
+  term2=(a1e*a1e-a2e*a2e)*sin(2.*atan(arg2));
+  term3=0.0625*(a1e-a2e)*(a1e-a2e)*2.*sin(4.*atan(arg2));
+  double sig_tmp=(1./sqrt(a1e*a2e))*rth_fact*r_e*r_e*(term1+term2+term3);
+  return sig_tmp;
 }
-
 #endif

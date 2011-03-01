@@ -23,6 +23,7 @@ import logging
 #from lens_parameters_new import lens_parameters_new
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 from sltools.geometry import separate_curves
+from sltools.geometry import separate_curves_a
 
 import numpy as np
 import matplotlib.pyplot as pyplot
@@ -193,8 +194,8 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.clf()
 	f1 = pyplot.figure(1,figsize = (15,15) )
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',marker='.', markersize=2)
-	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='.', markersize=2)
+	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',marker='', markersize=2)
+	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='', markersize=2)
 	pyplot.legend(('Tangential', 'Radial'),'upper right', shadow=True)
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
@@ -273,7 +274,9 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	x1, y1, u1, v1, x2, y2, u2, v2 = np.loadtxt(caustic_CC_file, comments='#', unpack=True)
 
 	# Separating the critical cuves ----------------------------------------------------------------
-	curves = separate_curves(x1, y1, x2, y2)
+	#nodes=[]
+	#curves = separate_curves(x1, y1, x2, y2,nodes)
+	curves = separate_curves_a(x1, y1, x2, y2)
 
 	if len(curves) == 1:
 		logging.warning('Only one critical curve was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
@@ -298,7 +301,9 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = np.array(rad_CC_x), np.array(rad_CC_y), np.array(tan_CC_x), np.array(tan_CC_y)
 
 	# separating the caustics curves ---------------------------------------------------------------
-	curves = separate_curves(u1, v1, u2, v2)
+	curves = separate_curves_a(u1, v1, u2, v2)
+	#curves = separate_curves(u1, v1, u2, v2,nodes)
+	
 	
 	if len(curves) == 1:
 		logging.warning('Only one caustic was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')

@@ -7,7 +7,7 @@
         double precision e,ks,lw,lwn,lwp,rs,theta
         double precision v_in,v_out,vit,vir,vilwn,vilwp
         double precision elp!,e_ad
-        integer npt,opt,iflag
+        integer npt,opt,iflag,eflag
         character*30 name
         dimension name(8)
         open(unit=1,file='in_pnfw_par.txt',status='unknown')
@@ -18,15 +18,17 @@
 !         iflag=1
         lw=1.0
 ! !         read(1,*)ks,rs,elp,npt
-	read(1,*)ks,rs,elp,lw,iflag,npt 
+	read(1,*)ks,rs,elp,lw,iflag,npt,eflag 
 	name(1)= "characteristic_convergence :"
 	name(2)= "ellipticity :"
 	name(3)= "scale_radius :"
 	name(4)=  "length-to-width :"
-        write(2,*) name(1),ks
-        write(2,*) name(2),elp
+	name(5)= "parametrization_ellipticity"
+	write(2,*) name(1),ks
+	write(2,*) name(2),elp
 	write(2,*) name(3),rs
-        write(2,*) name(4),lw
+	write(2,*) name(4),lw
+	write(2,*) name(5),eflag
 	write(*,*)'valor do iflag',iflag	
         
 !         
@@ -47,7 +49,7 @@
 !         write(*,*)name(4),lw
         write(*,*)"scale radius",rs
         write(*,*)"number of points",npt
-	write(*,*)"length-to-width ratio",lw 
+        write(*,*)"length-to-width ratio",lw 
 !         write(*,*)name(6),iflag
         
 !       Some scaling parameter
@@ -64,17 +66,17 @@
 
         vit=v_in
         
-        call contour_lt(npt,vit,v_out,rs,theta,ks,e)
+        call contour_lt(npt,vit,v_out,rs,theta,ks,e,eflag)
         if(iflag.eq.2)then
           vilwp=v_out
           vilwn=v_out
-          call contour_lwp(npt,vilwp,lwp,rs,theta,ks,e)  
-          call contour_lwn(npt,vilwn,lwn,rs,theta,ks,e,v_out)  
+          call contour_lwp(npt,vilwp,lwp,rs,theta,ks,e,eflag)  
+          call contour_lwn(npt,vilwn,lwn,rs,theta,ks,e,v_out,eflag)  
           go to 21
         endif
           vir=v_out
         if(iflag.eq.3)then
-         call contour_lr(npt,vir,rs,theta,ks,e)
+         call contour_lr(npt,vir,rs,theta,ks,e,eflag)
         endif	
 !        
 21      write(*,*)'Ending the plots'	
@@ -82,13 +84,13 @@
 
 ****************************************************************************
 ****************************************************************************
-        subroutine contour_lt(npt,v_in,v_out,rs,theta,ks,e)
+        subroutine contour_lt(npt,v_in,v_out,rs,theta,ks,e,eflag)
         double precision v_in,v_out,ks,e
         double precision e0,x1,x2
         double precision vinter
         double precision x1t,x2t,x1tmax,stept,vit
         double precision y1t,y2t,y1,y2
-        integer npt,i,eixo
+        integer npt,i,eixo,eflag
         dimension x1t(1000),x2t(1000),y1t(1000),y2t(1000)
 !       Useful to obtain the furthermore points
         double precision x2max1,x2max,x1ft,x2ft,stepft,v_ft
@@ -113,19 +115,19 @@
         eixo=1
         x2=0.d0
         e0=0.d0
-        call raiz_lt(eixo,v_in,ks,e0,x1,x2)
+        call raiz_lt(eixo,v_in,ks,e0,x1,x2,eflag)
         v_in=x1
         v_out=x1
 !        
         eixo=1
         x2=0.d0
         vit=v_in
-        call raiz_lt(eixo,vit,ks,e,x1,x2)
+        call raiz_lt(eixo,vit,ks,e,x1,x2,eflag)
         x1tmax=x1
         x1p(npt)=x1tmax
         x2p(npt)=0.d0
         vinter=x1tmax
-        call s_plane(ks,e,x1p(npt),x2p(npt),y1,y2)
+        call s_plane(ks,e,x1p(npt),x2p(npt),y1,y2,eflag)
         y1p(npt)=y1
         y2p(npt)=y2
         stept=x1p(npt)/dfloat(npt-1)
@@ -135,11 +137,11 @@
         do i=npt-1,1,-1
           j=i-1
           x1=0.d0+(i-1)*stept
-          call raiz_lt(eixo,vit,ks,e,x1,x2)
+          call raiz_lt(eixo,vit,ks,e,x1,x2,eflag)
           x1p(i)=x1
           x2p(i)=x2
           vit=x2
-          call s_plane(ks,e,x1p(i),x2p(i),y1,y2)
+          call s_plane(ks,e,x1p(i),x2p(i),y1,y2,eflag)
           y1p(i)=y1
           y2p(i)=y2
 !
@@ -177,14 +179,14 @@
         v_ft=vinter
 20      x2ft=i1*stepft
         eixo=1
-        call raiz_lt(eixo,v_ft,ks,e,x1ft,x2ft)
+        call raiz_lt(eixo,v_ft,ks,e,x1ft,x2ft,eflag)
         if(x1ft.ge.0.99d0*x1t(npt))then
             v_ft=x1ft
             if(x1ft.gt.x1t(npt))then
 	j=j+1
 	x1t(j)=x1ft
 	x2t(j)=x2ft
-	call s_plane(ks,e,x1t(j),x2t(j),y1,y2)
+	call s_plane(ks,e,x1t(j),x2t(j),y1,y2,eflag)
 	y1t(j)=y1
 	y2t(j)=y2
             endif
@@ -279,12 +281,12 @@
         end
 ! ****************************************************************************
 ! ****************************************************************************
-        subroutine contour_lwn(npt,v_in,lwn,rs,theta,ks,e,v_out)
+        subroutine contour_lwn(npt,v_in,lwn,rs,theta,ks,e,v_out,eflag)
         double precision v_in,lwn,ks,e,v_out
         double precision e0,x1,x2
         double precision x1lw,x2lw,x1lwmax,steplw,vilw
         double precision y1lw,y2lw,y1,y2
-        integer i,npt,eixo
+        integer i,npt,eixo,eflag
         dimension x1lw(1000),x2lw(1000),y1lw(1000),y2lw(1000)
 !       Useful to obtain the furthermore points
         double precision x2max1,x2max,x1ft,x2ft,stepft,v_ft,vinter
@@ -310,18 +312,18 @@
         eixo=1
         x2=0.d0
         e0=0.d0
-        call raiz_lw(eixo,lwn,v_in,ks,e0,x1,x2) ! v_in is from v_out of the tangential critical curve
+        call raiz_lw(eixo,lwn,v_in,ks,e0,x1,x2,eflag) ! v_in is from v_out of the tangential critical curve
         v_in=x1
         v_out=x1 ! it's useful for calculate the radial critical curve
 !
         vilw=v_in
-        call raiz_lw(eixo,lwn,vilw,ks,e,x1,x2)
+        call raiz_lw(eixo,lwn,vilw,ks,e,x1,x2,eflag)
         x1lwmax=x1
         x1p(npt)=x1lwmax
         x2p(npt)=0.d0
         vinter=x1lwmax
 !
-        call s_plane(ks,e,x1p(npt),x2p(npt),y1,y2)
+        call s_plane(ks,e,x1p(npt),x2p(npt),y1,y2,eflag)
         y1p(npt)=y1
         y2p(npt)=y2
 !
@@ -330,11 +332,11 @@
         eixo=2  
         do i=npt-1,1,-1
             x1=0.d0+(i-1)*steplw
-            call raiz_lw(eixo,lwn,vilw,ks,e,x1,x2)
+            call raiz_lw(eixo,lwn,vilw,ks,e,x1,x2,eflag)
             x1p(i)=x1
             x2p(i)=x2
             vilw=x2
-            call s_plane(ks,e,x1p(i),x2p(i),y1,y2)
+            call s_plane(ks,e,x1p(i),x2p(i),y1,y2,eflag)
             y1p(i)=y1
             y2p(i)=y2
 !
@@ -342,8 +344,8 @@
             x1b=0.d0+(j-1)*steplw
             d2s=1.05*x2
             d2i=0.95*x2
-            if(gamma2_e(e,x1b,d2s).lt.0.d0.or.
-     &      gamma2_e(e,x1b,d2i).lt.0.d0)then
+            if(gamma2_e(e,x1b,d2s,eflag).lt.0.d0.or.
+     &      gamma2_e(e,x1b,d2i,eflag).lt.0.d0)then
               write(*,*)"parameters limit in L/W = -10", ks,e
               write(60,*)'L/W = -10  critical curve ',ks,e
               go to 10
@@ -378,14 +380,14 @@
         v_ft=vinter
 20      x2ft=i1*stepft
         eixo=1
-        call raiz_lw(eixo,lwn,v_ft,ks,e,x1ft,x2ft)
+        call raiz_lw(eixo,lwn,v_ft,ks,e,x1ft,x2ft,eflag)
         if(x1ft.ge.0.99d0*x1lw(npt))then
             v_ft=x1ft
             if(x1ft.gt.x1lw(npt))then
 	j=j+1
 	x1lw(j)=x1ft
 	x2lw(j)=x2ft
-	call s_plane(ks,e,x1lw(j),x2lw(j),y1,y2)
+	call s_plane(ks,e,x1lw(j),x2lw(j),y1,y2,eflag)
 	y1lw(j)=y1
 	y2lw(j)=y2
             endif
@@ -479,12 +481,12 @@
 
 ****************************************************************************
 ****************************************************************************
-        subroutine contour_lwp(npt,v_in,lwp,rs,theta,ks,e)
+        subroutine contour_lwp(npt,v_in,lwp,rs,theta,ks,e,eflag)
         double precision v_in,lwp,ks,e
         double precision e0,x1,x2
         double precision x1lw,x2lw,x1lwmax,steplw,vilw
         double precision y1lw,y2lw,y1,y2
-        integer i,npt,eixo
+        integer i,npt,eixo,eflag
         dimension x1lw(1000),x2lw(1000),y1lw(1000),y2lw(1000)
 !       Useful to obtain the furthermore points
         double precision x2max1,x2max,x1ft,x2ft,stepft,v_ft,vinter
@@ -512,17 +514,17 @@
         eixo=1
         x2=0.d0
         e0=0.d0
-        call raiz_lw(eixo,lwp,v_in,ks,e0,x1,x2) ! v_in is from v_out of the tangential critical curve
+        call raiz_lw(eixo,lwp,v_in,ks,e0,x1,x2,eflag) ! v_in is from v_out of the tangential critical curve
         v_in=x1
 !
         vilw=v_in
-        call raiz_lw(eixo,lwp,vilw,ks,e,x1,x2)
+        call raiz_lw(eixo,lwp,vilw,ks,e,x1,x2,eflag)
         x1lwmax=x1
         x1p(npt)=x1lwmax
         x2p(npt)=0.d0
         vinter=x1lwmax
 !
-        call s_plane(ks,e,x1p(npt),x2p(npt),y1,y2)
+        call s_plane(ks,e,x1p(npt),x2p(npt),y1,y2,eflag)
         y1p(npt)=y1
         y2p(npt)=y2
 !
@@ -531,11 +533,11 @@
         eixo=2  
         do i=npt-1,1,-1
             x1=0.d0+(i-1)*steplw
-            call raiz_lw(eixo,lwp,vilw,ks,e,x1,x2)
+            call raiz_lw(eixo,lwp,vilw,ks,e,x1,x2,eflag)
             x1p(i)=x1
             x2p(i)=x2
             vilw=x2
-            call s_plane(ks,e,x1p(i),x2p(i),y1,y2)
+            call s_plane(ks,e,x1p(i),x2p(i),y1,y2,eflag)
             y1p(i)=y1
             y2p(i)=y2
 !
@@ -543,8 +545,8 @@
             x1b=0.d0+(j-1)*steplw
             d2s=1.05*x2
             d2i=0.95*x2
-            if(gamma2_e(e,x1b,d2s).lt.0.d0.or.
-     &      gamma2_e(e,x1b,d2i).lt.0.d0)then
+            if(gamma2_e(e,x1b,d2s,eflag).lt.0.d0.or.
+     &      gamma2_e(e,x1b,d2i,eflag).lt.0.d0)then
               write(*,*)"parameters limit in L/W = 10 ", ks,e
               write(60,*)'L/W = 10  critical curve ',ks,e
               go to 10
@@ -579,14 +581,14 @@
         v_ft=vinter
 20      x2ft=i1*stepft
         eixo=1
-        call raiz_lw(eixo,lwp,v_ft,ks,e,x1ft,x2ft)
+        call raiz_lw(eixo,lwp,v_ft,ks,e,x1ft,x2ft,eflag)
         if(x1ft.ge.0.99d0*x1lw(npt))then
             v_ft=x1ft
             if(x1ft.gt.x1lw(npt))then
 	j=j+1
 	x1lw(j)=x1ft
 	x2lw(j)=x2ft
-	call s_plane(ks,e,x1lw(j),x2lw(j),y1,y2)
+	call s_plane(ks,e,x1lw(j),x2lw(j),y1,y2,eflag)
 	y1lw(j)=y1
 	y2lw(j)=y2
             endif
@@ -679,24 +681,25 @@
 
 ****************************************************************************
 ****************************************************************************
-        subroutine s_plane(ks,e,x1,x2,y1,y2)	
+        subroutine s_plane(ks,e,x1,x2,y1,y2,eflag)	
 c      This subroutine make the mapping from the lens into source plane. 
 c      It use the lens equation:\vec{y}=-vec{x}-\alpha(\vec{x})
         double precision ks,e,x1,x2,y1,y2
         double precision y1_s,y2_s
+        integer eflag
         external y1_s,y2_s
-        y1=dabs(y1_s(ks,e,x1,x2))
-        y2=dabs(y2_s(ks,e,x1,x2))
+        y1=dabs(y1_s(ks,e,x1,x2,eflag))
+        y2=dabs(y2_s(ks,e,x1,x2,eflag))
         return
         end	
 ****************************************************************************
 ****************************************************************************
-        subroutine contour_lr(npt,v_in,rs,theta,ks,e)
+        subroutine contour_lr(npt,v_in,rs,theta,ks,e,eflag)
         double precision v_in,ks,e
         double precision e0,x1,x2
         double precision x1r,x2r,x1rmax,stepr,vir
         double precision y1r,y2r,y1,y2
-        integer npt,i,eixo
+        integer npt,i,eixo,eflag
         dimension x1r(1000),x2r(1000),y1r(1000),y2r(1000)
 !       Useful to obtain the furthermore points
         double precision x2max1,x2max,x1ft,x2ft,stepft,v_ft
@@ -719,15 +722,15 @@ c      It use the lens equation:\vec{y}=-vec{x}-\alpha(\vec{x})
         eixo=1
         x2=0.d0
         e0=0.d0
-        call raiz_lr(eixo,v_in,ks,e0,x1,x2)
+        call raiz_lr(eixo,v_in,ks,e0,x1,x2,eflag)
 !
         vir=x1
-        call raiz_lr(eixo,vir,ks,e,x1,x2)
+        call raiz_lr(eixo,vir,ks,e,x1,x2,eflag)
         x1rmax=x1
         x1p(npt)=x1rmax
         x2p(npt)=0.d0
         vinter=x1rmax  
-        call s_plane(ks,e,x1p(npt),x2p(npt),y1,y2)
+        call s_plane(ks,e,x1p(npt),x2p(npt),y1,y2,eflag)
         y1p(npt)=y1
         y2p(npt)=y2
 !        
@@ -737,19 +740,19 @@ c      It use the lens equation:\vec{y}=-vec{x}-\alpha(\vec{x})
         do i=npt-1,1,-1
             j=i-1
             x1=0.d0+(i-1)*stepr
-            call raiz_lr(eixo,vir,ks,e,x1,x2)
+            call raiz_lr(eixo,vir,ks,e,x1,x2,eflag)
             x1p(i)=x1
             x2p(i)=x2
             vir=x2
-            call s_plane(ks,e,x1p(i),x2p(i),y1,y2)
+            call s_plane(ks,e,x1p(i),x2p(i),y1,y2,eflag)
             y1p(i)=y1
             y2p(i)=y2
 !
             x1b=0.d0+(j-1)*stepr
             d2s=1.1*x2
             d2i=0.9*x2
-            if(gamma2_e(e,x1b,d2s).lt.0.d0.or.
-     &      gamma2_e(e,x1b,d2i).lt.0.d0)then
+            if(gamma2_e(e,x1b,d2s,eflag).lt.0.d0.or.
+     &      gamma2_e(e,x1b,d2i,eflag).lt.0.d0)then
               write(*,*)"parameters", ks,e
               write(60,*)'radial critical curve ',ks,e
               go to 10
@@ -783,14 +786,14 @@ c      It use the lens equation:\vec{y}=-vec{x}-\alpha(\vec{x})
         v_ft=vinter
 20      x2ft=i1*stepft
         eixo=1
-        call raiz_lr(eixo,v_ft,ks,e,x1ft,x2ft)
+        call raiz_lr(eixo,v_ft,ks,e,x1ft,x2ft,eflag)
         if(x1ft.ge.0.99d0*x1r(npt))then
             v_ft=x1ft
             if(x1ft.gt.x1r(npt))then
 	j=j+1
 	x1r(j)=x1ft
 	x2r(j)=x2ft
-	call s_plane(ks,e,x1r(j),x2r(j),y1,y2)
+	call s_plane(ks,e,x1r(j),x2r(j),y1,y2,eflag)
 	y1r(j)=y1
 	y2r(j)=y2
             endif

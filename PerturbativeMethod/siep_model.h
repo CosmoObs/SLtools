@@ -30,7 +30,7 @@
   \param pert_params[] : SIEP lens parameters, [0] =el, [1] flag, [2] R_e
   \return \f$ f_1(\theta)\f$
 */
-double f1_psis(double theta, double pert_params[],double _r_e_sis){
+double f1_siep(double theta, double pert_params[],double _r_e_sis){
     double f1=f1_pe(alpha_sis_circ, _r_e_sis, theta,pert_params);
     return f1;
 }
@@ -48,7 +48,7 @@ double f1_psis(double theta, double pert_params[],double _r_e_sis){
   \return \f$ \frac{df_0}{d\theta}\f$ 
 */
 
-double Df0Dtheta_psis( double theta, double pert_params[],double _r_e_sis){
+double Df0Dtheta_siep( double theta, double pert_params[],double _r_e_sis){
   return df0dtheta_pe(alpha_sis_circ, _r_e_sis, theta, pert_params);
 }
 /**  Second perturbative field for the SIEP model as Perturbation
@@ -65,7 +65,7 @@ double Df0Dtheta_psis( double theta, double pert_params[],double _r_e_sis){
   \return \f$ \frac{df_0}{d\theta}\f$ 
 */
 
-double D2f0Dtheta2_psis( double theta, double pert_params[],double _r_e_sis){
+double D2f0Dtheta2_siep( double theta, double pert_params[],double _r_e_sis){
   return d2f0dtheta2_pe(alpha_sis_circ,shear_sis_circ, _r_e_sis, theta, pert_params);
 }
 #endif

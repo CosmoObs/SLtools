@@ -1,3 +1,10 @@
+!> @file
+!> This module contain the root findings subroutines 
+!>
+!>
+!>
+!> @package pnfw_model
+
 !   THIS FILE CONTAINT ALL THE USEFUL FINDING-ROOT SUBROUTINES.
 !   IN THEIR WE USE TWO METHOD*  HELPED WITH A SUBROUTINES THAT
 !   FIND THE INTERVAL  WHERE THE POSSIBLE ROOT EXISTS.
@@ -36,17 +43,17 @@
 
 *************************************O O O*****************************************************
 
-      SUBROUTINE  raiz_ke(eixo,v_input,iscont,e,x1,x2)
+      SUBROUTINE  raiz_ke(eixo,v_input,iscont,e,x1,x2,eflag)
       double precision v_input,iscont,e,x1,x2
       double precision z_inf,z_sup
-      integer eixo,iter
+      integer eixo,iter,eflag
 	
-      call inter_ke(eixo,v_input,iscont,e,x1,x2,z_inf,z_sup)	
-      call nrdf_ke(eixo,z_inf,z_sup,iscont,e,x1,x2,iter)
+      call inter_ke(eixo,v_input,iscont,e,x1,x2,z_inf,z_sup,eflag)	
+      call nrdf_ke(eixo,z_inf,z_sup,iscont,e,x1,x2,iter,eflag)
 !      
       if(iter.gt.10)then
           write(*,*)'USING THE BISECTION METHOD'
-          call bisec_ke(eixo,z_inf,z_sup,iscont,e,x1,x2,iter)
+          call bisec_ke(eixo,z_inf,z_sup,iscont,e,x1,x2,iter,eflag)
       endif
 !
       x1=dabs(x1)
@@ -56,13 +63,13 @@
 	
 **********************************************************************************************
 *********************************************************************************************	
-      SUBROUTINE inter_ke(eixo,v_input,iscont,e,x1,x2,z_inf,z_sup)
+      SUBROUTINE inter_ke(eixo,v_input,iscont,e,x1,x2,z_inf,z_sup,eflag)
 !     This subroutine find the possible range in which the root can be exists
 !     Input Data: v_input: Initial value	
 !     Output Data: z_inf and z_sup are the  ()  and the upper limit of the range	
       double precision v_input,iscont,e,x1,x2,z_inf,z_sup
       double precision kappa_e2,z,dz,xi,xj
-      integer eixo
+      integer eixo,eflag
       external kappa_e2
 !	
       if(v_input.eq.0.d0)then
@@ -81,9 +88,9 @@
           xj=z
       endif
 !	
-      if(kappa_e2(iscont,e,xi,xj).gt.0.d0)then
+      if(kappa_e2(iscont,e,xi,xj,eflag).gt.0.d0)then
           z=z+dz
-210     if(kappa_e2(iscont,e,xi,xj).gt.0.d0)then
+210     if(kappa_e2(iscont,e,xi,xj,eflag).gt.0.d0)then
             z_inf=z
             z=z+dz
             if(eixo.eq.1)then
@@ -111,7 +118,7 @@
         endif	
       else	
           z=z-dz
-220     if(kappa_e2(iscont,e,xi,xj).lt.0.d0)then
+220     if(kappa_e2(iscont,e,xi,xj,eflag).lt.0.d0)then
           z_sup=z
           z=z-dz
           if(eixo.eq.1)then
@@ -141,12 +148,12 @@
 	
 **********************************************************************
 **********************************************************************
-      SUBROUTINE nrdf_ke(eixo,z_inf,z_sup,iscont,e,x1,x2,i)
+      SUBROUTINE nrdf_ke(eixo,z_inf,z_sup,iscont,e,x1,x2,i,eflag)
       double precision z_inf,z_sup,iscont,e,x1,x2
       double precision tol,z0,z1,zm,xi,xj,zk,tol_in
       double precision kappa_e2,f0,f1,fm,gm,hm
       double precision del1,del2,del_min,fk
-      INTEGER i,eixo
+      INTEGER i,eixo,eflag
       EXTERNAL kappa_e2
 c	
       i=0
@@ -165,15 +172,15 @@ c
       if(eixo.eq.1)then
         xj=x2
         xi=z0
-        f0=kappa_e2(iscont,e,xi,xj)
+        f0=kappa_e2(iscont,e,xi,xj,eflag)
         xi=z1
-        f1=kappa_e2(iscont,e,xi,xj)	
+        f1=kappa_e2(iscont,e,xi,xj,eflag)	
       else
         xi=x1
         xj=z0
-        f0=kappa_e2(iscont,e,xi,xj)
+        f0=kappa_e2(iscont,e,xi,xj,eflag)
         xj=z1
-        f1=kappa_e2(iscont,e,xi,xj)	
+        f1=kappa_e2(iscont,e,xi,xj,eflag)	
       endif
 !
 235   i=i+1
@@ -184,11 +191,11 @@ c
         if(eixo.eq.1)then
           xj=x2
           xi=zm
-          fm=kappa_e2(iscont,e,xi,xj)
+          fm=kappa_e2(iscont,e,xi,xj,eflag)
         else
           xi=x1
           xj=zm
-          fm=kappa_e2(iscont,e,xi,xj)
+          fm=kappa_e2(iscont,e,xi,xj,eflag)
         endif	
 !
         if(dabs(fm).lt.tol.or.dabs(z1-z0).lt.tol_in)then
@@ -211,11 +218,11 @@ c
           if(eixo.eq.1)then
               xi=zk
               xj=x2
-              fk=kappa_e2(iscont,e,xi,xj)
+              fk=kappa_e2(iscont,e,xi,xj,eflag)
           else
               xi=x1
               xj=zk
-              fk=kappa_e2(iscont,e,xi,xj)
+              fk=kappa_e2(iscont,e,xi,xj,eflag)
           endif	
 !			
           if(dabs(fk).lt.tol.or.dabs(del_min).lt.tol_in)then
@@ -251,11 +258,11 @@ c
 
 ****************************************************************************
 ****************************************************************************
-      SUBROUTINE bisec_ke(eixo,z_inf,z_sup,iscont,e,x1,x2,iter)
+      SUBROUTINE bisec_ke(eixo,z_inf,z_sup,iscont,e,x1,x2,iter,eflag)
       double precision z_inf,z_sup,iscont,e,x1,x2
       double precision tol,z0,z1,zm,xi,xj
       double precision kappa_e2,f0,f1,fm
-      integer iter,eixo,maxiter
+      integer iter,eixo,maxiter,eflag
       external kappa_e2
       maxiter=100
 !	
@@ -271,15 +278,15 @@ c
       if(eixo.eq.1)then
         xj=x2
         xi=z0
-        f0=kappa_e2(iscont,e,xi,xj)
+        f0=kappa_e2(iscont,e,xi,xj,eflag)
         xi=z1
-        f1=kappa_e2(iscont,e,xi,xj)	
+        f1=kappa_e2(iscont,e,xi,xj,eflag)	
       else	
         xi=x1
         xj=z0
-        f0=kappa_e2(iscont,e,xi,xj)
+        f0=kappa_e2(iscont,e,xi,xj,eflag)
         xj=z1
-        f1=kappa_e2(iscont,e,xi,xj)	
+        f1=kappa_e2(iscont,e,xi,xj,eflag)	
       endif
 	
 240   iter=iter+1	
@@ -288,11 +295,11 @@ c
       if(eixo.eq.1)then
         xj=x2
         xi=zm
-        fm=kappa_e2(iscont,e,xi,xj)
+        fm=kappa_e2(iscont,e,xi,xj,eflag)
       else
         xi=x1
         xj=zm
-        fm=kappa_e2(iscont,e,xi,xj)
+        fm=kappa_e2(iscont,e,xi,xj,eflag)
       endif	
 c	
       if(f0*fm.lt.0.d0.or.fm*f1.gt.0.d0)then
@@ -325,7 +332,7 @@ c
       END		
 ****************************************************************************
 ****************************************************************************
-      SUBROUTINE raiz_lt(eixo,v_input,ks,e,x1,x2)
+      SUBROUTINE raiz_lt(eixo,v_input,ks,e,x1,x2,eflag)
 !       This subroutine find the root of the tangential eigenvalue of the 
 !       mapping tensor lambda_t(ks,e,x1,x2)=0, keeping fixed x1 or x2 
 !       Input Data:
@@ -341,12 +348,12 @@ c
 !         if eixo=2, x1(input),x2(output)				
 
       DOUBLE PRECISION v_input,ks,e,x1,x2,z_inf,z_sup
-      INTEGER i,eixo
-      call inter_lt(eixo,v_input,ks,e,x1,x2,z_inf,z_sup)
-      call nrdf_lt(eixo,z_inf,z_sup,ks,e,x1,x2,i)
+      INTEGER i,eixo,eflag
+      call inter_lt(eixo,v_input,ks,e,x1,x2,z_inf,z_sup,eflag)
+      call nrdf_lt(eixo,z_inf,z_sup,ks,e,x1,x2,i,eflag)
       if(i.gt.10)then
           write(*,*)'usando a bisecao'
-          call bisec_lt(eixo,z_inf,z_sup,ks,e,x1,x2,i)	
+          call bisec_lt(eixo,z_inf,z_sup,ks,e,x1,x2,i,eflag)	
       endif
 !
       x1=dabs(x1)
@@ -356,10 +363,10 @@ c
       END
 **********************************************************************************************
 **********************************************************************************************
-      subroutine inter_lt(eixo,v_input,ks,e,x1,x2,z_inf,z_sup)
+      subroutine inter_lt(eixo,v_input,ks,e,x1,x2,z_inf,z_sup,eflag)
       double precision v_input,ks,e,x1,x2,z_inf,z_sup
       double precision z,dz,xi,xj,lambda_t
-      integer eixo
+      integer eixo,eflag
       EXTERNAL lambda_t
 c	
       if(v_input.eq.0.d0)then
@@ -378,10 +385,10 @@ c
           xj=z
       endif
 c	
-      if(lambda_t(ks,e,xi,xj).lt.0.d0)then
+      if(lambda_t(ks,e,xi,xj,eflag).lt.0.d0)then
           z=z+dz
 !
-10        if(lambda_t(ks,e,xi,xj).lt.0.d0)then
+10        if(lambda_t(ks,e,xi,xj,eflag).lt.0.d0)then
 	z_inf=z
 	z=z+dz
 	if(eixo.eq.1)then
@@ -410,7 +417,7 @@ c
 
       else	
         z=z-dz
-20        if(lambda_t(ks,e,xi,xj).gt.0.d0)then
+20        if(lambda_t(ks,e,xi,xj,eflag).gt.0.d0)then
 	z_sup=z
 	z=z-dz
 	if(eixo.eq.1)then
@@ -441,12 +448,12 @@ c
       END
 **********************************************************************************************
 *********************************************************************************************
-      subroutine nrdf_lt(eixo,z_inf,z_sup,ks,e,x1,x2,i)
+      subroutine nrdf_lt(eixo,z_inf,z_sup,ks,e,x1,x2,i,eflag)
       double precision z_inf,z_sup,ks,e,x1,x2
       double precision tol,z0,z1,zm,xi,xj,zk,tol_in
       double precision lambda_t,f0,f1,fm,gm,hm
       double precision del1,del2,del_min,fk
-      INTEGER i,eixo
+      INTEGER i,eixo,eflag
       EXTERNAL lambda_t
 c	
       i=0
@@ -464,15 +471,15 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=z0
-          f0=lambda_t(ks,e,xi,xj)
+          f0=lambda_t(ks,e,xi,xj,eflag)
           xi=z1
-          f1=lambda_t(ks,e,xi,xj)	
+          f1=lambda_t(ks,e,xi,xj,eflag)	
       else
           xi=x1
           xj=z0
-          f0=lambda_t(ks,e,xi,xj)
+          f0=lambda_t(ks,e,xi,xj,eflag)
           xj=z1
-          f1=lambda_t(ks,e,xi,xj)	
+          f1=lambda_t(ks,e,xi,xj,eflag)	
       endif
 				
 35    i=i+1
@@ -483,11 +490,11 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=zm
-          fm=lambda_t(ks,e,xi,xj)
+          fm=lambda_t(ks,e,xi,xj,eflag)
       else
           xi=x1
           xj=zm
-          fm=lambda_t(ks,e,xi,xj)
+          fm=lambda_t(ks,e,xi,xj,eflag)
       endif	
 !	
       if(dabs(fm).lt.tol.or.dabs(z1-z0).lt.tol_in)then
@@ -511,11 +518,11 @@ c
           if(eixo.eq.1)then
               xi=zk
               xj=x2
-              fk=lambda_t(ks,e,xi,xj)
+              fk=lambda_t(ks,e,xi,xj,eflag)
           else
               xi=x1
               xj=zk
-              fk=lambda_t(ks,e,xi,xj)
+              fk=lambda_t(ks,e,xi,xj,eflag)
           endif	
 c			
           if(dabs(fk).lt.tol.or.dabs(del_min).lt.tol_in)then
@@ -547,11 +554,11 @@ c
       END
 **********************************************************************************************
 *********************************************************************************************	
-      subroutine bisec_lt(eixo,z_inf,z_sup,ks,e,x1,x2,iter)
+      subroutine bisec_lt(eixo,z_inf,z_sup,ks,e,x1,x2,iter,eflag)
       double precision z_inf,z_sup,ks,e,x1,x2
       double precision tol,z0,z1,zm,xi,xj
       double precision lambda_t,f0,f1,fm
-      integer iter,eixo,maxiter
+      integer iter,eixo,maxiter,eflag
       external lambda_t
 !
       maxiter=100
@@ -569,15 +576,15 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=z0
-          f0=lambda_t(ks,e,xi,xj)
+          f0=lambda_t(ks,e,xi,xj,eflag)
           xi=z1
-          f1=lambda_t(ks,e,xi,xj)	
+          f1=lambda_t(ks,e,xi,xj,eflag)	
       else	
           xi=x1
           xj=z0
-          f0=lambda_t(ks,e,xi,xj)
+          f0=lambda_t(ks,e,xi,xj,eflag)
           xj=z1
-          f1=lambda_t(ks,e,xi,xj)	
+          f1=lambda_t(ks,e,xi,xj,eflag)	
       endif
 	
 40    iter=iter+1	
@@ -586,11 +593,11 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=zm
-          fm=lambda_t(ks,e,xi,xj)
+          fm=lambda_t(ks,e,xi,xj,eflag)
       else
           xi=x1
           xj=zm
-          fm=lambda_t(ks,e,xi,xj)
+          fm=lambda_t(ks,e,xi,xj,eflag)
       endif	
 c	
       if(f0*fm.lt.0.d0.or.fm*f1.gt.0.d0)then
@@ -624,7 +631,7 @@ c
 
 ****************************************************************************************
 ****************************************************************************************
-      SUBROUTINE  raiz_lr(eixo,v_input,ks,e,x1,x2)
+      SUBROUTINE  raiz_lr(eixo,v_input,ks,e,x1,x2,eflag)
 ! This soubrutine find the root of the equation 
 ! lambda_r(ks,e,x1,x2)=0, keeping fixed x1 or  x2.
 ! Input Data:
@@ -638,13 +645,13 @@ c
 ! 	se eixo=2, x1(entrada),x2(saida)				
 !
       DOUBLE PRECISION v_input,ks,e,x1,x2,z_inf,z_sup
-      INTEGER i,eixo
+      INTEGER i,eixo,eflag
 !
-      call inter_lr(eixo,v_input,ks,e,x1,x2,z_inf,z_sup)	
-      call nrdf_lr(eixo,z_inf,z_sup,ks,e,x1,x2,i)
+      call inter_lr(eixo,v_input,ks,e,x1,x2,z_inf,z_sup,eflag)	
+      call nrdf_lr(eixo,z_inf,z_sup,ks,e,x1,x2,i,eflag)
       if(i.gt.10)then
           print*,'USING THE METHOD OF THE BISECTION'
-          call bisec_lr(eixo,z_inf,z_sup,ks,e,x1,x2,i)
+          call bisec_lr(eixo,z_inf,z_sup,ks,e,x1,x2,i,eflag)
       endif	
 !
       x1=dabs(x1)
@@ -654,10 +661,10 @@ c
       END
 ************************************************************************
 ************************************************************************
-      SUBROUTINE inter_lr(eixo,v_input,ks,e,x1,x2,z_inf,z_sup)
+      SUBROUTINE inter_lr(eixo,v_input,ks,e,x1,x2,z_inf,z_sup,eflag)
       double precision v_input,ks,e,x1,x2,z_inf,z_sup
       double precision z,dz,xi,xj,lambda_r
-      integer eixo
+      integer eixo,eflag
       EXTERNAL lambda_r
 !	
       if(v_input.lt.1.d-5)then
@@ -676,9 +683,9 @@ c
           xj=z
       endif
 !	
-      if(lambda_r(ks,e,xi,xj).lt.0.d0)then
+      if(lambda_r(ks,e,xi,xj,eflag).lt.0.d0)then
           z=z+dz
-410       if(lambda_r(ks,e,xi,xj).lt.0.d0)then
+410       if(lambda_r(ks,e,xi,xj,eflag).lt.0.d0)then
 !
               z_inf=z
               z=z+dz
@@ -711,7 +718,7 @@ c
       else	
 !
           z=z-dz
-420       if(lambda_r(ks,e,xi,xj).gt.0.d0)then
+420       if(lambda_r(ks,e,xi,xj,eflag).gt.0.d0)then
               z_sup=z
               z=z-dz
               if(eixo.eq.1)then
@@ -742,12 +749,12 @@ c
       END
 *********************************************************
 *********************************************************
-      SUBROUTINE nrdf_lr(eixo,z_inf,z_sup,ks,e,x1,x2,i)
+      SUBROUTINE nrdf_lr(eixo,z_inf,z_sup,ks,e,x1,x2,i,eflag)
       double precision z_inf,z_sup,ks,e,x1,x2
       double precision tol,z0,z1,zm,xi,xj,zk,tol_in
       double precision lambda_r,f0,f1,fm,gm,hm
       double precision del1,del2,del_min,fk
-      INTEGER i,eixo
+      INTEGER i,eixo,eflag
       EXTERNAL lambda_r
 !	
       i=0
@@ -766,15 +773,15 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=z0
-          f0=lambda_r(ks,e,xi,xj)
+          f0=lambda_r(ks,e,xi,xj,eflag)
           xi=z1
-          f1=lambda_r(ks,e,xi,xj)	
+          f1=lambda_r(ks,e,xi,xj,eflag)	
       else
           xi=x1
           xj=z0
-          f0=lambda_r(ks,e,xi,xj)
+          f0=lambda_r(ks,e,xi,xj,eflag)
           xj=z1
-          f1=lambda_r(ks,e,xi,xj)	
+          f1=lambda_r(ks,e,xi,xj,eflag)	
       endif
 				
 435   i=i+1
@@ -786,11 +793,11 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=zm
-          fm=lambda_r(ks,e,xi,xj)
+          fm=lambda_r(ks,e,xi,xj,eflag)
       else
           xi=x1
           xj=zm
-          fm=lambda_r(ks,e,xi,xj)
+          fm=lambda_r(ks,e,xi,xj,eflag)
       endif	
 !	
       if(dabs(fm).lt.tol.or.dabs(z1-z0).lt.tol_in)then
@@ -815,11 +822,11 @@ c
           if(eixo.eq.1)then
               xi=zk
               xj=x2
-              fk=lambda_r(ks,e,xi,xj)
+              fk=lambda_r(ks,e,xi,xj,eflag)
           else
               xi=x1
               xj=zk
-              fk=lambda_r(ks,e,xi,xj)
+              fk=lambda_r(ks,e,xi,xj,eflag)
           endif	
 c			
           if(dabs(fk).lt.tol.or.dabs(del_min).lt.tol_in)then
@@ -854,11 +861,11 @@ c
       END
 ******************************************************************
 ******************************************************************	
-      SUBROUTINE  bisec_lr(eixo,z_inf,z_sup,ks,e,x1,x2,iter)
+      SUBROUTINE  bisec_lr(eixo,z_inf,z_sup,ks,e,x1,x2,iter,eflag)
       double precision z_inf,z_sup,ks,e,x1,x2
       double precision tol,z0,z1,zm,xi,xj
       double precision lambda_r,f0,f1,fm
-      integer iter,eixo,maxiter
+      integer iter,eixo,maxiter,eflag
       external lambda_r
 !
       maxiter=100
@@ -876,15 +883,15 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=z0
-          f0=lambda_r(ks,e,xi,xj)
+          f0=lambda_r(ks,e,xi,xj,eflag)
           xi=z1
-          f1=lambda_r(ks,e,xi,xj)	
+          f1=lambda_r(ks,e,xi,xj,eflag)	
       else	
           xi=x1
           xj=z0
-          f0=lambda_r(ks,e,xi,xj)
+          f0=lambda_r(ks,e,xi,xj,eflag)
           xj=z1
-          f1=lambda_r(ks,e,xi,xj)	
+          f1=lambda_r(ks,e,xi,xj,eflag)	
       endif
 !	
 440   iter=iter+1	
@@ -894,10 +901,10 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=zm
-          fm=lambda_r(ks,e,xi,xj)
+          fm=lambda_r(ks,e,xi,xj,eflag)
       else
           xi=x1
-          fm=lambda_r(ks,e,xi,xj)
+          fm=lambda_r(ks,e,xi,xj,eflag)
       endif	
 c	
       if(f0*fm.lt.0.d0.or.fm*f1.gt.0.d0)then
@@ -930,7 +937,7 @@ c
       END	
 ****************************************************************************
 ****************************************************************************
-      SUBROUTINE  raiz_lw(eixo,lwu,v_input,ks,e,x1,x2)
+      SUBROUTINE  raiz_lw(eixo,lwu,v_input,ks,e,x1,x2,eflag)
 ! This soubroutine find the root of the Equation 
 ! L/W(ks,e,x1,x2)=(L/W)min, keeping fixed x1 or x2
 ! Input Data:
@@ -947,16 +954,16 @@ c
 !      if eixo= 2, x1(input),x2(output)				
 !
       DOUBLE PRECISION lwu,lwt,v_input,ks,e,x1,x2,z_inf,z_sup
-      INTEGER i,eixo,iter
+      INTEGER i,eixo,iter,eflag
 !	
       lwt=1.0d0/lwu
 !
-      call inter_lw(eixo,lwt,v_input,ks,e,x1,x2,z_inf,z_sup)
-      call nrdf_lw(eixo,lwt,z_inf,z_sup,ks,e,x1,x2,iter)
+      call inter_lw(eixo,lwt,v_input,ks,e,x1,x2,z_inf,z_sup,eflag)
+      call nrdf_lw(eixo,lwt,z_inf,z_sup,ks,e,x1,x2,iter,eflag)
 !
       if(iter.gt.10)then
           write(*,*)'USING THE METHOD OF THE BISECTION '
-          call bisec_lw(eixo,lwt,z_inf,z_sup,ks,e,x1,x2,i)	
+          call bisec_lw(eixo,lwt,z_inf,z_sup,ks,e,x1,x2,i,eflag)	
       endif	
 !
       x1=dabs(x1)
@@ -967,10 +974,10 @@ c
 	
 **********************************************************************************************
 *********************************************************************************************
-      subroutine inter_lw(eixo,lwt,v_input,ks,e,x1,x2,z_inf,z_sup)
+      subroutine inter_lw(eixo,lwt,v_input,ks,e,x1,x2,z_inf,z_sup,eflag)
       double precision lwt,v_input,ks,e,x1,x2,z_inf,z_sup
       double precision z,dz,xi,xj,wl
-      integer eixo
+      integer eixo,eflag
       EXTERNAL wl
 !	
       if(v_input.eq.0.d0)then
@@ -989,9 +996,9 @@ c
           xj=z
       endif
 c	
-      if(wl(ks,e,xi,xj)-lwt.lt.0.d0)then
+      if(wl(ks,e,xi,xj,eflag)-lwt.lt.0.d0)then
           z=z+dz
-110       if(wl(ks,e,xi,xj)-lwt.lt.0.d0)then
+110       if(wl(ks,e,xi,xj,eflag)-lwt.lt.0.d0)then
               z_inf=z
               z=z+dz
               if(eixo.eq.1)then
@@ -1021,7 +1028,7 @@ c
       else	
 !
           z=z-dz
-120       if(wl(ks,e,xi,xj)-lwt.gt.0.d0)then
+120       if(wl(ks,e,xi,xj,eflag)-lwt.gt.0.d0)then
               z_sup=z
               z=z-dz
               if(eixo.eq.1)then
@@ -1032,7 +1039,7 @@ c
 	  xj=z
               endif
 !
-              if(wl(ks,e,xi,xj)-lwt.lt.1.d-6)goto 121	
+              if(wl(ks,e,xi,xj,eflag)-lwt.lt.1.d-6)goto 121	
 	  go to 120
               else
 121	   z_inf=z
@@ -1053,12 +1060,12 @@ c
       END	
 **********************************************************************************************
 *********************************************************************************************
-      subroutine nrdf_lw(eixo,lwt,z_inf,z_sup,ks,e,x1,x2,i)
+      subroutine nrdf_lw(eixo,lwt,z_inf,z_sup,ks,e,x1,x2,i,eflag)
       double precision lwt,z_inf,z_sup,ks,e,x1,x2
       double precision tol,z0,z1,zm,xi,xj,zk,tol_in
       double precision wl,f0,f1,fm,gm,hm
       double precision del1,del2,del_min,fk
-      INTEGER i,eixo
+      INTEGER i,eixo,eflag
       EXTERNAL wl
 !	
       i=0
@@ -1075,15 +1082,15 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=z0
-          f0=wl(ks,e,xi,xj)-lwt
+          f0=wl(ks,e,xi,xj,eflag)-lwt
           xi=z1
-          f1=wl(ks,e,xi,xj)-lwt	
+          f1=wl(ks,e,xi,xj,eflag)-lwt	
       else
           xi=x1
           xj=z0
-          f0=wl(ks,e,xi,xj)-lwt
+          f0=wl(ks,e,xi,xj,eflag)-lwt
           xj=z1
-          f1=wl(ks,e,xi,xj)-lwt	
+          f1=wl(ks,e,xi,xj,eflag)-lwt	
       endif		
 !
 135   i=i+1
@@ -1095,11 +1102,11 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=zm
-          fm=wl(ks,e,xi,xj)-lwt
+          fm=wl(ks,e,xi,xj,eflag)-lwt
       else
           xi=x1
           xj=zm
-          fm=wl(ks,e,xi,xj)-lwt
+          fm=wl(ks,e,xi,xj,eflag)-lwt
       endif
 !		
       if(dabs(fm).lt.tol.or.dabs(z1-z0).lt.tol_in)then
@@ -1124,11 +1131,11 @@ c
           if(eixo.eq.1)then
               xi=zk
               xj=x2
-              fk=wl(ks,e,xi,xj)-lwt
+              fk=wl(ks,e,xi,xj,eflag)-lwt
           else
               xi=x1
               xj=zk
-              fk=wl(ks,e,xi,xj)-lwt
+              fk=wl(ks,e,xi,xj,eflag)-lwt
           endif	
 c			
           if(dabs(fk).lt.tol.or.dabs(del_min).lt.tol_in)then
@@ -1162,11 +1169,11 @@ c
       END
 **********************************************************************************************
 **********************************************************************************************
-      subroutine bisec_lw(eixo,lwt,z_inf,z_sup,ks,e,x1,x2,iter)
+      subroutine bisec_lw(eixo,lwt,z_inf,z_sup,ks,e,x1,x2,iter,eflag)
       double precision lwt,z_inf,z_sup,ks,e,x1,x2
       double precision tol,z0,z1,zm,xi,xj
       double precision wl,f0,f1,fm
-      integer iter,eixo,maxiter
+      integer iter,eixo,maxiter,eflag
       external wl
 !
       maxiter=100
@@ -1183,15 +1190,15 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=z0
-          f0=wl(ks,e,xi,xj)-lwt
+          f0=wl(ks,e,xi,xj,eflag)-lwt
           xi=z1
-          f1=wl(ks,e,xi,xj)-lwt	
+          f1=wl(ks,e,xi,xj,eflag)-lwt	
       else
           xi=x1
           xj=z0
-          f0=wl(ks,e,xi,xj)-lwt
+          f0=wl(ks,e,xi,xj,eflag)-lwt
           xj=z1
-          f1=wl(ks,e,xi,xj)-lwt	
+          f1=wl(ks,e,xi,xj,eflag)-lwt	
       endif	
 !	
 140   iter=iter+1
@@ -1201,11 +1208,11 @@ c
       if(eixo.eq.1)then
           xj=x2
           xi=zm
-          fm=wl(ks,e,xi,xj)-lwt
+          fm=wl(ks,e,xi,xj,eflag)-lwt
       else
           xi=x1
           xj=zm
-          fm=wl(ks,e,xi,xj)-lwt
+          fm=wl(ks,e,xi,xj,eflag)-lwt
       endif	
 !	
       if(f0*fm.lt.0.d0.or.fm*f1.gt.0.d0)then

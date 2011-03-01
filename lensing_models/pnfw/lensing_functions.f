@@ -1,3 +1,17 @@
+!>  @file
+!> This module is useful to compute quantities related to the Singular Isothermal Elliptical Potential (SIEP) 
+!>
+!> See sltools/PerturbativeMethod/writeups/Report_on_Perturbative_Method.pdf
+!>
+!>   Lensing functions to be considered: angle deflection, convergence, components of the shear.
+!>
+!>  
+!> 
+!> @package pnfw_model
+!>
+
+
+!*
 ! THIS FILE CONTAINS ALL THE BASIC LENSING FUNCTION OF THE PNFW LENS MODEL:
 ! ALMOST OF THESE FUNCTIONS ARE DEFINED IN Golse & Kneib A&A 390,821-827 (2002)
 ! FUNCTION f(x)     --> Eq. (4)
@@ -21,6 +35,15 @@
 ! FUNCTION y1_s: Mapping the ¨x2¨ points of the lens plane into the source plane points
 ! FUNCTION y2_s : Mapping the ¨x1¨ points  of the lens plane into the source plane points
 !
+
+!
+!>Function useful to define the mass distribution of the PNFW Model
+!>
+!> \f$ \mathcal{F}(x)= 1 \f$
+!>
+!> @param  x : Radial Coordiante
+!>
+!> @return \f$F(x)\f$
       FUNCTION F(x)
 !     Hint: arccosh(x)=ln(x+sqrt(x^2-1))
 !     arcosh(1/x)=ln(1/x+sqrt(1/x^2-1))
@@ -45,6 +68,13 @@
       END
 ****************************************************************************	
 ****************************************************************************
+!> Function related to the mean surface mass density. It computes
+!>
+!> \f$ g(x)= \f$
+!> 
+!> @param x : radial coordinate
+!> @return \f$ g(x)= \f$
+
       FUNCTION G(X)
 !
       double precision d12,arg,x,g
@@ -68,6 +98,14 @@
       END
 ****************************************************************************	
 ****************************************************************************      
+!> Function to compute the dimensionless angle deflection of the NFW model
+!>
+!>  \f$ \alpha(x)=4\frac{g(x)}{x}\f$
+!>
+!>  @param x : radial coordinate
+!>
+!> @return  \f$ \alpha(x)g(x)\f$
+
       FUNCTION alpha(x)
 !
       double precision alpha,x,g
@@ -78,7 +116,7 @@
       END
 ****************************************************************************	
 ****************************************************************************
-      FUNCTION kappa_e(e,x1,x2)
+      FUNCTION kappa_e(e,x1,x2,eflag)
 !     Input data
 !     e : ellipticity of the angle deflection model
 !     x1,x2: grid points
@@ -86,11 +124,31 @@
       double precision kappa_e,e,x1,x2
       double precision x1e,x2e,xe,dphi
       double precision f,g,kappa,gamma
+      double precision a1e,a2e,ae,be
+      integer eflag
       external f,g
 !	
-      x1e=x1*dsqrt(1.d0-e)
-      x2e=x2*dsqrt(1.d0+e)
+      if(eflag.eq.1)then 
+         a1e=1.d0-e
+         a2e=1.d0+e
+      endif
+
+      if(eflag.eq.2)then
+         a1e=1.d0-e
+         a2e=1./(1.d0-e)
+      endif
+
+      if(eflag.eq.3)then
+         a1e=1.d0
+         a2e=1./(1.d0-e)**2
+      endif
+
+      x1e=x1*dsqrt(a1e)
+      x2e=x2*dsqrt(a2e)
       xe=dsqrt(x1e**2+x2e**2)
+!
+      ae=0.5*(a1e+a2e)
+      be=0.5*(a1e-a2e)
 !
       if(x1e.lt.dabs(1.d-8))then
         dphi=3.14159265d0
@@ -101,13 +159,13 @@
       kappa=2.d0*f(xe)
       gamma=2.d0*((2.d0*g(xe))/xe**2-f(xe))
 !	
-      kappa_e=kappa+e*dcos(dphi)*gamma
+      kappa_e=ae*kappa-be*dcos(dphi)*gamma
 !	
       RETURN
       END
 ****************************************************************************	
 ****************************************************************************
-      FUNCTION gamma2_e(e,x1,x2)
+      FUNCTION gamma2_e(e,x1,x2,eflag)
 !     Input Data 
 !      e  ellipticity of the angle deflection method,
 !      x1 e x2 grid points
@@ -115,11 +173,31 @@
       double precision e,x1,x2,gamma2_e
       double precision x1e,x2e,xe,dphi
       double precision f,g,kappa,gamma
+      double precision a1e,a2e,ae,be
+      integer eflag
       external f,g
-!	
-      x1e=x1*dsqrt(1.d0-e)
-      x2e=x2*dsqrt(1.d0+e)
+!
+      if(eflag.eq.1)then
+         a1e=1.d0-e
+         a2e=1.d0+e
+      endif
+
+      if(eflag.eq.2)then
+         a1e=1.d0-e
+         a2e=1./(1.d0-e)
+      endif
+
+      if(eflag.eq.3)then
+         a1e=1.d0
+         a2e=1./(1.d0-e)**2
+      endif
+
+      x1e=x1*dsqrt(a1e)
+      x2e=x2*dsqrt(a2e)
       xe=dsqrt(x1e**2+x2e**2)
+!
+      ae=0.5*(a1e+a2e)
+      be=0.5*(a1e-a2e)
 !
       if(x1e.lt.dabs(1.d-8))then
         dphi=3.14159265d0
@@ -130,89 +208,114 @@
       kappa=2.d0*f(xe)
       gamma=2.d0*((2.d0*g(xe))/xe**2-f(xe))
 !	
-      gamma2_e = gamma**2 +2.d0*e*dcos(dphi)*gamma*kappa +
-     &           (kappa**2-(dsin(dphi)**2)*(gamma)**2)*e**2	
+      gamma2_e = (ae*gamma)**2-2.d0*ae*be*dcos(dphi)*gamma*kappa +
+     &           be*be*(kappa**2-(dsin(dphi)**2)*(gamma)**2)	
 !     
       RETURN
       END
 ****************************************************************************	
 ****************************************************************************
-      FUNCTION lambda_t(ks,e,x1,x2)
+      FUNCTION lambda_t(ks,e,x1,x2,eflag)
 !     Input Data
 !     ks,e: parameters of the model
 !     x1,x2: grid points		
 !
       double precision lambda_t,ks,e,x1,x2
       double precision kappa_e,gamma2_e
+      integer eflag
       external kappa_e,gamma2_e
-      lambda_t=1.d0-ks*(kappa_e(e,x1,x2)+dsqrt(gamma2_e(e,x1,x2)))
+      lambda_t=1.d0-ks*(kappa_e(e,x1,x2,eflag)
+     &         +dsqrt(gamma2_e(e,x1,x2,eflag)))
 c	
       RETURN
       END
 ****************************************************************************	
 ****************************************************************************
-      FUNCTION lambda_r(ks,e,x1,x2)
+      FUNCTION lambda_r(ks,e,x1,x2,eflag)
 !     Input Data
 !     ks,e: parameters of the model
 !     x1,x2: grid points		
 !
       double precision lambda_r,ks,e,x1,x2
       double precision kappa_e,gamma2_e
+      integer eflag
       external kappa_e,gamma2_e
-      lambda_r=1.d0-ks*(kappa_e(e,x1,x2)-dsqrt(gamma2_e(e,x1,x2)))
+      lambda_r=1.d0-ks*(kappa_e(e,x1,x2,eflag)
+     &        -dsqrt(gamma2_e(e,x1,x2,eflag)))
 c	
       RETURN
       END
 ****************************************************************************	
 ****************************************************************************
-      FUNCTION det_j(ks,e,x1,x2)
+      FUNCTION det_j(ks,e,x1,x2,eflag)
 !     Input Data
 !     ks,e: parameters of the model
 !     x1,x2: grid points	
       double precision det_j,ks,e,x1,x2
       double precision lambda_t,lambda_r
+      integer eflag
       external lambda_r,lambda_t
-      det_j=dabs(lambda_t(ks,e,x1,x2)*lambda_r(ks,e,x1,x2))
+      det_j=dabs(lambda_t(ks,e,x1,x2,eflag)*lambda_r(ks,e,x1,x2,eflag))
 !	
       RETURN	
       END	
 ****************************************************************************	
 ****************************************************************************
-      FUNCTION  wl(ks,e,x1,x2)
+      FUNCTION  wl(ks,e,x1,x2,eflag)
 !     W/L=lambda_t/lambda_r
 !     Input Data:
 !     ks,e: parameters of the model
 !     x1,x2: grid points	
       double precision wl,ks,e,x1,x2
       double precision lambda_r, lambda_t
+      integer eflag
       external lambda_r,lambda_t
-      wl=lambda_t(ks,e,x1,x2)/lambda_r(ks,e,x1,x2)
+      wl=lambda_t(ks,e,x1,x2,eflag)/lambda_r(ks,e,x1,x2,eflag)
 c	
       RETURN
       END
 ****************************************************************************	
 ****************************************************************************
-      FUNCTION kappa_e2(iscont,e,x1,x2)
+      FUNCTION kappa_e2(iscont,e,x1,x2,eflag)
 !     Input Data
 !     iscont: numerical value of the iso-contour
 !     e : ellipticity of the angle deflection model
 !     x1,x2: grid points
       double precision kappa_e2,e,x1,x2,iscont
       double precision kappa_e
+      integer eflag
       external kappa_e
 c	
-      kappa_e2=kappa_e(e,x1,x2)-iscont
+      kappa_e2=kappa_e(e,x1,x2,eflag)-iscont
       RETURN
       END
 ****************************************************************************	
 ****************************************************************************
-      FUNCTION	y1_s(ks,e,x1,x2)
+      FUNCTION	y1_s(ks,e,x1,x2,eflag)
 !
       double precision y1_s,ks,e,x1,x2
       double precision x1e,x2e,xe,phie,alpha
+      double precision a1e,a2e
+      integer eflag
       external alpha
-      x1e=x1*dsqrt(1.d0-e)
-      x2e=x2*dsqrt(1.d0+e)
+!
+      if(eflag.eq.1)then
+         a1e=1.d0-e
+         a2e=1.d0+e
+      endif
+
+      if(eflag.eq.2)then
+         a1e=1.d0-e
+         a2e=1./(1.d0-e)
+      endif
+
+      if(eflag.eq.3)then
+         a1e=1.d0
+         a2e=1./(1.d0-e)**2
+      endif
+
+      x1e=x1*dsqrt(a1e)
+      x2e=x2*dsqrt(a2e)
       xe=dsqrt(x1e**2+x2e**2)
 !
       if(x1e.lt.dabs(1.d-8))then
@@ -221,27 +324,47 @@ c
         phie= datan(x2e/x1e)
       endif
 !
-      y1_s=x1-ks*alpha(xe)*dsqrt(1.0d0-e)*dcos(phie)
+      y1_s=x1-ks*alpha(xe)*dsqrt(a1e)*dcos(phie)
 !
       RETURN
       END
 ****************************************************************************	
 ****************************************************************************
-      FUNCTION y2_s(ks,e,x1,x2)
+      FUNCTION y2_s(ks,e,x1,x2,eflag)
 !
       double precision y2_s,ks,e,x1,x2
       double precision x1e,x2e,xe,phie,alpha
+      double precision a1e,a2e
+      integer eflag
       external alpha
-      x1e=x1*dsqrt(1.d0-e)
-      x2e=x2*dsqrt(1.d0+e)
+
+      if(eflag.eq.1)then
+         a1e=1.d0-e
+         a2e=1.d0+e
+      endif
+
+      if(eflag.eq.2)then
+         a1e=1.d0-e
+         a2e=1./(1.d0-e)
+      endif
+
+      if(eflag.eq.3)then
+         a1e=1.d0
+         a2e=1./(1.d0-e)**2
+      endif
+
+      x1e=x1*dsqrt(a1e)
+      x2e=x2*dsqrt(a2e)
       xe=dsqrt(x1e**2+x2e**2)
+!
+
       if(x1e.lt.dabs(1.d-8))then
         phie=3.14159265d0/2.d0
       else
         phie=datan(x2e/x1e)
       endif
 !
-      y2_s=x2-ks*alpha(xe)*dsqrt(1.0d0+e)*dsin(phie)
+      y2_s=x2-ks*alpha(xe)*dsqrt(a2e)*dsin(phie)
 !
       RETURN
       END
