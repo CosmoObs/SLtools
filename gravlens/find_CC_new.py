@@ -145,7 +145,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	index_CC = np.argmax(x1**2 + y1**2)
 
-	gravlens_params_updated['gridhi1'] =  grid_factor * ( (x1[index_CC]**2 + y1[index_CC]**2)**0.5 )
+	gravlens_params_updated['gridhi1'] =  gridhi1_CC_factor * ( (x1[index_CC]**2 + y1[index_CC]**2)**0.5 )
 	#-----------------------------------------------------------------------------------------------------------
 	# get CC with best value for the grid
 	lens_par_out = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
