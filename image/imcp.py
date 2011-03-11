@@ -451,10 +451,14 @@ if __name__ == "__main__" :
     coord = 'degrees' if coord_deg else 'pixel';
     size = 'degrees' if shape_deg else 'pixel';        
 
+    hdulist = pyfits.open(infits,memmap=True);
     if (use_header):
-        image, hdr = pyfits.getdata(infits,header=True);
+#        image, hdr = pyfits.getdata(infits,header=True);
+        image = hdulist[0].data;
+        hdr = hdulist[0].header;
     else:
-        image = pyfits.getdata(infits, header=False);
+#        image = pyfits.getdata(infits, header=False);
+        image = hdulist[0].data;
         hdr = None;
 
     try:
