@@ -401,8 +401,8 @@ if __name__ == "__main__" :
                 dest='is_shape_deg', default=False,
                 help="If given 'shape' (x,y sizes) are in degrees, default is False");
     parser.add_option('-s',
-                dest='dim', default=(250,250),
-                help="Output stamps shape default is (250,250)");
+                dest='dim', default='250,250',
+                help="Output stamps shape default is 250,250");
     parser.add_option('--increase',
                 dest='incr', default=0,
                 help="Amount of border/enlarge of object poststamp. It is an additive or multiplicative factor. See 'relative_increase' flag");
@@ -410,7 +410,7 @@ if __name__ == "__main__" :
                 dest='rel_incr', default=False,
                 help="Turn on the multiplicative factor for increase image, otherwise, 'increase' will be treated as an absolute value.");
     parser.add_option('-o',
-                dest='sufx', default='pstamp_',
+                dest='sufx', default='pstamp',
                 help="Output images (stamps) filename suffix [pstamp_]");
     parser.add_option('--no-header', action='store_false',
                 dest='use_header', default=True,
