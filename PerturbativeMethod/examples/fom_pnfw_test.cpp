@@ -4,14 +4,14 @@
 #include <iostream>
 
 #include "../perturbative_method.h"
-#include "../pnfw_model2.h"
+#include "../pnfw_model.h"
 #include "../nfw_circular_model.h"
 #include "../theta_find.h"
 #include "../generate_arcs.h"
 #include "../generate_curves.h"
 // #include "../arc_properties.h"
 #include "../comparison_fns.h"
-// to compile make: g++  -o exec_fom fom_pnfw_test.cpp `pkg-config gsl --cflags --libs`
+// to compile  make: g++  -o exec_fom fom_pnfw_test.cpp `pkg-config gsl --cflags --libs`
 int main(){
   
 

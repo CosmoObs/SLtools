@@ -1,15 +1,25 @@
 /** @file
 * Package useful to compute image properties, such number, center coordinates, curvature radius, length, width, length-to-width ratio.
 *
-* For more details, see Chap 2.5 of the Report on Perturbative Approach (in writeups folder)
+* Returns: A file that contains several of the arc properties
 */
 
 /** @package arc_properties
-* Package to calculate several image properties.
+* Package to calculate several image properties as length,width, length-to-width ratio, area.
+* 
+* This package compute:
 *
+* - four measurements of the length
 *
-* Detailde description FIXME
+* - measurement of the area
 *
+* - two measurements of the width
+*
+* - Coordinates of the center of the image
+*
+* - Radius of Curvature of the image
+*
+* For detailed description see sltools/PerturbativeMethod/writeups/Report_on_Perturbative_Method.pf
 */
 
 #include <cstdlib>

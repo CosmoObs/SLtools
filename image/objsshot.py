@@ -10,12 +10,14 @@ import pyfits;
 
 import sltools;
 from sltools.io import *;
-from sltools.image import segment,imcp;
+from sltools.image import sextractor,imcp;
 from sltools.string import *;
+from sltools.catalog import fits_data as fts;
+from sltools.catalog import ascii_data as asc;
 
 #!/usr/bin/env python
 
-"""Program for automate SExtractor run and produce objects postamps
+"""Program to automate SExtractor run and produce objects postamps
 
 The following functions run SExtractor on given image and create poststamps of identified objects.
 
@@ -45,26 +47,16 @@ list of object IDs (given by SE), header instances and image arrays, respectivel
 # Use "--help" for a list of program options
 
 
-import sys;
-import os;
-
-import gc;
-gc.enable();
-
-import optparse;
-from optparse import OptionParser;
-
-import re;
-import string;
-import numpy as np;
-import pyfits;
-
-import sltools;
-from sltools.io import *;
-from sltools.image import segment,imcp;
-from sltools.string import *;
-
 #---------------------------------------------------------------------------------------------------
+
+# Checking dependencies..
+stat = check_deps( binaries=['sex'] );
+if not stat:
+    print >> sys.stderr, "Error: Dependencies check failed. Fix it!";
+    sys.exit(2);
+
+# ---
+
 def _valid_line(wort):
 
     wort.rstrip("\n");
@@ -76,7 +68,6 @@ def _valid_line(wort):
 
 # ---
 
-#---------------------------------------------------------------------------------------------------
 def _check_config(cfg_file):
     """Check if given config file has the necessary structure.
 
@@ -106,67 +97,31 @@ def _check_config(cfg_file):
 
 # ---
 
-#---------------------------------------------------------------------------------------------------
-def _file_2_imgs(fits_image, use_header, params, args, preset):
-    """SExtract the Image and read the outputs to array
-    Input:
-    - fits_image <str> : filename
-    - use_header <bool> : True/False
-    - params <list str> : See SE's default.param file. Those params
-    - args <dic> : SE's command-line arguments
-    - preset <str> : preset configs (DC4,DC5,...)
-    Output:
-    - (<array> <array> <header_instance> <rec_array>) :
-      SE's Object image array, SE's Segmentation image array, FITS header, FITS catalog (respectively)
-    """
-    
-    # Now we set some Sextractor arguments for this script purposes..
-    #
-    rootname = string.split( string.replace( fits_image,".fits","" ), sep="/" )[-1];
+def _file_2_arrays(fits_image, use_header, params, args, preset):
+    """SExtract the Image and read the outputs to arrays."""
 
-    objimgname = rootname+'_obj.fits';
-    segimgname = rootname+'_seg.fits';
-    catalog = rootname+'_cat.fit';
+    out = sextractor.run_segobj(fits_image, params, args, preset=preset);
 
-    # And update given arguments (via 'args.dic') with necessary parameters..
-    #
-    args.update( {'checkimage_type' : 'OBJECTS,SEGMENTATION', 'checkimage_name' : objimgname+','+segimgname, 'catalog_type' : 'FITS_1.0', 'catalog_name' : catalog} );
-
-    # Run sextractor module; output catalogues to "catalog" files..
-    #
-    out = segment.run_sex(fits_image, params, args, custom=preset);
-
-    # Check if Sextractor ran OK. It is suppose to output an dictionary with fits filenames if all OK,
-    # otherwise, if not, return False:
-    #
     if (out == False):
         print >> sys.stderr, "Error: Sextractor raised and error coded during segmentation. Finishing run."
         return (False);
 
-    # Read fresh images just created by sex run..
-    #
-    objimg = pyfits.getdata( objimgname );
-    segimg = pyfits.getdata( segimgname );
+    objimg = pyfits.getdata( out['OBJECTS'] );
+    segimg = pyfits.getdata( out['SEGMENTATION'] );
+    tbhdu = pyfits.open(out['CATALOG'])[1];
 
-    # ASCII version: CATALOG_TYPE = ASCII_HEAD
-    #    cat = np.loadtxt( catalog, comments="#" );
-    # FITS version: CATALOG_TYPE = FITS_1.0
-    cat = pyfits.open(catalog)[1].data;
-
-    # If 'header' argument not False/None, read it..
-    #
     if (use_header):
         header = pyfits.getheader( fits_image );
     else:
         header = None;
 
 
-    return (objimg, segimg, header, cat);
+    return (objimg, segimg, header, tbhdu);
 
 # ---
 
 # =======================================================================================
-def readout_objs(fits_image, params=[], args={}, use_header=True, increase=0, preset=''):
+def readout_objs(filename, params=[], args={}, use_header=True, increase=0, preset=''):
     """
     Function to run SExtractor for objects identification and creates poststamp images.
     
@@ -203,10 +158,12 @@ def readout_objs(fits_image, params=[], args={}, use_header=True, increase=0, pr
     
     """
 
+    filename = fits_image;
+
     params.append('NUMBER');
-    
+
     # Deal with fits files and SExtracting the image..
-    out = _file_2_imgs(fits_image, use_header, params, args, preset);
+    out = _file_2_arrays(fits_image, use_header, params, args, preset);
 
     if not out:
         print >> sys.stderr, "Error: An error occured while running SE and extracting FITS files.";
@@ -224,7 +181,7 @@ def readout_objs(fits_image, params=[], args={}, use_header=True, increase=0, pr
     #        objIDs = list( cat.astype(np.int32) );
     # -
     # FITS:
-    objIDs = cat.field('NUMBER');
+    objIDs = cat.data.field('NUMBER');
 
     if ( len(objIDs) == 0 ):
         print >> sys.stdout, "No objects were identified on given image.";
@@ -284,7 +241,7 @@ def pickout_obj(fits_image, xo, yo, params=[], args={}, use_header=True, increas
     params.append('NUMBER');
 
     # Deal with fits files and SExtracting the image..
-    out = _file_2_imgs(fits_image, use_header, params, args, preset);
+    out = _file_2_arrays(fits_image, use_header, params, args, preset);
 
     if not out:
         print >> sys.stderr, "Error: An error occured while running SE and extracting FITS files.";
@@ -314,46 +271,60 @@ def pickout_obj(fits_image, xo, yo, params=[], args={}, use_header=True, increas
 
 # ---
 
-# \cond
-#---------------------------------------------------------------------------------------------------
-def _check_config(cfg_file):
-    """Check if given config file has the necessary structure.
+def run(filename, centroids=[], objIDs=[], params=[], args={}, preset='', use_header=True, increase=0):
+    """ """
+    
+    params.append('NUMBER');
 
-    In particular, if checking fails, a fixing procedure based on
-    Sextractor config file (default.sex) design.
-    """
+    # Run sextractor over 'imagename' and take/open their outputs..
+    #
+    Dsex = se.run_segobj(imagename, params=PARAMS, preset=preset);
+    if not Dsex:
+        print >> sys.stderr, "Error: SE's run raised an error. Finishing this thing...";
+        sys.exit(1);
+    
+    # Open the output from Sextractor run, images and catalog..
+    #
+    header = pyfits.getheader(imagename);
+    objimg = pyfits.getdata(Dsex['OBJECTS']);
+    segimg = pyfits.getdata(Dsex['SEGMENTATION']);
+    tbhdu  = fts.open_catalog(Dsex['CATALOG'])[1];
 
-    fp = open(cfg_file, 'r');
+    # Detect objects corresponding to given centroids..
+    #
+    if centroids != []:
+        objIDs = [ segobjs.centroid2ID(segimg,o_o) for o_o in centroids ];
 
-    file = filter( _valid_line, fp.readlines() );
+    if objIDs == []:
+        objIDs = tbhdu.data.field('NUMBER');
 
-    for line in file:
+    if ( len(objIDs) == 0 ):
+        print >> sys.stdout, "Nothing to be done. No objects were identified neither points(& IDs) were given.";
+        return (None);
 
-        if ( re.search("\[.*\]",line) ) :
+    # Each object in objIDs is returned (also inside a/the list) as array with their corresponding pixels..
+    #
+    objs = [];
+    hdrs = [];
+    for _id in objIDs:
+        if not _id:
+            objs.append(None);
+            hdrs.append(None);
             continue;
+        _otmp, _htmp = imcp.segstamp( segimg, objimg, header, increase, relative_increase=True, objID=_id );
+        objs.append(_otmp);
+        hdrs.append(_htmp);
 
-        if not ( bool(re.search("=",line))  or  bool(re.search(":",line)) ) :
-            return (False);
-
-        if not ( len(string.split(line,sep="=")) >= 2  or  len(string.split(line,sep=":")) >= 2 ) :
-            return (False);
-
-    fp.close();
+    return {'IDs' : objIDs, 'images' : objs, 'headers' : hdrs};
 
 
-    return (True);
-
-# ---
-
+# \cond
 # =======================================================================================================
 
 if __name__ == "__main__" :
 
-    # Checking dependencies..
-    stat = check_dependencies( { 'binaries':['sex'] } );
-    if not stat:
-        print >> sys.stderr, "Error: Dependencies check failed. Fix it!";
-        sys.exit(2);
+    import optparse;
+    from optparse import OptionParser;
 
     # Read input options..
     usage="Usage:  %prog [options] <objects_image.fits>";

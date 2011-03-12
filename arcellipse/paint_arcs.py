@@ -1,19 +1,25 @@
 #!/usr/bin/python
+# =====================================================
+# Authors:
+# Cristina Furlanetto - furlanetto.cristina@gmail.com
+# =====================================================
+
 
 """ Module to draw geometric figures that mimic arcs and add them to images using the prescription of ArcEllipse. """
 
 ##@module paint_arcs
-
-"""
- This module draws geometric figures that mimic arcs using the prescription of
- ArcEllipse, which consists in a deformation of an ellipse such that one of its# main axes becomes a circle segment.
-
- It uses Sersic profiles as the radial light distribution of the arcs. It also 
- performs Gaussian convolution and adds Poissonic noise to arc images.
- 
- The main goal of this code is that it allows the user to control all the input
- parameters of the arcs that are going to be added. 
-"""
+#
+# This module draws geometric figures that mimic arcs using the prescription of
+# ArcEllipse, which consists in a deformation of an ellipse such that one of its
+# main axes becomes a circle segment.
+#
+# It uses Sersic profiles as the radial light distribution of the arcs. It also 
+# performs Gaussian convolution and adds Poissonic noise to arc images.
+# 
+# The main goal of this code is that it allows the user to control all the input
+# parameters of the arcs that are going to be added. 
+#
+#
 
 import sys
 import os
@@ -29,34 +35,67 @@ from sltools.io import config_parser as cp
 from sltools.catalog import open_fits_catalog
 from sltools.catalog.halos import *
 import string
-from functions import *
+from functions import get_b_n,convert_arcsec_pix,convert_pix_arcsec # substituir por get_b_n, convert_arcsec_pix, convert_pix_arcsec
 from sltools.image import get_image_limits_pywcs
 from sltools.coordinate import *
 import pywcs
-
+from scipy.integrate import dblquad, quad
 
 sys.path.append( os.path.abspath( '.' ))
 cwd = os.getcwd()+'/'
 
-#========================================================================
+def read_input_file(input_file):
+
+	""" 
+	Function to read the input file and get the images list and the parameters list.
+	
+	Input:
+	- input_file: input file name
+	
+	Output:
+	- images_list: list of images where arc will be added
+	- params_list: list of parameters of the arcs that will be added
+	"""
+
+	file_in = open(input_file,'r')
+	images_list = []
+	params_list = []
+
+	for line in file_in.readlines():
+
+		if ( re.search('^$',line) ) : continue
+		if ( re.search('\s*#',line) ) : continue
+	
+		in_list = string.split( line,sep=None )
+		images_list.append(in_list[0])
+		params_list.append(in_list[1:len(in_list)])
+
+
+	return images_list,params_list
+
+
+
 def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
-    """ Function to compute the value of the surface brightness of the
+
+	""" 
+	Function to compute the value of the surface brightness of the
 	(r,theta) point following the ArcEllipse prescription.
 
 	Input:
 	- r: radius (pixel)
-	- theta_diff: difference between the position angle and the arc center position angle - theta-theta_0 (radians)
-	- n: index that describes the shape of the Sersic profile 
-	- b_n: coefficient of the Sersic profile that depends on the n index; b_n is chosen so that half the total luminosity predicted by the Sersic 
-	profile comes from r <= r_e 
-	- r_c: distance of the arc center related to the cluster center (pixel)
+	- theta_diff: difference between the position angle (theta) and the arc center position angle (theta_0) (radians)
+		the angles are measured conterclockwise starting in the x-axis
+	- n: index that describes the slope of the Sersic profile 
+	- b_n: coefficient of the Sersic profile that depends on the n index
+		b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e 
+	- r_c: distance of the arc center to the point where the arc is centered (pixel)
 	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
 	- I_0: central surface brightness of the Sersic profile
 	- ellip: ellipticity of the arc
 
 	Output:
 	- the value of the surface brightness of the (r,theta) point following the ArcEllipse prescription
-    """
+	"""
 
 	r_prof = math.sqrt((r_c * theta_diff * (1. - ellip))**2 + (r - r_c)**2 )
 
@@ -65,21 +104,22 @@ def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
 	return I_0 * math.exp(exp_arg)
 
 
-#========================================================================
 def arcellipse_sbmap_x_y(x,y,x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip):
-    """ Function to compute the value of the surface brightness of the
+
+	""" 
+	Function to compute the value of the surface brightness of the
 	(x,y) pixel following the ArcEllipse prescription.
 
 	Input:
 	- x: x position (pixel)
 	- y: y position (pixel)
-	- x_0: x position of the cluster center or the point where the arc is centered (pixel)
-	- y_0: y position of the cluster center or the point where the arc is centered (pixel)
-	- theta_0: orientation of the arc center related to the cluster center or the point where the arc is centered (radians)
-	- n: index that describes the shape of the Sersic profile 
-	- b_n: coefficient of the Sersic profile that depends on the n index; b_n is chosen so that half the total luminosity predicted by the Sersic 
-	profile comes from r <= r_e 
-	- r_c: distance of the arc center related to the cluster center (pixel)
+	- x_0: x position of the point where the arc is centered (pixel)
+	- y_0: y position of the point where the arc is centered (pixel)
+	- theta_0: orientation of the arc center related to the x-axis (radians)
+	- n: index that describes the slope of the Sersic profile 
+	- b_n: coefficient of the Sersic profile that depends on the n index
+		b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e 
+	- r_c: distance of the arc center related to the point where the arc is centered (pixel)
 	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
 	- I_0: central surface brightness of the Sersic profile
 	- ellip: ellipticity of the arc
@@ -102,17 +142,18 @@ def arcellipse_sbmap_x_y(x,y,x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip):
 	return I_0 * math.exp(exp_arg)	
 
 
-#========================================================================
+
 def derivative(f):
-    """ Function to compute the numerical derivative of the arcellipse_sbmap_r_theta function at (r,theta). 
+	""" 
+	Function to compute the numerical derivative of the arcellipse_sbmap_r_theta function at (r,theta). 
 
 	Input:
 	- r: radius (pixel)
 	- theta_diff: difference between the position angle (theta) and the arc center position angle (theta_0) - (radians)
-	- n: index that describes the shape of the Sersic profile 
-	- b_n: coefficient of the Sersic profile that depends on the n index; b_n is chosen so that half the total luminosity predicted by the Sersic 
-	profile comes from r <= r_e 
-	- r_c: distance of the arc center related to the cluster center (pixel)
+	- n: index that describes the slope of the Sersic profile 
+	- b_n: coefficient of the Sersic profile that depends on the n index
+		b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e 
+	- r_c: distance of the arc center related to the point where the arc is centered (pixel)
 	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
 	- I_0: central surface brightness of the Sersic profile
 	- ellip: ellipticity of the arc
@@ -129,18 +170,45 @@ def derivative(f):
 	return df
 
 
-#========================================================================
-def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_size,dim_x,dim_y):
-    """	Function to create the surface brightness map following the ArcEllipse prescription and digitalize ("pixelize") it.
+def I_0_integral(n,r_e,r_c,theta_0,ellip):
+
+	'''
+	Computes the definite double integral of the Sersic profile (where I_0 = 1) used to define 
+	the profile constant I_0 in terms of the total signal of the arc.
+	The Sersic profile is defined as I = I_0 * exp(-b_n * (r_prof/r_e)**(1/n)), where
+	I_0 is the central surface brightness and r_prof comes from the ArcEllipse prescription.
 
 	Input:
-	- x_0: x position of the cluster center or the point where the arc is centered (pixel)
-	- y_0: y position of the cluster center or the point where the arc is centered (pixel)
-	- theta_0: orientation of the arc center related to the cluster center or the point where the arc is centered (radians)
+	- n: Sersic index
+	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pix)
+	- r_c: distance of the arc center related to the point where the arc is centered (pix)
+	- theta_0: orientation of the arc center related to x-axis 
+	- ellip: ellipticity of the arc
+
+	Output:
+	- value of the definite double integral of the Sersic profile (where I_0 = 1)
+	'''
+
+	b_n = get_b_n(n)
+	
+	return dblquad(lambda r, theta: r * math.exp(- b_n * ( (math.sqrt((r_c * (theta - theta_0) * \
+		(1. - ellip))**2 + (r - r_c)**2 ) ) / r_e)**(1. / n)),theta_0 - math.pi, theta_0 + math.pi, lambda r: 0, lambda r: 7*r_c)[0]
+
+
+
+def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_size,dim_x,dim_y):
+	"""	
+	Function to create the surface brightness map following the ArcEllipse prescription 
+	and digitalize ("pixelize") it to an image with the same size as the input image. 
+
+	Input:
+	- x_0: x position of the point where the arc is centered (pixel)
+	- y_0: y position of the point where the arc is centered (pixel)
+	- theta_0: orientation of the arc center related to the x-axis (radians)
 	- n: index that describes the shape of the Sersic profile 
-	- b_n: coefficient of the Sersic profile that depends on the n index; b_n is chosen so that half the total luminosity predicted by the Sersic 
-	profile comes from r <= r_e 
-	- r_c: distance of the arc center related to the cluster center (pixel)
+	- b_n: coefficient of the Sersic profile that depends on the n index
+		b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e 
+	- r_c: distance of the arc center related to the point where the arc is centered (pixel)
 	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
 	- I_0: central surface brightness of the Sersic profile
 	- ellip: ellipticity of the arc
@@ -150,7 +218,8 @@ def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_
 	- dim_y: y dimension of the image
 
 	Output:
-	- (ndarray,s_total): resultant array of the digitalization of the surface brightness map and the value of the total signal distributed over the #	new array
+	- (ndarray,s_total): resultant array of the digitalization of the surface brightness map and the
+		value of the total signal distributed over the new array
 	"""
 	
 	s = numpy.zeros((dim_y,dim_x))
@@ -191,15 +260,23 @@ def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_
 	return s,s_sum
 
 
-#========================================================================
-def run_arcellipse(params,image_name):
-    """	Function to create the arc image. It computes the arcellipse_sbmap_r_theta derivative to find the size of the "new" pixel 
-	for the digitalization. Then it calls create_arcellipse_sbmap to create the surface brightness map and digitalize it. The arc image 
-	is written in a fits file and the arc properties are written in a ascii file. 
+def digitalize_arc_sbmap(params,image_name):
+	"""	
+	Function to create the arc image. 
+    
+	It computes the arcellipse_sbmap_r_theta derivative to find the size of the "new" pixel for 
+	digitalization. Then it calls the function create_arcellipse_sbmap to create the surface 
+	brightness map and digitalize it. 
+    
+	The arc image is written in a fits file with suffix "_arc.fits" and the arc properties are 
+	written in a ascii file with suffix "_arc.txt". This function returns the array resultant of 
+	the digitalization of the surface brightness map.
+
+	The arc image has the same size as the input image.
 
 	Input:
-	- params: list with all necessary parameters
-	- image_name: name of the image where the arc will be added.
+	- params: list with all necessary parameters (ellip,n,r_e,r_c,theta_0,mag,seeing,x_0,y_0,mag_zpt,dim_x,dim_y)
+	- image_name: name of the image where the arc will be added
 	
 	Output:
 	- ndarray: resultant array of the digitalization of the surface brightness map 
@@ -252,8 +329,67 @@ def run_arcellipse(params,image_name):
 	#Writing the arc to a fits file
 	arc_file = paths['output'] + img_name + "_arc" + img_ext
 
+	pyfits.writeto(arc_file,sbmap)
 	
 	return sbmap
+
+
+def run_paint_arcs(input_image,params_list):
+	"""	
+	Function to run PaintArcs and add an arc to an image.
+    
+	It calls the function digitalize_arc_sbmap to digitalize the arc surface brightness map and 
+	create the arc image (with suffix "_arc.fits"). Then it convolves the arc image with a gaussian
+	kernel, to add the seeing effect. After that, it add Poissonic noise to the arc image. Finally, 
+	it adds the arc to the input image. The final image with the added arc has the suffix "_final.fits". 
+    
+ 
+	Input:
+	- image_name: name of the image where the arc will be added
+	- params_list: list with arc parameters (ellip,n,r_e,r_c,theta_0,mag,seeing,x_0,y_0,mag_zpt,dim_x,dim_y)
+
+	
+	Output:
+	- ndarray: final arc array
+	"""
+	
+	image_name = string.split(input_image,sep='/')[-1]
+	image_root,image_extension = os.path.splitext(image_name) 
+
+	image_array,image_header = pyfits.getdata(input_image,header=True)	
+	
+	#Digitalize and create arc image
+	sbmap = digitalize_arc_sbmap(params,image_name)
+
+	#Convolving arc image with a gaussian kernel
+	seeing = convert_arcsec_pix(float(params[6]),pix_scale)	
+	sigma = seeing / (2.*math.sqrt(2.*math.log(2.)))
+	
+	fftconv_image = gauss_convolution.fftconvolve_image(sbmap,3.,sigma)
+	
+	#Adding convolved arc to image array
+	#img_array_conv = image_array + fftconv_image
+
+	#Adding noise
+	pyfits.writeto("arc_conv2.fits",fftconv_image)	
+	noise_file_list = ["arc_conv2.fits"]
+	noisy_files_list = add_noise(noise_file_list)
+	
+	for filename in noisy_files_list:
+		arc_array = pyfits.getdata(filename)
+				
+		image_array = image_array + arc_array
+	
+
+	#Writing final image to a fits file
+	final_image = paths['output'] + image_root + "_final" + image_extension
+
+	pyfits.writeto(final_image,image_array,image_header)
+	
+	os.system("rm arc_conv2.fits")
+	
+	return image_array
+
 
 #-----------------------------------------------------------------------------		
 #Reading configuration file and input file to get parameters
@@ -264,99 +400,39 @@ paint_arcs_config = cp.read_config( configfile )
 input = paint_arcs_config['input']
 paths = paint_arcs_config['paths']
 output = paths['output']
-#cosmol_params = paint_arcs_config['cosmological_background_params']
+
 
 images_path = os.path.expanduser( paths['input_images'])
 catalogs_path = os.path.expanduser( paths['input_catalogs'])
 
 # Scalars:
 input_file = str( input['input'])	
-#halocat_file = str( input['halo_catalogs'])
-#RAshift = float( input['rashift'])
-#DECfactor = float( input['decfactor'])
-#minimum_halo_mass = float( input['minimum_halo_mass'])
 pix_scale = float(input['dimpix'])
-#omega_m = float(cosmol_params['omega_m'])
-#omega_l = float(cosmol_params['omega_l'])
-
-#arc_loop = paint_arcs_config['loop_arc_properties_params']
 
 
 images_list,params_list = read_input_file(images_path + input_file)
 
 
-#-----------------------------------------------------------------------------	
-#Run PaintArcs to each image in the image list:
 for i in range(len(images_list)):
 
-	image = paths['input'] + images_list[i]
+	input_image = paths['input'] + images_list[i]
 
 	params = params_list[i]	
 
-	mag_zpt,dim_x,dim_y = get_header_parameter(image,'SEXMGZPT','NAXIS1','NAXIS2') 
-
-	dim_x = 100
-	dim_y = 100
+	mag_zpt,dim_x,dim_y = get_header_parameter(input_image,'SEXMGZPT','NAXIS1','NAXIS2') 
 
 	if len(params) == 7:  
-	#Add the position where the arc is centered (x_0,y_0) as the image center to params list in the case these
-	#parameters are not in the input file
+	#Add the position where the arc is centered (x_0,y_0) as the image center to params list in the 
+	#case these parameters are not in the input file.
 	
-		#params.insert(7,dim_x / 2.)
-		#params.insert(8,dim_y / 2.)
-		params.insert(7,10)
-		params.insert(8,10)
+		params.insert(7,dim_x / 2.)
+		params.insert(8,dim_y / 2.)
 	
-	
+	#Add mag_zpt, dim_x and dim_y to parameters list
 	params.insert(9,mag_zpt)
 	params.insert(10,dim_x)
 	params.insert(11,dim_y)	
 
-	image_name, image_extension = os.path.splitext(images_list[i])	
-
-	image_array,image_header = pyfits.getdata(image,header=True)	
 	
-	#Run arcellipse module
-	sbmap = run_arcellipse(params,images_list[i])
-
-	#Writing the arc to a fits file
-	arc_file = paths['output'] + image_name + "_arc" + image_extension
-
-	pyfits.writeto(arc_file,sbmap)
-
-	#Convolving image
-	seeing = convert_arcsec_pix(float(params[6]),pix_scale)	
-	sigma = seeing / (2.*math.sqrt(2.*math.log(2.)))
-	
-	fftconv_image = gauss_convolution.fftconvolve_image(sbmap,3.,sigma)
-	
-	#Adding convolved arc to image array
-#	img_array_conv = image_array + fftconv_image
-
-#	Adding noise
-#	pyfits.writeto("arc_conv2.fits",fftconv_image)	
-#	noise_file_list = ["arc_conv2.fits"]
-#	noisy_files_list = add_noise_2_image.add_noise_2_image(noise_file_list)
-#
-#	for filename in noisy_files_list:
-#		arc_array = pyfits.getdata(filename)
-#			
-#		img_array = img_array + arc_array
-#
-#	out_conv = "arc_conv_dc4_" + str(i+1) + ".fits" 
-#	out_noise = "arc_noise_dc4_" + str(i+1) + ".fits" 
-#
-#	os.system("mv arc_conv2.fits %s" %out_conv)
-#	os.system("mv arc_convns_2.fits %s" %out_noise)	
-
-	#Writing final image to a fits file
-#	final_image = paths['output'] + image_name + "_final" + image_extension
-
-#	pyfits.writeto(final_image,img_array_conv,image_header)
-	
-
-
-
-			
-
-
+	#Run PaintArcs
+	img_array = run_paint_arcs(input_image,params_list)

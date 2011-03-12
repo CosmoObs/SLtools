@@ -1,11 +1,11 @@
 """
-The following functions execute some geometrical operations such as calculate the perpedicular bisector between two points.
+The following functions execute elementar geometrical calculations.
 """
 
-from math import sin, cos ,sqrt, fabs, atan,tan 
-#from pylab import *
+from math import sin, cos ,sqrt, fabs, atan, tan 
 
-def Threepoints_circle(x,y):
+
+def three_points_to_circle(x,y):
 
     """
     Function that calculates circle parameters defined by three points.
@@ -32,21 +32,21 @@ def Threepoints_circle(x,y):
     return xc,yc,r
 
 
-def Intercept_point(theta,b_t,phi,b_p):
+def get_intercept_point(theta,b_t,phi,b_p):
 
     """
     Function that calculates the interception point from two straight lines.
     
     Input:
-     - theta      <float> : angle defined by the first line and the x axis
-     - b_t        <float> : linear coeficient from the first line in the line equation y=ax+b
-     - phi        <float> : angle defined by the second line and the x axis
-     - b_p        <float> : linear coeficient from the second line in the line equation y=ax+b
+     - theta      <float> : angle defined by angular coefficient from first line.
+     - b_t        <float> : linear coeficient from the first line.
+     - phi        <float> : angle defined by angular coefficient from second line.
+     - b_p        <float> : linear coeficient from the second line.
    
     Output:
-     - <float> : intercept x coordinate
-     - <float> : intercept y coordinate
-     - <int>   : a Flag. if Flag= 1 the lines are parallels, otherwise Flag=0
+     - <float> : intercept x coordinate.
+     - <float> : intercept y coordinate.
+     - <int>   : a Flag. if Flag= 1 the lines are parallels, otherwise Flag=0,
     """
 
     a_t=tan(theta)
@@ -81,17 +81,17 @@ def Intercept_point(theta,b_t,phi,b_p):
     return xi,yi,Flag
 
 
-def Perpendicular_Bisector(p1,p2): 
+def define_perpendicular_bisector(p1,p2): 
     """
-    Function that calculates the perpendicular bisector line between two points.
+    Function that calculates the perpendicular bisector line between two points p_i=[x_i,y_i].
     
     Input:
-     - p1      <float> : angle defined by the first line and the x axis
-     - p2      <float> : linear coeficient from the first line in the line equation y=ax+b
+     - p1      <list> : first point.
+     - p2      <list> : second point.
         
     Output:
-     - <float> : angle defined by the perpendicular bisector line and the x axis
-     - <float> : perpendicular bisector linear coeficient in the line equation y=ax+b
+    - <float> : angle defined by angular coefficient.
+    - <float> : linear coefficient.
      
     """
 
@@ -117,3 +117,76 @@ def Perpendicular_Bisector(p1,p2):
         b1=float(x2+x1)/2.		
             
     return theta,b1	
+
+def two_points_to_line(p1,p2): 
+    """
+    Function that calculates the line defined by two points  p_i=[x_i,y_i].
+    
+    Input:
+     - p1      <list> : first point.
+     - p2      <list> : second point.
+        
+    Output:
+     - <float> : angle defined by angular coefficient.
+     - <float> : linear coefficient.
+     
+    """
+
+    x1=p1[0]
+    y1=p1[1]	
+    x2=p2[0]
+    y2=p2[1]	
+    Dy=float(y2-y1)
+    Dx=float(x2-x1)
+    b1=0
+    My=0
+    Mx=0
+    if (fabs(Dx)>0): 
+        a=(Dy)/(Dx)
+        theta=atan(a)
+        b1=y1-a*x1			
+    elif Dx==0:
+        a=0
+        theta=2*atan(1)
+        b1=x1		
+            
+    return theta,b1	
+
+
+
+
+
+def get_distance_from_line_to_point(p,theta,c):
+    """
+    This Function calculates the distance from a line to a point.
+
+    Input:
+      - p              <list>  : a point p=[x,y]. 	
+      - theta          <float> : angle defined by line angular coefficient.
+      - c              <float> : linear coefficient.
+    Output:
+     - <float> : The distance from the line to the point p.
+
+    """
+    if(theta!=2*atan(1)) and (theta!=0.):
+        a=tan(theta)
+        m=-1./a
+        b=p[1]-m*p[0]
+        x=(c-b)/(m-a)
+        y=a*x+c
+        dx=p[0]-x
+        dy=p[1]-y
+        Distance=sqrt(dx*dx + dy*dy)
+                
+    elif (theta==2*atan(1)): # case of the perpendicular bisector is a vertical line a-->inf.
+        dx=fabs(p[0]-c)
+        Distance=dx
+
+    elif theta==0.: # case of the perpendicular bisector is a horizontal line a-->0
+        dy=fabs(p[1]-c)
+        Distance=dy
+    return Distance 
+
+
+
+

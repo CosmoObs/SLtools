@@ -1,17 +1,45 @@
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# Carlos Brandt - chbrandt@lncc.br
+# ==================================
 
 ##@package run_SE_on_frames
 #
 # Runs SExtractor on a list of images
 #
-#@param input_image_names
-#@param sextractor_params
-#@return the indices that indicates which images were sextracted succesfully
+# For other options of SExtractor modules, see sltools.image.objsshot and sltools.image.sextractor
 
-# ---
+
 import os;
 import logging;
-# ---
+
+
+#=======================================================================================================
 def run_SE_on_frames(input_image_names, sextractor_params):
+	"""
+	Runs SExtractor (objects and segmentation runs) in a list of images.
+
+	This function runs SExtractor (SE) in a set of images and gets both objects and segmetation 
+	images.
+
+	The input variable 'sextractor_params' is a dictionary containing the followinf keys: 
+	DEBLEND_MINCONT_merger, DETECT_MINAREA, THRESH_TYPE, DETECT_THRESH, ANALYSIS_THRESH, 
+	PIXEL_SCALE,SEEING_FWHM, BACK_TYPE, BACK_VALUE, MEMORY_OBJSTACK,  MEMORY_PIXSTACK and 
+	MEMORY_BUFSIZE. 
+
+	If SE execution have any trouble, a warning message will be displayed.
+
+	Input:
+	 - input_image_names  <list> : Image names <str> of the input fits images
+	 - sextractor_params  <dict> : SE control parameters (see documentation above)
+
+	Output:
+	 - <list>  : Indices <int> that indicates which images of input_image_names were sextracted 
+		     succesfully
+
+	"""
 
 	##############################  SExtractor ######################################
 	# creates the SExtractor default configuration file
@@ -89,4 +117,4 @@ def run_SE_on_frames(input_image_names, sextractor_params):
 			img_list.append(i)
 
 	return img_list;
-# -
+

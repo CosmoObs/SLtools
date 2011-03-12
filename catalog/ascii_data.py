@@ -9,19 +9,20 @@ writing text/csv catalogs given fieldnames and data.
 """
 
 import sys;
+import logging;
 import csv;
 import re;
 import string;
 
 # ---
 
-def dict_to_csv(dictionary, fieldnames, filename, mode='w', delimiter=','):
+def dict_to_csv(dictionary, fieldnames=[], filename='cat.csv', mode='w', delimiter=','):
     """ Write a CSV catalog from dictionary contents
     
     Input:
      - dictionary : {str,}
         Contents to be write in csv catalog
-     - filednames : [str,]
+     - fieldnames : [str,]
         Fieldnames to read from 'dictionary'
      - filename : str
         Name of csv catalog to write
@@ -52,10 +53,18 @@ def dict_to_csv(dictionary, fieldnames, filename, mode='w', delimiter=','):
     
     """
     
-    if not (list(set(fieldnames)-set(dictionary.keys())) == []):
-        print "Error: Given dictionary does not contain every requested fieldnames.";
-        return (False);
-
+    if fieldnames == []:
+        fieldnames = dictionary.keys();
+        
+    list_lengths = [ len(dictionary[_k])  for _k in fieldnames if type(dictionary[_k])==type([]) ];
+    leng = max(list_lengths);
+    
+    for _k in fieldnames:
+        if type(dictionary[_k])!=type([]) and type(dictionary[_k])!=type(()):
+            dictionary[_k] = [dictionary[_k]]*leng;
+        
+    logging.debug("Fields being written to (csv) catalog: %s",fieldnames);
+    
     catFile = open(filename,mode);
     catObj = csv.writer(catFile, delimiter=delimiter);
     catObj.writerow(fieldnames);
@@ -107,9 +116,6 @@ def dict_from_csv(filename, fieldnames, header_lines=1, delimiter=','):
     >>>
 
     """
-#    >>> D
-#    {'star': ['*', '*', '*'], 'user': ['nobody', 'root', 'daemon']}
-#    >>> 
 
     # Initialize output dictionary
     Dout = {};
@@ -130,7 +136,7 @@ def dict_from_csv(filename, fieldnames, header_lines=1, delimiter=','):
 
 # ---
 
-def write_ds9cat(x,y,size=20,marker='circle',color='red',outputfile='ds9.reg',imagefile='None'):
+def write_ds9cat(x,y,size=20,marker='circle',color='red',outputfile='ds9.reg',filename='None'):
     """ Function to write a ds9 region file given a set of centroids
     
     It works only with a circular 'marker' with fixed
@@ -212,7 +218,7 @@ def write_ds9cat(x,y,size=20,marker='circle',color='red',outputfile='ds9.reg',im
     output = open(outputfile,'w');
     # DS9 region file header
     output.write("# Region file format: DS9 version 4.1\n");
-    output.write("# Filename: %s\n" % (imagefile));
+    output.write("# Filename: %s\n" % (filename));
     output.write("global color=green dashlist=8 3 width=1 font=\"helvetica 10 normal\" ");
     output.write("select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n");
     output.write("image\n");
@@ -253,11 +259,8 @@ def read_ds9cat(regionfile):
     >>> 
     
     """
-#    >>> D
-#    {'color': ['red', 'red'], 'image': 'None', 'y': [0, 3], 'marker': ['circle', 'circle'], 'x': [1, 2], 'size': [10, 15]}
-#    >>> 
     
-    D_out = {'image':'', 'marker':[], 'color':[], 'x':[], 'y':[], 'size':[]};
+    D_out = {'filename':'', 'marker':[], 'color':[], 'x':[], 'y':[], 'size':[]};
 
     fp = open(regionfile,'r');
 
@@ -266,7 +269,7 @@ def read_ds9cat(regionfile):
         if (re.search("^#",line)):
             if (re.search("Filename",line)):
                 imagename = string.split(line,"/")[-1];
-                D_out['image'] = re.sub("# Filename: ","",imagename).rstrip('\n');
+                D_out['filename'] = re.sub("# Filename: ","",imagename).rstrip('\n');
             continue;
 
         else:
@@ -307,7 +310,8 @@ def read_ds9cat(regionfile):
 
     fp.close();
     return D_out;
-
+    
+# ---
 if __name__ == "__main__":
     import doctest;
     doctest.testmod()

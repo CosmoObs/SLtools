@@ -1,11 +1,29 @@
 /** @file
-*  Package to compute the mean weigthed squared radial fractional difference (wsrfd), and the condition for the linearity of the gradient of the lensing potential (lin_grad),  to compare the solution of the perturbative method with fully numerical solution for tangential critical and caustic curves FIXME
+*  Functions that are useful to compare the perturbative method with the exact solution. 
+*
+*  These functions are:
+*
+*  \f$ \mathcal{D}^2\f$ for critical curves \sa d2_crit
+*
+*  \f$ \mathcal{D}^2\f$ for caustics \sa d2_caust
+*
+*  \f$ D_{\rm max}:=3|c_3|dr_{\rm max}^2\f$ \sa lin_grad
 */
 
-/** @package comparison_fns.h
-*  Package to compare the solution of the perturbative method with fully numerical solution of the tangential critical and caustic curves
+/** @package comparison_with_exact_solution
 *
-*  Detailed descrition FIXME
+*  This Package compare the solution of the perturbative method with exact solution, through the calculation of the mean weighted squared fractional difference \f$ \mathcal{D}^2 \f$ and by the condition of the linearity of the gradient of the lensing potential \f$ D_{\rm max} \f$.
+*
+* It needs to know:
+*
+* The main fields of the Perturbative Approach, i.e., \f$ f_0(\theta)\f$, \f$ f_1(\theta) \f$ and their derivatives.
+*
+* The Einstein radius for a model \f$R_{\rm E}\f$, the second derivative of the potential \f$ \kappa_2\f$ and the third derivative of the potential \f$c_{3}\f$
+*
+* The other quantities as critical radius \f$ r_{\rm crit}\f$ and the radial coordinates of the caustic \f$r_{\rm caust}\f$
+*
+* A data file containing the exact solution for tangential caustic and critical curve of a model.
+*
 *
 */
 
@@ -229,6 +247,26 @@ double d2_caust(f_type f1_in, f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double
 
     return fom_ca;
 }
+/** A function to compute the second term of the Taylor's Series along the tangential critical curve, considering its maximum value.
+*
+* First, it need the third derivative of the unperturbed potential, i.e.
+*
+* \f$ C_3(r)= \frac{4}{r_s(X^2_{\mathrm{E}}-1)}\left[\frac{1}{X_{\mathrm{E}}}-\frac{3}{2}\frac{X_{\mathrm{E}}\kappa(R_{\mathrm{E}})}{2\kappa_s}  \right] +2 \frac{\gamma(R_{\mathrm{E}})}{R_{\mathrm{E}}} \f$ 
+*
+*
+* the radial coordinate of the tangential caustic curve, obtaining with the perturbative method \f$ R_{\rm caust} \f$ calculated for each angular coordinate \f$ \theta_L(i) \f$, such that \f$ \theta_s(\theta_L(i)) \f$ obtained from the perturbative approach match with the angle obtained with the fully numerical solution.
+*
+*  \param f1_in : function related to the perturbed potential
+*   \param D2f0Dtheta2_in : function related to the perturbed potential (second derivative)
+*   \param c3_model : The third derivative of the unperturbed potential
+*  \param kappa2 \f$ :  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
+*  \param pert_params[] a vector that contains all the perturbation parameters
+*  \param _r_e : Einstein Radius (\f$ R_{_{\mathrm{E}}}\f$ )
+*  \param n_points (number of points of the data set)
+*  \return \f$ D_{\rm max}:=3|c_3|dr_{\rm max}^2\f$
+*  \sa r_crit
+*
+*/
 
 double lin_grad(f_type f1_in,f_type D2f0Dtheta2_in, double c3_model, double kappa2_model, double pert_params[],double _r_e,int npts=100){
 

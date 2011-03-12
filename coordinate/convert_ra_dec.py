@@ -1,18 +1,10 @@
 #!/usr/bin/python
-#
-import string
-import os
-import sys
+# ==================================
+# Authors:
+# Cristina Furlanetto - furlanetto.cristina@gmail.com
+# ==================================
 
-
-"""Module to convert RA and DEC formats
-
-'convert_sexag_dec': converts from sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss) to decimal degrees format.
-
-'convert_dec_sexag': converts from decimal degrees format to sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss).
-
-
-"""
+"""Module to convert RA and DEC formats."""
 
 ##@package convert_ra_dec
 #
@@ -27,27 +19,34 @@ import sys
 # hr:min:sec or deg:min:sec format or decimal degree format. Depending on the format, the package calls 
 # the appropriate function for format conversion.
 #
-# Executable: YES
+# Executable package: YES
 #
 # To run the code, just type:
 #
-# > python convert_ra_dec.py
+# > python convert_ra_dec.py --ra=10 --dec=20
+#
+# or
+#
+# > python convert_ra_dec.py --ra=00:40:00 --dec=20:00:00
 #
 # To see the package help message, type:
 #
 # > python convert_ra_dec.py --help
 #
 
-
-
+import string
+import os
+import sys
 
 
 def convert_sexag2deg(ra,dec):
 
 	"""Converts from sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss) to decimal degrees format.
+	
 	Input:
 	- ra : (ra_h,ra_min,ra_sec) list with hr, min and sec components of RA in sexagesimal format 
 	- dec: (dec_d,dec_min,dec_sec) list with deg, min and sec components of DEC in sexagesimal format 
+	
 	Output:
 	- ra,dec : RA and DEC in decimal degree format.
 
@@ -75,9 +74,11 @@ def convert_sexag2deg(ra,dec):
 def convert_deg2sexag(ra,dec):
 
 	"""Converts from decimal degree format to sexagesimal format (hh:mm:ss.ss or dd:mm:ss.ss).
+	
 	Input:
 	- ra : RA in decimal degree format.
 	- dec: DEC in decimal degree format.
+	
 	Output:
 	- ra : (ra_h,ra_min,ra_sec) list with hr, min and sec components of RA in sexagesimal format 
 	- dec: (dec_d,dec_min,dec_sec) list with deg, min and sec components of DEC in sexagesimal format 
@@ -117,7 +118,7 @@ def convert_deg2sexag(ra,dec):
 	print "%d:%d:%f %d:%d:%f" %(ra_h,ra_min,ra_sec,dec_d,dec_min,dec_sec) 
 	return ra_conv,dec_conv
 
-#@cond	
+#\cond	
 if __name__ == "__main__" :
 
 	from optparse import OptionParser
@@ -154,14 +155,14 @@ if __name__ == "__main__" :
 	if ":" in ra and dec:
 		ra = string.split(ra,sep=":")
 		dec = string.split(dec,sep=":")
-		convert_sexag_dec(ra,dec)
+		convert_sexag2deg(ra,dec)
 	else:
 		
-		convert_dec_sexag(ra,dec)
+		convert_deg2sexag(ra,dec)
 	
 
 	sys.exit(0)
 
-#@endcond 
+#\endcond 
 
 

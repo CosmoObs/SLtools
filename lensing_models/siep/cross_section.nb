@@ -1,0 +1,365 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     10651,        356]
+NotebookOptionsPosition[      9637,        315]
+NotebookOutlinePosition[      9970,        330]
+CellTagsIndexPosition[      9927,        327]
+WindowFrame->Normal
+ContainsDynamic->False*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"\[Theta]", "=", 
+   RowBox[{"ArcTan", "[", 
+    RowBox[{
+     SqrtBox[
+      FractionBox["a2", "a1"]], 
+     RowBox[{"Tan", "[", "\[Phi]", "]"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"A", "=", 
+  RowBox[{"a1", "+", "a2"}]}]}], "Input",
+ CellChangeTimes->{{3.5014852525184813`*^9, 3.501485318842454*^9}, 
+   3.5014857281092577`*^9, {3.502440213565839*^9, 3.5024402274986677`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"a1", "+", "a2"}]], "Output",
+ CellChangeTimes->{3.50244022830171*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"B", "=", 
+   RowBox[{"a1", "-", "a2"}]}]}]], "Input",
+ CellChangeTimes->{{3.5024402323972807`*^9, 3.5024402396764507`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"a1", "-", "a2"}]], "Output",
+ CellChangeTimes->{3.5024402403440733`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"I1", "=", 
+   RowBox[{"\[Integral]", 
+    RowBox[{
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"A", "-", 
+        RowBox[{"B", "*", 
+         RowBox[{"Cos", "[", 
+          RowBox[{"2", "*", "\[Theta]"}], "]"}]}]}], ")"}], "2"], 
+     RowBox[{"\[DifferentialD]", "\[Phi]"}]}]}]}]}]], "Input",
+ CellChangeTimes->{{3.501485333576388*^9, 3.50148540234356*^9}, {
+  3.501491455361888*^9, 3.501491490707625*^9}, {3.5014915337780046`*^9, 
+  3.501491534859827*^9}, {3.502440106250803*^9, 3.502440107543069*^9}, {
+  3.5024404537374277`*^9, 3.502440455222106*^9}, {3.502441019008061*^9, 
+  3.5024410240662537`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"2", " ", 
+   SqrtBox["a1"], " ", 
+   SqrtBox["a2"], " ", 
+   RowBox[{"(", 
+    RowBox[{"a1", "+", "a2"}], ")"}], " ", 
+   RowBox[{"ArcTan", "[", 
+    FractionBox[
+     RowBox[{
+      SqrtBox["a2"], " ", 
+      RowBox[{"Tan", "[", "\[Phi]", "]"}]}], 
+     SqrtBox["a1"]], "]"}]}], "+", 
+  FractionBox[
+   RowBox[{"2", " ", "a1", " ", "a2", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "a1"}], "+", "a2"}], ")"}], " ", 
+    RowBox[{"Tan", "[", "\[Phi]", "]"}]}], 
+   RowBox[{"a1", "+", 
+    RowBox[{"a2", " ", 
+     SuperscriptBox[
+      RowBox[{"Tan", "[", "\[Phi]", "]"}], "2"]}]}]]}]], "Output",
+ CellChangeTimes->{{3.501491479837769*^9, 3.501491491416005*^9}, {
+   3.501491527538005*^9, 3.501491550332035*^9}, 3.501493985690851*^9, 
+   3.501495338155813*^9, 3.502440160349388*^9, 3.502440273069354*^9, 
+   3.502440481761509*^9, 3.502441025573414*^9, 3.502441505881612*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"Simplify", "[", "I1", "]"}]}]], "Input",
+ CellChangeTimes->{{3.501494049580329*^9, 3.501494056506837*^9}, {
+  3.5014941904083157`*^9, 3.501494191036614*^9}, {3.5024415227067957`*^9, 
+  3.50244152323591*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"2", " ", 
+   SqrtBox["a1"], " ", 
+   SqrtBox["a2"], " ", 
+   RowBox[{"(", 
+    RowBox[{"a1", "+", "a2"}], ")"}], " ", 
+   RowBox[{"ArcTan", "[", 
+    FractionBox[
+     RowBox[{
+      SqrtBox["a2"], " ", 
+      RowBox[{"Tan", "[", "\[Phi]", "]"}]}], 
+     SqrtBox["a1"]], "]"}]}], "+", 
+  FractionBox[
+   RowBox[{"2", " ", "a1", " ", "a2", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "a1"}], "+", "a2"}], ")"}], " ", 
+    RowBox[{"Tan", "[", "\[Phi]", "]"}]}], 
+   RowBox[{"a1", "+", 
+    RowBox[{"a2", " ", 
+     SuperscriptBox[
+      RowBox[{"Tan", "[", "\[Phi]", "]"}], "2"]}]}]]}]], "Output",
+ CellChangeTimes->{
+  3.50149405734346*^9, {3.5014941927595377`*^9, 3.501494197585889*^9}, 
+   3.502440187628778*^9, 3.502440680601275*^9, {3.502441512039462*^9, 
+   3.502441530078101*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"I2", "=", 
+    RowBox[{"\[Integral]", 
+     RowBox[{
+      FractionBox[
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"A", "-", 
+          RowBox[{"B", "*", 
+           RowBox[{"Cos", "[", 
+            RowBox[{"2", "*", "\[Theta]"}], "]"}]}]}], ")"}], "2"], 
+       RowBox[{
+        RowBox[{"a1", "*", 
+         RowBox[{"Cos", "[", "\[Phi]", "]"}], "*", 
+         RowBox[{"Cos", "[", "\[Phi]", "]"}]}], "+", 
+        RowBox[{"a2", "*", 
+         RowBox[{"Sin", "[", "\[Phi]", "]"}], "*", 
+         RowBox[{"Sin", "[", "\[Phi]", "]"}]}]}]], 
+      RowBox[{"\[DifferentialD]", "\[Phi]"}]}]}]}], 
+   "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{
+  3.5014914516585913`*^9, {3.501491661529604*^9, 3.5014916845597677`*^9}, {
+   3.5014918706807117`*^9, 3.501491934141842*^9}, 3.501495301590406*^9, {
+   3.502441032243672*^9, 3.502441036854019*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["1", "2"], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    FractionBox[
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"3", " ", 
+         SuperscriptBox["a1", "2"]}], "+", 
+        RowBox[{"2", " ", "a1", " ", "a2"}], "+", 
+        RowBox[{"3", " ", 
+         SuperscriptBox["a2", "2"]}]}], ")"}], " ", 
+      RowBox[{"ArcTan", "[", 
+       FractionBox[
+        RowBox[{
+         SqrtBox["a2"], " ", 
+         RowBox[{"Tan", "[", "\[Phi]", "]"}]}], 
+        SqrtBox["a1"]], "]"}]}], 
+     RowBox[{
+      SqrtBox["a1"], " ", 
+      SqrtBox["a2"]}]], "-", 
+    FractionBox[
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"a1", "-", "a2"}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"3", " ", 
+         SuperscriptBox["a1", "2"]}], "+", 
+        RowBox[{"10", " ", "a1", " ", "a2"}], "+", 
+        RowBox[{"3", " ", 
+         SuperscriptBox["a2", "2"]}], "+", 
+        RowBox[{"3", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["a1", "2"], "-", 
+           SuperscriptBox["a2", "2"]}], ")"}], " ", 
+         RowBox[{"Cos", "[", 
+          RowBox[{"2", " ", "\[Phi]"}], "]"}]}]}], ")"}], " ", 
+      RowBox[{"Sin", "[", 
+       RowBox[{"2", " ", "\[Phi]"}], "]"}]}], 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"a1", "+", "a2", "+", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"a1", "-", "a2"}], ")"}], " ", 
+         RowBox[{"Cos", "[", 
+          RowBox[{"2", " ", "\[Phi]"}], "]"}]}]}], ")"}], "2"]]}], 
+   ")"}]}]], "Output",
+ CellChangeTimes->{3.5014939658683987`*^9, 3.501495313842855*^9, 
+  3.501495487602922*^9, 3.502440431377561*^9, 3.5024410381525793`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"Simplify", "[", "I2", "]"}]}]], "Input",
+ CellChangeTimes->{{3.502441150696959*^9, 3.502441190040065*^9}, {
+  3.502441245686981*^9, 3.5024412540522118`*^9}, {3.502441291797387*^9, 
+  3.502441326536333*^9}, {3.502441533486621*^9, 3.502441539071171*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FractionBox["1", "2"], " ", 
+  RowBox[{"(", 
+   RowBox[{
+    FractionBox[
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"3", " ", 
+         SuperscriptBox["a1", "2"]}], "+", 
+        RowBox[{"2", " ", "a1", " ", "a2"}], "+", 
+        RowBox[{"3", " ", 
+         SuperscriptBox["a2", "2"]}]}], ")"}], " ", 
+      RowBox[{"ArcTan", "[", 
+       FractionBox[
+        RowBox[{
+         SqrtBox["a2"], " ", 
+         RowBox[{"Tan", "[", "\[Phi]", "]"}]}], 
+        SqrtBox["a1"]], "]"}]}], 
+     RowBox[{
+      SqrtBox["a1"], " ", 
+      SqrtBox["a2"]}]], "-", 
+    FractionBox[
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"a1", "-", "a2"}], ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"3", " ", 
+         SuperscriptBox["a1", "2"]}], "+", 
+        RowBox[{"10", " ", "a1", " ", "a2"}], "+", 
+        RowBox[{"3", " ", 
+         SuperscriptBox["a2", "2"]}], "+", 
+        RowBox[{"3", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["a1", "2"], "-", 
+           SuperscriptBox["a2", "2"]}], ")"}], " ", 
+         RowBox[{"Cos", "[", 
+          RowBox[{"2", " ", "\[Phi]"}], "]"}]}]}], ")"}], " ", 
+      RowBox[{"Sin", "[", 
+       RowBox[{"2", " ", "\[Phi]"}], "]"}]}], 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"a1", "+", "a2", "+", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"a1", "-", "a2"}], ")"}], " ", 
+         RowBox[{"Cos", "[", 
+          RowBox[{"2", " ", "\[Phi]"}], "]"}]}]}], ")"}], "2"]]}], 
+   ")"}]}]], "Output",
+ CellChangeTimes->{{3.502441183977736*^9, 3.502441190617663*^9}, {
+   3.5024412493262873`*^9, 3.50244125480578*^9}, {3.502441293333983*^9, 
+   3.502441297457502*^9}, 3.502441331767318*^9, 3.502441540045166*^9}]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.502441293021923*^9, 3.502441301374454*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"ArcTan", "[", 
+   RowBox[{
+    FractionBox[
+     SqrtBox[
+      RowBox[{"1", "+", "0.2"}]], 
+     SqrtBox[
+      RowBox[{"1", "-", "0.2"}]]], "*", 
+    RowBox[{"Tan", "[", 
+     RowBox[{"2", "\[Pi]"}], "]"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.502441642581181*^9, 3.502441695035458*^9}}],
+
+Cell[BoxData["0"], "Output",
+ CellChangeTimes->{{3.502441689737565*^9, 3.502441695857416*^9}}]
+}, Open  ]]
+},
+WindowSize->{1270, 693},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"6.0 for Linux x86 (64-bit) (April 20, 2007)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[590, 23, 432, 12, 91, "Input"],
+Cell[1025, 37, 93, 2, 28, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1155, 44, 181, 4, 46, "Input"],
+Cell[1339, 50, 96, 2, 28, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1472, 57, 675, 16, 64, "Input"],
+Cell[2150, 75, 921, 26, 58, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3108, 106, 265, 5, 46, "Input"],
+Cell[3376, 113, 833, 26, 58, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4246, 144, 961, 25, 113, "Input"],
+Cell[5210, 171, 1691, 53, 78, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6938, 229, 310, 5, 46, "Input"],
+Cell[7251, 236, 1765, 54, 78, "Output"]
+}, Open  ]],
+Cell[9031, 293, 92, 1, 28, "Input"],
+Cell[CellGroupData[{
+Cell[9148, 298, 376, 11, 107, "Input"],
+Cell[9527, 311, 94, 1, 28, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

@@ -6,12 +6,13 @@
 #include <iostream>
 
 #include "../perturbative_method.h"
-#include "../pnfw_model2.h"
+#include "../pnfw_model.h"
 #include "../nfw_circular_model.h"
 #include "../theta_find.h"
 #include "../generate_arcs.h"
 #include "../generate_curves.h"
 #include "../arc_properties.h"
+#include "../arc_cross_section.h"
 //#include "gof_per_method.h"
 
 #define TAM_MAX1 20
@@ -63,23 +64,25 @@ int main(){
 
   elliptical_source source;
 
-  source.x0 = (_r_e_nfw/15.5);
-  source.y0 = source.x0;
-//   source.y0 = 0.0;
+  source.x0 = (_r_e_nfw/2);
+//   source.y0 = source.x0;
+  source.y0 = 0.0;
   printf(" Source Position %f %f\n",source.x0, source.y0);
   source.R0 = (sqrt(2.0)/60.0)*_r_e_nfw;
-  source.eta0 = 0.5;
+  source.eta0 = 0.0;
    source.theta0 = twpi/8.0;
   //source.theta0 = 0.0;
 
   FILE *outarc = fopen ("arcs_pnfw.dat" , "w");
   FILE *outls = fopen ("lensing_data.txt" , "w");  
-  FILE *outtc = fopen ("tang_crit.dat" , "w");
-  FILE *outcau = fopen ("tang_caust.dat" , "w");
+  FILE *outtc = fopen ("tang_curves.dat" , "w");
   FILE *outsrc = fopen ("src_plot.dat" , "w");
+  FILE *outrthp = fopen ("curves_r_th_pos.dat" , "w");
+  FILE *outrthn = fopen ("curves_r_th_neg.dat" , "w");
   
-  plot_arcs(source, f1_pnfw, Df0Dtheta_pnfw, pert_params, kappa_2,_r_e_nfw,npts, outarc);   //func
-  plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npts, outtc, outcau);   //func
+  plot_arcs_sep(source, f1_pnfw, Df0Dtheta_pnfw, pert_params, kappa_2,_r_e_nfw,npts, outarc);   //func
+  plot_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, npts, outtc);   //func
+  plot_rth_curves(f1_pnfw, Df0Dtheta_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2, _r_e_nfw, 10., npts, outrthp, outrthn);   //func
   plot_sources(source,npts,outsrc);   //func
 
   fprintf(outls,"\t\t PNFW Model Parameters: \n");  
@@ -109,11 +112,14 @@ int main(){
    fclose(outarc);
    fclose(outls); 
    fclose(outtc); 
-   fclose(outcau); 
    fclose(outsrc); 
-  
-  system("xmgrace -view 0.15 0.15 0.85 0.85 tang_caust.dat src_plot.dat");
-  system("xmgrace -view 0.15 0.15 0.85 0.85 tang_crit.dat arcs_pnfw.dat");
-  
-
+   fclose(outrthp); 
+   fclose(outrthn);
+   
+  system("xmgrace -view 0.15 0.15 0.85 0.85 -block curves_r_th_pos.dat -bxy 3:4  -block tang_curves.dat -bxy 3:4 -block curves_r_th_neg.dat -bxy 3:4 src_plot.dat");
+  system("xmgrace -view 0.15 0.15 0.85 0.85 curves_r_th_pos.dat tang_curves.dat curves_r_th_neg.dat  arcs_pnfw.dat");
+//   system("xmgrace -view 0.15 0.15 0.85 0.85 tang_crit.dat arcs_pnfw.dat");
+ 
+  double sig_test = sigma_defarcs(f1_pnfw, D2f0Dtheta2_pnfw, pert_params, kappa_2,_r_e_nfw, 10);
+    printf("cross-sec=%E\n",sig_test);
 }

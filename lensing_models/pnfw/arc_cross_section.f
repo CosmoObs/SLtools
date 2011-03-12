@@ -17,11 +17,11 @@ c	sigma_u: dimensionless arc cross section with the constraint u>u_th (is necess
 c	u_min: minimum magnification
       double precision tinit, tend
 c	tinit and tend only are useful for take control of the time.
-      integer iflag,npt,iflag2,i,i_qu,n_qu
-c	if iflag=1, this program calculate the arc cross section in the parameters space varpesilon-ks
-c	if iflag=4, this program calculate the arc cross section varying ks
-c	if iflag=5, this program calculate the arc cross section varying varepsilon
-c	if iflag=6, this program calculate the arc cross section varying the length-to-width ratio	
+      integer iflag,npt,iflag2,i,i_qu,n_qu,eflag
+c	if iflag=1, this program calculate the arc cross section varying mu_th
+c	if iflag=2, this program calculate the arc cross section varying ks
+c	if iflag=3, this program calculate the arc cross section varying varepsilon
+c	if iflag=4, this program calculate the arc cross section varying the length-to-width ratio	
 c	iflag is useful to compute the arc cross section with/withour constrain on mu_th
 c c
       double precision x1t,x2,ivt
@@ -35,7 +35,7 @@ c	x1t: Intersection of the tangential critical curve with the x1 axis at varepsi
       open(unit=100,file='tempo_calculo.txt',status='unknown',
      &    access='append')
 
-      read(1,*)iflag, ks, e, lw_u, muth
+      read(1,*)iflag, ks, e, lw_u, muth,eflag
 !       read(1,*)iflag, ks, i, lw_u, muth !uncomment for the general case
 !        e=(i-1)*0.025d0 ! uncomment in the general case
       read(2,*)qu_min, qu_max,n_qu
@@ -55,7 +55,7 @@ c
       if(ks.gt.0.075.and.ks.le.0.11d0)ivt=0.05d0
       if(ks.gt.0.11d0.and.ks.le.0.5d0)ivt=0.1d0
       if(ks.gt.0.5d0.and.ks.le.1.d0)ivt=0.50
-      if(ks.gt.1.d0)ivt=1.5d0	
+      if(ks.gt.1.d0)ivt=1.0d0	
       write(*,*)ivt
 c
 c
@@ -65,7 +65,7 @@ c
 c        
         
         x2=0.d0
-        call raiz_lt(1,ivt,ks,0.d0,x1t,x2)
+        call raiz_lt(1,ivt,ks,0.d0,x1t,x2,eflag)
         ivt=x1t
         v_in=ivt
         iflag2=2
@@ -90,7 +90,7 @@ c
 c
           if(iflag.eq.3)then
               call c_section(npt,v_in,ks,0.d0,lw_u,muth,iflag2,
-     &	v_out,sigma_0,sigma_u0,u_min)
+     &	v_out,sigma_0,sigma_u0,u_min,eflag)
             v_in=v_out
               e=qu
           endif
@@ -99,13 +99,13 @@ c
 c 
           
           call c_section(npt,v_in,ks,e,lw_u,muth,iflag2,
-     &	v_out,sigma_q,sigma_u,u_min)
+     &	v_out,sigma_q,sigma_u,u_min,eflag)
             v_in=v_out
             write(*,*)e,ks,lw_u,muth,sigma_q,sigma_u,u_min
             if(iflag.eq.1)write(3,*)muth,sigma_u/sigma_q
             if(iflag.eq.2)write(3,*)ks,sigma_q,u_min
 !             if(iflag.eq.3)write(3,*)e,sigma_q/sigma_0,u_min
-	    if(iflag.eq.3)write(3,*)e,sigma_q,u_min
+            if(iflag.eq.3)write(3,*)e,sigma_q,u_min
             if(iflag.eq.4)write(3,*)lw_u,sigma_q,u_min
 !             write(4,*)e,ks,sigma_q
 !             write(*,*)ks,e,sigma_q

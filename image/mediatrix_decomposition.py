@@ -1,28 +1,42 @@
-from geometry import *
-from get_extrema_2loops import *
-import os
-import numpy
-from math import sin, cos ,sqrt, fabs, atan 
-from pylab import *
+"""
+Set of functions used in Mediatrix Decomposition.
+
+"""
 
 
-def FindKeydots (p1,p2,image_pixels,image,keydots,Area, method="medium",alpha=1,nearDistance=(sqrt(2)/2)):
+
+##@package pyexample 
+#
+# This module includes all functions developed to perform mediatrix decomposition method.
+#
+#
+
+
+
+from get_extrema_2loops import get_extrema_2loops
+from numpy import where
+from math import sin, cos ,sqrt, fabs, atan, tan 
+from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, title, savefig
+from pyfits import getdata
+from geometry import define_perpendicular_bisector, get_distance_from_line_to_point, two_points_to_line
+
+def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,near_distance=(sqrt(2)/2)):
     """
     Function to calculate the keydots Points in Mediatrix Decomposition.
     
     Input:
-     - p1      <list> : coordinates (x,y) of the first extreme point
-     - p2      <list> : coordinates (x,y) of the second extreme point
-     - image_pixels   <list> : list of points coordidates fitting the object
-     - image   <array> : the image with a single object
-     - keydots  <list> : list with the two extreme points e.g. [p_1,p_2]. And p_i=[p_i_x,p_i_y]
-     - Area  <list> : number of points belonging to the object
-     - method   <string> : 'medium' if you want to pick as Mediatrix Point the point at same distance from the two most distant points near the bisector. Or 'brightest' if you want to pick as Mediatrix Point the brightest point near the bisector. DEFAULT 'medium'
-     - alpha      <float> : the factor alpha=l_i/w to stop the bisection, w is the estimated width and l_i the distance from two neighbours keydots. if l_i<alpha*w the function will not bisect to next Mediatrix level. DEFAULT 1
-     - nearDistance      <list> : the hightest distance to consider a point near to the perpendicular bisector. DEFAULT sqrt(2)/2
+     - p1      <array> : coordinates (x,y) of the first extreme point.
+     - p2      <array> : coordinates (x,y) of the second extreme point.
+     - image_pixels   <list> : list of points coordidates fitting the object.
+     - image   <array> : the image matrix.
+     - keydots  <array> : list with the two p_i extreme points and p_i=[p_i_x,p_i_y].
+     - area  <array> : the object area.
+     - method   <string> : possible values are 'medium' or 'brightest'.
+     - alpha      <float> : the factor alpha=l_i/w.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
      
     Output:
-     - <list> : list  with the keydots points  
+     - <array> : list  with the keydots points.  
      
     """
     if (p1 in keydots) and (p2 in keydots):
@@ -46,176 +60,255 @@ def FindKeydots (p1,p2,image_pixels,image,keydots,Area, method="medium",alpha=1,
     dx=(x1-x2)
     dy=(y1-y2)
     dl=sqrt((dx*dx)+(dy*dy))
-    L=lenght(keydots)
-    W=width_ellipse(L,Area)
+    L=get_length(keydots)
+    W=width_ellipse(L,area)
 
-    if dl>(alpha*W):
-        coefficients=Perpendicular_Bisector(p1,p2)
-        p3x,p3y,p3Flag=ChooseNearPoint(coefficients[0],coefficients[1],image_pixels,image,method,nearDistance)
+    if dl>(alpha*W) and len(keydots)<100:
+        coefficients=define_perpendicular_bisector(p1,p2)
+        p3x,p3y,p3Flag=choose_near_point(coefficients[0],coefficients[1],image_pixels,image,method,near_distance)
         p3=[p3x,p3y]
         if (p3Flag==0):		
             if (not(p3 in keydots)):
                 keydots.insert(indexNext,p3)
-                keydots=FindKeydots(p1,p3,image_pixels,image,keydots,Area, method,alpha,nearDistance)
-                keydots=FindKeydots(p3,p2,image_pixels,image,keydots,Area, method,alpha,nearDistance)
+                keydots=find_keydots(p1,p3,image_pixels,image,keydots,area, method,alpha,near_distance)
+                keydots=find_keydots(p3,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
         else:
             xmed=float(x1+x2)/2.
             ymed=float(y1+y2)/2.
             pmed=[xmed,ymed]
             if p1 in keydots: 
-                keydots=FindKeydots(p1,pmedimage_pixels,image,keydots,Area, method,alpha,nearDistance)
+                keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area, method,alpha,near_distance)
             if p2 in keydots:
-                keydots=FindKeydots(pmed,p2,image_pixels,image,keydots,Area, method,alpha,nearDistance)
+                keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
 
     return keydots
 
-def Mediatrix_Decomposition(image, method="medium",alpha=1,nearDistance=(sqrt(2)/2)):
+def mediatrix_decomposition(image_name,image_dir='', method="medium",alpha=1,near_distance=(sqrt(2)/2)):
     """
     Function to perform the mediatrix decomposition method on a given object. 
 
     Input:
-     - image   <array> : the image with a single object
-     - method   <string> : 'medium' if you want to pick as Mediatrix Point the point at same distance from the two most distant points near the bisector. Or 'brightest' if you want to pick as Mediatrix Point the brightest point near the bisector. DEFAULT 'medium'
-     - alpha      <float> : the factor alpha=l_i/w to stop the bisection, w is the estimated width and l_i the distance from two neighbours keydots. if l_i<alpha*w the function will not bisect to next Mediatrix level. DEFAULT 1
-     - nearDistance      <list> : the hightest distance to consider a point near to the perpendicular bisector. DEFAULT sqrt(2)/2
+     - image_name   <str> : the image file name.
+     - image_dir   <str> : the image directory. If it is on the same directory directory=''.
+     - method   <string> : possible values are 'medium'  or 'brightest'.
+     - alpha      <float> : the factor alpha=l_i/w to stop the bisection.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
      
     Output:
-     - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'modulus' for vector modulus
+     - <dic> :  Dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus. The first item from the list has two extra keys 'id' wich contains the image_name and 'center' that keeps the objet center defined by the first mediatrix point in the first mediatrix level.
          
     """
-    pixels=numpy.where(image>0)
+    image,hdr = getdata(image_dir+image_name, header = True )
+    pixels=where(image>0)
     E1,E2=get_extrema_2loops( pixels[0], pixels[1], 0 )
     Area=len(pixels[1])
     p1=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
     p2=[pixels[0][E2],pixels[1][E2]]
     keydots=[p1,p2]
-    keydots=FindKeydots(p1,p2,pixels,image,keydots,Area, method="brightest",alpha=1,nearDistance=nearDistance)
-    mediatrix_vectors=Find_Mediatrix_vectors(keydots)
+    keydots=find_keydots(p1,p2,pixels,image,keydots,Area, method=method,alpha=1,near_distance=near_distance)
+    mediatrix_vectors=find_mediatrix_vectors(keydots)
+    mediatrix_vectors['id']=image_name
+    medium=int(float(len(keydots))/2)
+    mediatrix_vectors['center']=keydots[medium]
+    L=get_length(keydots)
+    W=len(pixels)/(4*atan(1)*L)
+    mediatrix_vectors['L/W']=L/W
+
     return mediatrix_vectors
 
 
-def LenghtMediatrix(image, method="medium",alpha=1,nearDistance=(sqrt(2)/2)):
+def get_length_from_mediatrix(image_name, method="medium",alpha=1,near_distance=(sqrt(2)/2)):
     """
-    Function to calculate lenght of an object using the Mediatrix Decomposition.
+    Function to calculate length of an object using the Mediatrix Decomposition.
 
     Input:
-     - image   <array> : the image with a single object
-     - method   <string> : 'medium' if you want to pick as Mediatrix Point the point at same distance from the two most distant points near the bisector. Or 'brightest' if you want to pick as Mediatrix Point the brightest point near the bisector. DEFAULT 'medium'
-     - alpha      <float> : the factor alpha=l_i/w to stop the bisection, w is the estimated width and l_i the distance from two neighbours keydots. if l_i<alpha*w the function will not bisect to next Mediatrix level. DEFAULT 1
-     - nearDistance      <list> : the hightest distance to consider a point near to the perpendicular bisector. DEFAULT sqrt(2)/2
+     - image_name   <array> : the image file name.
+     - method   <string> : possible values are 'medium'  or 'brightest'.
+     - alpha      <float> : the factor alpha=l_i/w.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
      
     Output:
-     - <Float> : the object lenght  
+     - <Float> : the object length  
      
     """
-    pixels=numpy.where(image>0)
+    pixels=where(image>0)
     E1,E2=get_extrema_2loops( pixels[0], pixels[1], 0 )
     Area=len(pixels[1])
     p1=[pixels[0][E1],pixels[1][E1]]
     p2=[pixels[0][E2],pixels[1][E2]]
     keypoints=[p1,p2]
-    keypoints=FindKeydots(p1,p2,pixels,image,keypoints,Area, method="brightest",alpha=1,nearDistance=nearDistance)
-    L_f=lenght(keypoints)
+    keypoints=find_keydots(p1,p2,pixels,image_name,keypoints,Area, method="brightest",alpha=1,near_distance=near_distance)
+    L_f=get_length(keypoints)
 
     return L_f
 
 
-def Find_Mediatrix_vectors(keydots): 
+def find_mediatrix_vectors(points): 
     """
     From a given set of points, this function returns the mediatrix decomposition vector between those points.
-
+  
     Input:
-     - p1      <list> : list  with the keydots points
-     - p2      <list> : coordinates (x,y) of the second extreme point
-     - image_pixels   <list> : list of points coordidates fitting the object
-     - image   <array> : the image with a single object
-     - keydots  <list> : list with the two extreme points e.g. [p_1,p_2]. And p_i=[p_i_x,p_i_y]
-     - Area  <list> : number of points belonging to the object
-     - method   <string> : 'medium' if you want to pick as Mediatrix Point the point at same distance from the two most distant points near the bisector. Or 'brightest' if you want to pick as Mediatrix Point the brightest point near the bisector. DEFAULT 'medium'
-     - alpha      <float> : the factor alpha=l_i/w to stop the bisection, w is the estimated width and l_i the distance from two neighbours keydots. if l_i<alpha*w the function will not bisect to next Mediatrix level. DEFAULT 1
-     - nearDistance      <list> : the hightest distance to consider a point near to the perpendicular bisector. DEFAULT sqrt(2)/2
+     - points      <list> : list  of p_i points where p_i(x_i,y_i).
      
     Output:
-     - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'modulus' for vector modulus  
+     - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus.  
      
     """
+    mediatrix_vectors= {'origin': [] , 'end': [], }
     vectors=[]
     t=0
-    for t in range(0,len(p)-1):
-        coefficients=Perpendicular_Bisector(p[t],p[t+1])
-        origin_x=float(p[t][0]+p[t+1][0])/2
-        origin_y=float(p[t][1]+p[t+1][1])/2
+    theta_ext,c_ext=two_points_to_line(points[t],points[len(points)-1])
+    for t in range(0,len(points)-1):
+        coefficients=define_perpendicular_bisector(points[t],points[t+1])
+        origin_x=float(points[t][0]+points[t+1][0])/2
+        origin_y=float(points[t][1]+points[t+1][1])/2
         origin=[origin_x,origin_y]
-        modulus=(p[t][0] - p[t+1][0])**2 + (p[t][1] - p[t+1][1])**2
+        modulus=(points[t][0] - points[t+1][0])**2 + (points[t][1] - points[t+1][1])**2
         modulus=sqrt(modulus)
-        mediatrix_vector = {'theta': coefficients[0], 'linear_coefficient': coefficients[1], 'origin': origin, 'modulus': modulus }
-        vectors.append(mediatrix_vector)
+	if(coefficients[0]!=2*atan(1)):
+	    a=tan(coefficients[0])
+            sq_a=a*a
+            x_end1=origin_x+(modulus/sqrt(1.+sq_a))
+            x_end2=origin_x-(modulus/sqrt(1.+sq_a))
+            y_end1=a*x_end1+coefficients[1]
+            y_end2=a*x_end2+coefficients[1]
+            
+        else:
+            y_end1=origin_y+modulus
+            y_end2=origin_y-modulus
+            x_end1=origin_x
+            x_end2=origin_x
+        end1=[x_end1,y_end1]
+        end2=[x_end2,y_end2]
+        Dend1=get_distance_from_line_to_point(end1,theta_ext,c_ext)
+        Dend2=get_distance_from_line_to_point(end2,theta_ext,c_ext)
+        if Dend1<Dend2:
+	    end=end1
+        else:
+            end=end2
+
+        #mediatrix_vector = {'theta': coefficients[0], 'linear_coefficient': coefficients[1], 'origin': origin, 'end': end, 'modulus': modulus }
+        mediatrix_vectors['origin'].append(origin) 
+        mediatrix_vectors['end'].append(end)
+        #vectors.append(mediatrix_vector)
                 
         
-    return vectors
+    return mediatrix_vectors
+
+def print_mediatrix_Object_graph(mediatrix_data,image_dir='', keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"}):
+    """
+    Make a plot presenting the object, keydots and mediatrix vectors. 
+
+    Input:
+    - mediatrix_data <list> : the output from mediatrix_decomposition.
+    - image_dir   <str> : the image directory. If it is on the same directory directory=''.
+    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
+    - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
+    Output:
+     none.
+         
+    """
+    
+    image_name=mediatrix_data['id']
+    image,hdr = getdata(image_dir+image_name, header = True )
+    pixels=where(image>0)    
+    A = subplot(111)
+    for i in range (0,len(pixels[0])):
+        xy=[pixels[1][i],pixels[0][i]]
+        rec=Rectangle(xy, 1, 1, ec=colors['object'], fc=colors['object'])
+        A.add_patch(rec)
+    #A.scatter(pixels[1], pixels[0], s=200, c='b', marker='s', edgecolors='none')
+    #A.plot(pixels[1],pixels[0],colors['object'])
+    Length=0
+    
+      
+    if keydots==True:
+        E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+        Area=len(pixels[1])
+        p1=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+        p2=[pixels[0][E2],pixels[1][E2]]
+        keydots=[p1,p2]
+        keydots=find_keydots(p1,p2,pixels,image,keydots,Area, method="brightest",alpha=1)
+        keyX=[]
+        keyY=[]
+        for j in range(0,len(keydots)):
+            keyX.append(keydots[j][0])
+            keyY.append(keydots[j][1])
+        
+        A.plot(keyY,keyX,colors['keydots']+'.')
+        #A.scatter(keyY, keyX, s=20, c='b', marker='s')
+
+    
+    for i in range(0,len(mediatrix_data['origin'])):
+        origin_x=mediatrix_data['origin'][i][0]
+        origin_y=mediatrix_data['origin'][i][1]
+        end_x=mediatrix_data['end'][i][0]
+        end_y=mediatrix_data['end'][i][1]
+        Length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
+        Length=Length+ sqrt(Length_aux)
+        d_x= end_x - origin_x
+        d_y= mediatrix_data['end'][i][1] - mediatrix_data['origin'][i][1]
+        arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*Length, fc=colors['vector'], ec='none',zorder=1000)
+        A.add_patch(arr)
+   
+    xmin, xmax = xlim()
+    ymin, ymax = ylim()
+    min_inc_axis=40
+    #x_axis_length=(xmax+1*Length)-(xmin-1*Length)
+    #y_axis_length=(ymax+1*Length)-(ymin-1*Length)
+    #if  x_axis_length<min_inc_axis
+    A.set_xlim(xmin-1*Length,xmax+1*Length)
+    A.set_ylim(ymin-1*Length,ymax+1*Length)    
+    ylabel("Y")
+    xlabel("X")
+    #A.axis("equal")
+    title("Mediatrix Decomposition applied") 
+    #A.axis("equal")
+    savefig(image_dir+image_name+"_mediatrixGraph.png")
+    A.clear()			
+    return True
 
 
-
-def ChooseNearPoint(theta,c,pixels,image,method,maxDistance): 
+def choose_near_point(theta,c,object_pixels,image,method,near_distance): 
     """
     This function choose the Mediatrix points from a perpendicular bisector parameters in an object.
 
     Input:
-     - theta          <float> : angle defined by the line and the x axis
-     - c              <float> : linear coeficient from the line in the line equation y=ax+c
-     - image_pixels   <list> : list of points coordidates fitting the object
-     - image          <array> : the image with a single object
-     - method         <string> : 'medium' if you want to pick as Mediatrix Point the point at same distance from the two most distant points near the bisector. Or 'brightest' if you want to pick as Mediatrix Point the brightest point near the bisector. DEFAULT 'medium'
-     - maxDistance    <list> : the hightest distance to consider a point near to the perpendicular bisector. DEFAULT sqrt(2)/2
+     - theta          <float> : straight line angle with x axis.
+     - c              <float> : linear coeficient the line.
+     - object_pixels   <list> : list of object's points coordidates.
+     - image_name   <array> : the image matrix.
+     - method   <string> : possible values are 'medium'  or 'brightest'.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
      
     Output:
-     - <float> : the chosen point x coordinate  
-     - <float> : the chosen point y coordinate
+     - <float> : the chosen point x coordinate.  
+     - <float> : the chosen point y coordinate.
      - <int>   : a Flag error. if Flag=1, it was not possible to choose a point.
     """
 
-    nearX= []
-    nearY= []
-    if(theta!=2*atan(1)) and (theta!=0.):
-        a=tan(theta)
-        m=-1./a
-        for i in range(0,len(pixels[1])):
-            b=pixels[1][i]-m*pixels[0][i]
-            x=(c-b)/(m-a)
-            y=a*x+c
-            dx=pixels[0][i]-x
-            dy=pixels[1][i]-y
-            D=sqrt(dx*dx + dy*dy)
-            if(maxDistance>D):
-                nearX.append(pixels[0][i])
-                nearY.append(pixels[1][i])
-                
-    elif (theta==2*atan(1)): # case of the perpendicular bisector is a vertical line a-->inf.
-        for i in range(0,len(pixels[1])):
-            dx=fabs(pixels[0][i]-c)
-            D=dx
-            if(maxDistance>D):
-                nearX.append(pixels[0][i])
-                nearY.append(pixels[1][i])
-    elif theta==0.: # case of the perpendicular bisector is a horizontal line a-->0
-        for i in range(0,len(pixels[1])):
-            dy=fabs(pixels[1][i]-c)
-            D=dy
-            if(maxDistance>D):
-                nearX.append(pixels[0][i])
-                nearY.append(pixels[1][i])
-    if (len(nearX)<1):
+    nearXs= []
+    nearYs= []
+
+    for i in range(0,len(object_pixels[1])):
+        pixel=[object_pixels[0][i],object_pixels[1][i]]
+	D=get_distance_from_line_to_point(pixel,theta,c)
+        if(near_distance>=D):
+            nearXs.append(object_pixels[0][i])
+            nearYs.append(object_pixels[1][i])
+           
+    if (len(nearXs)<1):
         FlagErr=1
         chosenX=0
         chosenY=0
         return chosenX, chosenY, FlagErr
     if method=='brightest':
-        chosenX=nearX.pop()
-        chosenY=nearY.pop()
+        chosenX=nearXs.pop()
+        chosenY=nearYs.pop()
         FlagErr=0
-        while len(nearX)>=1:
-            chosenAuxX=nearX.pop()
-            chosenAuxY=nearY.pop()
+        while len(nearXs)>=1:
+            chosenAuxX=nearXs.pop()
+            chosenAuxY=nearYs.pop()
             if (image[chosenX][chosenY])<(image[chosenAuxX][chosenAuxY]):
                 chosenX=chosenAuxX
                 chosenY=chosenAuxY
@@ -236,16 +329,16 @@ def ChooseNearPoint(theta,c,pixels,image,method,maxDistance):
 
 
 
-def lenght(points): 
+def get_length(points): 
     """
-    Function to calculate the lenght in a path determined by several points.
+    Function to calculate the length in a path determined by several points.
 
     Input:
-     - points      <list> : coordinates p_i(x_i,y_i) of the points. e.g. points=[p_1,p_2,p_3...,p_n]
+     - points      <list> : list  of p_i points where p_i(x_i,y_i).
      
      
     Output: 
-     - <float> : the lenght  
+     - <float> : the length.  
      
     """
     X=[]
@@ -253,8 +346,6 @@ def lenght(points):
     for i in range(0,len(points)):
         X.append(points[i][0])
         Y.append(points[i][1])
-    #X=points[0]
-    #Y=points[1]	
     L=0
     err=0
     for j in range(0,len(X)-1):
