@@ -99,7 +99,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	max_iterations_number = 20
 	grid_factor2 = 3.
 	min_n_lines = 200
-	gridhi1_CC_factor = 2
+	gridhi1_CC_factor = 2.
 	acceptable_res_limit = 2E-4
 	# ==================================
 
