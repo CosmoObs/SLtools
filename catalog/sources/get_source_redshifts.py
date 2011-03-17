@@ -14,7 +14,7 @@
 
 #=======================================================================================================
 def get_source_redshifts (zl, cosmological_background_parameters=(), halo_model=()):
-	"""
+    """
 	Returns a distribution of source redshifts and redshift bin widths
 
 	Input:
@@ -25,7 +25,7 @@ def get_source_redshifts (zl, cosmological_background_parameters=(), halo_model=
 				   projected
 	 - zs_bins_width  <list> : List with the width of each source redshift bin 
 
-	"""
+    """
     return  [1.5*zl, 2*zl , 2.5*zl, 3*zl], [0.5*zl, 0.5*zl,0.5*zl,0.5*zl] 
 
 

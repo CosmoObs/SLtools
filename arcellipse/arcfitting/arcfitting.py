@@ -28,7 +28,7 @@ import pyfits
 import sltools
 import string
 import minuit
-from sltools.image import get_header_parameter
+from sltools.image.get_header_parameter import *
 from tools.get_extrema_2loops import *
 from tools.get_bisectrix_pts import *
 from tools.circle3points import *
@@ -523,6 +523,11 @@ for line in file_in.readlines():
 	print "\n"
 	print image_name
 
+	image_root, image_extension = os.path.splitext(image_name)
+	
+	output_file = open(image_root + "_fitted_params.txt","w")
+	output_file.write("#Image name  x_0(pix)   y_0(pix)   r_c(pix)   ellip   I_0   r_e(pix)   theta_0(rad)   n   chi_2_min \n")
+
 	ximg,yimg,seg_index,xmax,ymax = segmentation(image_name)
 
 	params = initial_guesses(image_name,ximg,yimg,seg_index,xmax,ymax)
@@ -570,6 +575,6 @@ for line in file_in.readlines():
 
 	print image_name, params_new[3],nf[-1],params_new[5],params_new[2],params_new[6],params_new[0],params_new[1],params_new[4]
 	print "chi2 min: %f" %chi2_min
-
+	output_file.write("%s %s %s %s %s %s %s %s %s %s" %(image_name,params_new[0],params_new[1],params_new[2],params_new[3],params_new[4],params_new[5],params_new[6],nf[-1],chi2_min))
 
 

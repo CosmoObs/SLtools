@@ -23,8 +23,49 @@ import sltools;
 
 # PRESET CONFIG FOR SEXTRACTOR/INSTRUMENTS #
 # ------------------------------------------
-def _cstm_args(instrument):
+def _cstm_args(instrument,fits_image):
 
+
+    img_array, img_header = pyfits.getdata(fits_image, header=True )
+
+    try:
+        MAG_ZEROPOINT = img_header['MAGZP']
+
+    except:
+
+        if instrument == 'DC4':
+            MAG_ZEROPOINT = '31.0414' 
+        elif instrument == 'DC5':
+            MAG_ZEROPOINT = '31.0414'  
+        elif instrument == 'HST':
+            MAG_ZEROPOINT = '21.59'
+        elif instrument == 'HST_Arcs':
+            MAG_ZEROPOINT = '21.59'
+        elif instrument == 'CS82':
+            MAG_ZEROPOINT = '21.59'
+        else:
+            MAG_ZEROPOINT = '21.59'
+
+
+    try:
+        SEEING_FWHM = img_header['SEEING']
+
+    except:
+
+        if instrument == 'DC4':
+             SEEING_FWHM= '1.2'
+        elif instrument == 'DC5':
+             SEEING_FWHM= '0.8'
+        elif instrument == 'HST':
+             SEEING_FWHM= '0.22'
+        elif instrument == 'HST_Arcs':
+             SEEING_FWHM= '0.22'
+        elif instrument == 'CS82':
+             SEEING_FWHM= '0.22'
+        elif instrument == 'CFHT':
+             SEEING_FWHM= '1.2'
+        else:
+            SEEING_FWHM= '0.22'
     if instrument == 'DC4':
         _dic = {
             'FILTER_NAME' : 'default.conv',
@@ -45,11 +86,11 @@ def _cstm_args(instrument):
             'PHOT_APERTURES' : '5',
             'PHOT_AUTOPARAMS' : '2.5,',
             'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : '31.0414',
+            'MAG_ZEROPOINT' : MAG_ZEROPOINT,
             'MAG_GAMMA' : '4.0',
             'GAIN' : '0.0',
             'PIXEL_SCALE' : '0.27',
-            'SEEING_FWHM' : '1.2',
+            'SEEING_FWHM' : SEEING_FWHM,
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
             'BACKPHOTO_TYPE' : 'GLOBAL',
@@ -81,11 +122,11 @@ def _cstm_args(instrument):
             'PHOT_APERTURES' : '5',
             'PHOT_AUTOPARAMS' : '2.5,3.5',
             'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : '31.0414',
+            'MAG_ZEROPOINT' : MAG_ZEROPOINT,
             'MAG_GAMMA' : '4.0',
             'GAIN' : '0.0',
             'PIXEL_SCALE' : '0.27',
-            'SEEING_FWHM' : '0.8',
+            'SEEING_FWHM' : SEEING_FWHM,
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
             'BACKPHOTO_TYPE' : 'GLOBAL',
@@ -117,11 +158,11 @@ def _cstm_args(instrument):
             'PHOT_APERTURES' : '5',
             'PHOT_AUTOPARAMS' : '2.5,3.5',
             'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : '21.59',
+            'MAG_ZEROPOINT' : MAG_ZEROPOINT,
             'MAG_GAMMA' : '4.0',
             'GAIN' : '7.0',
             'PIXEL_SCALE' : '0.1',
-            'SEEING_FWHM' : '0.22',
+            'SEEING_FWHM' : SEEING_FWHM,
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
             'BACKPHOTO_TYPE' : 'GLOBAL',
@@ -154,11 +195,11 @@ def _cstm_args(instrument):
             'PHOT_APERTURES' : '5',
             'PHOT_AUTOPARAMS' : '2.5,3.5',
             'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : '21.59',
+            'MAG_ZEROPOINT' : MAG_ZEROPOINT,
             'MAG_GAMMA' : '4.0',
             'GAIN' : '7.0',
             'PIXEL_SCALE' : '0.1',
-            'SEEING_FWHM' : '0.22',
+            'SEEING_FWHM' : SEEING_FWHM,
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
             'BACKPHOTO_TYPE' : 'GLOBAL',
@@ -190,7 +231,7 @@ def _cstm_args(instrument):
             'MAG_GAMMA' : '4.0',
             'GAIN' : '0.0',
             'PIXEL_SCALE' : '1.0',
-            'SEEING_FWHM' : '1.2',
+            'SEEING_FWHM' : SEEING_FWHM,
             'STARNNW_NAME' : 'default.nnw',
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
@@ -201,6 +242,24 @@ def _cstm_args(instrument):
             'MEMORY_BUFSIZE' : '1024',
             'VERBOSE_TYPE' : 'NORMAL'
             };
+
+    elif instrument == 'CS82':
+        _dic = {
+
+            'SEEING_FWHM' : SEEING_FWHM,
+            'THRESH_TYPE' : 'RELATIVE',
+            'DETECT_THRESH' : '2.5',
+            'FILTER' : 'N',
+            'DEBLEND_MINCONT' : '0.005',
+            'DEBLEND_NTHRESH' : '32',
+            'DETECT_MINAREA'  : '10',
+            'ANALYSIS_THRESH' : '2.5',
+            'PIXEL_SCALE': '0.187',
+            'MAG_ZEROPOINT' : MAG_ZEROPOINT
+            };
+
+
+
 
     else:
         _dic = {};
@@ -304,7 +363,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
     # ==========================================================================
 
 
-    cargs = _cstm_args( preset );
+    cargs = _cstm_args( preset,fits_image );
     cargs.update( args );
 
     # Build up sextractor command line..

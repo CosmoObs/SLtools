@@ -4,8 +4,3 @@ sltools is a collection of modules designed to support strong lensing applicatio
 io package has functions to deal with configuration files, logging, etc.
 
 """
-
-from check_dependencies import *
-from config_parser import *
-from log import *
-
