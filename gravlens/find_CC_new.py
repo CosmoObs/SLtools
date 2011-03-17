@@ -23,7 +23,7 @@ import logging
 #from lens_parameters_new import lens_parameters_new
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 from sltools.geometry import separate_curves
-from sltools.geometry import separate_curves_a
+from sltools.geometry.separate_curves import separate_curves_a
 
 import numpy as np
 import matplotlib.pyplot as pyplot
