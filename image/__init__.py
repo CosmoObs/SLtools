@@ -4,4 +4,3 @@ sltools is a collection of modules designed to support strong lensing applicatio
 The image package has tools for image processing
 
 """
-import imcp;
