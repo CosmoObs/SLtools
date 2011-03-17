@@ -109,12 +109,12 @@ int i=0;
 
       fclose(ollwn);
       
-      system("xmgrace -view 0.15 0.15 0.85 0.85 tang_curves.dat rad_curves.dat lw_pos_curves.dat lw_neg_curves.dat -saveall curvas.agr ");
-      system("xmgrace -view 0.15 0.15 0.85 0.85 -block tang_curves.dat -bxy 3:4 -block rad_curves.dat -bxy 3:4  -block lw_pos_curves.dat -bxy 3:4 -block  lw_neg_curves.dat -bxy 3:4 -saveall curvas2.agr ");
+//       system("xmgrace -view 0.15 0.15 0.85 0.85 tang_curves.dat rad_curves.dat lw_pos_curves.dat lw_neg_curves.dat -saveall curvas.agr ");
+//       system("xmgrace -view 0.15 0.15 0.85 0.85 -block tang_curves.dat -bxy 3:4 -block rad_curves.dat -bxy 3:4  -block lw_pos_curves.dat -bxy 3:4 -block  lw_neg_curves.dat -bxy 3:4 -saveall curvas2.agr ");
       
 //       FILE *outcsda = fopen ("dcs_siep_vs_e.dat" , "w");
 //       FILE *outcsda = fopen ("dcs_siep_vs_re.dat" , "w");
-      FILE *outcsda = fopen ("dcs_siep_vs_rth.dat" , "w");
+      FILE *outcsda = fopen ("dcs_siep_vs_rth-gk_e.dat" , "w");
 //       double sig1,re_sis;
       double sig1;
  /*
