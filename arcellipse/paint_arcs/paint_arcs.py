@@ -36,7 +36,7 @@ from sltools.catalog import open_fits_catalog
 from sltools.catalog.halos import *
 import string
 from functions import get_b_n,convert_arcsec_pix,convert_pix_arcsec # substituir por get_b_n, convert_arcsec_pix, convert_pix_arcsec
-from sltools.image import get_image_limits_pywcs
+from sltools.image import get_image_limits
 from sltools.coordinate import *
 import pywcs
 from scipy.integrate import dblquad, quad
