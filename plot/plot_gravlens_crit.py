@@ -25,7 +25,7 @@ from numpy import *
 from random import *
 import sys
 
-from sltools.geometry import separate_curves_a # its Angelo's separate_curves
+from sltools.geometry.separate_curves import separate_curves_a # its Angelo's separate_curves
 
 
 def plot_gravlens_crit(file):
