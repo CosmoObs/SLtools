@@ -246,8 +246,8 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	 - curves_plot            <str> : the name of the generated plot file (including the format, ex. 
 					'curves_plot.png'). To see the formats available see matplotlib.pyplot help 
 					(default='crit_curves.png'). If curves_plot=0 means no plots.
-	 - show_plot              <int> : use 0 for 'no screen display' (default) and 1 for diaplay on 
-					  the screen
+	 - show_plot              <int> : use 0 for 'no screen display' (default) and 1 for display on 
+					  the screen.
 	 - write_to_file          <int> : Option to write the curves to a file (see rad_curves_file and 
 					  tan_curves_file ). The default is 0, meaning not to write to a file.
 
@@ -268,7 +268,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	"""
 
-	logging.info('Starting run_find_CC for the lens model %s with mass_scale (model_param_1) = %s, model_param_8 = %s, model_param_9 = %s, model_param_10 = %s, galaxy_position = %s, e_L = %s, theta_L = %s, shear = %s, theta_shear = %s \n' % (lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear) )
+	logging.info('Starting run_find_CC for the lens model %s with mass_scale (model_param_1) = %s, model_param_8 = %s, model_param_9 = %s, model_param_10 = %s, galaxy_position = %s, e_L = %s, theta_L = %s, shear = %s, theta_shear = %s' % (lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear) )
 
 	x_caustic, y_caustic, x_CC, y_CC, gravlens_params_updated = find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file)
 
@@ -290,8 +290,13 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	else:
 		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+#		if len( set(curves[0][0]) ) < 2 or len( set(curves[1][0]) ) < 2: # consider case where a curve is degenerated to a point
+#			logging.warning('Only one critical curve was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
+
 
 	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
+
+	logging.debug('The radial and tangential CC have %d and %d points each.' % (len(rad_CC_x), len(tan_CC_x) ) )
 
 
 	# Repeating the 1st element in the end of each array will make the plot easier
@@ -317,8 +322,12 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	else:
 		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+#		if len( set(curves[0][0]) ) < 2 or len( set(curves[1][0]) ) < 2: # consider case where a curve is degenerated to a point
+#			logging.warning('Only one caustic was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
 
 	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
+
+	logging.debug('The radial and tangential caustics have %d and %d points each.' % (len(rad_caustic_x), len(tan_caustic_x) ) )
 
 	# Repeating the 1st element in the end of each array will make the plot easier
 	# First, convert the array to a list
@@ -333,7 +342,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	logging.debug('Finished separation of the curves.')
 
-	logging.debug('Making the plots...')
+	logging.debug('Making the plots... \n')
 	# plot
 	if curves_plot != 0: # curves_plot = 0 means you don't want any plots.
 		plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot)
@@ -356,6 +365,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		outrad.write("#\n")
 		for j in range(len(rad_CC_x)):
 			outrad.write("%f %f %f %f\n" %(rad_CC_x[j],rad_CC_y[j],rad_caustic_x[j],rad_caustic_y[j]))
+
 
 	return rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y
 
