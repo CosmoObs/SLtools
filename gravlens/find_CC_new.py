@@ -268,10 +268,15 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	"""
 
+	logging.info('Starting run_find_CC for the lens model %s with model_param_8 = %s, model_param_9 = %s, model_param_10 = %s, galaxy_position = %s, e_L = %s, theta_L = %s, shear = %s, theta_shear = $s \n' % (lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear) )
+
 	x_caustic, y_caustic, x_CC, y_CC, gravlens_params_updated = find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file)
 
+	logging.debug('Ran find_CC_new')
 
 	x1, y1, u1, v1, x2, y2, u2, v2 = np.loadtxt(caustic_CC_file, comments='#', unpack=True)
+
+	logging.debug('Starting separation of the curves...')
 
 	# Separating the critical cuves ----------------------------------------------------------------
 	#nodes=[]
@@ -326,14 +331,16 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = np.array(rad_caustic_x), np.array(rad_caustic_y), np.array(tan_caustic_x), np.array(tan_caustic_y)
 
+	logging.debug('Finished separation of the curves.')
 
-
+	logging.debug('Making the plots...')
 	# plot
 	if curves_plot != 0: # curves_plot = 0 means you don't want any plots.
 		plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot)
 
 
 	if write_to_file != 0: # wrihte_show =0 means you don't want save the files.
+		logging.debug('Writting curves to files %s and %s.' % (tan_curves_file, rad_curves_file) )
 		outtan = open(tan_curves_file,"w")			
 		outtan.write("# Data file for tangential curves (critical and caustic) \n")
 		outtan.write("# x1 x2 y1 y2 \n")
