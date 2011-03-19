@@ -26,10 +26,11 @@ import sltools;
 def _cstm_args(instrument,fits_image):
 
 
-    img_array, img_header = pyfits.getdata(fits_image, header=True )
+    img_array, img_header = pyfits.getdata(fits_image, header=True)#,ignore_missing_end=True) 
 
     try:
         MAG_ZEROPOINT = img_header['MAGZP']
+        print "go it MagZPT"
 
     except:
 
@@ -49,6 +50,7 @@ def _cstm_args(instrument,fits_image):
 
     try:
         SEEING_FWHM = img_header['SEEING']
+        print "go it seeing"
 
     except:
 
@@ -250,7 +252,7 @@ def _cstm_args(instrument,fits_image):
             'THRESH_TYPE' : 'RELATIVE',
             'DETECT_THRESH' : '2.5',
             'FILTER' : 'N',
-            'DEBLEND_MINCONT' : '0.005',
+            'DEBLEND_MINCONT' : '0.5',
             'DEBLEND_NTHRESH' : '32',
             'DETECT_MINAREA'  : '10',
             'ANALYSIS_THRESH' : '2.5',
