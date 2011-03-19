@@ -39,12 +39,14 @@ def plot_arcellipse_contour(params_file):
 	b = r_e
 	a = b/(1. - ellip)
 
-
-	theta = np.linspace(0,2*np.pi, 1000)
+	theta_i = theta_0 - a/r_c
+	theta_f = theta_0 + a/r_c
+	theta = np.linspace(theta_i, theta_f, 1000)
 	# arcellipse equation
 	r_ext = r_c + b * np.sqrt( 1 - (r_c *(theta_0 - theta)/a)**2 )
 	r_int = r_c - b * np.sqrt( 1 - (r_c *(theta_0 - theta)/a)**2 )
 
+	pyplot.clf()
 	f1 = pyplot.figure() # figsize = (15,15) )
 
 #	# plot de todos os arcos
@@ -56,6 +58,12 @@ def plot_arcellipse_contour(params_file):
 
 	pyplot.plot( r_ext*np.cos(theta), r_ext*np.sin(theta), 'r' )
 	pyplot.plot( r_int*np.cos(theta), r_int*np.sin(theta), 'r' )
+
+#	pyplot.plot( [r_ext[-1]*np.cos(theta[-1]), r_int[0]*np.cos(theta[0]) ], [ r_ext[-1]*np.sin(theta[-1]), r_int[0]*np.sin(theta[0])  ], 'k' )
+#	pyplot.plot( [r_ext[0]*np.cos(theta)[0], r_int[-1]*np.cos(theta[-1]) ], [ r_ext[0]*np.sin(theta[0]), r_int[-1]*np.sin(theta[-1])  ], 'k' )
+#	pyplot.plot( [r_ext[-1]*np.cos(theta[0]), r_int[-1]*np.cos(theta[-1]) ], [ r_ext[-1]*np.sin(theta[0]), r_int[-1]*np.sin(theta[-1])  ], 'k' )
+#	pyplot.plot( [r_ext[0]*np.cos(theta)[-1], r_int[0]*np.cos(theta[0]) ], [ r_ext[0]*np.sin(theta[-1]), r_int[0]*np.sin(theta[0])  ], 'k' )
+
 	pyplot.axis('equal')
 	#pyplot.polar( theta , r_ext, 'r' )
 	#pyplot.polar( theta , r_int, 'g' )
@@ -63,12 +71,14 @@ def plot_arcellipse_contour(params_file):
 	pyplot.savefig(figname)
 
 #plot_arcellipse_contour('105_8647475120351217669_S82m35m_0_segm_118_fitted_params.txt')
-
+#plot_arcellipse_contour('2_8647474693013963015_S82m9p__0_segm_61_fitted_params.txt')
 
 #input_files = open('input_files.txt', 'r').readlines()
 #for line in input_files:
-#         params_file = string.split(line)[0]
-#	 plot_arcellipse_contour(params_file)
+#        params_file = string.split(line)[0]
+#	print "Starting file %s" % params_file
+#	if len( open(params_file, 'r').readlines()  ) > 1: # so chamas os arquivos q foram gerados corretamente pelo arcfitting
+#		plot_arcellipse_contour(params_file) 
 
 
 
