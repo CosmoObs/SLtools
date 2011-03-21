@@ -64,6 +64,9 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	error message. If all caustic points have coordinates < acceptable_res_limit (=2E-4), a warning 
 	message will be generated, meaning that the precision of gravlens (limited by the number of 
 	digits in the output file) is being reached. 
+ 
+        Warning: 
+		The option for show plot in the screen, does not working in interactively way. This is, only work for one combination of lens parameters.
 
 	Example:
 	         x_caustic, y_caustic, x_CC, y_CC, gravlens_config = find_CC_new('nfw',1,1,0,0)
