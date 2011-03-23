@@ -195,20 +195,20 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	"""
 
 	pyplot.clf()
-	f1 = pyplot.figure(1,figsize = (15,15) )
+	f1 = pyplot.figure(figsize = (20,12) )
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',marker='', markersize=2)
-	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='', markersize=2)
-	pyplot.legend(('Tangential', 'Radial'),'upper right', shadow=True)
+	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',marker='', markersize=2, label='Tangential')
+	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='', markersize=2, label='Radial')
+	pyplot.legend(loc='upper right', shadow=True)
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
 	pyplot.title('Caustics'  , fontsize = 20)
 
 	pyplot.subplot(122) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_CC_x, tan_CC_y, color='black',marker='', markersize=2 )
-	pyplot.plot(rad_CC_x, rad_CC_y, color='red', marker='', markersize=2 )
-	pyplot.legend(('Tangential', 'Radial'),'upper right', shadow=True)	
+	pyplot.plot(tan_CC_x, tan_CC_y, color='black',marker='', markersize=2, label='Tangential' )
+	pyplot.plot(rad_CC_x, rad_CC_y, color='red', marker='', markersize=2, label='Radial' )
+	pyplot.legend(loc='upper right', shadow=True)	
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
 	pyplot.ylabel('y', fontsize = 15)
@@ -288,7 +288,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	if len(curves) == 1:
 		logging.warning('Only one critical curve was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
-		radial_curve = [[0],[0],[0],[0]]
+		radial_curve = [[],[],[],[]]
 		tang_curve = curves[0]
 	else:
 		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
@@ -306,10 +306,12 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	# First, convert the array to a list
 	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = list(rad_CC_x), list(rad_CC_y), list(tan_CC_x), list(tan_CC_y)
 
-	rad_CC_x.append(rad_CC_x[0])
-	rad_CC_y.append(rad_CC_y[0])
-	tan_CC_x.append(tan_CC_x[0])
-	tan_CC_y.append(tan_CC_y[0])
+	if len(rad_CC_x) > 0:
+		rad_CC_x.append(rad_CC_x[0])
+		rad_CC_y.append(rad_CC_y[0])
+	if len(tan_CC_x) > 0:
+		tan_CC_x.append(tan_CC_x[0])
+		tan_CC_y.append(tan_CC_y[0])
 
 	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = np.array(rad_CC_x), np.array(rad_CC_y), np.array(tan_CC_x), np.array(tan_CC_y)
 
@@ -320,7 +322,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	
 	if len(curves) == 1:
 		logging.warning('Only one caustic was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
-		radial_curve = [[0],[0],[0],[0]]
+		radial_curve = [[],[],[],[]]
 		tang_curve = curves[0]
 	else:
 		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
@@ -336,10 +338,12 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	# First, convert the array to a list
 	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = list(rad_caustic_x), list(rad_caustic_y), list(tan_caustic_x), list(tan_caustic_y)
 
-	rad_caustic_x.append(rad_caustic_x[0])
-	rad_caustic_y.append(rad_caustic_y[0])
-	tan_caustic_x.append(tan_caustic_x[0])
-	tan_caustic_y.append(tan_caustic_y[0])
+	if len(rad_caustic_x) > 0:
+		rad_caustic_x.append(rad_caustic_x[0])
+		rad_caustic_y.append(rad_caustic_y[0])
+	if len(tan_caustic_x) > 0:
+		tan_caustic_x.append(tan_caustic_x[0])
+		tan_caustic_y.append(tan_caustic_y[0])
 
 	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = np.array(rad_caustic_x), np.array(rad_caustic_y), np.array(tan_caustic_x), np.array(tan_caustic_y)
 
