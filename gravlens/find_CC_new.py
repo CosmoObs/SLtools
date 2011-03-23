@@ -293,16 +293,13 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	else:
 		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
-#		if len( set(curves[0][0]) ) < 2 or len( set(curves[1][0]) ) < 2: # consider case where a curve is degenerated to a point
-#			logging.warning('Only one critical curve was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
-
 
 	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
 
 	logging.debug('The radial and tangential CC have %d and %d points each.' % (len(rad_CC_x), len(tan_CC_x) ) )
 
 
-	# Repeating the 1st element in the end of each array will make the plot easier
+	# Repeating the 1st element in the end of each array will avoid 'holes' in the plot
 	# First, convert the array to a list
 	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = list(rad_CC_x), list(rad_CC_y), list(tan_CC_x), list(tan_CC_y)
 
@@ -327,14 +324,12 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	else:
 		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
-#		if len( set(curves[0][0]) ) < 2 or len( set(curves[1][0]) ) < 2: # consider case where a curve is degenerated to a point
-#			logging.warning('Only one caustic was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
 
 	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
 
 	logging.debug('The radial and tangential caustics have %d and %d points each.' % (len(rad_caustic_x), len(tan_caustic_x) ) )
 
-	# Repeating the 1st element in the end of each array will make the plot easier
+	# Repeating the 1st element in the end of each array will avoid 'holes' in the plot
 	# First, convert the array to a list
 	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = list(rad_caustic_x), list(rad_caustic_y), list(tan_caustic_x), list(tan_caustic_y)
 
