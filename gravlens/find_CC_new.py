@@ -65,9 +65,6 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	message will be generated, meaning that the precision of gravlens (limited by the number of 
 	digits in the output file) is being reached. 
  
-        Warning: 
-		The option for show plot in the screen, does not working in interactively way. This is, only work for one combination of lens parameters.
-
 	Example:
 	         x_caustic, y_caustic, x_CC, y_CC, gravlens_config = find_CC_new('nfw',1,1,0,0)
 
@@ -268,6 +265,9 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	 - <file>                : separated radial curves (CC + caustics) - rad_curves_file
 	 - <file>                : separated tangential curves (CC + caustics) - tan_curves_file
 	 - <file>                : curves_plot
+
+	Warning: 
+			 show_plot=1 only shows one plot in the screen
 
 	"""
 
