@@ -20,13 +20,13 @@
 
 import os
 import logging
-#from lens_parameters_new import lens_parameters_new
-from sltools.gravlens.lens_parameters_new import lens_parameters_new
-from sltools.geometry import separate_curves
-from sltools.geometry.separate_curves import separate_curves_a
-
 import numpy as np
 import matplotlib.pyplot as pyplot
+
+from sltools.gravlens.lens_parameters_new import lens_parameters_new
+from sltools.geometry.separate_curves import separate_curves_a
+
+
 
 
 def _critcurves_new(gravinput, caustic_CC_file, gravlens_input_file='gravlens_CC_input.txt'):
@@ -107,7 +107,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	# ==================================
 
 	inputlens, setlens, gravlens_params_updated = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)	# setlens is the gravlens input line that concerns the lens (ex: nfw 1 0 ...)
-	logging.debug('Determined the strings that defines the mass model in gravlens through the \'lensparameter\' function')
+	logging.debug('Determined the strings that defines the mass model in gravlens through the \'lens_parameters\' function')
 	#--------------------------------------
 
 	#-----------------------------
@@ -138,7 +138,6 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		inputlens, setlens, gravlens_params_updated = lens_par_out
 
 		_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
-	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
 
 
 	x1, y1, u1, v1 = np.loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
@@ -147,16 +146,23 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	# redefine gridhi1 according to the CC size
 
 	index_CC = np.argmax(x1**2 + y1**2)
+	logging.debug( 'The CC furthest point is at (%s, %s), a distance %s of the origin .' % (x1[index_CC], y1[index_CC], (x1[index_CC]**2 + y1[index_CC]**2)**0.5 ) )
 
 	gravlens_params_updated['gridhi1'] =  gridhi1_CC_factor * ( (x1[index_CC]**2 + y1[index_CC]**2)**0.5 )
+
 	#-----------------------------------------------------------------------------------------------------------
 	# get CC with best value for the grid
 	lens_par_out = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 	inputlens, setlens, gravlens_params_updated = lens_par_out
 
+	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
+
 	_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 
 	x1, y1, u1, v1 = np.loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
+
+#	index_CC = np.argmax(x1**2 + y1**2)
+#	logging.debug( 'The CC furthest point is at (%s, %s), a distance %s of the origin .' % (x1[index_CC], y1[index_CC], (x1[index_CC]**2 + y1[index_CC]**2)**0.5 ) )
 
 	# check if the precision is ok (gravlens outputs coordinates with only 6 decimal places)
 	if max( max(np.abs(u1)), max(np.abs(v1)) ) < acceptable_res_limit:
@@ -287,7 +293,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	curves = separate_curves_a(x1, y1, x2, y2)
 
 	if len(curves) == 1:
-		logging.warning('Only one critical curve was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
+		logging.warning('Only one critical curve was found. It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 and 135 degrees).')
 		radial_curve = [[],[],[],[]]
 		tang_curve = curves[0]
 	else:
@@ -318,7 +324,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	
 	
 	if len(curves) == 1:
-		logging.warning('Only one caustic was found (usually it is the tangential). Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec).')
+		logging.warning('Only one caustic was found. It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 and 135 degrees).')
 		radial_curve = [[],[],[],[]]
 		tang_curve = curves[0]
 	else:
