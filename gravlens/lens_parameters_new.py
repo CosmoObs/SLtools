@@ -19,14 +19,20 @@ def set_gravlens_default():
 	"""
 	Defines the configuration of gravlens
 
+	In order to make broader aplication of these modules we have set some default values more 
+	accurate. For instance, separating the critical curves and caustics (see gravlens.find_CC_new 
+	and gravlens.run_find_CC) of some models demand crittol = 1e-7 and inttol = 1e-8 (see 
+	description below). The identified cases where this is needed are the NFW with the combination 
+	of parameters: kappas = [0.4], rs = [34., 54., 94.], theta = [0, 180] and e_L=0.5.
+
 	The default configurations is:
 
 	gridmode : 1 # the grid type gravlens will use (1: standard polar grid, 2: use information from 
 		       simple convex critical lines)
 	gridhi1  : 150 # the grid size in the image plane
 	xtol     : 1e-10 # Tolerance on image positions in numerical root finding
-	crittol  : 1e-6 # Tolerance for finding critical curves
-	inttol   : 1e-6 # Tolerance for numerical integrals
+	crittol  : 1e-7 # Tolerance for finding critical curves
+	inttol   : 1e-8 # Tolerance for numerical integrals
 	maxlev   : 4 # Deepest level of subgrid near critical curves
 	gallev   : 3 # Deepest level of subgrid near galaxies (other than the primary)
 	imglev   : 3 # Deepest level of subgrid near images
@@ -37,7 +43,7 @@ def set_gravlens_default():
 	- gravlens_params_default <dict> : contains the updated keys for gravlens configuration
 
 	"""
-	gravlens_params_default = {'gridmode': 1, 'gridhi1' : 150, 'xtol' : 1e-10, 'crittol' : 1e-6, 'inttol' : 1e-6, 'maxlev' : 4, 'gallev' : 3, 'imglev' : 3, 'ngrid1' : 30, 'ngrid2' : 30 }
+	gravlens_params_default = {'gridmode': 1, 'gridhi1' : 150, 'xtol' : 1e-10, 'crittol' : 1e-7, 'inttol' : 1e-8, 'maxlev' : 4, 'gallev' : 3, 'imglev' : 3, 'ngrid1' : 30, 'ngrid2' : 30 }
 
 
 	return gravlens_params_default
