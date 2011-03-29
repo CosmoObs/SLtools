@@ -231,6 +231,9 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	This is a pipeline that runs 'find_CC_new', 'separate_CC' and
 	'plot_CC'. For details of these functions, see their documentation.
 
+	We separate only the image plane curves (CC) and use the fact that the gravlens output has a 
+	one-to-one correspondence, allowing to separate the caustics at the same time.
+
 	Input:
 	 - lens_model             <str> : Lens name (see gravlens manual table 3.1)
 	 - mass_scale           <float> : Mass scale of the lens - "parameter 1"
@@ -287,10 +290,11 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	logging.debug('Starting separation of the curves...')
 
-	# Separating the critical cuves ----------------------------------------------------------------
+	# =====================================================================
+	# Separating the critical curves
 	#nodes=[]
 	#curves = separate_curves(x1, y1, x2, y2,nodes)
-	curves = separate_curves_a(x1, y1, x2, y2)
+	curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2)
 
 	if len(curves) == 1:
 		logging.warning('Only one critical curve was found. It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 and 135 degrees).')
@@ -318,18 +322,20 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y = np.array(rad_CC_x), np.array(rad_CC_y), np.array(tan_CC_x), np.array(tan_CC_y)
 
-	# separating the caustics curves ---------------------------------------------------------------
-	curves = separate_curves_a(u1, v1, u2, v2)
-	#curves = separate_curves(u1, v1, u2, v2,nodes)
-	
-	
-	if len(curves) == 1:
+	# =====================================================================
+	# separating the caustics curves
+	curves_caustic = []
+	for index in range( len(start_idx) ):
+		curves_caustic.append([u1[start_idx[index]:end_idx[index]], v1[start_idx[index]:end_idx[index]], 
+			       u2[start_idx[index]:end_idx[index]], v2[start_idx[index]:end_idx[index]]])
+
+	if len(curves_caustic) == 1:
 		logging.warning('Only one caustic was found. It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 and 135 degrees).')
 		radial_curve = [[],[],[],[]]
-		tang_curve = curves[0]
+		tang_curve = curves_caustic[0]
 	else:
-		radial_curve = curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
-		tang_curve = curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+		radial_curve = curves_caustic[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+		tang_curve = curves_caustic[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 
 	rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
 
