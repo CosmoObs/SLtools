@@ -296,10 +296,22 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	#curves = separate_curves(x1, y1, x2, y2,nodes)
 	CC_curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2)
 
+
+	if len(CC_curves) != 2:
+		logging.warning('Function separate_curves found %d critical curves (expected 2). It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).' % len(CC_curves) )
+
 	if len(CC_curves) == 1:
-		logging.warning('Only one critical curve was found. It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).')
 		radial_curve = [[],[],[],[]]
 		tang_curve = CC_curves[0]
+
+		# 1- rodar novamente find_CC_new, mas com theta_L=0.
+		# 2- ler os pontos do arquivo (loadtxt)
+		# 3- separar as curvas
+		# 4- verificar novamente se ha 2 curvas 
+		# 5- se novamente nao tiver 2 curvas, ai sim vai para o 'else'
+		# 6- se tiver 2 curvas, roda-las (-theta_L) e translada-las (x0,y0) 
+
+
 	else:
 		radial_curve = CC_curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 		tang_curve = CC_curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
@@ -329,8 +341,9 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		caustic_curves.append([u1[start_idx[index]:end_idx[index]], v1[start_idx[index]:end_idx[index]], 
 			       u2[start_idx[index]:end_idx[index]], v2[start_idx[index]:end_idx[index]]])
 
+	logging.debug('Function separate_curves found %d caustics' % len(caustic_curves) )
+
 	if len(caustic_curves) == 1:
-		logging.warning('Only one caustic was found. It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 and 135 degrees).')
 		radial_curve = [[],[],[],[]]
 		tang_curve = caustic_curves[0]
 	else:
