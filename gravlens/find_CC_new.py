@@ -200,8 +200,8 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.clf()
 	f1 = pyplot.figure(figsize = (20,12) )
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',marker='', markersize=2, label='Tangential')
-	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='', markersize=2, label='Radial')
+	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',marker='', linewidth=2, label='Tangential')
+	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='', linewidth=2, label='Radial')
 	pyplot.legend(loc='upper right', shadow=True)
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
@@ -209,8 +209,8 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.title('Caustics'  , fontsize = 20)
 
 	pyplot.subplot(122) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_CC_x, tan_CC_y, color='black',marker='', markersize=2, label='Tangential' )
-	pyplot.plot(rad_CC_x, rad_CC_y, color='red', marker='', markersize=2, label='Radial' )
+	pyplot.plot(tan_CC_x, tan_CC_y, color='black',marker='', linewidth=2, label='Tangential' )
+	pyplot.plot(rad_CC_x, rad_CC_y, color='red', marker='', linewidth=2, label='Radial' )
 	pyplot.legend(loc='upper right', shadow=True)	
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
@@ -226,7 +226,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
 #
-def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0):
+def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0):
 	""" 
 	This is a pipeline that runs 'find_CC_new', 'separate_CC' and
 	'plot_CC'. For details of these functions, see their documentation.
@@ -298,7 +298,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 
 	if len(CC_curves) != 2:
-		logging.warning('Function separate_curves found %d critical curves (expected 2). It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).' % len(CC_curves) )
+		logging.warning('Function separate_curves found %d critical curve(s) (expected 2). It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).' % len(CC_curves) )
 
 	if len(CC_curves) == 1:
 		radial_curve = [[],[],[],[]]
