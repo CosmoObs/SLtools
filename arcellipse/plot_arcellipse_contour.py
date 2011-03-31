@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as pyplot
 import string
 import random
+import pyfits
+
+from sltools.image.imcp import cutout
 
 # get parameters from file
 
@@ -34,14 +37,33 @@ def plot_arcellipse_contour(params_file):
 	#    * n: index that describes the shape of the Sersic profile
 	#    * I_0: intensity of the Sersic profile at the center of the arc (r = 0) 
 
+	# CORTE EM ellip
+	if ellip > 0.99:
+		ellip = 0.99
+
+
 	# determine 'a' and 'b' from 'ellip'
 
 	b = r_e
 	a = b/(1. - ellip)
 
+	# make sure we are using the correct limits
+#	if a > np.pi * r_c:
+#		a = np.pi * r_c
+
+#	if b > r_c:
+#		b = r_c
+
+	if theta_0 > 2*np.pi:
+		n = int( theta_0/(2*np.pi) )
+		theta_0 = theta_0 - (n*2*np.pi)
+
+	# =========================================
+
 	theta_i = theta_0 - a/r_c
 	theta_f = theta_0 + a/r_c
 	theta = np.linspace(theta_i, theta_f, 1000)
+
 	# arcellipse equation
 	r_ext = r_c + b * np.sqrt( 1 - (r_c *(theta_0 - theta)/a)**2 )
 	r_int = r_c - b * np.sqrt( 1 - (r_c *(theta_0 - theta)/a)**2 )
@@ -56,8 +78,8 @@ def plot_arcellipse_contour(params_file):
 #	pyplot.plot( x_rand + r_int*np.cos(theta), y_rand + r_int*np.sin(theta) )
 #	#======================
 
-	pyplot.plot( r_ext*np.cos(theta), r_ext*np.sin(theta), 'r' )
-	pyplot.plot( r_int*np.cos(theta), r_int*np.sin(theta), 'r' )
+	pyplot.plot( x_0 + r_ext*np.cos(theta), y_0 + r_ext*np.sin(theta), 'r' )
+	pyplot.plot( x_0 + r_int*np.cos(theta), y_0 + r_int*np.sin(theta), 'r' )
 
 #	pyplot.plot( [r_ext[-1]*np.cos(theta[-1]), r_int[0]*np.cos(theta[0]) ], [ r_ext[-1]*np.sin(theta[-1]), r_int[0]*np.sin(theta[0])  ], 'k' )
 #	pyplot.plot( [r_ext[0]*np.cos(theta)[0], r_int[-1]*np.cos(theta[-1]) ], [ r_ext[0]*np.sin(theta[0]), r_int[-1]*np.sin(theta[-1])  ], 'k' )
@@ -67,21 +89,26 @@ def plot_arcellipse_contour(params_file):
 	pyplot.axis('equal')
 	#pyplot.polar( theta , r_ext, 'r' )
 	#pyplot.polar( theta , r_int, 'g' )
-	figname = params_file[:-4] + '.png'
+	#figname = params_file[:-4] + '.png'
+	#pyplot.savefig(figname)
+
+	fits_file = params_file[:-18] + '.fits'
+	img = pyfits.getdata(fits_file)
+	img_nonzero = np.where(img)
+	pyplot.plot(img_nonzero[0], img_nonzero[1], 'g.'	)
+	figname = params_file[:-18] + '_data_arcellipse.png'
 	pyplot.savefig(figname)
+
 
 #plot_arcellipse_contour('105_8647475120351217669_S82m35m_0_segm_118_fitted_params.txt')
 #plot_arcellipse_contour('2_8647474693013963015_S82m9p__0_segm_61_fitted_params.txt')
 
-#input_files = open('input_files.txt', 'r').readlines()
-#for line in input_files:
-#        params_file = string.split(line)[0]
-#	print "Starting file %s" % params_file
-#	if len( open(params_file, 'r').readlines()  ) > 1: # so chamas os arquivos q foram gerados corretamente pelo arcfitting
-#		plot_arcellipse_contour(params_file) 
-
-
-
+input_files = open('input_files.txt', 'r').readlines()
+for line in input_files:
+        params_file = string.split(line)[0]
+	print "Starting file %s" % params_file
+	if len( open(params_file, 'r').readlines()  ) > 1: # so chamas os arquivos q foram gerados corretamente pelo arcfitting
+		plot_arcellipse_contour(params_file) 
 
 
 
