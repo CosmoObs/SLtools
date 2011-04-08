@@ -25,7 +25,7 @@ import matplotlib.pyplot as pyplot
 
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 from sltools.geometry.separate_curves import separate_curves_a
-
+from sltools.coordinate.translation_followed_by_rotation import translation_and_rotation
 
 
 
@@ -300,17 +300,33 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	if len(CC_curves) != 2:
 		logging.warning('Function separate_curves found %d critical curve(s) (expected 2). It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).' % len(CC_curves) )
 
-	if len(CC_curves) == 1:
-		radial_curve = [[],[],[],[]]
-		tang_curve = CC_curves[0]
+	if len(CC_curves) == 1 and theta_L != 0:
+		logging.debug('Since only one CC was found, I will try to check if setting the lens angle to 0 solves the separation problem.')
+		# try to get the CC with theta_L=0 and rotate back to theta_L
+		# 1- run find_CC_new again, but with theta_L=0
+		x_caustic, y_caustic, x_CC, y_CC, gravlens_params_if_clause = find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, 0, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file) # ran with theta_L = 0
+		# 2- read data (loadtxt)
+		x1, y1, u1, v1, x2, y2, u2, v2 = np.loadtxt(caustic_CC_file, comments='#', unpack=True)
+		# 3- separate the curves
+		CC_curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2)
+		# 4- check again if there are 2 curves 
+		if len(CC_curves) == 2:
+			logging.debug('Two CC found. It seems the separation was fixed by rotating the CC back and forth.')
+			radial_curve = CC_curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+			tang_curve = CC_curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]			
+			# 5- rotate back the curves (radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1])
+			out_trans_rot, out_trans_rot2  = translation_and_rotation(radial_curve[0], radial_curve[1], galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation(radial_curve[2], radial_curve[3], galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
+			radial_curve = out_trans_rot[0], out_trans_rot[1], out_trans_rot2[0], out_trans_rot2[1]
+			out_trans_rot, out_trans_rot2  = translation_and_rotation(  tang_curve[0],   tang_curve[1], galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation(  tang_curve[2],   tang_curve[3], galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
+			tang_curve   = out_trans_rot[0], out_trans_rot[1], out_trans_rot2[0], out_trans_rot2[1]
+			# 5b- rotate the caustics
+			rot_caustic1, rot_caustic2 = translation_and_rotation( u1, v1, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation( u2, v2, galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
+			u1, v1, u2, v2 = rot_caustic1[0], rot_caustic1[1], rot_caustic2[0], rot_caustic2[1]
 
-		# 1- rodar novamente find_CC_new, mas com theta_L=0.
-		# 2- ler os pontos do arquivo (loadtxt)
-		# 3- separar as curvas
-		# 4- verificar novamente se ha 2 curvas 
-		# 5- se novamente nao tiver 2 curvas, ai sim vai para o 'else'
-		# 6- se tiver 2 curvas, roda-las (-theta_L) e translada-las (x0,y0) 
-
+		# 6- if, again, we haven't the 2 curves, go to 'else'
+		else:
+			radial_curve = [[],[],[],[]]
+			tang_curve = CC_curves[0]
 
 	else:
 		radial_curve = CC_curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
