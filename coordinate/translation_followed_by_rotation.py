@@ -25,8 +25,8 @@ def translation_and_rotation(x, y, x_0, y_0, theta_0, angle='radian'):
     x = np.array(x)
     y = np.array(y)
 
-    x_transf =  np.cos(theta_0) * (x - x_0) + np.sin(theta_0) * (y - y_0)
-    y_transf = -np.sin(theta_0) * (x - x_0) + np.cos(theta_0) * (y - y_0)
+    x_transf = np.cos(theta_0) * (x - x_0) - np.sin(theta_0) * (y - y_0)
+    y_transf = np.sin(theta_0) * (x - x_0) + np.cos(theta_0) * (y - y_0)
 
     return x_transf, y_transf
 
