@@ -1,0 +1,35 @@
+PROJECT_NAME           =  %PROJECT_NAME%  
+PROJECT_NUMBER         =  %PROJECT_NUMBER%
+
+# Input
+INPUT                  = ./     
+EXCLUDE                = packages
+FILE_PATTERNS          = *.py *.c *.cpp *.C    
+RECURSIVE              = YES    
+
+# Output
+OUTPUT_DIRECTORY       = doc 
+
+# Source Browser
+SOURCE_BROWSER         = YES
+SHOW_DIRECTORIES       = YES
+     
+# Output format
+GENERATE_HTML          = YES     
+GENERATE_LATEX         = YES 
+LATEX_SOURCE_CODE      = YES
+LATEX_BATCHMODE        = YES
+
+OPTIMIZE_OUTPUT_JAVA   = YES
+
+# Enable Python docstring
+FILTER_SOURCE_FILES = YES
+INPUT_FILTER = "doxypy.py"
+
+
+# Other
+STRIP_CODE_COMMENTS    = YES
+OPTIMIZE_OUTPUT_JAVA = YES
+JAVADOC_AUTOBRIEF = YES
+SHOW_FILES = YES  
+	
