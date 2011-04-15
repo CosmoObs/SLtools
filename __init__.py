@@ -1,4 +1,21 @@
 """
+@file sltools/__init__.py
+@brief Strong Lensing tools project
+@package sltools Strong Lensing tools project
+
+@mainpage
+
+This is the SLtools documentation project page. The idea here is to provide an hourly
+updated version of Sltools documentation contents.
+
+@section intro Introduction
+
+SLtools combines a set of daily useful methods for astronomical and cosmological data
+handling. Modules defined here are organized by subject and tries to provide a complete 
+set of functions for astronomical use.
+
+-----
+
 Strong Lensing Tools
 
 SLtools is developed with the main goal of supporting astronomical daily-common 

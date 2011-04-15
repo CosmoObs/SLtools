@@ -78,7 +78,7 @@ def dict_to_csv(dictionary, fieldnames=[], filename='cat.csv', mode='w', delimit
     
 # ---
 
-def dict_from_csv(filename, fieldnames, header_lines=1, delimiter=','):
+def dict_from_csv(filename, fieldnames, header_lines=1, delimiter=',',dialect='excel'):
     """ Read CSV catalog and return a dictionary with the contents
     
     It is assumed that the first line to be read is the catalog header,
@@ -127,7 +127,7 @@ def dict_from_csv(filename, fieldnames, header_lines=1, delimiter=','):
 
     lixo_head = [ catFile.next() for i in range(header_lines) ];
 
-    catObj = csv.DictReader(catFile,fieldnames,delimiter=delimiter);
+    catObj = csv.DictReader(catFile,fieldnames,delimiter=delimiter,dialect=dialect);
     for row in catObj:
         for k in fieldnames:
             Dout[k].append(row[k]);

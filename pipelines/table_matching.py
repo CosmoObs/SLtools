@@ -225,7 +225,7 @@ if __name__ == '__main__' :
 
     if len(args) < 2 :
         parser.print_help();
-        sys.exit(1);
+        sys.exit(2);
 
 
     # Logging handler:
