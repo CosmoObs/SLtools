@@ -51,7 +51,7 @@ GenDoxygenDoc()
 
 	# work around for bug #600 [AddArcs] Fix doxygen documentation issue
 
-	for file in $(find . -name "__init__.py")
+	for file in $(find [a-zA-Z]* -name "__init__.py")
 	do
 		mv $file $(dirname $file)/__init__
 	done
