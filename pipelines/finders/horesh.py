@@ -100,17 +100,8 @@ def init(imagefile):
     return inputfile;
     
 # --
-def run(imgfile='img.fits', inputfile=None, clean=False):
+def process_output(rootname,clean=False):
 
-    # Initialize Horesh: read out necessary values from header
-    # and write it down to the input file.
-    if not inputfile:
-        inputfile = init(imgfile);
-
-    os.system('horesh < %s' % (inputfile));
-
-    # Process outputs
-    rootname = re.sub(".fits","",imgfile);
     # Clean final but unwanted files:
     os.system('rm -f %s %s' % (rootname+'.cat_old',rootname+'new.cat'));
     os.system('rm -f %s %s' % (rootname+'new_final2.fits',rootname+'.cat'));
@@ -121,6 +112,22 @@ def run(imgfile='img.fits', inputfile=None, clean=False):
     os.system('mv %s %s' % (rootname+'new_final.fits',rootname+'.final.fits'));    
     finalimg = rootname+'.final.fits';
     finalcat = rootname+'.final.cat';
+    
+    return finalcat;
+
+# --
+def run(imgfile='img.fits', inputfile=None, clean=False):
+
+    # Initialize Horesh: read out necessary values from header
+    # and write it down to the input file.
+    if not inputfile:
+        inputfile = init(imgfile);
+
+    os.system('horesh < %s' % (inputfile));
+
+    # Process outputs
+    rootname = imgfile[:-5];
+    finalcat = process_output(rootname,clean);
     
     return finalcat;
     
@@ -148,16 +155,17 @@ if __name__ == '__main__':
     # Run Horesh's arcfinder
     finalcat = run(imgfile,inputfile)
 
-    FITSout = False;
+    FITSout = True;
     
     # To finish the process, convert the ASCII table into FITS if asked for.
     if FITSout:
-        finalfit = finalcat[:-4]+".fit";
+#        finalfit = finalcat[:-4]+".fit";
+        finalfit = 'Catalog_arcs_horesh.out.fit';
         cat = numpy.loadtxt(finalcat).T;
         if cat.ndim == 1:
             cat.shape = (len(cat),1);
         dcat = {'ID':cat[0], 'X':cat[1], 'Y':cat[2], 'STmag':cat[3], 'Length':cat[4], 'Width':cat[5], 'L/W':cat[6], 'Area':cat[7]};
-        tbhdu = fits_data.dict_to_tbHDU(dcat,tbname="Horesh_out");
+        tbhdu = fits_data.dict_to_tbHDU(dcat,tbname="Horesh_arcsfound");
         tbhdu.writeto(finalfit,clobber=True);
 #        os.system('rm -f %s' % (finalcat));
 
