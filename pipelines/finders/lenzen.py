@@ -81,14 +81,19 @@ def process_output(imgfile,catfile,clean=False):
     # ----------
     # Catalog
     os.system("sed -e 's/^[ ]*//' %s | tr -s ' ' > %s" % ('data/'+catfile,catfile[:-4]+'.txt'));
-
-    columns = ['X','Y','ecc','lambda1','lambda2','A','B','theta','size'];
-    Catin = fits_data.dict_to_tbHDU(ascii_data.dict_from_csv(catfile[:-4]+'.txt',columns,header_lines=10,delimiter=' '));
     
+    columns = ['X','Y','ecc','lambda1','lambda2','A','B','theta','size'];
+    Dcatin = ascii_data.dict_from_csv(catfile[:-4]+'.txt',columns,header_lines=10,delimiter=' ');
+
     # Lenzen outputs the 'Y' positions inverted. Lets fix that:
     y_size = pyfits.getheader('data/'+imgfile)['naxis1'];
-    
-#    Catin.data.field('Y') = y_size - Catin.data.field('Y');
+    Y_inv = Dcatin['Y'];
+
+    Dcatin['Y'] = [ str(y_size-int(i)) for i in Y_inv ];
+    Catin = fits_data.dict_to_tbHDU(Dcatin);
+    print Dcatin.keys();
+    print Catin.data
+    # Select entries to output arc data
     Catout = fits_data.sample_entries(Catin,ecc=0.7);
     Catout.name = "Lenzen_arcsfound";
     finalcat = 'Catalog_arcs_lenzen.out.fit';
@@ -101,7 +106,7 @@ def process_output(imgfile,catfile,clean=False):
     comb = np.maximum(img[...,0],img[...,1]);
     diff = img[...,2] - comb;
     finalimg = 'Image_arcs_lenzen.out.fits';
-    pyfits.writeto(finalimg,diff,clobber=True)
+    pyfits.writeto(finalimg,diff[::-1],clobber=True)
     # ----------
     
     if clean:
