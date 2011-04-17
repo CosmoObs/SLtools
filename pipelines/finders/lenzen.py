@@ -1,8 +1,10 @@
+#!/usr/bin/env python
 import sys;
 import os;
 
 """Python interface fo Lenzen's arc-finder"""
 
+import pyfits;
 from sltools.catalog import ascii_data;
 from sltools.catalog import fits_data;
 
@@ -59,6 +61,7 @@ def init(imagefile,eccentricity=0.7,outputimage='lenzen_out.fits',outputcat='len
     """
     
     os.system('mkdir temp data DATA');
+    os.system('ln -s ../%s data/.' % (imagefile));
     param_file = 'input.par';
     ecc = eccentricity;
     outimg = outputimage;
@@ -77,27 +80,28 @@ def process_output(imgfile,catfile,clean=False):
     
     # ----------
     # Catalog
-    os.system("sed -e 's/^[ ]*//' %s | tr -s ' ' > %s" % ('DATA/'+catfile,catfile[:-4]+'.txt'));
+    os.system("sed -e 's/^[ ]*//' %s | tr -s ' ' > %s" % ('data/'+catfile,catfile[:-4]+'.txt'));
 
     columns = ['X','Y','ecc','lambda1','lambda2','A','B','theta','size'];
     Catin = fits_data.dict_to_tbHDU(ascii_data.dict_from_csv(catfile[:-4]+'.txt',columns,header_lines=10,delimiter=' '));
     
     # Lenzen outputs the 'Y' positions inverted. Lets fix that:
-    y_size = pyfits.getheader(imgfile)['naxis1'];
-    Catin.data.field('Y') = y_size - Catin.data.field('Y');
+    y_size = pyfits.getheader('data/'+imgfile)['naxis1'];
+    
+#    Catin.data.field('Y') = y_size - Catin.data.field('Y');
     Catout = fits_data.sample_entries(Catin,ecc=0.7);
     Catout.name = "Lenzen_arcsfound";
     finalcat = 'Catalog_arcs_lenzen.out.fit';
-    Catout.writeto(finalcat);
+    Catout.writeto(finalcat,clobber=True);
     # ----------
     
     # ----------
     # Image
-    img = ndimage.imread('DATA/result.ppm');
+    img = ndimage.imread('data/result.ppm');
     comb = np.maximum(img[...,0],img[...,1]);
     diff = img[...,2] - comb;
     finalimg = 'Image_arcs_lenzen.out.fits';
-    pyfits.writeto(finalimg,diff)
+    pyfits.writeto(finalimg,diff,clobber=True)
     # ----------
     
     if clean:
