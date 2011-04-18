@@ -22,6 +22,7 @@ import os
 import logging
 import numpy as np
 import matplotlib.pyplot as pyplot
+import string
 
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 from sltools.geometry.separate_curves import separate_curves_a
@@ -108,6 +109,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	#--------------------------------------
 
 	#-----------------------------
+	os.system('rm -f %s' % caustic_CC_file) # if the file previously exists, delete it
 	_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 	logging.debug('Got the critical curves (%s file) with function \"critcurves\"' % caustic_CC_file)
 	#-----------------------------
@@ -223,10 +225,12 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 
 	return True
 
+
+
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
 #
-def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0):
+def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1):
 	""" 
 	This is a pipeline that runs 'find_CC_new', 'separate_CC' and
 	'plot_CC'. For details of these functions, see their documentation.
@@ -300,6 +304,8 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	if len(CC_curves) != 2:
 		logging.warning('Function separate_curves found %d critical curve(s) (expected 2). It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).' % len(CC_curves) )
 
+
+
 	if len(CC_curves) == 1 and theta_L != 0:
 		logging.debug('Since only one CC was found, I will try to check if setting the lens angle to 0 solves the separation problem.')
 		# try to get the CC with theta_L=0 and rotate back to theta_L
@@ -324,13 +330,33 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 			u1, v1, u2, v2 = rot_caustic1[0], rot_caustic1[1], rot_caustic2[0], rot_caustic2[1]
 
 		# 6- if, again, we haven't the 2 curves, go to 'else'
-		else:
+		if len(CC_curves) < 2:
 			radial_curve = [[],[],[],[]]
 			tang_curve = CC_curves[0]
 
-	else:
+		if len(CC_curves) > 2: # in NFW example of kappas = 0.4, rs = 74. , eL=0.5 and theta_L=90 this 'if' is needed (to get the x1,y1, etc positions of the curves)
+			back_rotation_x1, back_rotation_u1, back_rotation_x2, back_rotation_u2 = translation_and_rotation( x1, y1, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation( u1, v1, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation( x2, y2, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation( u2, v2, galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
+			x1, y1, u1, v1, x2, y2, u2, v2 = back_rotation_x1[0], back_rotation_x1[1], back_rotation_u1[0], back_rotation_u1[1], back_rotation_x2[0], back_rotation_x2[1], back_rotation_u2[0], back_rotation_u2[1]
+
+
+	# attempt to get the correct number of CC (iteration over the 'delta' parameter in separate_curves)
+	delta = 0.1*np.sqrt( ((max(x1)-min(x1))**2) + ((max(y1)-min(y1))**2)) # the default from separate_curves
+	delta_count = 0
+	if len(CC_curves) > 2:
+		logging.debug("Try to separate the curves correctly by iterating over 'delta'. Current value "
+				 "of delta is %s and we found %s curves" % (delta, len(CC_curves)) )
+
+		while len(CC_curves) > 2 and delta_count < max_delta_count:
+			delta = delta*delta_increment
+			CC_curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2, delta=delta)
+			delta_count += 1
+
+		logging.debug("Ended loop to separate the curves iterating over 'delta'. Last value "
+				 "of delta is %s (after %s iterations) and we found %s curves." % (delta, delta_count, len(CC_curves)) )
 		radial_curve = CC_curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 		tang_curve = CC_curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+
+
 
 	rad_CC_x,rad_CC_y, tan_CC_x, tan_CC_y = radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1]
 
@@ -385,8 +411,8 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	logging.debug('Finished separation of the curves.')
 
-	logging.debug('Making the plots... \n')
 	# plot
+	logging.debug('Making the plots... \n')
 	if curves_plot != 0: # curves_plot = 0 means you don't want any plots.
 		plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot)
 
