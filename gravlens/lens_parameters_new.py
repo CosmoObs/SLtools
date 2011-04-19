@@ -36,14 +36,14 @@ def set_gravlens_default():
 	maxlev   : 4 # Deepest level of subgrid near critical curves
 	gallev   : 3 # Deepest level of subgrid near galaxies (other than the primary)
 	imglev   : 3 # Deepest level of subgrid near images
-	ngrid1   : 30 # dimension of top grid (in radius)
-	ngrid2   : 30 # dimension of top grid (in angle)
+	ngrid1   : 32 # dimension of top grid (in radius)
+	ngrid2   : 32 # dimension of top grid (in angle)
 
 	Output:
 	- gravlens_params_default <dict> : contains the updated keys for gravlens configuration
 
 	"""
-	gravlens_params_default = {'gridmode': 1, 'gridhi1' : 150, 'xtol' : 1e-10, 'crittol' : 1e-7, 'inttol' : 1e-8, 'maxlev' : 4, 'gallev' : 3, 'imglev' : 3, 'ngrid1' : 30, 'ngrid2' : 30 }
+	gravlens_params_default = {'gridmode': 1, 'gridhi1' : 150, 'xtol' : 1e-10, 'crittol' : 1e-7, 'inttol' : 1e-8, 'maxlev' : 4, 'gallev' : 3, 'imglev' : 3, 'ngrid1' : 32, 'ngrid2' : 32 }
 
 
 	return gravlens_params_default

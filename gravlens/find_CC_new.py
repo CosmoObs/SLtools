@@ -46,7 +46,10 @@ def _critcurves_new(gravinput, caustic_CC_file, gravlens_input_file='gravlens_CC
 
 
 #=======================================================================================================
-def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt'):
+def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], 
+		e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', 
+		gravlens_input_file='gravlens_CC_input.txt', grid_factor=5., grid_factor2=3., max_iter_number=20,
+		min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4):
 	""" 
 	Determines the caustics and critical curves (CC) for a single component lens model. Uses an iterative
 	procedure to determine the grid size and the minimum number of points on the curves.
@@ -56,13 +59,13 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	gravlens (gridhi1). The initial value of gridhi1 must be an upper limit for the size of the CC, 
 	and find_CC_new will try to find the CC. Each time gravlens can't find the CC, we lower	gridhi1 
 	by a factor of grid_factor (=5), in order to increase precision. This continues on until 
-	gravlens finds the CC or the number of iterations, max_iterations_number (=20), is reached. After 
+	gravlens finds the CC or the number of iterations, max_iter_number (=20), is reached. After 
 	finding the CC, if it is composed of less than min_n_lines (=200) points, the code redefines 
 	gridhi1 to a third of it (grid_factor2=3), usually increasing the number of points. With this 
 	first determination of the CC, the code uses its scale (gridhi1_CC_factor(=2) times the distance
 	of the furthest CC point to the origin) to reobtain the CC with the apropriate value for the 
 	grid. If the CC were not found after all these attempts, this function returns "False" and an 
-	error message. If all caustic points have coordinates < acceptable_res_limit (=2E-4), a warning 
+	error message. If all caustic points have coordinates < accept_res_limit (=2E-4), a warning 
 	message will be generated, meaning that the precision of gravlens (limited by the number of 
 	digits in the output file) is being reached. 
  
@@ -78,13 +81,22 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	 - galaxy_position    <list> : [x,y] position of the lens
 	 - e_L               <float> : lens ellipticity (default=0)
 	 - theta_L           <float> : lens position angle (in degrees) with respect to the vertical 
-					  (counterclockwise)
+				       (counterclockwise)
 	 - shear             <float> : external shear amplitude
 	 - theta_shear       <float> : external shear direction (in degrees)
-	 - gravlens_params     <dic> : contains the keys and values of the gravlens configuration 
-					  (see default parameters at function set_gravlens_default,inside lens_parameters_new)
+	 - gravlens_params     <dic> : contains the keys and values of the gravlens configuration (see 
+				       default parameters at function set_gravlens_default,inside lens_parameters_new)
 	 - caustic_CC_file     <str> : name of the output file with the caustic and CC positions
 	 - gravlens_input_file <str> : name of the input file used to run gravlens
+	 - grid_factor       <float> : used in the iteration to find the critical curves. Each time no 
+				       curves were found, the grid size is divided by grid_factor
+	 - min_n_lines         <int> : minimum number of lines demanded in the CC file to decrease the grid by grid_factor_2 
+	 - grid_factor2      <float> : if the CC file is composed of less than min_n_lines, the code divides
+				       the grid size by grid_factor2 
+	 - max_iter_number     <int> : maximum number of time the grid size will be divided by grid_factor
+	 - gridhi1_CC_factor <float> : the final size of the grid will be gridhi1_CC_factor * (the furthest CC point)
+	 - accept_res_limit  <float> : if the furthest CC point is closer than accept_res_limit from the lens 
+				       center, display a warning about lack of precision in determining the curves
 
 	Output:
 	 - <list>     : [x_caustic, ycaustic], with x_caustic and ycaustic being the lists with the 
@@ -95,14 +107,6 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	"""
 
-	# definitions of some control params
-	grid_factor = 5.
-	max_iterations_number = 20
-	grid_factor2 = 3.
-	min_n_lines = 200
-	gridhi1_CC_factor = 2.
-	acceptable_res_limit = 2E-4
-	# ==================================
 
 	inputlens, setlens, gravlens_params_updated = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params) # inputlens is the gravlens input (sets general parameters and the lens parameters)	# setlens is the gravlens input line that concerns the lens (ex: nfw 1 0 ...)
 	logging.debug('Determined the strings that defines the mass model in gravlens through the \'lens_parameters\' function')
@@ -116,7 +120,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	# ITERATION ON gridhi1 (TO GET BETTER RESOLUTION ON CC)
 	counter = 0
-	while os.path.isfile('./' + caustic_CC_file) == False and counter < max_iterations_number: # looks for the C.C. file (crit.txt) - if this file does not exist, add a note to arccatalog and quit
+	while os.path.isfile('./' + caustic_CC_file) == False and counter < max_iter_number: # looks for the C.C. file (crit.txt) - if this file does not exist, add a note to arccatalog and quit
 		gravlens_params_updated['gridhi1'] = float( gravlens_params_updated['gridhi1'] ) / grid_factor; # gridhi1 /= 5. 
 
 		lens_par_out = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
@@ -144,7 +148,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	#-----------------------------------------------------------------------------------------------------------
 	# redefine gridhi1 according to the CC size
 
-	index_CC = np.argmax(x1**2 + y1**2)
+	index_CC = np.argmax(x1**2 + y1**2) # it is not necessary to use the lens center since we want the furthest point anyway
 	logging.debug( 'The CC furthest point is at (%s, %s), a distance %s of the origin .' % (x1[index_CC], y1[index_CC], (x1[index_CC]**2 + y1[index_CC]**2)**0.5 ) )
 
 	gravlens_params_updated['gridhi1'] =  gridhi1_CC_factor * ( (x1[index_CC]**2 + y1[index_CC]**2)**0.5 )
@@ -164,7 +168,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 #	logging.debug( 'The CC furthest point is at (%s, %s), a distance %s of the origin .' % (x1[index_CC], y1[index_CC], (x1[index_CC]**2 + y1[index_CC]**2)**0.5 ) )
 
 	# check if the precision is ok (gravlens outputs coordinates with only 6 decimal places)
-	if max( max(np.abs(u1)), max(np.abs(v1)) ) < acceptable_res_limit:
+	if max( max(np.abs(u1)), max(np.abs(v1)) ) < accept_res_limit:
 		logging.warning('The caustics seem to be determined with low resolution')
 
 	return x1, y1, u1, v1, gravlens_params_updated
@@ -230,7 +234,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 ## run_find_CC_new
 # Finds the caustics and CC for a given lens model, separates the radial from the tangential and plots the curves
 #
-def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1):
+def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4):
 	""" 
 	This is a pipeline that runs 'find_CC_new', 'separate_CC' and
 	'plot_CC'. For details of these functions, see their documentation.
@@ -263,7 +267,15 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 					  the screen.
 	 - write_to_file          <int> : Option to write the curves to a file (see rad_curves_file and 
 					  tan_curves_file ). The default is 0, meaning not to write to a file.
-
+	 - grid_factor       <float> : used in the iteration to find the critical curves. Each time no 
+				       curves were found, the grid size is divided by grid_factor
+	 - min_n_lines         <int> : minimum number of lines demanded in the CC file to decrease the grid by grid_factor_2 
+	 - grid_factor2      <float> : if the CC file is composed of less than min_n_lines, the code divides
+				       the grid size by grid_factor2 
+	 - max_iter_number     <int> : maximum number of time the grid size will be divided by grid_factor
+	 - gridhi1_CC_factor <float> : the final size of the grid will be gridhi1_CC_factor * (the furthest CC point)
+	 - accept_res_limit  <float> : if the furthest CC point is closer than accept_res_limit from the lens 
+				       center, display a warning about lack of precision in determining the curves
 	Output:
 	 - rad_CC_x       <list> : x coordinates of points from the radial CC
 	 - rad_CC_y       <list> : y coordinates of points from the radial CC
@@ -302,8 +314,10 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 
 	if len(CC_curves) != 2:
-		logging.warning('Function separate_curves found %d critical curve(s) (expected 2). It is probable that the curves separation function (separate_curves) did not separated them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).' % len(CC_curves) )
-
+		logging.warning('Function separate_curves found %d critical curve(s) (expected 2). It is probable that the curves separation function (separate_curves) did not separat them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).' % len(CC_curves) )
+	else:
+		radial_curve = CC_curves[0]
+		tang_curve = CC_curves[1]
 
 
 	if len(CC_curves) == 1 and theta_L != 0:
@@ -339,6 +353,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 			x1, y1, u1, v1, x2, y2, u2, v2 = back_rotation_x1[0], back_rotation_x1[1], back_rotation_u1[0], back_rotation_u1[1], back_rotation_x2[0], back_rotation_x2[1], back_rotation_u2[0], back_rotation_u2[1]
 
 
+
 	# attempt to get the correct number of CC (iteration over the 'delta' parameter in separate_curves)
 	delta = 0.1*np.sqrt( ((max(x1)-min(x1))**2) + ((max(y1)-min(y1))**2)) # the default from separate_curves
 	delta_count = 0
@@ -353,8 +368,14 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 		logging.debug("Ended loop to separate the curves iterating over 'delta'. Last value "
 				 "of delta is %s (after %s iterations) and we found %s curves." % (delta, delta_count, len(CC_curves)) )
-		radial_curve = CC_curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
-		tang_curve = CC_curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+
+		if len(CC_curves) == 1:
+			logging.warning('The iteration over delta did not work: it now found only one CC. Maybe lowering delta_increment will work out.')
+			radial_curve = [[],[],[],[]]
+			tang_curve = CC_curves[0]
+		else:
+			radial_curve = CC_curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
+			tang_curve = CC_curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 
 
 
