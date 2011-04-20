@@ -75,9 +75,9 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	Input:
 	 - lens_model          <str> : lens name (see gravlens manual table 3.1)
 	 - mass_scale        <float> : mass scale of the lens - "parameter 1"
-	 - model_param_8     <float> : misc. lens parameter - often scale radio
-	 - model_param_9     <float> : misc. lens parameter - often scale radio
-	 - model_param_10    <float> : misc. lens parameter - often a power law index
+	 - model_param_8     <float> : misc. lens parameter - often scale radio (depends on the lens model)
+	 - model_param_9     <float> : misc. lens parameter - often scale radio (depends on the lens model)
+	 - model_param_10    <float> : misc. lens parameter - often a power law index  (depends on the lens model)
 	 - galaxy_position    <list> : [x,y] position of the lens
 	 - e_L               <float> : lens ellipticity (default=0)
 	 - theta_L           <float> : lens position angle (in degrees) with respect to the vertical 
@@ -103,7 +103,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 			caustic coordinates
 	 - <list>     : [x_CC, y_CC], with x_CC and y_CC being the lists with the CC coordinates
 	 - <dict>     : all configuration variables used for running gravlens (including gridhi1)
-	 - <file>     : file named 'caustic_CC_file' with the caustic and CC positions
+	 - <str>     : name of the file with the caustic and CC positions ('caustic_CC_file')
 
 	"""
 
@@ -199,7 +199,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 				   screen
 
 	Output:
-	 - <file> : the plot file named plot_filename will be generated only if show_plot=0
+	 - <str> : name of the plot file (plot_filename). It will be generated only if show_plot=0 (default)
 
 	"""
 
@@ -253,18 +253,18 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	rs = [34., 54., 74., 94.] and theta_L = [0, 45, 90, 135, 180]. 
 	For more details, see http://twiki.linea.gov.br/bin/view/StrongLensing/SLtoolsGravlens#Module_find_CC_new_py.
 
-
-	As there is a one-to-one relation between points in the source and image plane in the gravlens output, it is sufficient to separate the CC and the caustic curves are trivially separated.
-
 	We separate only the image plane curves (CC) and use the fact that the gravlens output has a 
 	one-to-one correspondence, allowing to separate the caustics at the same time.
+
+	Warning (known bug): 
+	 - show_plot=1 only shows only one plot in the screen
 
 	Input:
 	 - lens_model             <str> : Lens name (see gravlens manual table 3.1)
 	 - mass_scale           <float> : Mass scale of the lens - "parameter 1"
-	 - model_param_8        <float> : misc. lens parameter - often scale radio
-	 - model_param_9        <float> : misc. lens parameter - often scale radio
-	 - model_param_10       <float> : misc. lens parameter - often a power law index
+	 - model_param_8        <float> : misc. lens parameter - often scale radio (depends on the lens model)
+	 - model_param_9        <float> : misc. lens parameter - often scale radio (depends on the lens model)
+	 - model_param_10       <float> : misc. lens parameter - often a power law index (depends on the lens model)
 	 - galaxy_position <list float> : [x,y] position of the lens
 	 - e_L                  <float> : lens ellipticity (default=0)
 	 - theta_L              <float> : lens position angle (in degrees) with respect to the vertical 
@@ -275,8 +275,8 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 					  (see default parameters at function set_gravlens_default, inside lens_parameters_new)
 	 - caustic_CC_file        <str> : name of the output file with the caustic and CC positions
 	 - gravlens_input_file    <str> : name of the input file used to run gravlens
-	 - rad_curves_file        <str> : 
-	 - tan_curves_file        <str> :  (default='crit_tan.txt')
+	 - rad_curves_file        <str> : name of the file contaning the radial curves (optional - see write_to_file) 
+	 - tan_curves_file        <str> : name of the file contaning the radial curves (optional - see write_to_file) 
 	 - curves_plot            <str> : the name of the generated plot file (including the format, ex. 
 					'curves_plot.png'). To see the formats available see matplotlib.pyplot help 
 					(default='crit_curves.png'). If curves_plot=0 means no plots.
@@ -303,13 +303,11 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	 - tan_caustic_x  <list> : x coordinates of points from the tangential caustic
 	 - tan_caustic_y  <list> : y coordinates of points from the tangential caustic
 	 - <dict>                : all configuration variables used for running gravlens (including gridhi1)
-	 - <file>                : file named 'caustic_CC_file' with the caustic and CC positions
-	 - <file>                : separated radial curves (CC + caustics) - rad_curves_file
-	 - <file>                : separated tangential curves (CC + caustics) - tan_curves_file
-	 - <file>                : curves_plot
-
-	Warning: 
-			 show_plot=1 only shows one plot in the screen
+	 - <str>                : name of the file ('caustic_CC_file') with the caustic and CC positions 
+				  (its a gravlens output file)
+	 - <str>                : name of the file with separated radial curves (CC + caustics) - rad_curves_file
+	 - <str>                : name of the file with separated tangential curves (CC + caustics) - tan_curves_file
+	 - <str>                : name of the file with the plots (curves_plot)
 
 	"""
 

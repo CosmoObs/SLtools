@@ -11,7 +11,7 @@
 #
 # Deals with gravlens configuration. The function set_gravlens_default defines default values for 
 # gravlens configuration. Function lens_parameters_new generates the basis gravlens configuration
-# in order to the user start his calculations with gravlens. 
+# so the user can start his calculations with gravlens. 
 
 
 #=======================================================================================================
@@ -23,7 +23,8 @@ def set_gravlens_default():
 	accurate. For instance, separating the critical curves and caustics (see gravlens.find_CC_new 
 	and gravlens.run_find_CC) of some models demand crittol = 1e-7 and inttol = 1e-8 (see 
 	description below). The identified cases where this is needed are the NFW with the combination 
-	of parameters: kappas = [0.4], rs = [34., 54., 94.], theta = [0, 180] and e_L=0.5.
+	of parameters: kappas = [0.4], rs = [34., 54., 94.], theta = [0, 180] and e_L=0.5 (note that the 
+	problem for these values were not in gravlens itself, but in the separation of the curves).
 
 	The default configurations is:
 
@@ -51,7 +52,7 @@ def set_gravlens_default():
 
 def lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}):
 	"""
-	Determine the 'basis string' that defines the lens and gravlens properties.
+	Determine the 'base string' that defines the lens and gravlens properties.
 
 	The advantage of this function is that the user do not need to know the gravlens syntax (only 
 	the lenses available and its parameters).
@@ -71,9 +72,8 @@ def lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_pa
 
 	Output:
 	 - <str> : a string with all the lines gravlens needs to its configuration
-	 - <str> : a string line that only defines the lens used (in gravlens format) 
-	 - <dic> : all gravlens defaults (defined at 'set_gravlens_default') plus the
-		   ones used as input
+	 - <str> : a string (one line) that only defines the lens used (in gravlens format) 
+	 - <dic> : all gravlens defaults (defined at 'set_gravlens_default') plus the ones used as input
 
 	"""
 
