@@ -13,10 +13,13 @@
 ##@package find_CC_new
 # 
 #
-# This package has functions to i) get the caustic and the critical curves of a given model (see find_CC_new) and ii) 
-# plot the caustics and the critical curves (plot_CC).
+# This package has functions to i) get the caustic and the critical curves of a given model (see find_CC_new) and 
+# ii) plot the caustics and the critical curves (plot_CC).
 # The curves are determined using an iterating method that uses gravlens (see find_CC_new).
 # The curves are identifyed as radial and tangencial using the function sltools.geometry.separate_curves.
+# There is a 3rd function that concatenates find_CC_new, separate_curvs and plot_CC, optimizing the curves 
+# separation (see run_find_CC for details)
+# For high-level documentation, see http://twiki.linea.gov.br/bin/view/StrongLensing/SLtoolsGravlens#Module_find_CC_new_py
 
 import os
 import logging
