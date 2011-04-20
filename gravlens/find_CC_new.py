@@ -236,8 +236,25 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 #
 def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4):
 	""" 
-	This is a pipeline that runs 'find_CC_new', 'separate_CC' and
-	'plot_CC'. For details of these functions, see their documentation.
+	This is a pipeline that runs 'find_CC_new', 'separate_CC' and 'plot_CC'. For details of these 
+	functions, see their documentation.
+
+	As we expect 2 critical curves, if the function separate_curves finds a different number, we 
+	question it. If we find only one CC, then the separation code did not worked properly, and we 
+	noticed that for some values of theta_L this occurs quite often. So we find the CC again for
+	theta_L=0, separate them and rotate them back to its original angle, which proved to be a good
+	solution.
+	In the case that more than 2 CC are found, we try an iterating process with the control parameter
+	of separate_curves 'delta' (see separate_curves documentation). So we increase the value of delta 
+	until there are 2 CC.
+	The combination of these 2 implementations above with the default gravlens parameters used in 
+	'lens_parameters_new' allows for a 100% correct separation in a NFW profile with all possible 
+	combination of parameters kappas = [0.03, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.87], 
+	rs = [34., 54., 74., 94.] and theta_L = [0, 45, 90, 135, 180]. 
+	For more details, see http://twiki.linea.gov.br/bin/view/StrongLensing/SLtoolsGravlens#Module_find_CC_new_py.
+
+
+	As there is a one-to-one relation between points in the source and image plane in the gravlens output, it is sufficient to separate the CC and the caustic curves are trivially separated.
 
 	We separate only the image plane curves (CC) and use the fact that the gravlens output has a 
 	one-to-one correspondence, allowing to separate the caustics at the same time.
