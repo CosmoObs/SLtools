@@ -5,7 +5,7 @@ Set of functions used in Mediatrix Decomposition.
 
 
 
-##@package mediatrix_decomposition 
+##@package pyexample 
 #
 # This module includes all functions developed to perform mediatrix decomposition method.
 #
@@ -89,7 +89,7 @@ def mediatrix_decomposition(image_name,image_dir='', method="medium",alpha=1,nea
 
     Input:
      - image_name   <str> : the image file name.
-     - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
+     - image_dir   <str> : the image directory. If it is on the same directory directory=''.
      - method   <string> : possible values are 'medium'  or 'brightest'.
      - alpha      <float> : the factor alpha=l_i/w to stop the bisection.
      - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
@@ -148,7 +148,7 @@ def find_mediatrix_vectors(points):
     From a given set of points, this function returns the mediatrix decomposition vector between those points.
   
     Input:
-     - points      <list> : list  of p_i points where p_i=(x_i,y_i).
+     - points      <list> : list  of p_i points where p_i(x_i,y_i).
      
     Output:
      - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus.  
@@ -201,7 +201,7 @@ def print_mediatrix_Object_graph(mediatrix_data,image_dir='', keydots=False, col
 
     Input:
     - mediatrix_data <list> : the output from mediatrix_decomposition.
-    - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
+    - image_dir   <str> : the image directory. If it is on the same directory directory=''.
     - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
     - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
     Output:
@@ -334,7 +334,7 @@ def get_length(points):
     Function to calculate the length in a path determined by several points.
 
     Input:
-     - points      <list> : list  of p_i points where p_i=(x_i,y_i).
+     - points      <list> : list  of p_i points where p_i(x_i,y_i).
      
      
     Output: 
@@ -361,4 +361,5 @@ def get_length(points):
 def width_ellipse(L,Area):
 	W=Area/(atan(1)*L)
 	return W
+
 
