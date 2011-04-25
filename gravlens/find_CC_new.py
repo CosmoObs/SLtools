@@ -106,7 +106,8 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 			caustic coordinates
 	 - <list>     : [x_CC, y_CC], with x_CC and y_CC being the lists with the CC coordinates
 	 - <dict>     : all configuration variables used for running gravlens (including gridhi1)
-	 - <str>     : name of the file with the caustic and CC positions ('caustic_CC_file')
+	 - <str>      : name of the file with the caustic and CC positions ('caustic_CC_file')
+	 - <str>      : name of the input file used to run gravlens (gravlens_input_file)
 
 	"""
 
@@ -239,7 +240,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 #
 def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4):
 	""" 
-	This is a pipeline that runs 'find_CC_new', 'separate_CC' and 'plot_CC'. For details of these 
+	This is a pipeline that runs 'find_CC_new', 'separate_curves' and 'plot_CC'. For details of these 
 	functions, see their documentation.
 
 	As we expect 2 critical curves, if the function separate_curves finds a different number, we 

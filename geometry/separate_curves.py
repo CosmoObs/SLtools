@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # =================================================
 # Authors:
-# Angelo Fausti Neto, Pedro Ferreira,Carlos Brandt
+# Angelo Fausti Neto, Pedro Ferreira, Carlos Brandt
 # =================================================
   
 """Module to separate curves defined by connected line segments"""
