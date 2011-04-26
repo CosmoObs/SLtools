@@ -496,8 +496,8 @@ def run_detec_test(filename, params=[], args={}, preset='', temp_dir='', quiet=F
     f_out.close()       
            
             
- #           'PIXEL_SCALE': '0.187',
- #           'MAG_ZEROPOINT' : MAG_ZEROPOINT)}
+#           'PIXEL_SCALE': '0.187',
+#           'MAG_ZEROPOINT' : MAG_ZEROPOINT)}
 #'THRESH_TYPE' : 'RELATIVE',
 #'FILTER' : 'N',
     return 0
