@@ -41,31 +41,36 @@ def calc_magzpt(hdr):
     return magzpt;
     
     
-def init(imagefile = 'img.fits'):
+def init(imagefile):
 
-    ##################
-    # Image file list
+    # ------------------------------
+    # List of images for processing
+    # ------------------------------
     hdr = pyfits.getheader(imagefile);
     y_size = hdr['naxis1'];
     x_size = hdr['naxis2'];
-    exptime = hdr.get('exptime',0);
+    exptime = hdr.get('texptime',hdr.get('exptime',0));
     if not exptime:
         logging.error("Exposure time was not found on given image header.");
         return False;
-    imagelistfile = 'images.lst';
 
+    imagelistfile = 'images.lst';
     fp = open(imagelistfile,'w')
     fp.write("%s %d %d %d\n" % (imagefile,x_size,y_size,exptime))
     fp.close()
-    ##################
+    # ------------------------------
 
+
+    # ----------------------
+    # Input parameters file
+    # ----------------------
     inputfile = 'input.in';
     fp = open(inputfile,'w');
 
-    # List of images filenames
+    # List-of-images filename
     fp.write(str(imagelistfile)+"\n");
     
-    # Output file with the number of detected files
+    # Output filename, with the number of detected files
     fp.write("nArcs.out\n");
 
     # Pixel Scale
@@ -77,7 +82,9 @@ def init(imagefile = 'img.fits'):
     fp.write(str(LW)+"\n");
 
     # Magnitude Zeropoint
-    magzpt = calc_magzpt(hdr);
+    magzpt = hdr.get('MAGZP',default=None)
+    if not magzpt:
+        magzpt = calc_magzpt(hdr);
     fp.write(str(magzpt)+"\n");
 
     # Phot flam param (HST)
@@ -92,30 +99,39 @@ def init(imagefile = 'img.fits'):
     
     return inputfile;
     
+# --
+def process_output(rootname,clean=False):
 
-def run(imgfile='img.fits', inputfile='', clean=True):
-
-    os.system('horesh < %s' % (inputfile));
-
-    rootname = re.sub(".fits","",imgfile);
-    
     # Clean final but unwanted files:
     os.system('rm -f %s %s' % (rootname+'.cat_old',rootname+'new.cat'));
     os.system('rm -f %s %s' % (rootname+'new_final2.fits',rootname+'.cat'));
-
-    # Rename final image:
-    os.system('mv %s %s' % (rootname+'new_final.fits',rootname+'.final.fits'));
-
     # Clean tmp files:
     if clean:
         os.system('rm -rf images.lst input.in horesh_sex_files');
-    
+    # Rename final image:
+    os.system('mv %s %s' % (rootname+'new_final.fits',rootname+'.final.fits'));    
     finalimg = rootname+'.final.fits';
     finalcat = rootname+'.final.cat';
     
     return finalcat;
-    
 
+# --
+def run(imgfile='img.fits', inputfile=None, clean=False):
+
+    # Initialize Horesh: read out necessary values from header
+    # and write it down to the input file.
+    if not inputfile:
+        inputfile = init(imgfile);
+
+    os.system('horesh < %s' % (inputfile));
+
+    # Process outputs
+    rootname = imgfile[:-5];
+    finalcat = process_output(rootname,clean);
+    
+    return finalcat;
+    
+# ---
 if __name__ == '__main__':
 
     import optparse;
@@ -134,21 +150,23 @@ if __name__ == '__main__':
 
     inputfile = opts.input;
 
-    imgfile = sys.argv[1];
+    imgfile = args[0];
     
-    # Initialize Horesh: read out necessary values from header
-    # and write it down to the input file.
-    if not inputfile:
-        inputfile = init(imgfile);
-
     # Run Horesh's arcfinder
     finalcat = run(imgfile,inputfile)
 
-    # To finish the process, convert the ASCII table into a FITS one
-    finalfit = finalcat[:-4]+".fit";
-    cat = numpy.loadtxt(finalcat).T;
-    dcat = {'ID':cat[0], 'X':cat[1], 'Y':cat[2], 'STmag':cat[3], 'Length':cat[4], 'Width':cat[5], 'L/W':cat[6], 'Area':cat[7]};
-    tbhdu = fits_data.dict_to_tbHDU(dcat,tbname="Horesh_out");
-    tbhdu.writeto(finalfit,clobber=True);
-    os.system('rm -f %s' % (finalcat));
+    FITSout = True;
+    
+    # To finish the process, convert the ASCII table into FITS if asked for.
+    if FITSout:
+#        finalfit = finalcat[:-4]+".fit";
+        finalfit = 'Catalog_arcs_horesh.out.fit';
+        cat = numpy.loadtxt(finalcat).T;
+        if cat.ndim == 1:
+            cat.shape = (len(cat),1);
+        dcat = {'ID':cat[0], 'X':cat[1], 'Y':cat[2], 'STmag':cat[3], 'Length':cat[4], 'Width':cat[5], 'L/W':cat[6], 'Area':cat[7]};
+        tbhdu = fits_data.dict_to_tbHDU(dcat,tbname="Horesh_arcsfound");
+        tbhdu.writeto(finalfit,clobber=True);
+#        os.system('rm -f %s' % (finalcat));
 
+    sys.exit(0);

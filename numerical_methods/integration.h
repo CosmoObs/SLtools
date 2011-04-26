@@ -9,8 +9,8 @@
 *
 */
 
-#ifndef QUADRATURE_INTEGRATION_H
-#define QUADRATURE_INTEGRATION_H
+#ifndef GENERAL_METHODS_H
+#define GENERAL_METHODS_H
 
 #include <cmath> 
 #define PI 3.1415926535897931159979634685441851615905761718750
@@ -27,7 +27,7 @@
 *  \param EPS relative precision for the abscissas and wheights
 *  \return nothing
 */
-void gauleg_func(double x1, double x2, double x[], double w[], int n, double EPS=1.0e-15)
+void gauleg(double x1, double x2, double x[], double w[], int n, double EPS=1.0e-15)
 {
   //const DP EPS=1.0e-14;
   int m,j,i;
@@ -61,15 +61,15 @@ void gauleg_func(double x1, double x2, double x[], double w[], int n, double EPS
 
 /**  Useful substitution for change the integration limits x_lower--x_upper to 0--1.
 *
-* Doing the folow substitution in a integral: a=x*(x_upper-x_lower)+x_lower, it takes the form: \f$\int_{x_{lower}}^{x_{upper}} f(x)dx  = (x_{upper}-x_{lower})\int_{0}^{1} f(a)da\f$
+* Doing the folow substitution in a integral: a=x*(x_upper-x_lower)+x_init, it takes the form: \f$\int_{x_{lower}}^{x_{upper}} f(x)dx  = (x_{upper}-x_{lower})\int_{0}^{1} f(a)da\f$
 *
 *  \param x original function argument
 *  \param x_lower lower integration limit
 *  \param x_upper upper integration limit
-*  \return the variable transformation: \f$ a=x(x_{upper}-x_{lower}) + x_{lower} \f$
+*  \return the variable transformation: \f$ a=x(x_{upper}-x_{lower}) + x_{init} \f$
 */
 inline double argument_substitution_for_integration(double x, double x_lower, double x_upper){
-  return x*(x_upper-x_lower) + x_lower;
+  return x*(x_upper-x_lower) + x_init;
 }
 
 
@@ -85,6 +85,8 @@ inline double argument_substitution_for_integration(double x, double x_lower, do
 */
 void gauleg_fill_vector_zero_to_one(double x[], double w[], int n = 50, double EPS=1.0e-15)
 {
+  double x[n],w[n];
+
   if(n == 50){
     x[0]=5.667977899644904837828107702080E-04;  w[0]=1.454311276577351531164028486387E-03;
     x[1]=2.984015283954644104369435808621E-03;  w[1]=3.379899597872739608339642813917E-03;
@@ -249,7 +251,7 @@ void gauleg_fill_vector_zero_to_one(double x[], double w[], int n = 50, double E
     x[98]=9.992459753197979743788437190233E-01;  w[98]=8.546963267590209408636203747278E-04;
     x[99]=9.998568633867206401077964983415E-01;  w[99]=3.673172452527929889194713286571E-04;
   }else{
-    gauleg_func(0.0,1.0, x, w, n, EPS);
+    gauleg(0.0,1.0, x, w, n, EPS);
   }
 }
 
