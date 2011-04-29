@@ -334,7 +334,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 
 	if len(CC_curves) != 2:
-		logging.warning('Function separate_curves found %d critical curve(s) (expected 2). It is probable that the curves separation function (separate_curves) did not separat them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).' % len(CC_curves) )
+		logging.warning('Function separate_curves found %d critical curve(s) (expected 2). It is probable that the curves separation function (separate_curves) did not separate them properly. Maybe you are approaching gravlens precision. Try changing units (ex., from arcsec to miliarcsec). Note also that some angles are not very well dealt by separate_curves (ex. 90 degrees).' % len(CC_curves) )
 	else:
 		radial_curve = CC_curves[0]
 		tang_curve = CC_curves[1]
