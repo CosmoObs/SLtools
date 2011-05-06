@@ -191,13 +191,13 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 
 	Input:
 	 - tan_caustic_x  <list> : list of x coordinates of points from the tangencial caustic
-     - tan_caustic_y  <list> : list of y coordinates of points from the tangencial caustic
-     - rad_caustic_x  <list> : list of x coordinates of points from the radial caustic
-     - rad_caustic_y  <list> : list of y coordinates of points from the radial caustic
-     - tan_CC_x       <list> : list of x coordinates of points from the tangencial CC
-     - tan_CC_y       <list> : list of y coordinates of points from the tangencial CC
-     - rad_CC_x       <list> : list of x coordinates of points from the radial CC
-     - rad_CC_y       <list> : list of y coordinates of points from the radial CC
+         - tan_caustic_y  <list> : list of y coordinates of points from the tangencial caustic
+         - rad_caustic_x  <list> : list of x coordinates of points from the radial caustic
+         - rad_caustic_y  <list> : list of y coordinates of points from the radial caustic
+         - tan_CC_x       <list> : list of x coordinates of points from the tangencial CC
+         - tan_CC_y       <list> : list of y coordinates of points from the tangencial CC
+         - rad_CC_x       <list> : list of x coordinates of points from the radial CC
+         - rad_CC_y       <list> : list of y coordinates of points from the radial CC
 	 - plot_filename   <str> : the name of the generated plot file (including the format, ex. 
 			           'curves_plot.png'). To see the formats available see matplotlib.pyplot help
 	 - show_plot       <int> : use 0 for 'no screen display' (default) and 1 for diaplay on the 
