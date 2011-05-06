@@ -26,10 +26,11 @@ import sltools;
 def _cstm_args(instrument,fits_image):
 
 
-    img_array, img_header = pyfits.getdata(fits_image, header=True )
+    img_array, img_header = pyfits.getdata(fits_image, header=True)#,ignore_missing_end=True) 
 
     try:
         MAG_ZEROPOINT = img_header['MAGZP']
+        print "go it MagZPT"
 
     except:
 
@@ -49,6 +50,7 @@ def _cstm_args(instrument,fits_image):
 
     try:
         SEEING_FWHM = img_header['SEEING']
+        print "go it seeing"
 
     except:
 
@@ -250,7 +252,7 @@ def _cstm_args(instrument,fits_image):
             'THRESH_TYPE' : 'RELATIVE',
             'DETECT_THRESH' : '2.5',
             'FILTER' : 'N',
-            'DEBLEND_MINCONT' : '0.005',
+            'DEBLEND_MINCONT' : '0.5',
             'DEBLEND_NTHRESH' : '32',
             'DETECT_MINAREA'  : '10',
             'ANALYSIS_THRESH' : '2.5',
@@ -446,11 +448,12 @@ def run_segobj(filename, params=[], args={}, preset='', temp_dir='', quiet=False
         
     # And update given arguments (via 'args.dic') with necessary parameters..
     #
-    args.update( {'checkimage_type' : 'OBJECTS,SEGMENTATION', 'checkimage_name' : objimgname+','+segimgname, 'catalog_type' : 'FITS_1.0', 'catalog_name' : catfilename} );
+    cargs={'checkimage_type' : 'OBJECTS,SEGMENTATION', 'checkimage_name' : objimgname+','+segimgname, 'catalog_type' : 'FITS_1.0', 'catalog_name' : catfilename}
+    cargs.update(args);
 
     # Run sextractor module; output catalogues to "catalog" files..
     #
-    out = run(fits_image, params, args, preset, temp_dir);
+    out = run(fits_image, params, cargs, preset, temp_dir);
 
     if (out == False):
         return (False);
@@ -462,6 +465,65 @@ run_segment = run_segobj;
 segment = run_segobj;
 
 # ---
+
+def run_detec_test(filename, params=[], args={}, preset='', temp_dir='', quiet=False, arg_min={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}, arg_max={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}, arg_step={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}):
+
+
+    fits_image = filename;
+    _rootname = string.split( string.replace( fits_image,".fits","" ), sep="/" )[-1]
+    f_out=open(_rootname+"_variables.txt","w")
+    detect_thresh=frange(arg_min['DETECT_THRESH'],arg_max['DETECT_THRESH'], arg_step['DETECT_THRESH'])
+    deblend_min=frange(arg_min['DEBLEND_MINCONT'],arg_max['DEBLEND_MINCONT'], arg_step['DEBLEND_MINCONT'])
+    deblend_nthresh=frange(arg_min['DEBLEND_NTHRESH'],arg_max['DEBLEND_NTHRESH'], arg_step['DEBLEND_NTHRESH'])
+    detec_min=frange(arg_min['DETECT_MINAREA'],arg_max['DETECT_MINAREA'], arg_step['DETECT_MINAREA'])
+    analysis_thresh=frange(arg_min['ANALYSIS_THRESH'],arg_max['ANALYSIS_THRESH'], arg_step['ANALYSIS_THRESH'])
+    print analysis_thresh
+    for i in range(0,len(detect_thresh)):
+        args.update({'DETECT_THRESH' : detect_thresh[i]})
+        for j in range(0,len(deblend_min)):
+            args.update({'DEBLEND_MINCONT' : deblend_min[j]})
+            for k in range(0,len(deblend_nthresh)):
+                args.update({'DEBLEND_NTHRESH' : deblend_nthresh[k]})
+                for w in range(0,len(detec_min)):
+                    args.update({'DETECT_MINAREA' : detec_min[w]})
+                    for y in range(0,len(analysis_thresh)):
+                        args.update({'ANALYSIS_THRESH' : analysis_thresh[y]})
+                        objimgname = _rootname+'var'+str(i)+str(j)+str(k)+str(w)+str(y)+'_obj.fits';
+                        segimgname = _rootname+'var'+str(i)+str(j)+str(k)+str(w)+str(y)+'_seg.fits';
+                        f_out.write(str(i)+str(j)+str(k)+str(w)+str(y)+'        '+'DETECT_THRESH='+str(args['DETECT_THRESH'])+'    '+'DEBLEND_MINCONT='+str(args['DEBLEND_MINCONT'])+'    '+'DEBLEND_NTHRESH='+str(args['DEBLEND_NTHRESH'])+'    '+'DETECT_MINAREA='+str(args['DETECT_MINAREA'])+'ANALYSIS_THRESH='+str(args['ANALYSIS_THRESH'])+'\n \n');    
+                        args.update({'checkimage_name' : objimgname+','+segimgname})
+                        run_segobj(filename, params, args, preset, temp_dir, quiet)            
+    f_out.close()       
+           
+            
+#           'PIXEL_SCALE': '0.187',
+#           'MAG_ZEROPOINT' : MAG_ZEROPOINT)}
+#'THRESH_TYPE' : 'RELATIVE',
+#'FILTER' : 'N',
+    return 0
+
+def frange(start,end,step):
+    L=[]
+    start=float(start)
+    end=float(end)
+    step=float(step)
+    _item=start
+    L.append(_item)
+    if (step==0) or (start>end and step>0) or (end>start and step<0):
+        return L
+    L=[]
+    if (start<end):
+        while _item<=end:
+            L.append(_item)
+            _item+=step
+
+    elif (start>end):
+        while _item>=end:
+            L.append(_item)
+            _item+=step
+    return L
+    
+
 
 def read_config(SE_configfile):
     """ Read SE config file (plain: 'key value' ascii) to a dictionary."""

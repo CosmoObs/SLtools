@@ -25,7 +25,7 @@ from numpy import *
 from random import *
 import sys
 
-from sltools.geometry import separate_curves_a # its Angelo's separate_curves
+from sltools.geometry.separate_curves import separate_curves_a # its Angelo's separate_curves
 
 
 def plot_gravlens_crit(file):
@@ -54,7 +54,7 @@ def plot_gravlens_crit(file):
         x1, y1, x2, y2 = curve
         plot([x1, x2], [y1, y2], color = colors[i])  # plot line segments from (x1,y1) to (x2,y2)
         i=i+1
-
+    axis('equal')
     # Plot caustics
 
     subplot(122)
@@ -67,6 +67,7 @@ def plot_gravlens_crit(file):
         u1, v1, u2, v2 = curve
         plot([u1, u2], [v1, v2], color = colors[i])
         i=i+1
+    axis('equal')
 
     savefig(file + '.png')            
 

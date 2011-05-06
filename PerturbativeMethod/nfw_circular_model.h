@@ -24,7 +24,7 @@
 #include <math.h>
 #include <cstdlib>
 
-#include "../numerical_methods/general_methods.h"
+#include "../numerical_methods/root_find.h"
 //#include "general_methods.h"
 
 //! Function useful to define the convergence and angle deflection of the NFW model.

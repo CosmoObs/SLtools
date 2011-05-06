@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # =================================================
 # Authors:
-# Angelo Fausti Neto, Pedro Ferreira,Carlos Brandt
+# Angelo Fausti Neto, Pedro Ferreira, Carlos Brandt
 # =================================================
   
 """Module to separate curves defined by connected line segments"""
@@ -41,6 +41,8 @@ def separate_curves_a(x1, y1, x2, y2, delta=None):
      - curves  <list> : list of curves. Each element curves[i] is a closed curve with 4 arrays. The 
                         first 2 arrays being the (x,y) coordinates of the curve points and the 3rd and 
 			4th collumns are the consecutive points to the 1st and 2nd collumns
+     - start   <list> : indexes (integers) of x1, y1, x2, y2 indicating when a curve starts
+     - end     <list> : indexes (integers) of x1, y1, x2, y2 indicating when a curve ends
 
     '''
 
@@ -67,14 +69,14 @@ def separate_curves_a(x1, y1, x2, y2, delta=None):
         end.append(i)
 
     ncurves = len(start)
-    curves = [] # curves[0] is the radial curve and curves[1] is the tangential curve
+    curves = [] # in the SL case, curves[0] is the radial curve and curves[1] is the tangential curve
 
 
     for index in range(ncurves):
         curves.append([x1[start[index]:end[index]], y1[start[index]:end[index]], x2[start[index]:end[index]], y2[start[index]:end[index]]])
 
 
-    return curves
+    return curves, start, end
 
 
 #=======================================================================================================

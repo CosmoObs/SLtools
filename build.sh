@@ -31,6 +31,7 @@ namespace2module()
 
 GenDoxygenDoc()
 {
+	project_name="SLtools"
 	application=$1
 	version=$2
 	mode=$3
@@ -44,7 +45,7 @@ GenDoxygenDoc()
 	cp ../doc/doxygen.cfg doc/
 
 	# Edit doxygen configuration file for the current application
-	sed -i "s/%PROJECT_NAME%/$application/" doc/doxygen.cfg
+	sed -i "s/%PROJECT_NAME%/$project_name/" doc/doxygen.cfg
 	sed -i "s/%PROJECT_NUMBER%/\"Version $version\"/" doc/doxygen.cfg
 
 

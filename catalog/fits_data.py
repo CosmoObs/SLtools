@@ -234,6 +234,23 @@ def dict_to_tbHDU(dic, tbname='', *fieldnames):
     if not len(args):
         args = dic.keys();
 
+    # Function verify datatypes for convertion
+    #
+    def is_numeric(lit):
+        try:
+            return int(lit);
+        except ValueError:
+            pass;
+        try:
+            return float(lit);
+        except ValueError:
+            pass;
+        try:
+            return complex(lit);
+        except:
+            pass;
+        return False;
+        
     c = [];
     to_header = {};
     for _arg in args:
@@ -242,8 +259,10 @@ def dict_to_tbHDU(dic, tbname='', *fieldnames):
             to_header[_arg] = dic[_arg];
             continue;
         
+        valores = [ is_numeric(s_i) for s_i in dic[_arg] ];
+        
         try:
-            tipo = np.max(np.abs(dic[_arg])).dtype
+            tipo = np.max(np.abs(valores)).dtype
             ndim = np.asarray(dic[_arg]).ndim
             if tipo == 'int64':
                 tipo = str(ndim)+'K'

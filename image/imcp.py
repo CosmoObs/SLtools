@@ -237,7 +237,7 @@ def snapshot( image, hdr=None, centroid=(0,0), shape=(0,0), coord_unit='pixel', 
 # ---
 
 # ==========================================================================================
-def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase=False):
+def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase=False, connected=False):
     """
     Identify objects on given images by their IDs and return object images
 
@@ -294,10 +294,18 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
 
     y_size = max( y_idx ) + 1;
     x_size = max( x_idx ) + 1;
+    
+   
+
+    if (connected == True ):		
+      ind=elliminate_disconected(ind)
+ 
 
     # Central pixel on original image:
     yo = y_size/2 + y_min;
     xo = x_size/2 + x_min;
+
+
 
     if ( increase != 0 ):		
         if (relative_increase == True):
@@ -315,6 +323,46 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
     return ( image_out, hdr );
 
 # ---
+
+
+def elliminate_disconected(ind):
+    # change  from a list of coordinates to a list of points
+    p=[]
+    for i in range(0,len(ind[0])):
+        p_aux=[ind[0][i],ind[1][i]]
+        p.append(p_aux)
+    
+   
+    Objects=[]
+    objects=[]
+    while len(p)>0:
+        p_test=[p[0]]
+        while len(p_test)>0:
+            p_center=p_test[0]
+            p_neighbors=[[p_center[0],p_center[1]],[p_center[0]+1,p_center[1]],[p_center[0]+1,p_center[1]+1],[p_center[0]+1,p_center[1]-1],[p_center[0]-1,p_center[1]],[p_center[0]-1,p_center[1]+1],[p_center[0]-1,p_center[1]-1],[p_center[0],p_center[1]-1],[p_center[0],p_center[1]+1]]
+            for i in range(0,len(p_neighbors)):
+                if (p_neighbors[i] in p) and not(p_neighbors[i] in objects):
+                    objects.append(p_neighbors[i])
+                    p_test.append(p_neighbors[i])
+                    p.remove(p_neighbors[i])   
+            p_test.remove(p_test[0])
+        Objects.append(objects)
+        objects=[]
+    # criteria to select an interest object
+    Area_max=len(Objects[0])
+    id_max=0
+    for i in range(0,len(Objects)):
+        if len(Objects[i])>Area_max:
+            Area_max=len(Objects[i])
+            id_max=i
+    ind_new=[[-100],[-1000]]
+    for i in range(0,len(Objects[id_max])):
+        ind_new[0].append(Objects[id_max][i][0])
+        ind_new[1].append(Objects[id_max][i][1])
+    ind_new[0].remove(-100)
+    ind_new[1].remove(-1000)
+    ind_n=[np.array(ind_new[0]),np.array(ind_new[1])]
+    return ind_n      
 # To keep compatibility with the old "sextamp" function:
 def sextamp(seg_img, obj_img, hdr=None, increase=0, relative_increase=False, objIDs=[]):
 	return [ segstamp(seg_img, ID, obj_img, hdr, increase, relative_increase) for ID in objIDs ]
@@ -486,6 +534,10 @@ if __name__ == "__main__" :
     print >> sys.stdout, "Done.";
     os.chdir( owd );
     sys.exit(0);
+
+
+
+
 
 # ------------------
 # \endcond
