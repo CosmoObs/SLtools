@@ -34,10 +34,18 @@ from sltools.coordinate.translation_followed_by_rotation import translation_and_
 
 
 
-def _critcurves_new(gravinput, caustic_CC_file, gravlens_input_file='gravlens_CC_input.txt'):
+def critcurves_new(gravinput, caustic_CC_file, gravlens_input_file='gravlens_CC_input.txt'):
 	"""
 	Given the gravlens 'config file', runs gravlens to generate the file with caustics and critical 
 	curves.
+
+	Input:
+	 - gravinput           <str> : a string with all the lines gravlens needs to its configuration
+	 - caustic_CC_file     <str> : name of the output file with the caustic and CC positions
+	 - gravlens_input_file <str> : name of the input file used to run gravlens
+
+	Output:
+	 - <str> : name of the output file with the caustic and CC positions (caustic_CC_file)
 
 	"""
 	
@@ -47,6 +55,7 @@ def _critcurves_new(gravinput, caustic_CC_file, gravlens_input_file='gravlens_CC
 	fmag.close()
 	os.system('gravlens %s > /dev/null' % gravlens_input_file )
 
+	return caustic_CC_file
 
 
 #=======================================================================================================
@@ -64,11 +73,11 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	and find_CC_new will try to find the CC. Each time gravlens can't find the CC, we lower	gridhi1 
 	by a factor of grid_factor (=5), in order to increase precision. This continues on until 
 	gravlens finds the CC or the number of iterations, max_iter_number (=20), is reached. After 
-	finding the CC, if it is composed of less than min_n_lines (=200) points, the code redefines 
-	gridhi1 to a third of it (grid_factor2=3), usually increasing the number of points. With this 
+	finding the CC, if the file is composed of less than min_n_lines (=200) lines, the code redefines 
+	gridhi1 to gridhi1/grid_factor2 (grid_factor2=3), usually increasing the number of points. With this 
 	first determination of the CC, the code uses its scale (gridhi1_CC_factor(=2) times the distance
-	of the furthest CC point to the origin) to reobtain the CC with the apropriate value for the 
-	grid. If the CC were not found after all these attempts, this function returns "False" and an 
+	of the furthest CC point to the lens center) to reobtain the CC with the apropriate value for the 
+	grid, insuring best precision. If the CC were not found after these attempts, this function returns "False" and an 
 	error message. If all caustic points have coordinates < accept_res_limit (=2E-4), a warning 
 	message will be generated, meaning that the precision of gravlens (limited by the number of 
 	digits in the output file) is being reached. 
@@ -119,7 +128,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	#-----------------------------
 	os.system('rm -f %s' % caustic_CC_file) # if the file previously exists, delete it
-	_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
+	critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 	logging.debug('Got the critical curves (%s file) with function \"critcurves\"' % caustic_CC_file)
 	#-----------------------------
 
@@ -131,7 +140,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		lens_par_out = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 
 		inputlens, setlens, gravlens_params_updated = lens_par_out
-		_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
+		critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 		counter += 1
 	logging.debug( '(Number of iterations on gridhi1 = %d)' % (counter) )
 
@@ -145,7 +154,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		lens_par_out = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params_updated) # inputlens is the gravlens input (sets general parameters and the lens parameters)
 		inputlens, setlens, gravlens_params_updated = lens_par_out
 
-		_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
+		critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 
 
 	x1, y1, u1, v1 = np.loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
@@ -165,7 +174,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 	logging.debug( 'gridhi1 = %f and number of iterations on gridhi1 = %d' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
 
-	_critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
+	critcurves_new(inputlens, caustic_CC_file, gravlens_input_file) # gets the critical curves (crit.txt file)
 
 	x1, y1, u1, v1 = np.loadtxt(caustic_CC_file, usecols = (0,1,2,3), unpack=True) # CC_x, CC_y, caustic_x, caustic_y
 
@@ -244,25 +253,28 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	This is a pipeline that runs 'find_CC_new', 'separate_curves' and 'plot_CC'. For details of these 
 	functions, see their documentation.
 
+	Besides running the functions above mentioned, run_find_CC also treats for some cases which the CC
+	are not separated correctly. See details below.
+
 	As we expect 2 critical curves, if the function separate_curves finds a different number, we 
 	question it. If we find only one CC, then the separation code did not worked properly, and we 
-	noticed that for some values of theta_L this occurs quite often. So we find the CC again for
-	theta_L=0, separate them and rotate them back to its original angle, which proved to be a good
-	solution.
+	noticed that for some values of theta_L this occurred quite often. So we find the CC again for
+	theta_L=0, separate the CC for this value of theta_L and rotate the separated curves back to the
+	original value of theta_L. This proved to be a good solution.
+
 	In the case that more than 2 CC are found, we try an iterating process with the control parameter
 	of separate_curves 'delta' (see separate_curves documentation). So we increase the value of delta 
 	until there are 2 CC.
+
 	The combination of these 2 implementations above with the default gravlens parameters used in 
-	'lens_parameters_new' allows for a 100% correct separation in a NFW profile with all possible 
-	combination of parameters kappas = [0.03, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.87], 
-	rs = [34., 54., 74., 94.] and theta_L = [0, 45, 90, 135, 180]. 
+	'lens_parameters_new' allows a good success on separationg the curves.
 	For more details, see http://twiki.linea.gov.br/bin/view/StrongLensing/SLtoolsGravlens#Module_find_CC_new_py.
 
 	We separate only the image plane curves (CC) and use the fact that the gravlens output has a 
 	one-to-one correspondence, allowing to separate the caustics at the same time.
 
 	Warning (known bug): 
-	 - show_plot=1 only shows only one plot in the screen
+	 - show_plot=1 shows only one plot in the screen
 
 	Input:
 	 - lens_model             <str> : Lens name (see gravlens manual table 3.1)

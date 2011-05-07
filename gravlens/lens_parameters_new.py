@@ -28,20 +28,23 @@ def set_gravlens_default():
 
 	The default configurations is:
 
-	gridmode : 1 # the grid type gravlens will use (1: standard polar grid, 2: use information from 
-		       simple convex critical lines)
-	gridhi1  : 150 # the grid size in the image plane
-	xtol     : 1e-10 # Tolerance on image positions in numerical root finding
-	crittol  : 1e-7 # Tolerance for finding critical curves
-	inttol   : 1e-8 # Tolerance for numerical integrals
-	maxlev   : 4 # Deepest level of subgrid near critical curves
-	gallev   : 3 # Deepest level of subgrid near galaxies (other than the primary)
-	imglev   : 3 # Deepest level of subgrid near images
-	ngrid1   : 32 # dimension of top grid (in radius)
-	ngrid2   : 32 # dimension of top grid (in angle)
+	 - gridmode      <int> = 1 : the grid type gravlens will use (1: standard polar grid, 2: use 
+			             information from simple convex critical lines)
+	 - gridhi1   <float> = 150 : the grid size in the image plane
+	 - xtol    <float> = 1e-10 : Tolerance on image positions in numerical root finding
+	 - crittol  <float> = 1e-7 : Tolerance for finding critical curves
+	 - inttol   <float> = 1e-8 : Tolerance for numerical integrals
+	 - maxlev        <int> = 4 : Deepest level of subgrid near critical curves
+	 - gallev        <int> = 3 : Deepest level of subgrid near galaxies (other than the primary)
+	 - imglev        <int> = 3 : Deepest level of subgrid near images
+	 - ngrid1       <int> = 32 : dimension of top grid (in radius)
+	 - ngrid2       <int> = 32 : dimension of top grid (in angle)
 
 	Output:
-	- gravlens_params_default <dict> : contains the updated keys for gravlens configuration
+	 - gravlens_params_default <dict> : contains the sltools default keys for gravlens configuration.
+					    The keys and its values are 'gridmode': 1, 'gridhi1' : 150, 
+					    'xtol' : 1e-10, 'crittol' : 1e-7, 'inttol' : 1e-8, 'maxlev' : 4, 
+					    'gallev' : 3, 'imglev' : 3, 'ngrid1' : 32, 'ngrid2' : 32 
 
 	"""
 	gravlens_params_default = {'gridmode': 1, 'gridhi1' : 150, 'xtol' : 1e-10, 'crittol' : 1e-7, 'inttol' : 1e-8, 'maxlev' : 4, 'gallev' : 3, 'imglev' : 3, 'ngrid1' : 32, 'ngrid2' : 32 }
@@ -60,9 +63,9 @@ def lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_pa
 	Input:
 	 - lens              <str> : Lens name (see gravlens manual table 3.1)
 	 - mass_scale      <float> : Mass scale of the lens - "parameter 1"
-	 - model_param_8   <float> : Vertical size (in pixels) of output image
-	 - model_param_9   <float> : Vertical size (in pixels) of output image
-	 - model_param_10  <float> : Vertical size (in pixels) of output image
+	 - model_param_8   <float> : misc. lens parameter - often scale radio (depends on the lens model)
+	 - model_param_9   <float> : misc. lens parameter - often scale radio (depends on the lens model)
+	 - model_param_10  <float> : misc. lens parameter - often a power law index (depends on the lens model)
 	 - galaxy_position  <list> : [x,y] position of the lens
 	 - e_L             <float> : Horizontal central position for output (cut) image
 	 - theta_L         <float> : Vertical central position for output (cut) image
