@@ -114,4 +114,4 @@ def make_sdss_query():
 
 #Main Program
 
-
+get_subdirectories('/mnt/single/SOGRAS/2008b_data/2008b_reduced')
