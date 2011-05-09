@@ -42,6 +42,23 @@ def get_image_limits(image_path):
 
     return ra_min, dec_min, ra_max, dec_max
 
+def get_subdirectories(directory_path):
+    """ Function to get all subdirectories in a directory
+        
+      
+    Input:
+     - directory_pat: a path to the directory
+    
+    Output:
+     - [directory1, directory2 ...]
+
+    ---
+    """
+    folders = os.listdir(directory_path)
+    folders.sort()
+    print folders
+
+
 
 def make_sdss_query():
     """ Function to criate a query for the SDSS CasJob system.
