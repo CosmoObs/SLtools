@@ -56,8 +56,7 @@ def get_subdirectories(directory_path):
     """
     folders = os.listdir(directory_path)
     folders.sort()
-    print folders
-
+    return folders
 
 
 def make_sdss_query():
