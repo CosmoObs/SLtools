@@ -4,6 +4,8 @@ import pyfits
 import glob
 import os
 
+import cuts2
+
 from sltools.coordinate.wcs_conversion import xy2radec
 
 def get_image_limits(image_path):
@@ -40,7 +42,7 @@ def get_image_limits(image_path):
 
 
 
-    return ra_min, dec_min, ra_max, dec_max
+    return [ra_min, dec_min, ra_max, dec_max]
 
 def get_subdirectories(directory_path):
     """ Function to get all subdirectories in a directory
@@ -56,8 +58,7 @@ def get_subdirectories(directory_path):
     """
     folders = os.listdir(directory_path)
     folders.sort()
-    print folders
-
+    return folders
 
 
 def make_sdss_query():
@@ -114,4 +115,45 @@ def make_sdss_query():
 
 #Main Program
 
-get_subdirectories('/mnt/single/SOGRAS/2008b_data/2008b_reduced')
+directory_path = '/mnt/single/SOGRAS/2008b_data/2008b_reduced/'
+subdirectories = get_subdirectories(directory_path)
+
+images_path = []
+images_radec = []
+
+radec_center = []
+ra_center = []
+dec_center = []
+
+for i in range(len(subdirectories)):
+    images_path.append(directory_path + subdirectories[i] + '/' + subdirectories[i] + 'i.fits')
+    images_radec.append(get_image_limits(images_path[i]))
+    radec_center.append([(images_radec[i][0] + images_radec[i][2])/2.0, (images_radec[i][1] + images_radec[i][3])/2.0])
+    ra_center.append(radec_center[i][0])
+    dec_center.append(radec_center[i][1])
+
+print radec_center
+cs82_impath = '/mnt/cs82_data/CS82_data_products/coadd_V2.3A/images_V2.3A'
+
+cuts2.find_obj(cs82_impath, ra_center, dec_center, subdirectories)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
