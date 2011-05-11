@@ -4,18 +4,20 @@ import pyfits
 import glob
 import os
 
+import cuts2
+
 from sltools.coordinate.wcs_conversion import xy2radec
 
 def get_image_limits(image_path):
     """ Function get the image limits in RA and DEC
         
-    FIXME
+    
     
     Input:
      - image_path : a path to the image
     
     Output:
-     - [(index_BtoA0,distance_BtoA0), ]
+     - ra_min, dec_min, ra_max, dec_max
 
     ---
     """
@@ -40,51 +42,114 @@ def get_image_limits(image_path):
 
 
 
-    return ra_min, dec_min, ra_max, dec_max
+    return [ra_min, dec_min, ra_max, dec_max]
+
+def get_subdirectories(directory_path):
+    """ Function to get all subdirectories in a directory
+        
+      
+    Input:
+     - directory_pat: a path to the directory
+    
+    Output:
+     - [directory1, directory2 ...]
+
+    ---
+    """
+    folders = os.listdir(directory_path)
+    folders.sort()
+    return folders
+
+
+def make_sdss_query():
+    """ Function to criate a query for the SDSS CasJob system.
+        
+    
+    
+    Input:
+     - none
+    
+    Output:
+     - none
+
+    ---
+    """
+
+    im_path = '/home/gbcaminha/SOGRAS/2008b_data/2008b_reduced/'
+
+    folders = os.listdir(im_path)
+    folders.sort()
+
+    image_files = []
+
+    for i in folders:
+        image_files.append( glob.glob( os.path.join(im_path+i, '*r.fits'))[0] )
+
+
+    radec_limits = []
+
+    for i in range(len(image_files)):
+        radec_limits.append(get_image_limits(image_files[i]))
+        str_cond1 = 'WHERE g.ra>' + str(radec_limits[i][0])
+        str_cond2 = 'AND g.ra<' + str(radec_limits[i][2])
+        str_cond3 = 'AND g.dec>' + str(radec_limits[i][1])
+        str_cond4 = 'AND g.dec<' + str(radec_limits[i][3])
+        str_cond5 = 'AND g.objID=p.objID'
+
+        select1 = 'SELECT g.objID, g.ra, g.raErr, g.dec, g.decErr, p.z, p.zErr,'
+        select2 = ' g.modelMag_u, g.modelMag_g, g.modelMag_r, g.modelMag_i,'
+        select3 = ' g.modelMag_z, g.modelMagErr_u, g.modelMagErr_g,'
+        select4 = ' g.modelMagErr_r, g.modelMagErr_i, g.modelMagErr_z'
+
+        into1 = 'into mydb.SOGRAS_' + str(folders[i])
+
+        #from1 = 'from Galaxy g, Photoz p'
+
+        print select1, select2, select3, select4, into1
+        print 'from Galaxy g, Photoz p' #from1
+        print str_cond1, str_cond2, str_cond3, str_cond4, str_cond5
+        print
+        print '**********************************************************'
+        print 
+
+
 #Main Program
 
-IM_PATH = '/home/gbcaminha/SOGRAS/2008b_data/2008b_reduced/'
+directory_path = '/mnt/single/SOGRAS/2008b_data/2008b_reduced/'
+subdirectories = get_subdirectories(directory_path)
+
+images_path = []
+images_radec = []
+
+radec_center = []
+ra_center = []
+dec_center = []
+
+for i in range(len(subdirectories)):
+    images_path.append(directory_path + subdirectories[i] + '/' + subdirectories[i] + 'i.fits')
+    images_radec.append(get_image_limits(images_path[i]))
+    radec_center.append([(images_radec[i][0] + images_radec[i][2])/2.0, (images_radec[i][1] + images_radec[i][3])/2.0])
+    ra_center.append(radec_center[i][0])
+    dec_center.append(radec_center[i][1])
+
+print radec_center
+cs82_impath = '/mnt/cs82_data/CS82_data_products/coadd_V2.3A/images_V2.3A'
+
+cuts2.find_obj(cs82_impath, ra_center, dec_center, subdirectories)
 
 
 
 
 
-FOLDERS = os.listdir(IM_PATH)
-FOLDERS.sort()
-
-IMAGE_FILES = []
-
-for i in FOLDERS:
-    IMAGE_FILES.append( glob.glob( os.path.join(IM_PATH+i, '*r.fits'))[0] )
 
 
-RADEC_LIMITS = []
 
-for i in range(len(IMAGE_FILES)):
-    RADEC_LIMITS.append(get_image_limits(IMAGE_FILES[i]))
-    STR_COND1 = 'WHERE g.ra>' + str(RADEC_LIMITS[i][0])
-    STR_COND2 = 'AND g.ra<' + str(RADEC_LIMITS[i][2])
-    STR_COND3 = 'AND g.dec>' + str(RADEC_LIMITS[i][1])
-    STR_COND4 = 'AND g.dec<' + str(RADEC_LIMITS[i][3])
-    STR_COND5 = 'AND g.objID=p.objID'
 
-    SELECT1 = 'SELECT g.objID, g.ra, g.raErr, g.dec, g.decErr, p.z, p.zErr, '
-    SELECT2 = 'g.modelMag_u, g.modelMag_g, g.modelMag_r, g.modelMag_i, '
-    SELECT3 = 'g.modelMag_z, g.modelMagErr_u, g.modelMagErr_g,'
-    SELECT4 = 'g.modelMagErr_r, g.modelMagErr_i, g.modelMagErr_z'
 
-    INTO1 = 'into mydb.SOGRAS_' + str(FOLDERS[i])
 
-    FROM1 = 'FROM Galaxy g, Photoz p'
 
-    print SELECT1, SELECT2, SELECT3, SELECT4, INTO1
-    print FROM1
-    print STR_COND1, STR_COND2, STR_COND3, STR_COND4, STR_COND5
-    print
-    print '**********************************************************'
-    print 
 
-#RADEC_LIMITS[i][0], RADEC_LIMITS[i][1], RADEC_LIMITS[i][2], RADEC_LIMITS[i][3]
+
 
 
 
