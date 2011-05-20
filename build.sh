@@ -43,7 +43,7 @@ GenDoxygenDoc()
 	[ $(which doxypy.py) ] || { echo "Failed: doxypy not found."; exit 1; }
 
 	dir=$(pwd)
-	cd $folder &> /dev/null
+	cd $FOLDER &> /dev/null
 	mkdir doc
 	cp ../doc/doxygen.cfg doc/
 
@@ -52,14 +52,14 @@ GenDoxygenDoc()
 	sed -i "s/%PROJECT_NUMBER%/\"Version $version\"/" doc/doxygen.cfg
 
 	# work around for bug #600 [AddArcs] Fix doxygen documentation issue
-    #for file in $(find . -name "__init__.py")
-    #do
-    #	mv $file $(dirname $file)/__init__
-    #done
+    for file in $(find . -name "__init__.py")
+    do
+    	mv $file $(dirname $file)/__init__
+    done
 
     doxygen doc/doxygen.cfg &> /dev/null || { echo "Failed.";  cd $dir &> /dev/null; exit 1; }
 
-    #find . -name "__init__" -exec mv '{}' '{}'.py \;
+    find . -name "__init__" -exec mv '{}' '{}'.py \;
 
 	(
         cd doc/html && namespace2module html
@@ -70,7 +70,7 @@ GenDoxygenDoc()
 
 	    if [ "$mode" != "--no-pdf" ]
         then
-            make || { echo "Failed to create PDF documentation."; exit 1; }
+            make &> /dev/null || { echo "Failed to create PDF documentation."; exit 1; }
             [ -f refman.pdf ] && mv refman.pdf $application-v$version.pdf
 	    fi
 	)
@@ -98,9 +98,27 @@ Link_subtree_Clone()
 
 }
 
+clone_devel()
+{   # Clone $opt (e.g., sltools) tree to $destdir directory.
+
+    opt=$1
+    destdir=$2
+    
+    [ ! -w $destdir -o "$destdir" == "$PWD" ] && { echo "Directory $destdir is not writeable. Try again."; exit 1; }
+    
+    destdir="${destdir}/${opt}"
+    mkdir -p $destdir
+
+    Link_subtree_Clone $destdir
+
+    rm -f $destdir/build.sh
+    rm -f $destdir/*_TO_INCLUDE_IN_BUILD
+
+}
 
 build_sltools()
-{   # SLtools build.
+{   # SLtools building function
+    # It receives the building $mode and the destination $FOLDER folder
 
     mode=$1
 	FOLDER=$2
@@ -134,7 +152,7 @@ build_sltools()
         cp __init__.py $FOLDER
         cp -r `grep -v "^#" DIRECTORIES_TO_INCLUDE_IN_BUILD` $FOLDER
         cp -r -p bin $FOLDER
-        cp etc/* ${FOLDER}/.
+        cp etc/* ${FOLDER}/. &> /dev/null
 
     else
 
@@ -149,7 +167,7 @@ build_sltools()
 
 		# compile documentation
 		echo "Generating Doxygen documentation ..."
-		GenDoxygenDoc $opt $version $mode
+		GenDoxygenDoc "$opt" "$version" "$mode"
 
     fi
 
@@ -160,23 +178,6 @@ build_sltools()
 
 }
 
-clone_devel()
-{   # Clone $opt (e.g., sltools) tree to $destdir directory.
-
-    opt=$1
-    destdir=$2
-    
-    [ ! -w $destdir -o "$destdir" == "$PWD" ] && { echo "Directory $destdir is not writeable. Try again."; exit 1; }
-    
-    destdir="${destdir}/${opt}"
-    mkdir -p $destdir
-
-    Link_subtree_Clone $destdir
-
-    rm -f $destdir/build.sh
-    rm -f $destdir/*_TO_INCLUDE_IN_BUILD
-
-}
 
 ####################################
 ##### Start build's main block #####
@@ -222,6 +223,8 @@ do
 	esac
 	shift
 done
+# If no argument is given (./build sltools), $mode will not be set.
+# No problem if we are properly using the variable (within "$quotes")
 
 if [ "$opt" != "sltools" ]
 then
@@ -241,19 +244,19 @@ if [ "$mode" == "--devel" ]
 then
 
     echo "Cloning devel tree into $destdir ..."
-    clone_devel $opt $destdir
+    clone_devel "$opt" "$destdir"
     echo "Done."    
     exit 0
 fi
 
 version=$(head -n1 ./etc/version.txt)
-FOLDER=${opt}-v${version}
+FOLDER="${opt}-v${version}"
 
 echo "Building $opt version: $version ..."
-build_sltools $mode $FOLDER
+build_sltools "$mode" "$FOLDER"
 
 echo "Compressing $FOLDER ..."
-tar czf $FOLDER.tgz $FOLDER
+tar czf "${FOLDER}.tgz" "$FOLDER"
 rm -rf $FOLDER
 
 echo "Done."
