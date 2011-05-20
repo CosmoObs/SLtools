@@ -24,5 +24,5 @@ module_mac: $(SRCS) $(INTERFACE)
 	g++ -I$(PYTHONINC) -framework Python -bundle -bundle_loader $(PYTHONBIN) $(SRCS) $(WRAPFILE) -o $(MODULE)
 
 clean: 
-	rm -f $(TARGET) $(WRAPFILE) $(WRAPOBJ) $(COBJS)
+	@rm -f $(TARGET) $(WRAPFILE) $(WRAPOBJ) $(COBJS)
 

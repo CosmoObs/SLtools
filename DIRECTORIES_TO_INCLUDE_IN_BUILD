@@ -1,13 +1,1 @@
-# Mandatory: bin doc etc
-arcellipse
-catalog
-coordinate
-geometry
-gravlens
-image
-io
-lens
-pipelines
-plot
-string
-GUI
+etc/BUILD_FILES/DIRECTORIES_TO_INCLUDE_IN_BUILD
