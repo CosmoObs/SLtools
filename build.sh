@@ -211,7 +211,7 @@ do
 		;;
 		-o)
 			shift
-			folder="$1"
+			FOLDER="$1"
 		;;
 		-h | --help)
 			opt="null"
@@ -250,7 +250,7 @@ then
 fi
 
 version=$(head -n1 ./etc/version.txt)
-FOLDER="${opt}-v${version}"
+[ -z "$FOLDER" ] && FOLDER="${opt}-v${version}"
 
 echo "Building $opt version: $version ..."
 build_sltools "$mode" "$FOLDER"
