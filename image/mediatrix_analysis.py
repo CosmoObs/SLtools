@@ -60,7 +60,7 @@ def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Ar
     Function to calculate the S estatistic measurements.
     
     Input:
-     - mediatrix_data <dic> : 
+     - mediatrix_data <list> : a list of dictionary structure. Each list item is a dictionary with information corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus. The first item from the list has an extra key 'id' wich contains the image file name. It is the output from Mediatrix_Decomposition.
 
      
     Output:
