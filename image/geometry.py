@@ -22,9 +22,9 @@ def three_points_to_circle(x,y):
     p1=[x[0],y[0]]
     p2=[x[1],y[1]]
     p3=[x[2],y[2]]
-    theta1,b1=Perpendicular_Bisector(p1,p2)
-    theta2,b2=Perpendicular_Bisector(p2,p3)
-    xc,yc,Flag=Intercept_point(theta1,b1,theta2,b2)
+    theta1,b1=define_perpendicular_bisector(p1,p2)
+    theta2,b2=define_perpendicular_bisector(p2,p3)
+    xc,yc,Flag=get_intercept_point(theta1,b1,theta2,b2)
     if Flag==1:
         return 0
     r=((p1[0]-xc)*(p1[0]-xc))+((p1[1]-yc)*(p1[1]-yc))
