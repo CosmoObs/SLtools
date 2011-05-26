@@ -30,7 +30,7 @@ def _cstm_args(instrument,fits_image):
 
     try:
         MAG_ZEROPOINT = img_header['MAGZP']
-        print "go it MagZPT"
+        
 
     except:
 
@@ -50,7 +50,7 @@ def _cstm_args(instrument,fits_image):
 
     try:
         SEEING_FWHM = img_header['SEEING']
-        print "go it seeing"
+
 
     except:
 
@@ -86,7 +86,7 @@ def _cstm_args(instrument,fits_image):
             'CLEAN_PARAM' : '1.0',
             'BLANK' : 'Y',
             'PHOT_APERTURES' : '5',
-            'PHOT_AUTOPARAMS' : '2.5,',
+            'PHOT_AUTOPARAMS' : '2.5,3.5',
             'SATUR_LEVEL' : '50000.0',
             'MAG_ZEROPOINT' : MAG_ZEROPOINT,
             'MAG_GAMMA' : '4.0',
