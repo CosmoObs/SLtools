@@ -14,6 +14,7 @@ from sltools.image import sextractor,imcp;
 from sltools.string import *;
 from sltools.catalog import fits_data as fts;
 from sltools.catalog import ascii_data as asc;
+from sltools.io.check_dependencies import check_deps
 
 #!/usr/bin/env python
 
