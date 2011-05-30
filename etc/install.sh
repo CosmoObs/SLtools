@@ -96,7 +96,7 @@ fi
 #
 
 
-INSTALLDIR=${INSTALLDIR}/sltools-v$version
+INSTALLDIR=${INSTALLDIR}/sltools-$version
 
 mkdir -p ${INSTALLDIR}/sltools/bin || exit 1
 
