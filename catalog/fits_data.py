@@ -1,6 +1,6 @@
 """ Module to deal with FITS catalog read/access """
 
-##@package fits_file
+##@package fits_data
 
 import sys;
 
