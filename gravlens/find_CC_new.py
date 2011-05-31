@@ -77,7 +77,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	gridhi1 to gridhi1/grid_factor2 (grid_factor2=3), usually increasing the number of points. With this 
 	first determination of the CC, the code uses its scale (gridhi1_CC_factor(=2) times the distance
 	of the furthest CC point to the lens center) to reobtain the CC with the apropriate value for the 
-	grid, insuring best precision. If the CC were not found after these attempts, this function returns "False" and an 
+	grid, ensuring best precision. If the CC were not found after these attempts, this function returns "False" and an 
 	error message. If all caustic points have coordinates < accept_res_limit (=2E-4), a warning 
 	message will be generated, meaning that the precision of gravlens (limited by the number of 
 	digits in the output file) is being reached. 
