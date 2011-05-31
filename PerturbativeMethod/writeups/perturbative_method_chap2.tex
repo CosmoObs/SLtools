@@ -65,40 +65,46 @@ $ \re$.
 This indicates the point source is spread into a circle of radius $ \re $ in the
 image plane.
 
-We now take the first step of perturbing the situation:
+We now take the first step of perturbing the situation by moving the source off-axis by making $\vec{r}_s$ generally different from zero:
+
 
 \bea
 \label{eq:rspert}
-\vec{r}_s & = & \eps \vec{y}, \\
+\vec{r}_s & = & \eps \vec{y}, 
+\eea
+
+and by adding a non-axially symmetric piece of the potential, $\psi$:
+
+\bea
 \phi( \vec{r} ) & = & \phi_0(|\vec{r}|) + \eps \psi( \vec{r} )
 \label{eq:potsplit},
 \eea
 
-which imply we have moved the source off-axis, and added a non-axially
-symmetric potential, both to the exact same order $\eps$ by
-assumption.  Note that the perturbed distance $y$ is in the source plane.
+We do this in both cases to the exact same order $\eps$ by assumption for the moment.
+Note that the perturbed distance $y$ is in the source plane.
 
-Note that this changes the notation of the first eq in \cite{Alard07} eq.~3
-(which doesn't make much sense, of course).
+[Note that this changes the notation of the first eq in \cite{Alard07} eq.~3, which is internally not self-consistent, quite clearly.]
 
 We now write the image position also as a perturbation around the
-Einstein Radius, using eq.(\ref{eq:rspert}) to modify
+Einstein Radius, finding that eq's (\ref{eq:rspert}-\ref{eq:potsplit}) will generally modify
 eq.(\ref{eq:einsteinradius}) into
 
 \beq
 \label{eq:rpert}
-r = \re +  \eps x
+r(\theta) = \re +  \eps x(\theta)
 \eeq
 
-which changes the notation in \cite{Alard07} eq.~4 (which is somewhat weird notation,
-since his $dr$ is not necessarily a small distance), and we do not follow
-his convention of setting $\re \equiv 1$.
+where the original image point at $\re$ is moved off the circle by a
+small distance $\eps x$ (note this changes the form of \cite{Alard07}
+eq.~4 slightly, which is somewhat strange notation, since their $dr$
+is not necessarily a small distance, and further we do not follow
+their convention of setting $\re \equiv 1$).
 
 Note that now the perturbed distance $x$ is in the image plane.
 
 To recap: $r_s, y$ are in the source plane, while $r, x$ are in the image plane.
 
-Now we do a Taylor series expansion of the potential about the Einstein ring
+We now do a Taylor series expansion of the potential about the Einstein ring
 radius:
 
 \beq
@@ -135,7 +141,7 @@ So that we can write  eq.(\ref{eq:tse}) as
 \phi  = \sum_{n=0}^\infty \left[ C_n + \eps f_n(\theta)  \right] (r-\re)^n
 \eeq
 
-where $f_n(\theta)$ is a one-dimensional function independent of $r$.
+where $f_n(\theta)$ is a one-dimensional function independent of $r$, and $C_n$ are simply numbers and not functions of either $r$ or $\theta$.
 
 
 Now we go back and substitute \eqref{eq:rspert}) and \eqref{eq:rpert}) into
@@ -151,12 +157,12 @@ Now substitute \eqref{eq:tse2}) into this to find
 \eps \vec{y} = \left( \re + \eps x -  {\prtl \over \prtl r} \left(
 \sum_{n=0}^\infty \left[ C_n + \eps f_n  \right] (r-\re)^n  \right) \right)
 \hat{r} - \\
-{1 \over \re + \eps x}  {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty
+{1 \over \re + \eps x} \; {\prtl  \over \prtl \theta} \left( \sum_{n=0}^\infty
 \left[ C_n + \eps f_n  \right] (r-\re)^n  \right)  \hat{\theta} \nonumber
 \eea
 
 Remembering that $C_n$ and  $f_n$ are independent of $r$, and using
-\eqref{eq:rpert}), $r-\re = \eps x$ we find
+\eqref{eq:rpert}), $r-\re = \eps x$, we find
 
 \bea
 \label{eq:tse3}
@@ -166,7 +172,7 @@ Remembering that $C_n$ and  $f_n$ are independent of $r$, and using
 \left[ C_n + \eps f_n  \right] (\eps x)^n  \right)  \hat{\theta} \nonumber
 \eea
 
-Let us expand \eqref{eq:tse3} in orders, first the zero'th order piece in
+Let us expand \eqref{eq:tse3}) in orders, first the zero'th order piece in
 $\eps$:
 
 \beq
@@ -174,7 +180,7 @@ $\eps$:
 \over \prtl \theta \right|_{\re},
 \eeq
 
-so that we reassuringly recover the Einstein ring solution.
+so that we reassuringly recover the Einstein ring solution, \eqref{eq:einsteinradius}).
 
 Next the first order piece in $\eps$:
 
@@ -282,6 +288,7 @@ for $2\times 2$ matrices}\label{trace}
 \eea
 We also recall that the components of $J_{L_C\rightarrow L_P}$ are given by:
 \begin{eqnarray}
+\label{eq:LctoLp}
 \frac{\prtl r}{\prtl x_1}&=&\cos{\te}\label{drdx1}   \\
 \frac{\prtl \te}{\prtl x_1}&=&-\frac{\sin{\te}}{r}\label{dtedx1}\\
 \frac{\prtl r}{\prtl x_2}&=&\sin{\te}\label{drdx2}\\
@@ -293,7 +300,7 @@ We also recall that the components of $J_{L_C\rightarrow L_P}$ are given by:
 We will now obtain the equations for the critical curves in the lens
 plane, which correspond to the caustic curves in the source plane.
 
-First write \eqref{eq:rsexpanded}) in Cartesian coordinates (writing
+First write \eqref{eq:rsexpanded}) in Cartesian coordinates, writing
 the unit polar vectors as \eqref{eq:unitvs}), and taking
 $\vec{y}=(y_1,y_2)$ in the source plane and $\vec{r}=(r,\te)$ in the
 lens plane:
@@ -309,7 +316,10 @@ y_{2} &=& (\kt x - f_1)\sin{\te}-\frac{1}{\re}\frac{d f_0}{d\te}\sin{\te}
 It is important to stress that even though $y_{1}$ and $y_{2}$ are written in
 terms of $r$ and $\te$, equations (\ref{y_1}) and (\ref{y_2}) describe the
 transformation $J_{L_C\rightarrow S_C}$. Let us decompose it following eq.
-(\ref{jacobian_comp}). The components of the Jacobian matrix $J_{L_P\rightarrow
+(\ref{jacobian_comp}). 
+
+Using \eqref{eq:rsexpanded}) and ${\prtl \over \prtl r} ={ 1 \over \epsilon}
+{\prtl \over \prtl x}$ (from \eqref{eq:rpert}), the components of the Jacobian matrix $J_{L_P\rightarrow
 S_C}$ are given by %polar to Cartesian coordinates
 
 %\begin{equation}
@@ -327,12 +337,10 @@ S_C}$ are given by %polar to Cartesian coordinates
 -\scriptf(\te)\cos{\te}+\scriptg(\te)\sin{\te}\label{dy2dte}
 \end{eqnarray}
 
-using \eqref{eq:rsexpanded}), ${\prtl \over \prtl r} ={ 1 \over \epsilon}
-{\prtl \over \prtl x}$ (from \eqref{eq:rpert}) and defining the functions
-$\scriptf$ and $\scriptg$ as
+where we have defined the functions $\scriptf$ and $\scriptg$ as
 
 \bea
-% \begin{equation}
+\label{eq:scriptf}
 \scriptf(\te)&=&\frac{1}{\re}\frac{d^2f_0}{d\te^2}-(\kt x -f_1) \quad \\
 % \textrm{and} \quad % \\
 \scriptg(\te)&=&\frac{1}{\re}\frac{df_0}{d\te}-\frac{df_1}{d\te}
@@ -340,23 +348,28 @@ $\scriptf$ and $\scriptg$ as
 % \end{equation}
 
 It is straightforward to verify that the determinant of this matrix is given by
-$\det \left(J_{L_P\rightarrow S_C}\right)=-\kt\scriptf(\te)$. Knowing that the
+
+\beq
+\det \left(J_{L_P\rightarrow S_C}\right)=-\kt\scriptf(\te).
+\eeq
+
+Knowing that the
 Jacobian matrix $J_{L_C\rightarrow L_P}$ is the usual Jacobian transformation
 from Cartesian to polar coordinates, with $\det \left(J_{L_C\rightarrow
-L_P}\right)=\frac{1}{r}$, we can use eq. (\ref{determinant_mult}) to show that
+L_P}\right)=\frac{1}{r}$, as can be verified by eq.(\ref{eq:LctoLp}), we can use eq. (\ref{determinant_mult}) to show that
 \beq
 J\equiv\det \left(J_{L_C\rightarrow
 S_C}\right)=-\frac{\kt\scriptf(\te)}{r}\,.\label{jacobian}
 \eeq
 
-Therefore on the critical curves, where $J = 0$, we have
+Therefore on the critical curves, defined by the condition $J = 0$, using \eqref{eq:scriptf}) we find
 
 \begin{equation}
 \label{eq:critcurves}
 \Delta x_{crit}=\frac{1}{\kt}\left[f_1+\frac{1}{\re}\frac{d^2f_0}{d\te^2}\right]
 \end{equation}
 
-This is \cite{Alard07} eq.~30. From this last equation, the tangential critical
+This is \cite{Alard07} eq.~30, and represents the distortion coordinates of the critical curve from the Einstein circle.  From this last equation, the tangential critical
 curve can be expressed in Cartesian coordinates in parametric form as 
 \beq
 \vec{r}_{\mathrm{crit}}= \left[(\re  +\Delta x_{crit})\cos{\te},(\re+\Delta
@@ -364,7 +377,7 @@ x_{crit})\sin{\te}\right],\quad
 0 \leq \te < 2\pi.  
 \eeq
 
-Now, substituting this last equation into eqs.~(\ref{y_1}) and
+Now, substituting \eqref{eq:critcurves}) into eqs.~(\ref{y_1}) and
 (\ref{y_2}) we obtain, the parametric equation for the tangential
 caustic, i.e.,
 
@@ -385,7 +398,7 @@ Which reduce to \cite{Alard07}'s eqs.~31 for $\re=1$.
 
 Getting \cite{Alard07} eq.33 from the above is straight, and from there we may obtain
 % I (MSSG) got most of the way to 
-\cite{Alard07} eq.34 from 33 and 32.
+\cite{Alard07} eq.~34 from 33 and 32.
 % with some small hiccups..
 \subsection{Eigenvalues of the Jacobian Matrix and Deformation Cross-Section}
 
@@ -471,7 +484,7 @@ Now we know in Cartesian coordinates:
 \bea
 \kappa &=& {1 \over 2} (\Psi_{11} + \Psi_{22}) \\
 \gamma_1 &=&   {1 \over 2} (\Psi_{11} - \Psi_{22}) \\
-\gamma_2 &=&   \Psi_{12}  \\
+\gamma_2 &=&   \Psi_{12}  
 \eea
 
 with $\gamma = \sqrt{\gamma_1^2 + \gamma_2^2}$
@@ -480,6 +493,7 @@ We need to convert these Cartesian derivatives to polar ones, using:
 
 \bea
 {\partial \over \partial x } &=& \cost \ppr - \sint \oor \ppt \\
+\nonumber \\ 
 {\partial \over \partial y } &=& \sint \ppr + \cost \oor \ppt
 \eea
 
@@ -487,13 +501,15 @@ Which lead to the expressions
 
 \bea
 {\partial^2 \over \partial x^2 } + {\partial^2 \over \partial y^2 } &=&  \pprsq +  \oorsq \pptsq + \oor \ppr \\
-{\partial^2 \over \partial x^2 } - {\partial^2 \over \partial y^2 } &=&  \costwot \lp \pprsq -  \oorsq \pptsq - \oor \ppr \rp + \sintwot \lp \oorsq \ppt - \twoor \pprt \rp \\
-{\partial^2 \over \partial x \partial y }  &=&  \half \sintwot \lp \pprsq -  \oorsq \pptsq - \oor \ppr \rp + \costwot \lp - \oorsq \ppt - \oor \pprt \rp 
+{\partial^2 \over \partial x \partial y }  &=&  \half \sintwot \lp \pprsq -  \oorsq \pptsq - \oor \ppr \rp + \costwot \lp - \oorsq \ppt - \oor \pprt \rp \\
+{\partial^2 \over \partial x^2 } - {\partial^2 \over \partial y^2 } &=&  \costwot \lp \pprsq -  \oorsq \pptsq - \oor \ppr \rp + \sintwot \lp \oorsq \ppt - \twoor \pprt \rp 
 \eea
 
 Where the first is the standard Laplacian in polar coordinates.
 
-Using now $f_0 = \Psi$, $f_1 = {\prtl \Psi \over \prtl r}$, $f_2 = \half {\prtl^2 \Psi \over \prtl r^2}$, we obtain the following:
+Using now $f_0 = \Psi$, $f_1 = {\prtl \Psi \over \prtl r}$, $f_2 = \half
+{\prtl^2 \Psi \over \prtl r^2}$, we obtain the following:
+
 
 \bea
 \kappa &=& {1 \over 2} \lp 2 f_2 + \oorsq \pptsqfz + \oor f_1 \rp \\
@@ -501,16 +517,6 @@ Using now $f_0 = \Psi$, $f_1 = {\prtl \Psi \over \prtl r}$, $f_2 = \half {\prtl^
 \gamma_2 &=&   \half \sintwot \lp 2 f_2 - \oorsq \pptsqfz - \oor f_1 \rp + \costwot \lp - \oorsq \pptfz - \oor \pptfone \rp  
 \eea
 
-Using now $f_0 = \Psi$, $f_1 = {\prtl \Psi \over \prtl r}$, $f_2 = \half
-{\prtl^2 \Psi \over \prtl r^2}$, we obtain the following:
-
-\bea
-\kappa &=& {1 \over 2} \lp 2 f_2 + \oorsq \pptsqfz + \oor f_1 \rp \\
-\gamma_1 &=&   {1 \over 2} \lp \costwot \lp 2 f_2 - \oorsq \pptsqfz - \oor f_1
-\rp + \sintwot \lp \oorsq \pptfz - \twoor \pptfone \rp \rp \\
-\gamma_2 &=&   \half \sintwot \lp 2 f_2 - \oorsq \pptsqfz - \oor f_1 \rp +
-\costwot \lp - \oorsq \pptfz - \oor \pptfone \rp  \\
-\eea
 
 %So that 
 
