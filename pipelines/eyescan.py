@@ -144,7 +144,7 @@ def run(regionfile, imagefile, args={}, preset='', shape=(100,100), tablefile="o
     tb_flList = fts.dict_to_tbHDU({'filename':_flList});
     new_tbhdu = fts.merge_tbHDU(new_tbhdu,tb_flList);
 
-    new_tbhdu.writeto(tablefile+'.fit');
+    new_tbhdu.writeto(tablefile+'.fit',clobber=True);
 
     return;
 

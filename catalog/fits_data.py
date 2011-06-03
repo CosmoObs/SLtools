@@ -249,7 +249,7 @@ def dict_to_tbHDU(dic, tbname='', *fieldnames):
             return complex(lit);
         except:
             pass;
-        return False;
+        return lit;
         
     c = [];
     to_header = {};
@@ -284,7 +284,7 @@ def dict_to_tbHDU(dic, tbname='', *fieldnames):
             tipo = '40A'
             
         c.append(pyfits.Column(name=str(_arg).upper(),format=tipo,array=np.asarray(dic[_arg])));
-    
+
     newtable = pyfits.new_table(pyfits.ColDefs(c));
     newtable.name = tbname;
     
