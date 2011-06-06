@@ -10,9 +10,10 @@
 from __future__ import division
 import os
 import logging
-
+import numpy as np
 
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
+from sltools.gravlens.find_CC_new import run_find_CC
 
 ##@package lens_finite_sources
 # 
@@ -24,14 +25,20 @@ from sltools.gravlens.lens_parameters_new import lens_parameters_new
 
 
 #=================================================================================================================
-def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}):
+def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot=0, show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.5, accept_res_limit=2E-4):
 
-    inputlens, setlens, gravlens_params_updated = lens_parameters_new(lens_model, mass_scale, model_param_8, 
+
+    rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
+
+    index_CC = np.argmax(tan_CC_x**2 + tan_CC_y**2) # it is not necessary to use the lens center since we want the furthest point anyway
+    # gridhi1_CC_factor must be defined/iterated internaly to encompass all images
+    gravlens_params['gridhi1'] =  gridhi1_CC_factor * ( (tan_CC_x[index_CC]**2 + tan_CC_y[index_CC]**2)**0.5 )
+
+    inputlens, setlens, same_gravlens_params = lens_parameters_new(lens_model, mass_scale, model_param_8, 
                                                   model_param_9, model_param_10, galaxy_position, e_L, theta_L, 
                                                   shear, theta_shear, gravlens_params)
 
-    gridhi1 = gravlens_params_updated['gridhi1']
-    half_frame_size = gridhi1
+    half_frame_size = gravlens_params['gridhi1']
     Npix = int( (2*half_frame_size) / dimpix)
     image_names = []
     f199 = open('sersicinput.txt', 'w')
