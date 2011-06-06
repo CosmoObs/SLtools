@@ -356,7 +356,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		logging.debug('Since only one CC was found, I will try to check if setting the lens angle to 0 solves the separation problem.')
 		# try to get the CC with theta_L=0 and rotate back to theta_L
 		# 1- run find_CC_new again, but with theta_L=0
-		x_caustic, y_caustic, x_CC, y_CC, gravlens_params_if_clause = find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, 0, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file) # ran with theta_L = 0
+		x_caustic, y_caustic, x_CC, y_CC, gravlens_params_if_clause = find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, 0, shear, theta_shear, gravlens_params_updated, caustic_CC_file, gravlens_input_file) # ran with theta_L = 0
 		# 2- read data (loadtxt)
 		x1, y1, u1, v1, x2, y2, u2, v2 = np.loadtxt(caustic_CC_file, comments='#', unpack=True)
 		# 3- separate the curves
