@@ -114,6 +114,12 @@ def mediatrix_decomposition(image_name,image_dir='', method="medium",alpha=1,nea
     W=len(pixels[0])/(atan(1)*L)
     mediatrix_vectors['L/W']=L/W
     mediatrix_vectors['L']=L
+    x=[pixels[0][E1],mediatrix_vectors['center'][0],pixels[0][E2]]
+    y=[pixels[1][E1],mediatrix_vectors['center'][1],pixels[1][E2]]
+    x_c,y_c,r=three_points_to_circle(x,y)
+    circle_center=[x_c,y_c]
+    mediatrix_vectors['circle_params']=[circle_center,p1,p2]
+
     return mediatrix_vectors
 
 
