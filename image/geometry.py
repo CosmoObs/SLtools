@@ -26,7 +26,7 @@ def three_points_to_circle(x,y):
     theta2,b2=define_perpendicular_bisector(p2,p3)
     xc,yc,Flag=get_intercept_point(theta1,b1,theta2,b2)
     if Flag==1:
-        return 0
+        return 0,0,0
     r=((p1[0]-xc)*(p1[0]-xc))+((p1[1]-yc)*(p1[1]-yc))
     r=sqrt(r)
     return xc,yc,r
