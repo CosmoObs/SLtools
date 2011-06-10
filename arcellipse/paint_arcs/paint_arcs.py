@@ -27,6 +27,7 @@ import numpy
 import math
 import pyfits
 import sltools
+import re
 from sltools.image import gauss_convolution
 from sltools.image import add_noise
 from sltools.image import get_header_parameter
@@ -72,6 +73,8 @@ def read_input_file(input_file):
 
 
 	return images_list,params_list
+
+
 
 
 
@@ -341,7 +344,8 @@ def run_paint_arcs(input_image,params_list):
 	It calls the function digitalize_arc_sbmap to digitalize the arc surface brightness map and 
 	create the arc image (with suffix "_arc.fits"). Then it convolves the arc image with a gaussian
 	kernel, to add the seeing effect. After that, it add Poissonic noise to the arc image. Finally, 
-	it adds the arc to the input image. The final image with the added arc has the suffix "_final.fits". 
+	it adds the arc to the input image and it writes thee arc properties in the input image header.
+	The final image with the added arc has the suffix "_final.fits". 
     
  
 	Input:
@@ -357,6 +361,21 @@ def run_paint_arcs(input_image,params_list):
 	image_root,image_extension = os.path.splitext(image_name) 
 
 	image_array,image_header = pyfits.getdata(input_image,header=True)	
+
+	l_w_header = float(params[0])
+	n_header = float(params[1])
+	r_e_header = float(params[2])
+	r_c_header = float(params[3])
+	theta_0_header = float(params[4])
+	mag_header = float(params[5])
+	seeing_header = float(params[6])
+	x_0_header = float(params[7])
+	y_0_header = float(params[8])
+	mag_zpt_header = float(params[9])
+
+		
+	x_arc_header = x_0_header + r_c_header * math.cos(math.radians(theta_0_header))
+	y_arc_header = y_0_header + r_c_header * math.sin(math.radians(theta_0_header))
 	
 	#Digitalize and create arc image
 	sbmap = digitalize_arc_sbmap(params,image_name)
@@ -373,7 +392,7 @@ def run_paint_arcs(input_image,params_list):
 	#Adding noise
 	pyfits.writeto("arc_conv2.fits",fftconv_image)	
 	noise_file_list = ["arc_conv2.fits"]
-	noisy_files_list = add_noise(noise_file_list)
+	noisy_files_list = add_noise.add_noise(noise_file_list)
 	
 	for filename in noisy_files_list:
 		arc_array = pyfits.getdata(filename)
@@ -384,9 +403,22 @@ def run_paint_arcs(input_image,params_list):
 	#Writing final image to a fits file
 	final_image = paths['output'] + image_root + "_final" + image_extension
 
+
+
+	image_header.update('ALW',l_w_header,comment='Arc lenght-width ratio')
+	image_header.update('ARC',r_c_header,comment='Arc curvature radius (arcsec)')
+	image_header.update('ATHETA',theta_0_header,comment='Arc theta (degree)')
+	image_header.update('AMAG',mag_header,comment='Arc magnitude')
+	image_header.update('ASEEING',seeing_header,comment='Arc seeing (arcsec)')
+	image_header.update('NINDEX',n_header,comment='Arc Sersic profile index')
+	image_header.update('RE',r_e_header,comment='Arc Sersic effective radius (arcsec)')
+	image_header.update('XARC',x_arc_header,comment='Arc x center')
+	image_header.update('YARC',y_arc_header,comment='Arc y center')
+
 	pyfits.writeto(final_image,image_array,image_header)
-	
+
 	os.system("rm arc_conv2.fits")
+	os.system("rm arc_convns_2.fits")
 	
 	return image_array
 
@@ -419,7 +451,7 @@ for i in range(len(images_list)):
 
 	params = params_list[i]	
 
-	mag_zpt,dim_x,dim_y = get_header_parameter(input_image,'SEXMGZPT','NAXIS1','NAXIS2') 
+	mag_zpt,dim_x,dim_y = get_header_parameter.get_header_parameter(input_image,'SEXMGZPT','NAXIS1','NAXIS2') 
 
 	if len(params) == 7:  
 	#Add the position where the arc is centered (x_0,y_0) as the image center to params list in the 

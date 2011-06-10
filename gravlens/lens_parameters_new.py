@@ -53,7 +53,7 @@ def set_gravlens_default():
 	return gravlens_params_default
 
 
-def lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}):
+def lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}):
 	"""
 	Determine the 'base string' that defines the lens and gravlens properties.
 
@@ -61,7 +61,7 @@ def lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_pa
 	the lenses available and its parameters).
 
 	Input:
-	 - lens              <str> : Lens name (see gravlens manual table 3.1)
+	 - lens_model        <str> : Lens name (see gravlens manual table 3.1)
 	 - mass_scale      <float> : Mass scale of the lens - "parameter 1"
 	 - model_param_8   <float> : misc. lens parameter - often scale radio (depends on the lens model)
 	 - model_param_9   <float> : misc. lens parameter - often scale radio (depends on the lens model)
@@ -85,7 +85,7 @@ def lens_parameters_new(lens, mass_scale, model_param_8, model_param_9, model_pa
 	gravlens_params_updated.update( gravlens_params ) # update with the user options
 	
 	# define the lens model
-	setlens = '%s %f %f %f %f %f %f %f %f %f %f'% (lens, mass_scale, galaxy_position[0], galaxy_position[1], e_L, theta_L, shear, theta_shear, model_param_8, model_param_9, model_param_10 )
+	setlens = '%s %f %f %f %f %f %f %f %f %f %f'% (lens_model  , mass_scale, galaxy_position[0], galaxy_position[1], e_L, theta_L, shear, theta_shear, model_param_8, model_param_9, model_param_10 )
 
 	inputlens = """gridmode %d
 set gridhi1=%0.12f

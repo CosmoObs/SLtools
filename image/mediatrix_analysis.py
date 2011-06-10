@@ -22,14 +22,14 @@ def Sum_inner_product(mediatrix_data):
      
     """
     total_inner_prod=0
-    for i in range(0,len(mediatrix_data)-1):
+    for i in range(0,len(mediatrix_data['end'])-1):
         
-        component_1=mediatrix_data[i]['end'][0]-mediatrix_data[i]['origin'][0]
-        component_2=mediatrix_data[i]['end'][1]-mediatrix_data[i]['origin'][1]
+        component_1=mediatrix_data['end'][i][0]-mediatrix_data['origin'][i][0]
+        component_2=mediatrix_data['end'][i][1]-mediatrix_data['origin'][i][1]
         vector1=[component_1,component_2]
 
-        component_1=mediatrix_data[i+1]['end'][0]-mediatrix_data[i+1]['origin'][0]
-        component_2=mediatrix_data[i+1]['end'][1]-mediatrix_data[i+1]['origin'][1]
+        component_1=mediatrix_data['end'][i+1][0]-mediatrix_data['origin'][i+1][0]
+        component_2=mediatrix_data['end'][i+1][1]-mediatrix_data['origin'][i+1][1]
 
         vector2=[component_1,component_2]
         
@@ -54,7 +54,7 @@ def Sum_oposite_inner_product(mediatrix_data):
     return 0
 
 
-def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Area_out=True,image_Path=''):
+def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Area_out=True,image_path=''):
 
     """
     Function to calculate the S estatistic measurements.
@@ -71,15 +71,29 @@ def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Ar
     L=0
     theta=[]
     linear=[]
-    for i in range(0,len(mediatrix_data)):
-        theta.append(mediatrix_data['theta'][i])
-        linear.append(mediatrix_data['linear_coefficient'][i])
-        L=L+mediatrix_data['modulus'][i]
-        
+    for i in range(0,len(mediatrix_data['origin'])):
+       origin_x=mediatrix_data['origin'][i][0]
+       origin_y=mediatrix_data['origin'][i][1]
+       end_x=mediatrix_data['end'][i][0]
+       end_y=mediatrix_data['end'][i][1]
+       Length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
+       L=L+ sqrt(Length_aux)
+       delta_x=float((end_x-origin_x ))
+       if delta_x!=0:
+           a=float((end_y-origin_y ))/delta_x
+           theta.append(atan(a))
+           b=end_y-a*(end_x)
+           linear.append(b)
+       else:
+           theta.append(2*atan(1))
+           linear.append(end_y-origin_y)
     MinM=fmin(M_function,guess,args=(theta,linear),maxiter=1000, disp=0)
     MinM_val=M_function(MinM,theta,linear)
-    R=(guess[0]-MinM[0])**2 + (guess[0]-MinM[0])**2
+    R=(guess[0]-MinM[0])**2 + (guess[1]-MinM[1])**2
     R=sqrt(R)
+    center_comparisson=(mediatrix_data['circle_params'][0][0]-MinM[0])**2 + (mediatrix_data['circle_params'][0][1]-MinM[0])**2
+    center_comparisson=sqrt(center_comparisson)
+    alpha=Find_angle_from_circle_section(mediatrix_data['circle_params'][0],mediatrix_data['circle_params'][1],mediatrix_data['circle_params'][2])
     S_output={'id': mediatrix_data['id']}
     try:
         S_output['MinM_norm']=MinM_val/(L*L)
@@ -91,6 +105,16 @@ def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Ar
     except:
         print "Impossible to define a radius and curvature for "+str(mediatrix_data['id'])
         S_output['L/R']=-1
+    try:
+        S_output['curvature_comparisson']=(L/R)/alpha
+    except:
+        print "Impossible to compare curvature from circle section and mediatrix S for "+str(mediatrix_data['id'])
+        S_output['curvature_comparisson']=-1
+    try:
+        S_output['center_comparisson']=center_comparisson/L
+    except:
+        print "Impossible to compare center from circle method and mediatrix S for "+str(mediatrix_data['id'])
+        S_output['curvature_comparisson']=-1
     if sigma_out==True:
         lim=round((L+2.)/2.,2)
 	sigma_X=[]
@@ -117,7 +141,7 @@ def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Ar
         Extreme_sigma1=[sigma_X[E1],sigma_Y[E1]]
         Extreme_sigma2=[sigma_X[E2],sigma_Y[E2]]
         Extreme=[Extreme_sigma1,Extreme_sigma2]
-        sigma_lenght=lenght(Extreme)
+        sigma_lenght=get_length(Extreme)
         try:
             S_output['sigma_lenght']=(sigma_lenght)/L
         except:
@@ -129,7 +153,7 @@ def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Ar
             print "Impossible to define sigma_exc for "+str(mediatrix_data['id'])
         if Area_out==True:
             image_name=mediatrix_data['id']
-            image,hdr = pyfits.getdata(image_Path+image_name, header = True )
+            image,hdr = pyfits.getdata(image_path+image_name, header = True )
             pixels=numpy.where(image>0)
             sigma_points=[sigma_X,sigma_Y]
             intersection=Area_intersection(pixels,sigma_points)
@@ -137,8 +161,20 @@ def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Ar
                 
     return S_output
     
+def Find_angle_from_circle_section(circle_center,circle_point1,circle_point2):
 
-
+    x_aux=float(circle_point1[0]+circle_point2[0])/2
+    y_aux=float(circle_point1[1]+circle_point2[1])/2
+    m_point=[x_aux,y_aux]
+    dx=m_point[0]-circle_center[0]
+    dy=m_point[1]-circle_center[1]
+    adjacent=sqrt((dx*dx)+(dy*dy))
+    dx=circle_point1[0]-circle_center[0]
+    dy=circle_point1[1]-circle_center[1]
+    opposite=sqrt((dx*dx)+(dy*dy))
+    alpha=atan(opposite/adjacent)
+    alpha=2*alpha 
+    return alpha
 def Plot_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Area_out=True,image_Path='', save=True,save_dir=''):
 
     """
