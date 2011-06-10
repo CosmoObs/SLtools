@@ -1,5 +1,3 @@
-
-
 \chapter{Perturbative Approach in Strong Lensing}
 \section{\label{sec:BasicIdeas} Basic Ideas}
 
@@ -799,8 +797,8 @@ two.
 \section{Measurements of the arc properties}
 
 One of the great advantages of the Perturbative Method is that it
-allows us to calculate the analytical expressions for the images contours
-coming from lensed sources.
+allows us to calculate the analytical expressions for the images
+contours coming from lensed sources.
 
 \begin{figure*}[!htp]
 \resizebox{\hsize}{!}{
@@ -830,15 +828,15 @@ In the Perturbative Method, the inner and outer radial vector of an arc
 are given by
 
 \bea
-\vec{r}_{+}&=&(\re + x_{+})\cos{\te}\hat{\imath}+(\re
-+x_{+})\sin{\te}\hat{\jmath}\label{rplus}\\
-\vec{r}_{-}&=&(\re + x_{-})\cos{\te}\hat{\imath}+(\re
-+x_{-})\sin{\te}\hat{\jmath}\label{rminus}
+\vec{r}_{+}&=&(\re + x_{+})\cos{\te} \; \hat{\imath}+(\re
++x_{+})\sin{\te} \; \hat{\jmath}\label{rplus}\\
+\vec{r}_{-}&=&(\re + x_{-})\cos{\te} \; \hat{\imath}+(\re
++x_{-})\sin{\te} \; \hat{\jmath}\label{rminus}
 \eea
 where $x_{\pm}$ are given by eq.~(\ref{elliptical_contour2}) for an
-elliptical source oriented in any direction with respect to the source
-potential semimajor axis.  Therefore, we may define a mean value of
-the radial coordinate at a given angle $\te$ as
+elliptical source oriented in any direction with respect to the
+semimajor axis of the source potential.  Therefore, we may define a
+mean value of the radial coordinate at a given angle $\te$ as
 
 \bea
 \bar{r}(\te)&=&\dfrac{r_{+}+r_{-}}{2}=\re+\left(\dfrac{x_{+}+x_{-}}{2}
@@ -872,10 +870,11 @@ represented by the straight line segment joining the points $P_1$ and
 $P_2$ (see Left Panel in Fig.~\ref{measure_arcs}).  By the condition
 of the formation of images, we know the angles between which the arc
 is formed. We denote these angles $\te_{i}$ and $\te_{f}$, and we
-define the points $P_1$, $P_2$ as the mean radial vector at these
-angles, i.e,
+define the points $P_1$, $P_2$ as the
+mean radial vector at these angles, with Cartesian coordinates
 
 \beq
+\label{eq:circlecoords}
 P_1=(\bar{r}_i\cos{\te_i},\bar{r}_{i}\sin{\te_i}), \quad
 P_2=(\bar{r}_f\cos{\te_f},\bar{r}_{f}\sin{\te_f})
 \eeq
@@ -891,9 +890,10 @@ purposes, and will not be further discussed in this report.
 
 The second method consists of calculating the distance resulting of
 the summation of the straight line segments joining the points $P_1$
-and $P_G$ ($L_{1G}$) and $P_G$ and $P_2$ ($L_{2G}$). Where the Point
-$P_G$ correspond to the barycenter (i.e. gravicenter) of the image,
-defined by radial vector at the angle $\te_G$.
+and $P_G$ ($L_{1G}$) and $P_G$ and $P_2$ ($L_{2G}$) (also see Left
+Panel in Fig.~\ref{measure_arcs}). Where the Point $P_G$ corresponds to
+the barycenter (i.e. gravicenter) of the image, defined by radial
+vector at the angle $\te_G$.
 
 \beq
 P_G\equiv
@@ -918,10 +918,11 @@ is
 \end{equation*}
 or
 \beq
+\label{eq:singlecirceq}
 x^2+y^2+Ax+By+C=0\\
 \eeq 
 
-Considering the circular arc that passes through three points $P_1$, $P_G$ and
+Using eqs.\ref{eq:circlecoords} and \ref{eq:singlecirceq}, and considering the circular arc that passes through three points $P_1$, $P_G$ and
 $P_2$, we need to solve the following system of equations
 
 
