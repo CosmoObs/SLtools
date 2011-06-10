@@ -89,8 +89,11 @@ def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Ar
            linear.append(end_y-origin_y)
     MinM=fmin(M_function,guess,args=(theta,linear),maxiter=1000, disp=0)
     MinM_val=M_function(MinM,theta,linear)
-    R=(guess[0]-MinM[0])**2 + (guess[0]-MinM[0])**2
+    R=(guess[0]-MinM[0])**2 + (guess[1]-MinM[1])**2
     R=sqrt(R)
+    center_comparisson=(mediatrix_data['circle_params'][0][0]-MinM[0])**2 + (mediatrix_data['circle_params'][0][1]-MinM[0])**2
+    center_comparisson=sqrt(center_comparisson)
+    alpha=Find_angle_from_circle_section(mediatrix_data['circle_params'][0],mediatrix_data['circle_params'][1],mediatrix_data['circle_params'][2])
     S_output={'id': mediatrix_data['id']}
     try:
         S_output['MinM_norm']=MinM_val/(L*L)
@@ -102,6 +105,16 @@ def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Ar
     except:
         print "Impossible to define a radius and curvature for "+str(mediatrix_data['id'])
         S_output['L/R']=-1
+    try:
+        S_output['curvature_comparisson']=(L/R)/alpha
+    except:
+        print "Impossible to compare curvature from circle section and mediatrix S for "+str(mediatrix_data['id'])
+        S_output['curvature_comparisson']=-1
+    try:
+        S_output['center_comparisson']=center_comparisson/L
+    except:
+        print "Impossible to compare center from circle method and mediatrix S for "+str(mediatrix_data['id'])
+        S_output['curvature_comparisson']=-1
     if sigma_out==True:
         lim=round((L+2.)/2.,2)
 	sigma_X=[]
@@ -148,8 +161,20 @@ def Evaluate_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Ar
                 
     return S_output
     
+def Find_angle_from_circle_section(circle_center,circle_point1,circle_point2):
 
-
+    x_aux=float(circle_point1[0]+circle_point2[0])/2
+    y_aux=float(circle_point1[1]+circle_point2[1])/2
+    m_point=[x_aux,y_aux]
+    dx=m_point[0]-circle_center[0]
+    dy=m_point[1]-circle_center[1]
+    adjacent=sqrt((dx*dx)+(dy*dy))
+    dx=circle_point1[0]-circle_center[0]
+    dy=circle_point1[1]-circle_center[1]
+    opposite=sqrt((dx*dx)+(dy*dy))
+    alpha=atan(opposite/adjacent)
+    alpha=2*alpha 
+    return alpha
 def Plot_S_Statistic(mediatrix_data, sigma_out=True,sigma=1,sigma_pre=0.5,Area_out=True,image_Path='', save=True,save_dir=''):
 
     """
