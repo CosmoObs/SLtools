@@ -280,7 +280,7 @@ def source_positions(source_selector_control_params, deformation_rectangle, nsou
 		for j in range (2,len(filemag)):	
 			f1.write('magtensor %0.6f %0.6f\n' % ( float(filemag[j].split()[0]), float(filemag[j].split()[1])  ) )
 			image_positions[i].append( [float(filemag[j].split()[0]), float(filemag[j].split()[1])] )
-	# if gravlens does not finf any images, the grid is not big enough
+	# if gravlens does not find any images, the grid is not big enough
 	if 0 in imagens and len(imagens) != 0:
 		logging.debug( 'There are %d point images outside the grid' % imagens.count(0) )
 		return False
