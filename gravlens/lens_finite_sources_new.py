@@ -4,8 +4,15 @@
 # Pedro Ferreira - pferreira@dfte.ufrn.br
 # ==================================
 
-""" Lenses a finite source with gravlens. """
+""" Package to lens finite sources with gravlens and measure the images. """
 
+##@package lens_finite_sources_new
+# 
+#
+# This package contains functions to lens finite sources (lensing), extract the image plane images 
+# determining mergers, plot sources and images with the caustics and critical curves and apply 
+# measurement methods to individual images. Also, the pipeline lens_finite_sources_new concatenates and 
+# runs the above functions.
 
 from __future__ import division
 import os
@@ -15,28 +22,36 @@ import numpy as np
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 from sltools.gravlens.find_CC_new import run_find_CC
 
-##@package lens_finite_sources
-# 
-# lenses sources (centered in source_centers) with gravlens
-# Treats both sersic and uniform sources (uniform sources do not have sersic parameter 'n').
-# In the case of uniform sources, the flux is set to unity. Always!
-# We increase the resolution of the calculus by increasing Nover (maximum Nover allowed = 3)
-# 
+def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, 
+            theta_L, shear, theta_shear, gravlens_params, dimpix, source_centers, source_model, 
+            ref_magzpt, reference_band, nover_max=3):
+    """
+    Lenses sources with the same lens model.
 
+    Input:
+     - lens_model        <str> : Lens name (see gravlens manual table 3.1)
+     - mass_scale      <float> : Mass scale of the lens - "parameter 1"
+     - model_param_8   <float> : misc. lens parameter - often scale radio (depends on the lens model)
+     - model_param_9   <float> : misc. lens parameter - often scale radio (depends on the lens model)
+     - model_param_10  <float> : misc. lens parameter - often a power law index (depends on the lens model)
+     - galaxy_position  <list> : [x,y] position of the lens
+     - e_L             <float> : Horizontal central position for output (cut) image
+     - theta_L         <float> : Vertical central position for output (cut) image
+     - shear           <float> : 'pixel' or 'degrees' for size (x_size,y_size) values
+     - theta_shear     <float> : Horizontal size (in pixels) of output image
+     - gravlens_params   <dic> : Contains the keys and values of the gravlens configuration , dimpix, source_centers, source_model, 
+     - ref_magzpt      <float> :
+     - reference_band    <str> :
+     - nover_max         <int> :
 
-#=================================================================================================================
-def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot=0, show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.5, accept_res_limit=2E-4):
+    Output:
+     - image_names <list> :
 
-
-    rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
-
-    index_CC = np.argmax(tan_CC_x**2 + tan_CC_y**2) # it is not necessary to use the lens center since we want the furthest point anyway
-    # gridhi1_CC_factor must be defined/iterated internaly to encompass all images
-    gravlens_params['gridhi1'] =  gridhi1_CC_factor * ( (tan_CC_x[index_CC]**2 + tan_CC_y[index_CC]**2)**0.5 )
+    """
 
     inputlens, setlens, same_gravlens_params = lens_parameters_new(lens_model, mass_scale, model_param_8, 
-                                                  model_param_9, model_param_10, galaxy_position, e_L, theta_L, 
-                                                  shear, theta_shear, gravlens_params)
+                                                  model_param_9, model_param_10, galaxy_position, e_L, 
+                                                  theta_L, shear, theta_shear, gravlens_params)
 
     half_frame_size = gravlens_params['gridhi1']
     Npix = int( (2*half_frame_size) / dimpix)
@@ -48,7 +63,7 @@ def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9
         f199.write('setsource 1\n')
         # Nover increase resolution if the source is smaller than the pixel
         nover = source_model[i]['nover']
-        while source_model[i]['rs'] < dimpix/nover and nover < 3:
+        while source_model[i]['rs'] < dimpix/nover and nover < nover_max:
             nover += 1
         source_model[i]['nover'] = nover
         # -------------------------------------------------------------------
@@ -78,6 +93,61 @@ def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9
         logging.info( "There were no sources to be lensed" )
 	return image_names
 
+
+##@package lens_finite_sources
+# 
+# lenses sources (centered in source_centers) with gravlens
+# Treats both sersic and uniform sources (uniform sources do not have sersic parameter 'n').
+# In the case of uniform sources, the flux is set to unity. Always!
+# We increase the resolution of the calculus by increasing Nover (maximum Nover allowed = 3)
+# 
+
+
+#=================================================================================================================
+def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot=0, show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.0, accept_res_limit=2E-4, nover_max=3):
+    """"
+    This is a pipeline that ...
+
+    Input:
+     - lens_model        <str> : Lens name (see gravlens manual table 3.1)
+     - mass_scale      <float> : Mass scale of the lens - "parameter 1"
+     - model_param_8   <float> : misc. lens parameter - often scale radio (depends on the lens model)
+     - model_param_9   <float> : misc. lens parameter - often scale radio (depends on the lens model)
+     - model_param_10  <float> : misc. lens parameter - often a power law index (depends on the lens model)
+     - galaxy_position  <list> : [x,y] position of the lens
+     - e_L             <float> : Horizontal central position for output (cut) image
+     - theta_L         <float> : Vertical central position for output (cut) image
+     - shear           <float> : 'pixel' or 'degrees' for size (x_size,y_size) values
+     - theta_shear     <float> : Horizontal size (in pixels) of output image
+     - gravlens_params   <dic> : Contains the keys and values of the gravlens configuration , dimpix, source_centers, source_model, 
+     - ref_magzpt      <float> :
+     - reference_band    <str> :
+     - nover_max         <int> :
+    ...
+
+    Output:
+     - 
+
+    """"
+
+    rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
+
+    index_CC = np.argmax(tan_CC_x**2 + tan_CC_y**2) # it is not necessary to use the lens center since we want the furthest point anyway
+    # gridhi1_CC_factor must be defined/iterated internaly to encompass all images
+    gravlens_params['gridhi1'] =  gridhi1_CC_factor * ( (tan_CC_x[index_CC]**2 + tan_CC_y[index_CC]**2)**0.5 )
+
+    image_names = lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, 
+                          galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, dimpix, 
+                          source_centers, source_model, ref_magzpt, reference_band, nover_max)
+
+
+    # extract the image plane images 
+
+    # determine mergers
+
+    # plot sources and images with the caustics and critical curves 
+
+    # apply measurement methods to individual images
 
 
 
