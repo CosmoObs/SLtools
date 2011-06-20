@@ -325,14 +325,30 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
 # ---
 
 
-def elliminate_disconected(ind):
-    # change  from a list of coordinates to a list of points
+def elliminate_disconected(ind, high_area=False):
+
+"""
+    From a list of points that belongs to objects it separates in groups of connected objects. If high_area=False return a list which first index represents each object , the second and third its coordinates. if high_area=True  returns the only a list with the coordinates of the object that has greater area.
+
+   
+    Input:
+     - ind : array like
+        the list of points where ind[0] is a list with the first coordinates (e.g. x) and ind[1] the second coordinates (e.g. y)
+     - high_area : bool
+        enables a criteria to return only the coordinates of the object that has greater area
+   
+    Output:
+     - (nparray)  : if high_area=False  is list which first index represent the  object.  The second  and third index represents  the first and second coordinates. if high_area=True  is list which first and second index represents lists the first and second coordinates
+
+    ---
+    """
+
     p=[]
     for i in range(0,len(ind[0])):
         p_aux=[ind[0][i],ind[1][i]]
         p.append(p_aux)
-    
    
+  
     Objects=[]
     objects=[]
     while len(p)>0:
@@ -344,11 +360,16 @@ def elliminate_disconected(ind):
                 if (p_neighbors[i] in p) and not(p_neighbors[i] in objects):
                     objects.append(p_neighbors[i])
                     p_test.append(p_neighbors[i])
-                    p.remove(p_neighbors[i])   
+                    p.remove(p_neighbors[i])  
             p_test.remove(p_test[0])
         Objects.append(objects)
         objects=[]
+
+    if high_area==False:
+        return Objects
+    else:
     # criteria to select an interest object
+   
     Area_max=len(Objects[0])
     id_max=0
     for i in range(0,len(Objects)):
@@ -362,7 +383,7 @@ def elliminate_disconected(ind):
     ind_new[0].remove(-100)
     ind_new[1].remove(-1000)
     ind_n=[np.array(ind_new[0]),np.array(ind_new[1])]
-    return ind_n      
+    return ind_n          
 # To keep compatibility with the old "sextamp" function:
 def sextamp(seg_img, obj_img, hdr=None, increase=0, relative_increase=False, objIDs=[]):
 	return [ segstamp(seg_img, ID, obj_img, hdr, increase, relative_increase) for ID in objIDs ]
