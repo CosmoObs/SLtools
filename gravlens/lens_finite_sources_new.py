@@ -18,9 +18,12 @@ from __future__ import division
 import os
 import logging
 import numpy as np
+import pyfits
 
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 from sltools.gravlens.find_CC_new import run_find_CC
+from sltools.image.imcp import elliminate_disconected as elliminate_disconected
+
 
 def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, 
             theta_L, shear, theta_shear, gravlens_params, dimpix, source_centers, source_model, 
@@ -77,8 +80,8 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
             f199.write('%s %f %.6f %.6f %f %f %.6f 0 0 macro\n' % (source_type, totalsourceplaneflux, source_centers[i][0], source_centers[i][1], source_model[i]['es'], source_model[i]['thetas'], source_model[i]['rs'] ) ) # sersic/uniform F x y e PA halflightr nothing macro/micro
         #------------------------------------------------------------------------
         f199.write('0 0 0 0 0 0 0 0\n')
-        f199.write('SBmap2 %0.9f %0.9f %d %0.9f %0.9f %d %d sbmap%05d_%s.fits 3\n' % (-1*half_frame_size, half_frame_size, Npix, -1*half_frame_size, half_frame_size, Npix, nover, i, reference_band) ) # <x lo> <hi> <# steps> <y lo> <hi> <# steps> <Nover> <file> <outtype>	
         image_names.append('sbmap%05d_%s.fits' % (i, reference_band) )
+        f199.write('SBmap2 %0.9f %0.9f %d %0.9f %0.9f %d %d %s 3\n' % (-1*half_frame_size, half_frame_size, Npix, -1*half_frame_size, half_frame_size, Npix, nover, image_names[-1]) ) # <x lo> <hi> <# steps> <y lo> <hi> <# steps> <Nover> <file> <outtype>	
         logging.debug( "The source %d is centered at %s and is properties are %s" % (i+1, source_centers[i] ,str(source_model) ) )
 
     f199.close()
@@ -91,21 +94,21 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
         logging.debug('Executed gravlens to lens the finite sources and returned status %s' % str(status) )
     else:
         logging.info( "There were no sources to be lensed" )
-	return image_names
+
+    return image_names
 
 
-##@package lens_finite_sources
-# 
-# lenses sources (centered in source_centers) with gravlens
-# Treats both sersic and uniform sources (uniform sources do not have sersic parameter 'n').
-# In the case of uniform sources, the flux is set to unity. Always!
-# We increase the resolution of the calculus by increasing Nover (maximum Nover allowed = 3)
-# 
+def identify_images(nonzero_frame_data):
+
+    img_1 = elliminate_disconected(nonzero_frame_data) # get all arguments of this single image
+    #img[img_1] = 0
+
+    # make a loop over all images on the frame
 
 
 #=================================================================================================================
 def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot=0, show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.0, accept_res_limit=2E-4, nover_max=3):
-    """"
+    """
     This is a pipeline that ...
 
     Input:
@@ -123,12 +126,12 @@ def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9
      - ref_magzpt      <float> :
      - reference_band    <str> :
      - nover_max         <int> :
-    ...
+     - 
 
     Output:
      - 
 
-    """"
+    """
 
     rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
 
@@ -140,6 +143,16 @@ def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9
                           galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, dimpix, 
                           source_centers, source_model, ref_magzpt, reference_band, nover_max)
 
+    # loop nos frames (each image plane)
+    for frame_name in image_names:
+        frame_data = pyfits.getdata(frame_name) # to get the header add 'header=True'
+        nonzero_frame_data = np.nonzero(frame_data)
+#        # zerar a contagem dos pixels fracos (<0.1max(count))? (attention to uniform sources)
+#        counts = frame_data[nonzero_frame_data]; arg_max = np.argmax(counts); max_count_pix = [ nonzero_frame_data[1][arg],nonzero_frame_data[0][arg] ]
+#        args_low_count = np.where(frame_data < np.max(counts)/1000.)
+#        frame_data[args_low_count] = 0
+#        nonzero_frame_data_new = np.nonzero(frame_data)
+        identify_images(nonzero_frame_data)
 
     # extract the image plane images 
 
