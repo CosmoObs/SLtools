@@ -99,6 +99,8 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
 
 
 def identify_images(nonzero_frame_data):
+    """Runs SExtractor in OBJECTS mode, identify each object and return its positions."""
+
 
     img_1 = elliminate_disconected(nonzero_frame_data) # get all arguments of this single image
     #img[img_1] = 0
