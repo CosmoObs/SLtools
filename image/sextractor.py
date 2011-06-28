@@ -460,10 +460,6 @@ def run_segobj(filename, params=[], args={}, preset='', temp_dir='', quiet=False
 
     return ({'OBJECTS':objimgname, 'SEGMENTATION':segimgname, 'CATALOG':catfilename});
 
-# aliases
-run_segment = run_segobj;
-segment = run_segobj;
-
 # ---
 
 def run_detec_test(filename, params=[], args={}, preset='', temp_dir='', quiet=False, arg_min={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}, arg_max={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}, arg_step={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}):
