@@ -23,6 +23,7 @@ import pyfits
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 from sltools.gravlens.find_CC_new import run_find_CC
 from sltools.image.imcp import elliminate_disconected as elliminate_disconected
+from sltools.image.sextractor import run_segobj
 
 
 def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, 
@@ -101,6 +102,8 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
 def identify_images(nonzero_frame_data):
     """Runs SExtractor in OBJECTS mode, identify each object and return its positions."""
 
+    run_segobj(filename, params=[], args={}, preset='') # 'params' are the SExtractor 
+    # parameters to output (strings, see SE's default.param). 'args' ({str:str,}) are SE command-line arguments
 
     img_1 = elliminate_disconected(nonzero_frame_data) # get all arguments of this single image
     #img[img_1] = 0

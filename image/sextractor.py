@@ -44,6 +44,8 @@ def _cstm_args(instrument,fits_image):
             MAG_ZEROPOINT = '21.59'
         elif instrument == 'CS82':
             MAG_ZEROPOINT = '21.59'
+        elif instrument == 'sims':
+            MAG_ZEROPOINT = '31.0'
         else:
             MAG_ZEROPOINT = '21.59'
 
@@ -66,6 +68,8 @@ def _cstm_args(instrument,fits_image):
              SEEING_FWHM= '0.22'
         elif instrument == 'CFHT':
              SEEING_FWHM= '1.2'
+        elif instrument == 'sims':
+             SEEING_FWHM= '0.3'
         else:
             SEEING_FWHM= '0.22'
     if instrument == 'DC4':
@@ -260,7 +264,39 @@ def _cstm_args(instrument,fits_image):
             'MAG_ZEROPOINT' : MAG_ZEROPOINT
             };
 
-
+    elif instrument == 'sims':
+        _dic = {
+            'DETECT_TYPE' : 'CCD',
+            'DETECT_MINAREA' : '4',
+            'THRESH_TYPE' : 'ABSOLUTE',
+            'DETECT_THRESH' :  '0.000004',
+            'ANALYSIS_THRESH' : '1.0',
+            'FILTER' : 'Y',
+            'FILTER_NAME' : 'default.conv',
+            'DEBLEND_NTHRESH' : '32',
+            'DEBLEND_MINCONT' : '0.15',
+            'CLEAN' : 'Y',
+            'CLEAN_PARAM' : '1.0',
+            'MASK_TYPE' : 'CORRECT',
+            'PHOT_APERTURES' : '5',
+            'PHOT_AUTOPARAMS' : '2.5,3.5',
+            'SATUR_LEVEL' : '50000.0',
+            'MAG_GAMMA' : '4.0',
+            'GAIN' : '0.0',
+            'PIXEL_SCALE' : '1.0',
+            'SEEING_FWHM' : SEEING_FWHM,
+            'BACK_TYPE' : 'MANUAL',
+            'BACK_VALUE' : '0.0,0.0',
+            'STARNNW_NAME' : 'default.nnw',
+            'BACK_SIZE' : '64',
+            'BACK_FILTERSIZE' : '3',
+            'BACKPHOTO_TYPE' : 'GLOBAL',
+            'CHECKIMAGE_TYPE' : 'NONE',
+            'MEMORY_OBJSTACK' : '3000',
+            'MEMORY_PIXSTACK' : '1000000',
+            'MEMORY_BUFSIZE' : '1024',
+            'VERBOSE_TYPE' : 'NORMAL'
+            };
 
 
     else:
@@ -390,7 +426,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
 # -
 
 #---------------------------------------------------------
-def run_segobj(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
+def run_segobj(filename, params=[], args={}, preset='', temp_dir=''):
     """ Run Sextractor over given image with specific outputs
 
     run_segobj( 'image.fits' )  ->  <dict>
