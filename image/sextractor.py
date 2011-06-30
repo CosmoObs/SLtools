@@ -426,7 +426,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
 # -
 
 #---------------------------------------------------------
-def run_segobj(filename, params=[], args={}, preset='', temp_dir=''):
+def run_segobj(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
     """ Run Sextractor over given image with specific outputs
 
     run_segobj( 'image.fits' )  ->  <dict>
@@ -489,7 +489,7 @@ def run_segobj(filename, params=[], args={}, preset='', temp_dir=''):
 
     # Run sextractor module; output catalogues to "catalog" files..
     #
-    out = run(fits_image, params, cargs, preset, temp_dir);
+    out = run(fits_image, params, cargs, preset, temp_dir, quiet);
 
     if (out == False):
         return (False);

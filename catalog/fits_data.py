@@ -79,7 +79,7 @@ def select_columns(tbhdu, *fieldnames):
 
     Input:
      - tbhdu : pyfits.open('data.fit')[?]
-        Table HDU, often "?" equals to 1
+        Table HDU, often "?" equals 1
      - cols : str,
         Comma separated list of variables to be read from 'hdulist'
 
@@ -109,10 +109,8 @@ def select_rows(tbhdu, *indices):
     'indices', is output.
     
     Input:
-     - tbhdu : pyfits.BinTableHDU
-        FITS table HDU
-     - *indices : int,
-        List of indexes to read from tbhdu
+     - tbhdu     [BinTableHDU] : FITS table HDU
+     - *indices         [int,] : List of indexes to read from tbhdu
     
     Output:
      -> (new) BinTableHDU : sub-selection (rows) of tbhdu
@@ -136,12 +134,9 @@ def select_entries(tbhdu, fieldname, *values):
     table (HDU) is generated from selected lines.
     
     Input:
-     - tbhdu : pyfits.open('data.fit')[?]
-        Table HDU, often "?" equals to 1
-     - field : str
-        Field (column) name that 'values' should match
-     - *values : <tbdata.field(field).dtype>
-        List of values to match in 'field' entries
+     - tbhdu     [BinTableHDU] : Table HDU, often "?" equals to 1
+     - field            [str]  : Field (column) name that 'values' should match
+     - *values  [field.dtype]  : List of values to match in 'field' entries
     
     Output:
      -> (new) BinTableHDU : sub-selection (rows) of tbhdu
