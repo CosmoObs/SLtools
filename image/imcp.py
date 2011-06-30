@@ -327,7 +327,7 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
 
 def elliminate_disconected(ind, high_area=False):
 
-"""
+    """
     From a list of points that belongs to objects it separates in groups of connected objects. If high_area=False return a list which first index represents each object , the second and third its coordinates. if high_area=True  returns the only a list with the coordinates of the object that has greater area.
 
    
@@ -368,22 +368,22 @@ def elliminate_disconected(ind, high_area=False):
     if high_area==False:
         return Objects
     else:
-    # criteria to select an interest object
+        # criteria to select an interest object
    
-    Area_max=len(Objects[0])
-    id_max=0
-    for i in range(0,len(Objects)):
-        if len(Objects[i])>Area_max:
-            Area_max=len(Objects[i])
-            id_max=i
-    ind_new=[[-100],[-1000]]
-    for i in range(0,len(Objects[id_max])):
-        ind_new[0].append(Objects[id_max][i][0])
-        ind_new[1].append(Objects[id_max][i][1])
-    ind_new[0].remove(-100)
-    ind_new[1].remove(-1000)
-    ind_n=[np.array(ind_new[0]),np.array(ind_new[1])]
-    return ind_n          
+        Area_max=len(Objects[0])
+        id_max=0
+        for i in range(0,len(Objects)):
+            if len(Objects[i])>Area_max:
+                Area_max=len(Objects[i])
+                id_max=i
+        ind_new=[[-100],[-1000]]
+        for i in range(0,len(Objects[id_max])):
+            ind_new[0].append(Objects[id_max][i][0])
+            ind_new[1].append(Objects[id_max][i][1])
+        ind_new[0].remove(-100)
+        ind_new[1].remove(-1000)
+        ind_n=[np.array(ind_new[0]),np.array(ind_new[1])]
+        return ind_n          
 # To keep compatibility with the old "sextamp" function:
 def sextamp(seg_img, obj_img, hdr=None, increase=0, relative_increase=False, objIDs=[]):
 	return [ segstamp(seg_img, ID, obj_img, hdr, increase, relative_increase) for ID in objIDs ]

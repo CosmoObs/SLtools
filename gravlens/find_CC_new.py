@@ -145,7 +145,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	logging.debug( '(Number of iterations on gridhi1 = %d)' % (counter) )
 
 	if os.path.isfile('./' + caustic_CC_file) == False: # looks for the C.C. file (crit.txt) - if this file does not exist, returns 'False'
-		logging.error( 'Gravlens could not determine the caustics and critical curves. Try changing the input units (for example, from arcseconds to miliarcsecond), because gravlens outputs the critical curves with only 6 digits.' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
+		logging.error( 'Gravlens could not determine the caustics and critical curves. Try changing the input units (for example, from arcseconds to miliarcsecond), because gravlens outputs the critical curves with only 6 digits. The grid size used was %f and it was obtained through %d iteration.' % (float( gravlens_params_updated['gridhi1'] ),  counter) )
 		return False
 
  	if len(open('./' + caustic_CC_file).readlines() ) < min_n_lines: # these correspond to critical cases when the CC have too few points.

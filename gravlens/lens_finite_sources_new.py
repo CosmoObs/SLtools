@@ -99,14 +99,13 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
     return image_names
 
 
-def identify_images(frame_name, params=[], args={}, preset=''):
+def identify_images(frame_name, params=[], args={}, preset='sims'):
     """Runs SExtractor in OBJECTS mode, identify each object and return its positions."""
 
     dict_run_segobj = run_segobj(frame_name, params=[], args={}, preset='') # 'params' are the SExtractor 
     # parameters to output (strings, see SE's default.param). 'args' ({str:str,}) are SE command-line arguments
 
-    objimgname, segimgname, catfilename = dict_run_segobj['OBJECTS'], dict_run_segobj['SEGMENTATION'], 
-                                          dict_run_segobj['CATALOG'] # catfilename is the SE output catalog with the 'params' collumns
+    objimgname, segimgname, catfilename = dict_run_segobj['OBJECTS'], dict_run_segobj['SEGMENTATION'], dict_run_segobj['CATALOG'] # catfilename is the SE output catalog with the 'params' collumns
 
     frame_data = pyfits.getdata(frame_name) # to get the header add 'header=True'
     nonzero_frame_data = np.nonzero(frame_data)
@@ -120,7 +119,7 @@ def identify_images(frame_name, params=[], args={}, preset=''):
 
 
 #=================================================================================================================
-def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot=0, show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.0, accept_res_limit=2E-4, nover_max=3):
+def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot=0, show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.2, accept_res_limit=2E-4, nover_max=3):
     """
     This is a pipeline that ...
 
@@ -165,7 +164,7 @@ def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9
 #        args_low_count = np.where(frame_data < np.max(counts)/1000.)
 #        frame_data[args_low_count] = 0
 #        nonzero_frame_data_new = np.nonzero(frame_data)
-        identify_images(frame_name, params, args, preset='sims')
+        identify_images(frame_name) # , params, args, preset='sims')
 
     # extract the image plane images 
 
