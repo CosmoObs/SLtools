@@ -99,16 +99,24 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
     return image_names
 
 
-def identify_images(nonzero_frame_data):
+def identify_images(frame_name, params=[], args={}, preset=''):
     """Runs SExtractor in OBJECTS mode, identify each object and return its positions."""
 
-    run_segobj(filename, params=[], args={}, preset='') # 'params' are the SExtractor 
+    dict_run_segobj = run_segobj(frame_name, params=[], args={}, preset='') # 'params' are the SExtractor 
     # parameters to output (strings, see SE's default.param). 'args' ({str:str,}) are SE command-line arguments
+
+    objimgname, segimgname, catfilename = dict_run_segobj['OBJECTS'], dict_run_segobj['SEGMENTATION'], 
+                                          dict_run_segobj['CATALOG'] # catfilename is the SE output catalog with the 'params' collumns
+
+    frame_data = pyfits.getdata(frame_name) # to get the header add 'header=True'
+    nonzero_frame_data = np.nonzero(frame_data)
 
     img_1 = elliminate_disconected(nonzero_frame_data) # get all arguments of this single image
     #img[img_1] = 0
 
     # make a loop over all images on the frame
+
+
 
 
 #=================================================================================================================
@@ -150,14 +158,14 @@ def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9
 
     # loop nos frames (each image plane)
     for frame_name in image_names:
-        frame_data = pyfits.getdata(frame_name) # to get the header add 'header=True'
-        nonzero_frame_data = np.nonzero(frame_data)
+
+
 #        # zerar a contagem dos pixels fracos (<0.1max(count))? (attention to uniform sources)
 #        counts = frame_data[nonzero_frame_data]; arg_max = np.argmax(counts); max_count_pix = [ nonzero_frame_data[1][arg],nonzero_frame_data[0][arg] ]
 #        args_low_count = np.where(frame_data < np.max(counts)/1000.)
 #        frame_data[args_low_count] = 0
 #        nonzero_frame_data_new = np.nonzero(frame_data)
-        identify_images(nonzero_frame_data)
+        identify_images(frame_name, params, args, preset='sims')
 
     # extract the image plane images 
 
