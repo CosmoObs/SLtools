@@ -209,7 +209,7 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
          - rad_CC_y       <list> : list of y coordinates of points from the radial CC
 	 - plot_filename   <str> : the name of the generated plot file (including the format, ex. 
 			           'curves_plot.png'). To see the formats available see matplotlib.pyplot help
-	 - show_plot       <int> : use 0 for 'no screen display' (default) and 1 for diaplay on the 
+	 - show_plot       <int> : use 0 for 'no screen display' (default) and 1 for display on the 
 				   screen
 
 	Output:
@@ -240,6 +240,8 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 		pyplot.savefig(plot_filename)
 	if show_plot == 1:
 		pyplot.show() 
+
+        pyplot.close()
 
 	return True
 
