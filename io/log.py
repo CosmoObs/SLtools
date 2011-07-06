@@ -34,7 +34,7 @@ def init( logfile='logging.log', debug=False, verbose=False ):
 
     logging.basicConfig(level=level,
                 format='%(asctime)s %(module)-25s : %(levelname)-8s %(message)s',
-                datefmt='%m-%d %H:%M',
+                datefmt='%m-%d %H:%M:%S',
                 filename=logfile,
                 filemode='w')
 
