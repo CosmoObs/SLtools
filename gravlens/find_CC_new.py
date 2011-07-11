@@ -191,7 +191,7 @@ def find_CC_new(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 
 #=======================================================================================================
-def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, plot_filename, show_plot=0):
+def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, plot_filename, show_plot=0, src_x=[], src_y=[], img_x=[], img_y=[] ):
 	"""
 	Plots given caustics and critical curves (CC).
 
@@ -220,8 +220,10 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.clf()
 	f1 = pyplot.figure(figsize = (20,12) )
 	pyplot.subplot(121) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black',marker='', linewidth=2, label='Tangential')
+	pyplot.plot(tan_caustic_x, tan_caustic_y, color='black', marker='', linewidth=2, label='Tangential')
 	pyplot.plot(rad_caustic_x, rad_caustic_y, color='red', marker='', linewidth=2, label='Radial')
+	if len(src_x) != 0:
+		pyplot.plot(src_x, src_y, 'b.', label='Source')
 	pyplot.legend(loc='upper right', shadow=True)
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
@@ -229,8 +231,10 @@ def plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x
 	pyplot.title('Caustics'  , fontsize = 20)
 
 	pyplot.subplot(122) # (numRows,numCols, plotNum)
-	pyplot.plot(tan_CC_x, tan_CC_y, color='black',marker='', linewidth=2, label='Tangential' )
+	pyplot.plot(tan_CC_x, tan_CC_y, color='black', marker='', linewidth=2, label='Tangential' )
 	pyplot.plot(rad_CC_x, rad_CC_y, color='red', marker='', linewidth=2, label='Radial' )
+	if len(img_x) != 0:
+		pyplot.plot(img_x, img_y, 'g.', label='Images')
 	pyplot.legend(loc='upper right', shadow=True)	
 	pyplot.axis('equal')
 	pyplot.xlabel('x', fontsize = 15)
