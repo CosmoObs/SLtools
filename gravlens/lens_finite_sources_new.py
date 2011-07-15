@@ -28,11 +28,32 @@ from sltools.image.imcp import elliminate_disconected as elliminate_disconected
 from sltools.image.sextractor import run_segobj
 
 
-##@package define_source_model # remove it from slcode
-# defines source properties. Given variable values var_i and var_f ('var' being radius, ellipticity or thetas), define_source_model shuffles a value between var_i and var_f. If var_i = var_f, returns var_i.
-#
-#@return dictionary containing source radius (rs), ellipticity (es) and position angle (thetas)
+
 def define_source_model(source_type, rs_i, rs_f, es_i, es_f, thetas_i, thetas_f, ns_i=0.5, ns_f=0.5, nover=1, mag=24.0):
+    """ 
+    Generates dictionary with source properties ("source_model") custom made for lens_finite_sources.
+
+    Given variable values var_i and var_f ('var' being radius, ellipticity, theta or Sersic index 'n'), 
+    picks randomly a value between var_i and var_f. If var_i = var_f, var_i is taken.
+
+    Input:
+     - source_type <str> : Can be 'sersic' for a Sersic profile, or 'uniform' for a constant surface brightness
+     - rs_i      <float> : Inferior limit for the source radius
+     - rs_f      <float> : Superior limit for the source radius
+     - es_i      <float> : Inferior limit for the source ellipticity
+     - es_f      <float> : Superior limit for the source ellipticity
+     - thetas_i  <float> : Inferior limit for the source position angle
+     - thetas_f  <float> : Superior limit for the source position angle
+     - ns_i      <float> : Inferior limit for the source sersic index 'n'
+     - ns_f      <float> : Superior limit for the source sersic index 'n'
+     - nover     <int>   : Oversampling of the image plane, with nover steps in each direction. 
+     - mag       <float> : Magnitude of the source
+     
+    Output:
+     - <dict> : Dictionary with the source properties. The keys are 'source_type', 'rs', 'es', 'thetas', 
+                'nover', 'ns', 'mag'.
+
+    """
 
     # radius --------------------------------------------------
     if rs_i == rs_f:
@@ -62,7 +83,9 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
             theta_L, shear, theta_shear, gravlens_params, dimpix, source_centers, source_model, 
             ref_magzpt, reference_band, base_name='sbmap', nover_max=3):
     """
-    Lenses sources with the same lens model.
+    Lenses sources with the given lens model. 
+    
+    The lensing is performed with the gravlens software, using command SBmap2.
 
     Input:
      - lens_model        <str> : Lens name (see gravlens manual table 3.1)
@@ -76,8 +99,9 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
      - shear           <float> : 'pixel' or 'degrees' for size (x_size,y_size) values
      - theta_shear     <float> : Horizontal size (in pixels) of output image
      - gravlens_params   <dic> : Contains the keys and values of the gravlens configuration , dimpix, source_centers, source_model, 
-     - ref_magzpt      <float> :
+     - ref_magzpt      <float> : The zero point magnitude to be used. It only affects the source fluxes.
      - reference_band    <str> :
+     - base_name         <str> : 
      - nover_max         <int> :
 
     Output:
@@ -132,7 +156,10 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
 
 
 def identify_images(frame_name, params=[], args={}, preset='sims'):
-    """Runs SExtractor in OBJECTS mode, identify each object and return its positions."""
+    """
+    Identify the objects on an image.
+    
+    """
 
     dict_run_segobj = run_segobj(frame_name, params=[], args={}, preset='') # 'params' are the SExtractor 
     # parameters to output (strings, see SE's default.param). 'args' ({str:str,}) are SE command-line arguments
@@ -153,6 +180,22 @@ def identify_images(frame_name, params=[], args={}, preset='sims'):
 
 
 def get_src_img_coords(source_name, image_name):
+    """
+    Get the nonzero points of the source and image plane.
+    
+    Input:
+     - source_name <str> : source plane FITS image
+     - image_name  <str> : image plane FITS image
+
+    Output:
+     - x_src <ndarray> : 1d array (int) of the source x coordinates (in pixels)
+     - y_src <ndarray> : 1d array (int) of the source y coordinates (in pixels)
+     - x_img <ndarray> : 1d array (int) of the images x coordinates (in pixels)
+     - y_img <ndarray> : 1d array (int) of the images y coordinates (in pixels)
+         
+    """
+
+
     src_data = pyfits.getdata(source_name)
     img_data = pyfits.getdata(image_name)
     src_data = np.nonzero(src_data)
@@ -168,6 +211,25 @@ def get_src_img_coords(source_name, image_name):
 
 
 def pix_2_arcsec(x_src, y_src, x_img, y_img, half_frame_size, dimpix):
+    """
+    Convert from pixel to arcsec coordinates.
+    
+    Input:
+     - x_src          <ndarray> : 1d array (int) of the source x coordinates (in pixels)
+     - y_src          <ndarray> : 1d array (int) of the source y coordinates (in pixels)
+     - x_img          <ndarray> : 1d array (int) of the images x coordinates (in pixels)
+     - y_img          <ndarray> : 1d array (int) of the images y coordinates (in pixels)
+     - half_frame_size  <float> : half the size of the FITS file (in arcsec)
+     - dimpix           <float> : size of the pixel, in arcsec
+
+    Output:
+     - x_src_arcsec  <ndarray> : 1d array (int) of the source x coordinates (in arcsec)
+     - y_src_arcsec  <ndarray> : 1d array (int) of the source y coordinates (in arcsec)
+     - x_img_arcsec  <ndarray> : 1d array (int) of the images x coordinates (in arcsec)
+     - y_img_arcsec  <ndarray> : 1d array (int) of the images y coordinates (in arcsec)
+
+    """
+    
     Npix = int( (2*half_frame_size) / dimpix )
     x_src_arcsec = (2*half_frame_size/(Npix-1))*x_src - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec x coordinate
     y_src_arcsec = (2*half_frame_size/(Npix-1))*y_src - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec y coordinate
@@ -178,7 +240,7 @@ def pix_2_arcsec(x_src, y_src, x_img, y_img, half_frame_size, dimpix):
     return x_src_arcsec, y_src_arcsec, x_img_arcsec, y_img_arcsec, 
 
 #=================================================================================================================
-def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='cautic_CC_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.2, accept_res_limit=2E-4, nover_max=3, SE_params={}, SE_args={}, preset='sims', base_name='sbmap'):
+def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='caustic_CC_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.2, accept_res_limit=2E-4, nover_max=3, SE_params={}, SE_args={}, preset='sims', base_name='sbmap'):
     """
     This is a pipeline that ...
 
