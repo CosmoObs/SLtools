@@ -498,41 +498,115 @@ def run_segobj(filename, params=[], args={}, preset='', temp_dir='', quiet=False
 
 # ---
 
-def run_detec_test(filename, params=[], args={}, preset='', temp_dir='', quiet=False, arg_min={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}, arg_max={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}, arg_step={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}):
+def run_detec_test(filename, params=[], args={}, preset='', temp_dir='', quiet=False, arg_min={}, arg_max={}, arg_step={}, Filter_Name='', plots=False):
+
+    """ Run Sextractor over given image and a range of inputs
+
+    run_detec_test( 'image.fits' )  ->  <dict>
+
+    See sextractor.run() help page for description about
+    'filename', 'params', 'args' and 'preset' arguments.
+
+    EDITAR This functions adds to 'params' list the value 'NUMBER' if not yet 
+    given. And set some 'args' options to specific values with the goal 
+    to have The SEGMENTATION and OBJECTS output versions of the input 
+    image, as well as a FITS catalog with 'params' computed features.
+
+    SE's hardcoded argument values:
+    CHECKIMAGE_TYPE : "OBJECTS,SEGMENTATION"
+    CHECKIMAGE_NAME : objects_name , segmentation_name
+    CATALOG_TYPE : "FITS_1.0"
+    CATALOG_NAME : catalog_name
+
+    "objects_name", "segmentation_name" and "catalog_name" 
+    have values composed by the image 'filename' (without the ".fits" 
+    extension) with the suffixes "_obj.fits", "_seg.fits" and "_cat.fit", 
+    respectively. These file names are given as output in a dictionary
+    with keys ""OBJECTS", "SEGMENTATION" and "CATALOG".
 
 
+    Input:
+     - filename : str
+        FITS image filename
+     - params : [str,]
+        Sextractor parameters to output (see SE's default.param)
+     - args : {str:str,}
+        Sextractor command-line arguments
+     - preset : str
+        Options are: 'HST', 'CFHT', 'DC4', 'DC5'
+
+    Output:
+     - {'OBJECTS':str, 'SEGMENTATION':str, CATALOG:str}
+        SE's OBJECTS, SEGMENTATION, CATALOG output filenames
+      
+    """
+
+    arg_min_t={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}
+    arg_max_t={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}
+    arg_step_t={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}
+    arg_min_t.update(arg_min)
+    arg_max_t.update(arg_max)    
+    arg_step_t.update(arg_step)
     fits_image = filename;
     _rootname = string.split( string.replace( fits_image,".fits","" ), sep="/" )[-1]
     f_out=open(_rootname+"_variables.txt","w")
-    detect_thresh=frange(arg_min['DETECT_THRESH'],arg_max['DETECT_THRESH'], arg_step['DETECT_THRESH'])
-    deblend_min=frange(arg_min['DEBLEND_MINCONT'],arg_max['DEBLEND_MINCONT'], arg_step['DEBLEND_MINCONT'])
-    deblend_nthresh=frange(arg_min['DEBLEND_NTHRESH'],arg_max['DEBLEND_NTHRESH'], arg_step['DEBLEND_NTHRESH'])
-    detec_min=frange(arg_min['DETECT_MINAREA'],arg_max['DETECT_MINAREA'], arg_step['DETECT_MINAREA'])
-    analysis_thresh=frange(arg_min['ANALYSIS_THRESH'],arg_max['ANALYSIS_THRESH'], arg_step['ANALYSIS_THRESH'])
-    print analysis_thresh
-    for i in range(0,len(detect_thresh)):
-        args.update({'DETECT_THRESH' : detect_thresh[i]})
-        for j in range(0,len(deblend_min)):
-            args.update({'DEBLEND_MINCONT' : deblend_min[j]})
-            for k in range(0,len(deblend_nthresh)):
-                args.update({'DEBLEND_NTHRESH' : deblend_nthresh[k]})
-                for w in range(0,len(detec_min)):
-                    args.update({'DETECT_MINAREA' : detec_min[w]})
-                    for y in range(0,len(analysis_thresh)):
-                        args.update({'ANALYSIS_THRESH' : analysis_thresh[y]})
-                        objimgname = _rootname+'var'+str(i)+str(j)+str(k)+str(w)+str(y)+'_obj.fits';
-                        segimgname = _rootname+'var'+str(i)+str(j)+str(k)+str(w)+str(y)+'_seg.fits';
-                        f_out.write(str(i)+str(j)+str(k)+str(w)+str(y)+'        '+'DETECT_THRESH='+str(args['DETECT_THRESH'])+'    '+'DEBLEND_MINCONT='+str(args['DEBLEND_MINCONT'])+'    '+'DEBLEND_NTHRESH='+str(args['DEBLEND_NTHRESH'])+'    '+'DETECT_MINAREA='+str(args['DETECT_MINAREA'])+'ANALYSIS_THRESH='+str(args['ANALYSIS_THRESH'])+'\n \n');    
-                        args.update({'checkimage_name' : objimgname+','+segimgname})
-                        run_segobj(filename, params, args, preset, temp_dir, quiet)            
+    detect_thresh=frange(arg_min_t['DETECT_THRESH'],arg_max_t['DETECT_THRESH'], arg_step_t['DETECT_THRESH'])
+    deblend_min=frange(arg_min_t['DEBLEND_MINCONT'],arg_max_t['DEBLEND_MINCONT'], arg_step_t['DEBLEND_MINCONT'])
+    deblend_nthresh=frange(arg_min_t['DEBLEND_NTHRESH'],arg_max_t['DEBLEND_NTHRESH'], arg_step_t['DEBLEND_NTHRESH'])
+    detec_min=frange(arg_min_t['DETECT_MINAREA'],arg_max_t['DETECT_MINAREA'], arg_step_t['DETECT_MINAREA'])
+    analysis_thresh=frange(arg_min_t['ANALYSIS_THRESH'],arg_max_t['ANALYSIS_THRESH'], arg_step_t['ANALYSIS_THRESH'])
+    Filter_=['Y','N']
+    
+    if preset!='':
+        cargs = _cstm_args( preset,fits_image );
+        args.uptdate(cargs)    
+    if Filter_Name=='':
+        args.update({'FILTER_NAME' : temp_dir+'default.conv'})
+    for x in range(0,len(Filter_)):
+        args.update({'FILTER' : Filter[x]})
+        for i in range(0,len(detect_thresh)):
+            args.update({'DETECT_THRESH' : detect_thresh[i]})
+            for j in range(0,len(deblend_min)):
+                args.update({'DEBLEND_MINCONT' : deblend_min[j]})
+                for k in range(0,len(deblend_nthresh)):
+                    args.update({'DEBLEND_NTHRESH' : deblend_nthresh[k]})
+                    for w in range(0,len(detec_min)):
+                        args.update({'DETECT_MINAREA' : detec_min[w]})
+                        for y in range(0,len(analysis_thresh)):
+                            args.update({'ANALYSIS_THRESH' : analysis_thresh[y]})
+                            objimgname = _rootname+'var'+str(i)+str(j)+str(k)+str(w)+str(y)+'_obj.fits';
+                            segimgname = _rootname+'var'+str(i)+str(j)+str(k)+str(w)+str(y)+'_seg.fits';
+                            f_out.write(str(i)+str(j)+str(k)+str(w)+str(y)+'        '+'DETECT_THRESH='+str(args['DETECT_THRESH'])+'    '+'DEBLEND_MINCONT='+str(args['DEBLEND_MINCONT'])+'    '+'DEBLEND_NTHRESH='+str(args['DEBLEND_NTHRESH'])+'    '+'DETECT_MINAREA='+str(args['DETECT_MINAREA'])+'ANALYSIS_THRESH='+str(args['ANALYSIS_THRESH'])+'    '+"FILTER="+Filer[x]+'    \n \n');    
+                            args.update({'checkimage_name' : objimgname+','+segimgname})
+                            run_segobj(filename, params, args, preset, temp_dir, quiet)            
     f_out.close()       
            
             
-#           'PIXEL_SCALE': '0.187',
-#           'MAG_ZEROPOINT' : MAG_ZEROPOINT)}
-#'THRESH_TYPE' : 'RELATIVE',
-#'FILTER' : 'N',
+
     return 0
+
+
+def Flag_Counter(catalog. _dir=''):
+   
+    """ Give number of objects per flag in a fits catalog
+
+    """
+    flags_count=[0,0,0,0,0,0,0,0,0,0]
+    catalogs_data = pyfits.open(_dir+catalog)[1].data
+    for j in range(0,len(catalogs_data)):
+        flag=catalogs_data[j]['FLAGS']
+        flag=bin(flag)
+        flag=str(flag)
+        flag=string.replace(flag,"0b","")
+        for k in range(0,len(flag)):
+            if int(flag)==0:
+                flags_count[0]= flags_count[0]+1
+            else:
+                if int(flag[k])==1:
+                    flags_count[k+1]=flags_count[k+1]+1
+
+
+    return flags_count 
 
 def frange(start,end,step):
     L=[]
