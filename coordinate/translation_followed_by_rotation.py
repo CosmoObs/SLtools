@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# ==================================
+
 import numpy as np
 
 
@@ -7,7 +13,7 @@ def translation_and_rotation(x, y, x_0, y_0, theta_0, angle='radian'):
 
     Input:
      - x         <list> : x coordinates to be transformed
-     - y         <list> : y  coordinates to be transformed
+     - y         <list> : y coordinates to be transformed
      - x_0      <float> : x coordinate of the new center of reference
      - y_0      <float> : y coordinate of the new center of reference
      - theta_0  <float> : angle of the (counterclockwise) rotation

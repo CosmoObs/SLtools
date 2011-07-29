@@ -12,7 +12,7 @@
 import sys
 from .. import *
 def future_compute_source_density(zS, delta_zS, source_catalog): 
-	"""Returns the number of sources(objects) from given catalog per unit area
+	"""Returns the number of sources (objects) from given catalog per unit area
 
 	Input:
 	 zS : source (central) redshift
