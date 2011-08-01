@@ -226,13 +226,6 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
             pass;
 
     return (imagemnova, hdr);
-
-
-def snapshot( image, hdr=None, centroid=(0,0), shape=(0,0), coord_unit='pixel', size_unit='pixel', mask=None ):
-    """See 'cutout' help. This is just a definition to interface (xo,yo)<->centroid and (x_size,y_size)<->shape"""
-    xo,yo = centroid;
-    x_size,y_size= shape;
-    return cutout( image, hdr, coord_unit, xo, yo, size_unit, x_size, y_size, mask );
     
 # ---
 
@@ -384,70 +377,6 @@ def elliminate_disconected(ind, high_area=False):
         ind_new[1].remove(-1000)
         ind_n=[np.array(ind_new[0]),np.array(ind_new[1])]
         return ind_n          
-# To keep compatibility with the old "sextamp" function:
-def sextamp(seg_img, obj_img, hdr=None, increase=0, relative_increase=False, objIDs=[]):
-	return [ segstamp(seg_img, ID, obj_img, hdr, increase, relative_increase) for ID in objIDs ]
-# ---
-
-#=============================================================================
-
-def copy_objects(objimg, segimg, objIDs=[], groundimg=None):
-    """
-    Returns an image (with same size/shape as given ones) for each object 
-    in 'objimg' found in 'segimg' (optional: with ID given in 'objIDs').
-    
-    copy_objects( objimg, segimg ...)
-
-    Function identifies the pixels of each ID(int) in 'objIDs' on 
-    segmentation image(array) - segimg. These identified pixels 
-    (their values) are copied from object image, objimg, to a new 
-    blank array with same shape as given images. 
-    
-
-    Input:
-     - objimg : np.ndarray(ndim=2,dtype=float)
-      Objects image
-      
-     - segimg : np.array(ndim=2,dtype=int)
-      Segmented image 
-      
-     - objIDs  : [int,]
-      A list with numbers that identify segmented objects in 'segimg'
-      
-     - groundimg : np.array(ndim=2,dtype=float)
-      Image array where selected "pixels" will be overwritten.
-      If 'None', a null image is used.
-
-    Output:
-     - np.array(ndim=2,dtype=float) : Array containing objects
-
-    ---
-    """
-
-    objs_list = [];
-    
-    if (objimg.shape != segimg.shape):
-        logging.error("Given images (obj|seg) have different shapes.");
-        return False;
-
-    if (objIDs == []):
-        objIDs = list(set(segimg.flatten()) - set([0]))
-        
-    if (type(objIDs) == type(int())):
-        objIDs = [objIDs];
-
-    if not groundimg:
-        groundimg = np.zeros( objimg.shape, dtype = objimg.dtype );
-
-    # In case the user just give a number (one object ID..), we deal with that
-    # Lets try first the list, if not, use the single ID and do the job..
-    #
-    for objID in objIDs:
-        _ind = np.where(segimg == objID);
-        groundimg[_ind] += objimg[_ind];
-
-
-    return (groundimg);
 
 # ---
 
