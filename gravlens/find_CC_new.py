@@ -30,7 +30,7 @@ import time
 
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 from sltools.geometry.separate_curves import separate_curves_a
-from sltools.coordinate.translation_followed_by_rotation import translation_and_rotation
+from sltools.coordinate.translation_and_rotation import translation_and_rotation
 
 
 
