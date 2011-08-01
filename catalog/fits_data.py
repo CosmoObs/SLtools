@@ -316,26 +316,7 @@ def dict_from_tbHDU(tbhdu, *fieldnames):
     
     return (dic); 
 
-# ---
 
-def open_catalog_table( catalog_file ):
-    """ Open given FITS catalog
-
-    Input:
-     - catalog_file : str
-        FITS catalog filename
-
-    Output:
-     -> tbHDU : table HDU (1st FITS extension)
-    """
-     
-    if ( string.find(catalog_file,'.fit') == -1 ):
-        print >>sys.stderr,"Error: Does not seem to be a .fit(s) file."
-        return (False); 
-
-    return (pyfits.open(catalog_file)[1]);
-
-# ---
 
 # 
 # Functions below are preserved for compatibility reasons:
