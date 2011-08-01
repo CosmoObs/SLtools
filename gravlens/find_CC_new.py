@@ -29,7 +29,7 @@ import string
 import time
 
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
-from sltools.geometry.separate_curves import separate_curves_a
+from sltools.geometry.separate_curves import separate_curves
 from sltools.coordinate.translation_and_rotation import translate_and_rotate_coord_system
 
 
@@ -348,7 +348,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	# Separating the critical curves
 	#nodes=[]
 	#curves = separate_curves(x1, y1, x2, y2,nodes)
-	CC_curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2)
+	CC_curves, start_idx, end_idx = separate_curves(x1, y1, x2, y2)
 
 
 	if len(CC_curves) != 2:
@@ -366,7 +366,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		# 2- read data (loadtxt)
 		x1, y1, u1, v1, x2, y2, u2, v2 = np.loadtxt(caustic_CC_file, comments='#', unpack=True)
 		# 3- separate the curves
-		CC_curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2)
+		CC_curves, start_idx, end_idx = separate_curves(x1, y1, x2, y2)
 		# 4- check again if there are 2 curves 
 		if len(CC_curves) == 2:
 			logging.debug('Two CC found. It seems the separation was fixed by rotating the CC back and forth.')
@@ -401,7 +401,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 		while len(CC_curves) > 2 and delta_count < max_delta_count:
 			delta = delta*delta_increment
-			CC_curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2, delta=delta)
+			CC_curves, start_idx, end_idx = separate_curves(x1, y1, x2, y2, delta=delta)
 			delta_count += 1
 
 		logging.debug("Ended loop to separate the curves iterating over 'delta'. Last value "
