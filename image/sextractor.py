@@ -606,29 +606,7 @@ def Flag_Counter(catalog. _dir=''):
                     flags_count[k+1]=flags_count[k+1]+1
 
 
-    return flags_count 
-
-def frange(start,end,step):
-    L=[]
-    start=float(start)
-    end=float(end)
-    step=float(step)
-    _item=start
-    L.append(_item)
-    if (step==0) or (start>end and step>0) or (end>start and step<0):
-        return L
-    L=[]
-    if (start<end):
-        while _item<=end:
-            L.append(_item)
-            _item+=step
-
-    elif (start>end):
-        while _item>=end:
-            L.append(_item)
-            _item+=step
-    return L
-    
+    return flags_count     
 
 
 def read_config(SE_configfile):
