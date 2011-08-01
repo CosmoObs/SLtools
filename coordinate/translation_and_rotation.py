@@ -7,9 +7,9 @@
 import numpy as np
 
 
-def translation_and_rotation(x, y, x_0, y_0, theta_0, angle='radian'):
+def translate_and_rotate_coord_system(x, y, x_0, y_0, theta_0, angle='radian'):
     """
-     Changes the coordinate system by a translation followed by a rotation.
+     Changes the coordinate system by a translation and a rotation.
 
     Input:
      - x         <list> : x coordinates to be transformed

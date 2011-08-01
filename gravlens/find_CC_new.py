@@ -29,8 +29,8 @@ import string
 import time
 
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
-from sltools.geometry.separate_curves import separate_curves_a
-from sltools.coordinate.translation_followed_by_rotation import translation_and_rotation
+from sltools.geometry.separate_curves import separate_curves
+from sltools.coordinate.translation_and_rotation import translate_and_rotate_coord_system
 
 
 
@@ -348,7 +348,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 	# Separating the critical curves
 	#nodes=[]
 	#curves = separate_curves(x1, y1, x2, y2,nodes)
-	CC_curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2)
+	CC_curves, start_idx, end_idx = separate_curves(x1, y1, x2, y2)
 
 
 	if len(CC_curves) != 2:
@@ -366,19 +366,19 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 		# 2- read data (loadtxt)
 		x1, y1, u1, v1, x2, y2, u2, v2 = np.loadtxt(caustic_CC_file, comments='#', unpack=True)
 		# 3- separate the curves
-		CC_curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2)
+		CC_curves, start_idx, end_idx = separate_curves(x1, y1, x2, y2)
 		# 4- check again if there are 2 curves 
 		if len(CC_curves) == 2:
 			logging.debug('Two CC found. It seems the separation was fixed by rotating the CC back and forth.')
 			radial_curve = CC_curves[0] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]
 			tang_curve = CC_curves[1] # [ [x1_i], [y1_i], [x2_i], [y2_i] ]			
 			# 5- rotate back the curves (radial_curve[0], radial_curve[1], tang_curve[0], tang_curve[1])
-			out_trans_rot, out_trans_rot2  = translation_and_rotation(radial_curve[0], radial_curve[1], galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation(radial_curve[2], radial_curve[3], galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
+			out_trans_rot, out_trans_rot2  = translate_and_rotate_coord_system(radial_curve[0], radial_curve[1], galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translate_and_rotate_coord_system(radial_curve[2], radial_curve[3], galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
 			radial_curve = out_trans_rot[0], out_trans_rot[1], out_trans_rot2[0], out_trans_rot2[1]
-			out_trans_rot, out_trans_rot2  = translation_and_rotation(  tang_curve[0],   tang_curve[1], galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation(  tang_curve[2],   tang_curve[3], galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
+			out_trans_rot, out_trans_rot2  = translate_and_rotate_coord_system(  tang_curve[0],   tang_curve[1], galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translate_and_rotate_coord_system(  tang_curve[2],   tang_curve[3], galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
 			tang_curve   = out_trans_rot[0], out_trans_rot[1], out_trans_rot2[0], out_trans_rot2[1]
 			# 5b- rotate the caustics
-			rot_caustic1, rot_caustic2 = translation_and_rotation( u1, v1, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation( u2, v2, galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
+			rot_caustic1, rot_caustic2 = translate_and_rotate_coord_system( u1, v1, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translate_and_rotate_coord_system( u2, v2, galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
 			u1, v1, u2, v2 = rot_caustic1[0], rot_caustic1[1], rot_caustic2[0], rot_caustic2[1]
 
 		# 6- if, again, we haven't the 2 curves, go to 'else'
@@ -387,7 +387,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 			tang_curve = CC_curves[0]
 
 		if len(CC_curves) > 2: # in NFW example of kappas = 0.4, rs = 74. , eL=0.5 and theta_L=90 this 'if' is needed (to get the x1,y1, etc positions of the curves)
-			back_rotation_x1, back_rotation_u1, back_rotation_x2, back_rotation_u2 = translation_and_rotation( x1, y1, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation( u1, v1, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation( x2, y2, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translation_and_rotation( u2, v2, galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
+			back_rotation_x1, back_rotation_u1, back_rotation_x2, back_rotation_u2 = translate_and_rotate_coord_system( x1, y1, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translate_and_rotate_coord_system( u1, v1, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translate_and_rotate_coord_system( x2, y2, galaxy_position[0], galaxy_position[1], theta_L, angle='degree'), translate_and_rotate_coord_system( u2, v2, galaxy_position[0], galaxy_position[1], theta_L, angle='degree')
 			x1, y1, u1, v1, x2, y2, u2, v2 = back_rotation_x1[0], back_rotation_x1[1], back_rotation_u1[0], back_rotation_u1[1], back_rotation_x2[0], back_rotation_x2[1], back_rotation_u2[0], back_rotation_u2[1]
 
 
@@ -401,7 +401,7 @@ def run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_para
 
 		while len(CC_curves) > 2 and delta_count < max_delta_count:
 			delta = delta*delta_increment
-			CC_curves, start_idx, end_idx = separate_curves_a(x1, y1, x2, y2, delta=delta)
+			CC_curves, start_idx, end_idx = separate_curves(x1, y1, x2, y2, delta=delta)
 			delta_count += 1
 
 		logging.debug("Ended loop to separate the curves iterating over 'delta'. Last value "

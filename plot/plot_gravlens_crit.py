@@ -25,7 +25,7 @@ from numpy import *
 from random import *
 import sys
 
-from sltools.geometry.separate_curves import separate_curves_a # its Angelo's separate_curves
+from sltools.geometry.separate_curves import separate_curves
 
 
 def plot_gravlens_crit(file):
@@ -47,7 +47,7 @@ def plot_gravlens_crit(file):
     subplot(121)
     title("Critical curves")
 
-    curves = separate_curves_a(x1, y1, x2, y2)
+    curves = separate_curves(x1, y1, x2, y2)
     i=0
 
     for curve in curves: # plots one curve (radial/tangential) at a time
@@ -60,7 +60,7 @@ def plot_gravlens_crit(file):
     subplot(122)
     title("Caustics")
 
-    curves = separate_curves_a(u1, v1, u2, v2)
+    curves = separate_curves(u1, v1, u2, v2)
     i=0
 
     for curve in curves:
