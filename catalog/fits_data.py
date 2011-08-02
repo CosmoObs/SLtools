@@ -10,7 +10,7 @@ import numpy as np;
 import re;
 
 # ---
-def sort_column(tbhdu,fieldname)
+def sort_column(tbhdu,column=0):
     """
     Returns a new tbhdu with data sorted regarding 'fieldname'
     
@@ -20,7 +20,7 @@ def sort_column(tbhdu,fieldname)
     coldefs = tbhdu.columns
     tbdata = tbhdu.data
     
-    sorted_data = sorted(tbdata,key=itemgetter(0))
+    sorted_data = np.asarray(sorted(tbdata,key=itemgetter(0))).T
 
     cols = [];
     for i in xrange(len(coldefs.names)):
