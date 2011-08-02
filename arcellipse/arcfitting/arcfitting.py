@@ -32,7 +32,7 @@ from sltools.image.get_header_parameter import *
 from tools.get_extrema_2loops import *
 from tools.get_bisectrix_pts import *
 from tools.circle3points import *
-from sltools.image import add_noise
+
 
 #========================================================================
 #Ad-hoc parameters:
