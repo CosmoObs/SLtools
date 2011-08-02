@@ -10,7 +10,11 @@ import numpy as np;
 import re;
 
 # ---
+<<<<<<< HEAD
 def sort_by_column(tbhdu,fieldname):
+=======
+def sort_column(tbhdu,column=0):
+>>>>>>> 4b400cef4384db74e848980d569238f1094a843d
     """
     Sort a FITS table HDU by the its "fieldname" column in increasing order. 
     
@@ -28,7 +32,11 @@ def sort_by_column(tbhdu,fieldname):
     coldefs = tbhdu.columns
     tbdata = tbhdu.data
     
+<<<<<<< HEAD
     sorted_data = np.transpose(sorted(tbdata,key=itemgetter(0)))
+=======
+    sorted_data = np.asarray(sorted(tbdata,key=itemgetter(0))).T
+>>>>>>> 4b400cef4384db74e848980d569238f1094a843d
 
     cols = [];
     for i in xrange(len(coldefs.names)):

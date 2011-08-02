@@ -1,6 +1,6 @@
 """ Module to deal with ascii (CSV/Block-Data) catalog files """
 
-##@package text_file
+##@package ascii_data
 
 """
 The following functions are meant to help in reading and

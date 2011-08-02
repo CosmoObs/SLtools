@@ -5,11 +5,16 @@
 # Angelo Fausti Neto, Pedro Ferreira, Carlos Brandt
 # =================================================
   
-"""Module to separate curves defined by connected line segments"""
+"""Module to identify multiple curves among ordered points (line segments)"""
 
 
 ##@package separate_curves
 #
+#
+# Module to separate curves defined by connected line segments.
+# Its single function, separate_curves, receives as inputs sets of consecutive points (see on line 
+# documentation), forming line segments. The code tries to find where the line segments joins, closing 
+# the curve and possibly starting another one.
 # Executable package: NO
 
 
@@ -24,7 +29,7 @@ def separate_curves(x1, y1, x2, y2, delta=None):
     ''' 
     Separates curves defined by connected line segments.
     
-    The arrays (x1,y1) and (x2,y2) define line segments, that when connected, form curves. The 
+    The arrays (x1,y1) and (x2,y2) define line segments that when connected form curves. The 
     requirement is that the input points are initialy sorted. The parameter delta is the criterium to 
     separate one curve from the other and is an upper limit to the size of a line segment. If the 
     distance between two consecutive points (x1[i],y1[i]) and (x1[i+1], y1[i+1]) is larger than delta it

@@ -392,7 +392,7 @@ def run_paint_arcs(input_image,params_list):
 	#Adding noise
 	pyfits.writeto("arc_conv2.fits",fftconv_image)	
 	noise_file_list = ["arc_conv2.fits"]
-	noisy_files_list = add_noise.add_noise(noise_file_list)
+	noisy_files_list = add_noise.add_poisson_noise(noise_file_list)
 	
 	for filename in noisy_files_list:
 		arc_array = pyfits.getdata(filename)
