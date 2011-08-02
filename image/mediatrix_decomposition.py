@@ -13,7 +13,7 @@ Set of functions used in Mediatrix Decomposition.
 
 
 
-from get_extrema_2loops import get_extrema_2loops
+from sltools.geometry.get_extrema_pts import get_extrema_2loops
 from numpy import where
 from math import sin, cos ,sqrt, fabs, atan, tan 
 from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, title, savefig, Circle

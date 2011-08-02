@@ -4,57 +4,42 @@
 # Pedro Ferreira - pferreira@dfte.ufrn.br
 # ==================================
 
-""" Reescalonates image to simulate other band """
+""" Rescalonates a frame to simulate other band """
 
 ##@package rescale_frame_by_color
 #
 #
-# Re-scale counts of an image using a magzpt and magnitude of both reference image and desired image
-
-
-from __future__ import division
-import pyfits
+# Rescale counts of a frame using magzpt of both reference image and desired image and the color
 
 
 
 # =================================================================================================
-def create_color_img( ref_img, ref_magzpt, SEXMGZPT_color, out_color, mag_ref, mag_color ):
-	"""
-	Rescales a given image to simulate other band of an object in the image.
+def create_color_img(frame_data, ref_magzpt, color_magzpt, color):
+    """
+    Rescales a given frame to simulate other band of an object in the image.
 
-	This function uses the magnitude definition \f$ m = m_0 - 2.5log(F/F_0) \f$ to calculate the
-	factor that multiplies every pixel count of the original image:
-	\f$ factor = 10^{ (2/5)( SEXMGZPT_{color} - SEXMGZPT_{ref} - mag_{color} + mag_{ref} ) }\f$,
-	where SEXMGZPT_color and ref_magzpt are the zero point magnitudes of the output and input 
-	images, while mag_color and mag_ref are the output and input magnitudes of an object of the 
-	image. 
-	Multiplying an image by this factor simulates an image in the desired band.
+    This function uses the magnitude definition \f$ m = m_0 - 2.5log(F/F_0) \f$ to calculate the
+    factor that multiplies every pixel count of the original image:
+    \f$ factor = 10^{ (2/5)( magzpt_{color} - magzpt_{ref} + color ) }\f$,
+    where color_magzpt and ref_magzpt are the zero point magnitudes of the output and input 
+    images, while color is the magnitude difference mag_ref - mag_color (see input below).
+    Multiplying an image by this factor simulates an image in the desired band for the special case 
+    all objects present in the image derive from a single object.
 
-	Input:
-	 - ref_img    <str> : name of the input fits image
-	 - ref_magzpt <float> : the zero point magnitude of the input image
-	 - SEXMGZPT_color <float> : the zero point magnitude of the image in the desired band
-	 - out_color <str> : a one string caracter, designating the output band (ex. 'r' or 'g'). 
-			     The output image will have this sufix in its name
-	 - mag_ref <float> : magnitude of an object in the input image
-	 - mag_color <float> : magnitude of the same object in the output image/band
+    Input:
+     - frame_data <ndarray> : numpy.ndarray(ndim=2,dtype=float). Input data of the reference frame
+     - ref_magzpt   <float> : the zero point magnitude of the input image
+     - color_magzpt <float> : the zero point magnitude of the image in the desired band
+     - color        <float> : difference of magnitudes mag_ref - mag_color(magnitude of an object in the 
+                              reference band minus the magnitude of the same object in the output image/band
 
-	Output:
-	 - <file> : the new image rescaled to another band
-	 - <str>  : name of the new band image
+    Output:
+     - <ndarray> : numpy.ndarray(ndim=2,dtype=float). Color rescaled data.
 
-	"""
+    """
 
-	dados = pyfits.getdata(ref_img)  
+    factor = 10**( (2./5)*( color_magzpt - ref_magzpt + color ) ) # color_magzpt - ref_magzpt - mag_color + mag_ref
 
-	factor = 10**( (2/5)*( SEXMGZPT_color - ref_magzpt - mag_color + mag_ref ) )
+    return frame_data*factor
 
-	imgname_out = ''
-	for i in range( len(ref_img) - 6): # the last 6 characters corresponds to 'color.fits'
-		imgname_out = imgname_out + ref_img[i]
-	imgname_out = imgname_out + out_color + '.fits'
 
-	pyfits.writeto('%s' % (imgname_out), dados*factor )
-
-	return imgname_out
-# -
