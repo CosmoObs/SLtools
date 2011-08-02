@@ -34,7 +34,7 @@
 import sys;
 from numpy import *;
 from math import cos, radians;
-from sltools.image import *;
+from catalog.fits_data import *;
 
 
 def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor, output_file):
@@ -70,7 +70,9 @@ def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor
 	pixel_scale = float(pixel_scale) 
 	scale_factor = float(scale_factor)
 
-	data = get_fits_data(input_file, "RA", "DEC", "A_IMAGE", "B_IMAGE", "THETA_IMAGE")
+	tbhdu = pyfits.open(input_file)[1]
+	
+	data = dict_from_tbHDU(tbhdu, "RA", "DEC", "A_IMAGE", "B_IMAGE", "THETA_IMAGE")
     	
 	search_radius = ((data['RA'] - ra_0)**2)*(math.cos(math.radians(dec_0))**2) + (data['DEC'] - dec_0)**2
 
