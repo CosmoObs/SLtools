@@ -10,7 +10,7 @@ import numpy as np;
 import re;
 
 # ---
-def sort_column(tbhdu,fieldname)
+def sort_column(tbhdu,fieldname):
     """
     Returns a new tbhdu with data sorted regarding 'fieldname'
     
@@ -20,11 +20,11 @@ def sort_column(tbhdu,fieldname)
     coldefs = tbhdu.columns
     tbdata = tbhdu.data
     
-    sorted_data = sorted(tbdata,key=itemgetter(0))
+    sorted_data_transposed = np.transpose(sorted(tbdata,key=itemgetter(0)))
 
     cols = [];
     for i in xrange(len(coldefs.names)):
-        cols.append( pyfits.Column(name=coldefs[i].name, format=coldefs[i].format, array=sorted_data[i]) );
+        cols.append( pyfits.Column(name=coldefs[i].name, format=coldefs[i].format, array=sorted_data_transposed[i]) );
     coldefs = pyfits.ColDefs(cols);
     
     return pyfits.new_table(coldefs);
