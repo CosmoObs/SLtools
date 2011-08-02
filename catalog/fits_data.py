@@ -10,6 +10,24 @@ import numpy as np;
 import re;
 
 # ---
+def sort_column(tbhdu,fieldname)
+    """
+    Returns a new tbhdu with data sorted regarding 'fieldname'
+    
+    """
+    from operator import itemgetter, attrgetter
+
+    coldefs = tbhdu.columns
+    tbdata = tbhdu.data
+    
+    sorted_data = sorted(tbdata,key=itemgetter(0))
+
+    cols = [];
+    for i in xrange(len(coldefs.names)):
+        cols.append( pyfits.Column(name=coldefs[i].name, format=coldefs[i].format, array=sorted_data[i]) );
+    coldefs = pyfits.ColDefs(cols);
+    
+    return pyfits.new_table(coldefs);
 
 def merge_tbHDU(tbhdu_A, tbhdu_B):
     """
@@ -110,7 +128,7 @@ def select_rows(tbhdu, indices):
     
     Input:
      - tbhdu     [BinTableHDU] : FITS table HDU
-     - indices         [int,] : List of indexes to read from tbhdu
+     - indices          [int,] : List of indexes to read from tbhdu
     
     Output:
      -> (new) BinTableHDU : sub-selection (rows) of tbhdu
@@ -150,6 +168,7 @@ def select_entries(tbhdu, fieldname, values):
     except:
             _inds.extend( np.where(tbhdu.data.field(fieldname)==values)[0].tolist() );
 
+
     return select_rows(tbhdu,_inds);
 
 # ---
@@ -183,9 +202,6 @@ def sample_entries(tbhdu, **kwargs):
         data = tbhdu.data.field(_key);
         try:
             _min,_max = kwargs[_key];
-            #_in = np.where(data >= _min)[0].tolist();
-            #_ax = np.where(data <= _max)[0].tolist();
-            #inds = list(set.intersection(set(_in),set(_ax)));
             inds = np.where(data >= _min) * np.where(data >= _max);
             inds = inds[0].tolist();
             
@@ -195,9 +211,8 @@ def sample_entries(tbhdu, **kwargs):
 
         indices.extend(inds);
 
-    tbsamp = select_rows(tbhdu,indices);
-    
-    return tbsamp;
+
+    return select_rows(tbhdu,indices);
 
 # ---
 
@@ -355,21 +370,3 @@ def get_fits_data(hdulist, *args):
             print "Variable %s does not exist in this catalog." % arg
     
     return (dic); 
-
-
-def open_fits_catalog( catalog_file ):
-    """ Open given FITS catalog
-
-    Input:
-     - catalog_file : str
-        FITS catalog filename
-
-    Output:
-     -> hdulist : FITS catalog "header" instance
-    """
-     
-    if ( string.find(catalog_file,'.fit') == -1 ):
-        print >>sys.stderr,"Error: Does not seem to be a .fit(s) filename."
-        return (False); 
-
-    return (pyfits.open(catalog_file)); 
