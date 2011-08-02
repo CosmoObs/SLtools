@@ -6,19 +6,19 @@
 # ====================================================
 
 
-"""Module to create SAO DS9 region files from DES Data Challenge FITS catalogs"""
+"""Module to create SAO DS9 region files from FITS catalogs"""
 
 ##@package catalog2ds9region
 #
-# This package creates SAO DS9 region files for objects in the DES Data Challenge 
-# FITS catalogs.
+# This package creates SAO DS9 region files for objects in FITS catalogs.
 # It has four mandatory arguments: the (input) FITS catalog, the reference center 
 # coordinates (RA and DEC) and the search radius. It searches the objects in the 
 # catalog that are inside a circle with this radius and centered at this reference 
 # position.
 # For each object it uses the catalog information to create an ellipse. It uses A_IMAGE 
 # and B_IMAGE from the catalog as the ellipse semi-major axis and semi-minor axis, 
-# respectively. The ellipse semi-major and semi-minor axes can be multiplied by a scale
+# respectively. It also uses THETA_IMAGE from the catalog as the ellipse orientation.
+# The ellipse semi-major and semi-minor axes can be multiplied by a scale
 # factor to enlarge the size of the object region. 
 #
 # Executable package: YES
@@ -39,8 +39,7 @@ from sltools.image import *;
 
 def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor, output_file):
 	''' 
-	Main function to create SAO DS9 region files for objects in the DES Data Challenge 
-	FITS catalogs. 
+	Main function to create SAO DS9 region files for objects in FITS catalogs. 
 	It searches objects in the catalog that are inside a circle with a  
 	given radius and centered at a reference position (RA and DEC). 
 	For each object it uses the catalog information to create an ellipse. The ellipse 
@@ -48,13 +47,13 @@ def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor
 	size of the object region.
 
 	Input:
-	- input_file : Input FITS catalog
-	- ra_0 : RA value of reference (deg)
-	- dec_0 : DEC value of reference (deg)
-	- radius : Search objetcs inside the radius (arcsec) 
-	- pixel_scale : Angular size of the pixel
-	- scale_factor : Scale the ellipse size
-	- output_file : Output SAO DS9 region file
+	- input_file <str>: Input FITS catalog
+	- ra_0 <float>: RA value of reference (deg)
+	- dec_0 <float>: DEC value of reference (deg)
+	- radius <float>: Search objetcs inside the radius (arcsec) 
+	- pixel_scale <float>: Angular size of the pixel
+	- scale_factor <float>: Scale the ellipse size
+	- output_file <str>: Output SAO DS9 region file
 	
 	Output:
 	- 0 success or 1 fail
@@ -66,11 +65,12 @@ def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor
 		ra_0 = (360. + ra_0)
 
         dec_0 = float(dec_0)
+        
 	radius = float(radius) 				
 	pixel_scale = float(pixel_scale) 
 	scale_factor = float(scale_factor)
 
-	data = get_fits_data(input_file, "RA", "DEC", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "TILENAME")
+	data = get_fits_data(input_file, "RA", "DEC", "A_IMAGE", "B_IMAGE", "THETA_IMAGE")
     	
 	search_radius = ((data['RA'] - ra_0)**2)*(math.cos(math.radians(dec_0))**2) + (data['DEC'] - dec_0)**2
 
@@ -85,7 +85,7 @@ def catalog2ds9region(input_file, ra_0, dec_0, radius, pixel_scale, scale_factor
 	
 	# DS9 region file header
 	output.write("# Region file format: DS9 version 4.1 \n")
-	output.write("# Filename: DES2223.fits \n")
+	output.write("# Filename: %s \n" %input_file) 
 	output.write("global color=green dashlist=8 3 width=1 font=\"helvetica 10 normal\" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n")
 	output.write("fk5\n")
 
