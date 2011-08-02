@@ -15,7 +15,7 @@
 #
 # 'xy2radec' transforms pixel coordinates (x and y) to sky coordinates (RA and Dec).
 #
-# Both radec2xy and xy2radec have three mandatory arguments: the FITS image name and the coordinate 
+# Both radec2xy and xy2radec have three mandatory arguments: the FITS image header and the coordinate 
 # values (RA and Dec our x and y). RA and Dec values must be in degrees.
 #
 #
@@ -27,23 +27,21 @@ import pywcs
 import numpy
 
 
-def radec2xy(image,ra,dec):
+def radec2xy(hdr,ra,dec):
 
 	"""Transforms sky coordinates (RA and Dec) to pixel coordinates (x and y).
 	
 	Input:
-	- image: FITS image name
-	- ra : Right ascension value in degrees
-	- dec: Declination value in degrees
+	- hdr: FITS image header
+	- ra <float> : Right ascension value in degrees
+	- dec <float>: Declination value in degrees
 	
 	Output:
-	- (x,y) : pixel coordinates
+	- (x,y) <tuple>: pixel coordinates
 
 	"""
 
-	hdulist = pyfits.open(image)
-
-	wcs = pywcs.WCS(hdulist[0].header)
+	wcs = pywcs.WCS(hdr)
 	
 	skycrd = numpy.array([[ra,dec]])
 
@@ -60,23 +58,21 @@ def radec2xy(image,ra,dec):
 	
 
 
-def xy2radec(image,x,y):
+def xy2radec(hdr,x,y):
 
 	""" Transforms pixel coordinates (x and y) to sky coordinates (RA and Dec).
 	
 	Input:
-	- image: FITS image name
-	- x: x value
-	- y: y value
+	- hdr: FITS image header
+	- x <float>: x value
+	- y <float>: y value
 	
 	Output:
-	- (ra,dec) : Right ascension and declination values in degrees 
+	- (ra,dec) <tuple>: Right ascension and declination values in degrees 
 
 	"""
 
-	hdulist = pyfits.open(image)
-	
-	wcs = pywcs.WCS(hdulist[0].header)
+	wcs = pywcs.WCS(hdr)
 
 	pixcrd = numpy.array([[x,y]], numpy.float_)
 
