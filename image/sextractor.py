@@ -23,7 +23,7 @@ import sltools;
 
 # PRESET CONFIG FOR SEXTRACTOR/INSTRUMENTS #
 # ------------------------------------------
-def _cstm_args(instrument,fits_image):
+def custom_args(instrument,fits_image):
 
 
     img_array, img_header = pyfits.getdata(fits_image, header=True)#,ignore_missing_end=True) 
