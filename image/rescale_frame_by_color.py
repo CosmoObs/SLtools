@@ -6,7 +6,7 @@
 
 """ Reescalonates image to simulate other band """
 
-##@package create_color_img
+##@package rescale_frame_by_color
 #
 #
 # Re-scale counts of an image using a magzpt and magnitude of both reference image and desired image

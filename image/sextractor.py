@@ -23,56 +23,10 @@ import sltools;
 
 # PRESET CONFIG FOR SEXTRACTOR/INSTRUMENTS #
 # ------------------------------------------
-def _cstm_args(instrument,fits_image):
+def se_presets(instrument):
 
 
-    img_array, img_header = pyfits.getdata(fits_image, header=True)#,ignore_missing_end=True) 
-
-    try:
-        MAG_ZEROPOINT = img_header['MAGZP']
-        
-
-    except:
-
-        if instrument == 'DC4':
-            MAG_ZEROPOINT = '31.0414' 
-        elif instrument == 'DC5':
-            MAG_ZEROPOINT = '31.0414'  
-        elif instrument == 'HST':
-            MAG_ZEROPOINT = '21.59'
-        elif instrument == 'HST_Arcs':
-            MAG_ZEROPOINT = '21.59'
-        elif instrument == 'CS82':
-            MAG_ZEROPOINT = '21.59'
-        elif instrument == 'sims':
-            MAG_ZEROPOINT = '31.0'
-        else:
-            MAG_ZEROPOINT = '21.59'
-
-
-    try:
-        SEEING_FWHM = img_header['SEEING']
-
-
-    except:
-
-        if instrument == 'DC4':
-             SEEING_FWHM= '1.2'
-        elif instrument == 'DC5':
-             SEEING_FWHM= '0.8'
-        elif instrument == 'HST':
-             SEEING_FWHM= '0.22'
-        elif instrument == 'HST_Arcs':
-             SEEING_FWHM= '0.22'
-        elif instrument == 'CS82':
-             SEEING_FWHM= '0.22'
-        elif instrument == 'CFHT':
-             SEEING_FWHM= '1.2'
-        elif instrument == 'sims':
-             SEEING_FWHM= '0.3'
-        else:
-            SEEING_FWHM= '0.22'
-    if instrument == 'DC4':
+   if instrument == 'DC4':
         _dic = {
             'FILTER_NAME' : 'default.conv',
             'STARNNW_NAME' : 'default.nnw',
@@ -92,11 +46,11 @@ def _cstm_args(instrument,fits_image):
             'PHOT_APERTURES' : '5',
             'PHOT_AUTOPARAMS' : '2.5,3.5',
             'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : MAG_ZEROPOINT,
+            'MAG_ZEROPOINT' : '31.0414',
             'MAG_GAMMA' : '4.0',
             'GAIN' : '0.0',
             'PIXEL_SCALE' : '0.27',
-            'SEEING_FWHM' : SEEING_FWHM,
+            'SEEING_FWHM' : '1.2',
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
             'BACKPHOTO_TYPE' : 'GLOBAL',
@@ -128,11 +82,11 @@ def _cstm_args(instrument,fits_image):
             'PHOT_APERTURES' : '5',
             'PHOT_AUTOPARAMS' : '2.5,3.5',
             'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : MAG_ZEROPOINT,
+            'MAG_ZEROPOINT' : '31.0414',
             'MAG_GAMMA' : '4.0',
             'GAIN' : '0.0',
             'PIXEL_SCALE' : '0.27',
-            'SEEING_FWHM' : SEEING_FWHM,
+            'SEEING_FWHM' : '0.8',
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
             'BACKPHOTO_TYPE' : 'GLOBAL',
@@ -164,11 +118,11 @@ def _cstm_args(instrument,fits_image):
             'PHOT_APERTURES' : '5',
             'PHOT_AUTOPARAMS' : '2.5,3.5',
             'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : MAG_ZEROPOINT,
+            'MAG_ZEROPOINT' : '21.59',
             'MAG_GAMMA' : '4.0',
             'GAIN' : '7.0',
             'PIXEL_SCALE' : '0.1',
-            'SEEING_FWHM' : SEEING_FWHM,
+            'SEEING_FWHM' : '0.22',
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
             'BACKPHOTO_TYPE' : 'GLOBAL',
@@ -201,11 +155,11 @@ def _cstm_args(instrument,fits_image):
             'PHOT_APERTURES' : '5',
             'PHOT_AUTOPARAMS' : '2.5,3.5',
             'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : MAG_ZEROPOINT,
+            'MAG_ZEROPOINT' : '21.59',
             'MAG_GAMMA' : '4.0',
             'GAIN' : '7.0',
             'PIXEL_SCALE' : '0.1',
-            'SEEING_FWHM' : SEEING_FWHM,
+            'SEEING_FWHM' : '0.22',
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
             'BACKPHOTO_TYPE' : 'GLOBAL',
@@ -237,7 +191,7 @@ def _cstm_args(instrument,fits_image):
             'MAG_GAMMA' : '4.0',
             'GAIN' : '0.0',
             'PIXEL_SCALE' : '1.0',
-            'SEEING_FWHM' : SEEING_FWHM,
+            'SEEING_FWHM' : '1.2',
             'STARNNW_NAME' : 'default.nnw',
             'BACK_SIZE' : '64',
             'BACK_FILTERSIZE' : '3',
@@ -252,7 +206,7 @@ def _cstm_args(instrument,fits_image):
     elif instrument == 'CS82':
         _dic = {
 
-            'SEEING_FWHM' : SEEING_FWHM,
+            'SEEING_FWHM' : '0.22',
             'THRESH_TYPE' : 'RELATIVE',
             'DETECT_THRESH' : '2.5',
             'FILTER' : 'N',
@@ -261,7 +215,7 @@ def _cstm_args(instrument,fits_image):
             'DETECT_MINAREA'  : '10',
             'ANALYSIS_THRESH' : '2.5',
             'PIXEL_SCALE': '0.187',
-            'MAG_ZEROPOINT' : MAG_ZEROPOINT
+            'MAG_ZEROPOINT' : '21.59'
             };
 
     elif instrument == 'sims':
@@ -284,7 +238,7 @@ def _cstm_args(instrument,fits_image):
             'MAG_GAMMA' : '4.0',
             'GAIN' : '0.0',
             'PIXEL_SCALE' : '1.0',
-            'SEEING_FWHM' : SEEING_FWHM,
+            'SEEING_FWHM' : '0.3',
             'BACK_TYPE' : 'MANUAL',
             'BACK_VALUE' : '0.0,0.0',
             'STARNNW_NAME' : 'default.nnw',
@@ -363,7 +317,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
      - args : {str:str,}
         Sextractor command-line arguments
      - preset : str
-        Options are: 'HST', 'CFHT', 'DC4', 'DC5'
+        See sextractor.se_presets() documentation for options
 
     Output:
      - True|False
@@ -401,7 +355,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
     # ==========================================================================
 
 
-    cargs = _cstm_args( preset,fits_image );
+    cargs = se_presets(preset);
     cargs.update( args );
 
     # Build up sextractor command line..
@@ -496,139 +450,60 @@ def run_segobj(filename, params=[], args={}, preset='', temp_dir='', quiet=False
 
     return ({'OBJECTS':objimgname, 'SEGMENTATION':segimgname, 'CATALOG':catfilename});
 
-# ---
-
-def run_detec_test(filename, params=[], args={}, preset='', temp_dir='', quiet=False, arg_min={}, arg_max={}, arg_step={}, Filter_Name='', plots=False):
-
-    """ Run Sextractor over given image and a range of inputs
-
-    run_detec_test( 'image.fits' )  ->  <dict>
-
-    See sextractor.run() help page for description about
-    'filename', 'params', 'args' and 'preset' arguments.
-
-    EDITAR This functions adds to 'params' list the value 'NUMBER' if not yet 
-    given. And set some 'args' options to specific values with the goal 
-    to have The SEGMENTATION and OBJECTS output versions of the input 
-    image, as well as a FITS catalog with 'params' computed features.
-
-    SE's hardcoded argument values:
-    CHECKIMAGE_TYPE : "OBJECTS,SEGMENTATION"
-    CHECKIMAGE_NAME : objects_name , segmentation_name
-    CATALOG_TYPE : "FITS_1.0"
-    CATALOG_NAME : catalog_name
-
-    "objects_name", "segmentation_name" and "catalog_name" 
-    have values composed by the image 'filename' (without the ".fits" 
-    extension) with the suffixes "_obj.fits", "_seg.fits" and "_cat.fit", 
-    respectively. These file names are given as output in a dictionary
-    with keys ""OBJECTS", "SEGMENTATION" and "CATALOG".
 
 
-    Input:
-     - filename : str
-        FITS image filename
-     - params : [str,]
-        Sextractor parameters to output (see SE's default.param)
-     - args : {str:str,}
-        Sextractor command-line arguments
-     - preset : str
-        Options are: 'HST', 'CFHT', 'DC4', 'DC5'
-
-    Output:
-     - {'OBJECTS':str, 'SEGMENTATION':str, CATALOG:str}
-        SE's OBJECTS, SEGMENTATION, CATALOG output filenames
-      
-    """
-
-    arg_min_t={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}
-    arg_max_t={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}
-    arg_step_t={'DETECT_THRESH' : '2.5', 'DEBLEND_MINCONT' : '0.5',  'DEBLEND_NTHRESH' : '32', 'DETECT_MINAREA'  : '10', 'ANALYSIS_THRESH' : '2.5'}
-    arg_min_t.update(arg_min)
-    arg_max_t.update(arg_max)    
-    arg_step_t.update(arg_step)
-    fits_image = filename;
-    _rootname = string.split( string.replace( fits_image,".fits","" ), sep="/" )[-1]
-    f_out=open(_rootname+"_variables.txt","w")
-    detect_thresh=frange(arg_min_t['DETECT_THRESH'],arg_max_t['DETECT_THRESH'], arg_step_t['DETECT_THRESH'])
-    deblend_min=frange(arg_min_t['DEBLEND_MINCONT'],arg_max_t['DEBLEND_MINCONT'], arg_step_t['DEBLEND_MINCONT'])
-    deblend_nthresh=frange(arg_min_t['DEBLEND_NTHRESH'],arg_max_t['DEBLEND_NTHRESH'], arg_step_t['DEBLEND_NTHRESH'])
-    detec_min=frange(arg_min_t['DETECT_MINAREA'],arg_max_t['DETECT_MINAREA'], arg_step_t['DETECT_MINAREA'])
-    analysis_thresh=frange(arg_min_t['ANALYSIS_THRESH'],arg_max_t['ANALYSIS_THRESH'], arg_step_t['ANALYSIS_THRESH'])
-    Filter_=['Y','N']
-    
-    if preset!='':
-        cargs = _cstm_args( preset,fits_image );
-        args.uptdate(cargs)    
-    if Filter_Name=='':
-        args.update({'FILTER_NAME' : temp_dir+'default.conv'})
-    for x in range(0,len(Filter_)):
-        args.update({'FILTER' : Filter[x]})
-        for i in range(0,len(detect_thresh)):
-            args.update({'DETECT_THRESH' : detect_thresh[i]})
-            for j in range(0,len(deblend_min)):
-                args.update({'DEBLEND_MINCONT' : deblend_min[j]})
-                for k in range(0,len(deblend_nthresh)):
-                    args.update({'DEBLEND_NTHRESH' : deblend_nthresh[k]})
-                    for w in range(0,len(detec_min)):
-                        args.update({'DETECT_MINAREA' : detec_min[w]})
-                        for y in range(0,len(analysis_thresh)):
-                            args.update({'ANALYSIS_THRESH' : analysis_thresh[y]})
-                            objimgname = _rootname+'var'+str(i)+str(j)+str(k)+str(w)+str(y)+'_obj.fits';
-                            segimgname = _rootname+'var'+str(i)+str(j)+str(k)+str(w)+str(y)+'_seg.fits';
-                            f_out.write(str(i)+str(j)+str(k)+str(w)+str(y)+'        '+'DETECT_THRESH='+str(args['DETECT_THRESH'])+'    '+'DEBLEND_MINCONT='+str(args['DEBLEND_MINCONT'])+'    '+'DEBLEND_NTHRESH='+str(args['DEBLEND_NTHRESH'])+'    '+'DETECT_MINAREA='+str(args['DETECT_MINAREA'])+'ANALYSIS_THRESH='+str(args['ANALYSIS_THRESH'])+'    '+"FILTER="+Filer[x]+'    \n \n');    
-                            args.update({'checkimage_name' : objimgname+','+segimgname})
-                            run_segobj(filename, params, args, preset, temp_dir, quiet)            
-    f_out.close()       
-           
-            
-
-    return 0
 
 
-def Flag_Counter(catalog. _dir=''):
+def flags_distribuition(hdu_cat):
    
-    """ Give number of objects per flag in a fits catalog
+    """ 
+    Give number of objects per flag in a fits catalog
+
+    
+    input:
+    - hdu : <hdulist> it is the hdu fits sextractor catalog, eg. hdu=pyfits.open("catalog_path")
+
+    output:
+    - <list> It is a list with the number of object per flag. The '0' index is the flag '0', the index '1' is the flag '1' , the index '2' is the flag '2' , the index '3' is the flag '4', the index '4' the flag '8', the index '5' the flag '16', the index '6' is the flag '32', the index '7' the flag '64', the index '8' the flag '128'.   
 
     """
-    flags_count=[0,0,0,0,0,0,0,0,0,0]
-    catalogs_data = pyfits.open(_dir+catalog)[1].data
-    for j in range(0,len(catalogs_data)):
-        flag=catalogs_data[j]['FLAGS']
-        flag=bin(flag)
-        flag=str(flag)
-        flag=string.replace(flag,"0b","")
-        for k in range(0,len(flag)):
+    flags_dist=[0,0,0,0,0,0,0,0,0]
+    catalogs_data =hdu_cat[1].data
+    for i in range(0,len(catalogs_data)):
+        flag=flags_counter(hdu_cat,i+1)
+        for j in range(0,len(flag_dist)):
+            if int(flag[j])==1:
+                    flags_dist[j]=flags_dist[j]+1
+    return flags_dist     
+
+def flags_counter(hdu_cat,_id):
+    """ 
+    Returns flags  on a given object
+
+    
+    input:
+    - hdu : <hdulist> it is the hdu fits sextractor catalog, eg. hdu=pyfits.open("catalog_path")
+    - _id : <int> it the object id in the sextractor fits cataloh  
+
+    output:
+    - <list> It is a list with information of which flags are 'on' in a given object. If the flag is 'on' the list item has the value '1' and if the flag is 'off' list item value is '0'. The '0' index is the flag '0', the index '1' is the flag '1' , the index '2' is the flag '2' , the index '3' is the flag '4', the index '4' the flag '8', the index '5' the flag '16', the index '6' is the flag '32', the index '7' the flag '64', the index '8' the flag '128'.   
+
+    """
+
+    catalogs_data =hdu_cat[1].data
+    i=_id-1
+    flag=catalogs_data[j]['FLAGS']
+    flag=bin(flag)
+    flag=str(flag)
+    flag=string.replace(flag,"0b","")
+    flags_list=[0,0,0,0,0,0,0,0,0]
+    for j in range(0,len(flag)):
             if int(flag)==0:
-                flags_count[0]= flags_count[0]+1
+                flags_list[0]= 1
             else:
                 if int(flag[k])==1:
-                    flags_count[k+1]=flags_count[k+1]+1
-
-
-    return flags_count 
-
-def frange(start,end,step):
-    L=[]
-    start=float(start)
-    end=float(end)
-    step=float(step)
-    _item=start
-    L.append(_item)
-    if (step==0) or (start>end and step>0) or (end>start and step<0):
-        return L
-    L=[]
-    if (start<end):
-        while _item<=end:
-            L.append(_item)
-            _item+=step
-
-    elif (start>end):
-        while _item>=end:
-            L.append(_item)
-            _item+=step
-    return L
-    
+                    flags_dist[j+1]=flags_dist[j+1]+1
+    return flag_dist
 
 
 def read_config(SE_configfile):

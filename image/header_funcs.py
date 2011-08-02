@@ -1,9 +1,20 @@
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
+# ===================================================
+# Authors:
+# Carlos Brandt - 
+# ===================================================
+
+
 """ Module to deal with FITS (image) header entries """
 
 import sys;
 import math as m;
+import pyfits;
+import pywcs
+import numpy
 
-def read_pixelscale( hdr ):
+def get_pixelscale( hdr ):
     """ Read out header dimpix (pixel_scale) from CD_* keys """
 
     try:
@@ -118,3 +129,60 @@ def update_coordinates(hdr, x_ini, y_ini):
 
 
     return (hdr);
+
+
+def get_ra_dec_limits(image):
+
+	"""
+	This function reads RA and DEC values correponding to the spatial limits of the sky image. 
+
+	Input:
+	- image <str>: name of image(tile) fits file.
+
+	Output:
+	- ra,dec <tuple>: two tuples with image sky region limits.
+	"""
+
+    hdr = pyfits.getheader( image)
+    
+    wcs = pywcs.WCS(hdr) 
+
+    naxis1 = hdr['NAXIS1']
+    naxis2 = hdr['NAXIS2']
+    ra_centre = hdr['CRVAL1']
+    dec_centre = hdr['CRVAL2']
+    pixcrd = numpy.array([[1,1],[naxis1,naxis2]])
+
+    skycrd = wcs.wcs_pix2sky(pixcrd,1)
+
+    ra_min = skycrd[0][0]
+    dec_min = skycrd[0][1]
+    ra_max = skycrd[1][0]
+    dec_max = skycrd[1][1]
+
+
+    return ((ra_min,ra_max),(dec_min,dec_max))
+    
+    
+def get_header_parameter( image_file, *parargs ):
+	"""
+	Read parameter value from image header. 
+
+	Input:
+	- image_file <str>: image FITS filename
+	- parargs <str>: parameters
+
+	Output:
+	- parvalue <str>: header parameter value
+	"""
+
+
+    _header = pyfits.getheader( image_file );
+
+    # Get image parameters in header.
+    #
+    param_list = [];
+    for _param in parargs :
+        param_list.append( _header[_param] ); 
+
+    return (param_list);

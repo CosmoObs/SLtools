@@ -18,8 +18,8 @@ import numpy as np;
 
 
 # =======================================================================
-def centroid2ID(segimg, centroid):
-    """Select objects based on given positions
+def centroid2id(segimg, centroid):
+    """Determine ID of the objects which contains the given pixel.
 
     Input:
      - segimg : ndarray(ndim=2,dtype=int)
@@ -55,8 +55,8 @@ def centroid2ID(segimg, centroid):
 
 
 #=============================================================================
-def readout_IDs(segimg):
-    """ Read segmented image values as object IDs
+def readout_ids(segimg):
+    """ Read segmented image values as object IDs.
     
     Input:
      - segimg : ndarray
@@ -74,8 +74,9 @@ def readout_IDs(segimg):
     return objIDs
 
 #=============================================================================
-def create_mask(segimg, objID):
-    """ Generate mask for each object in given image.
+def obj_id2index_array(segimg, objID):
+    """ 
+    Generate mask for each object in given image.
     
     ID in 'objIDs' is used to create a mask for each object (ID) in 'segimg'.
     
@@ -99,4 +100,4 @@ def create_mask(segimg, objID):
     
     return mask;
 
-create_IDmask = create_mask;
+create_IDmask = obj_id2index_array;
