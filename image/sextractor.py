@@ -401,7 +401,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
     # ==========================================================================
 
 
-    cargs = _cstm_args( preset,fits_image );
+    cargs = se_preset( preset,fits_image );
     cargs.update( args );
 
     # Build up sextractor command line..
@@ -558,7 +558,7 @@ def run_detec_test(filename, params=[], args={}, preset='', temp_dir='', quiet=F
     Filter_=['Y','N']
     
     if preset!='':
-        cargs = _cstm_args( preset,fits_image );
+        cargs = se_preset( preset,fits_image );
         args.uptdate(cargs)    
     if Filter_Name=='':
         args.update({'FILTER_NAME' : temp_dir+'default.conv'})
