@@ -101,7 +101,7 @@ def select_columns(tbhdu, *fieldnames):
 
 # ---
 
-def select_rows(tbhdu, *indices):
+def select_rows(tbhdu, indices):
     """
     Read rows(indexes) from given HDU (catalog)
     
@@ -110,7 +110,7 @@ def select_rows(tbhdu, *indices):
     
     Input:
      - tbhdu     [BinTableHDU] : FITS table HDU
-     - *indices         [int,] : List of indexes to read from tbhdu
+     - indices         [int,] : List of indexes to read from tbhdu
     
     Output:
      -> (new) BinTableHDU : sub-selection (rows) of tbhdu
@@ -118,14 +118,13 @@ def select_rows(tbhdu, *indices):
     ---
     """
     
-    _inds = [ i for i in indices ];
-    data = tbhdu.data.take(_inds);
+    data = tbhdu.data.take(indices);
 
     return pyfits.BinTableHDU(data);
     
 # ---
 
-def select_entries(tbhdu, fieldname, *values):
+def select_entries(tbhdu, fieldname, values):
     """
     Read entries (lines) from given HDU (catalog)
     
@@ -134,9 +133,9 @@ def select_entries(tbhdu, fieldname, *values):
     table (HDU) is generated from selected lines.
     
     Input:
-     - tbhdu     [BinTableHDU] : Table HDU, often "?" equals to 1
-     - field            [str]  : Field (column) name that 'values' should match
-     - *values  [field.dtype]  : List of values to match in 'field' entries
+     - tbhdu      [BinTableHDU] : Table HDU, often "?" equals to 1
+     - fieldname         [str]  : Field (column) name that 'values' should match
+     - values [fieldname type]  : List of values to match in 'field' entries
     
     Output:
      -> (new) BinTableHDU : sub-selection (rows) of tbhdu
@@ -144,9 +143,14 @@ def select_entries(tbhdu, fieldname, *values):
     ---
     """
     
-    _inds = [ tbhdu.data.field(fieldname).tolist().index(_v) for _v in values ];
+    _inds = [];
+    try:
+        for i in values:
+            _inds.extend( np.where(tbhdu.data.field(fieldname)==i)[0].tolist() );
+    except:
+            _inds.extend( np.where(tbhdu.data.field(fieldname)==values)[0].tolist() );
 
-    return select_rows(tbhdu,*_inds);
+    return select_rows(tbhdu,_inds);
 
 # ---
 
@@ -173,22 +177,26 @@ def sample_entries(tbhdu, **kwargs):
     ---
     """
 
-    tbsamp = tbhdu.copy();
-
+    indices = [];
     for _key in kwargs.keys():
     
+        data = tbhdu.data.field(_key);
         try:
             _min,_max = kwargs[_key];
-            _in = np.where(tbsamp.data.field(_key) >= _min)[0].tolist();
-            _ax = np.where(tbsamp.data.field(_key) <= _max)[0].tolist();
-            inds = list(set.intersection(set(_in),set(_ax)));
-            tbsamp = select_rows(tbsamp,*inds);
+            #_in = np.where(data >= _min)[0].tolist();
+            #_ax = np.where(data <= _max)[0].tolist();
+            #inds = list(set.intersection(set(_in),set(_ax)));
+            inds = np.where(data >= _min) * np.where(data >= _max);
+            inds = inds[0].tolist();
             
         except:
             _min = kwargs[_key];
-            inds = np.where(tbsamp.data.field(_key) >= _min)[0].tolist();
-            tbsamp = select_rows(tbsamp,*inds);
-            
+            inds = np.where(data >= _min)[0].tolist();
+
+        indices.extend(inds);
+
+    tbsamp = select_rows(tbhdu,indices);
+    
     return tbsamp;
 
 # ---

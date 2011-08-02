@@ -1,6 +1,38 @@
 from scipy import weave;
 import numpy as np;
 
+def tanh(img,slope=100,cut=None):
+    """
+    Modifies image intensities scale
+    
+    Input:
+     - img <ndarray>
+     - slope <float> : tanh('slope'*image)
+     - cut <float> : If 'cut' is not given, histogram's maximum is used
+    
+    Output:
+     - ndarray
+    
+    ---
+    """
+    
+    new_img = np.zeros(img.shape,dtype=img.dtype);
+    
+    min = img.min();
+    max = img.max();
+    
+    if cut == None:
+        steps = 10000;
+        delta_h = float(max-min)/(steps-1);
+        hist,bins = np.histogram(img.flatten(),bins=steps);
+        cut = min + (hist.argmax()+1) * delta_h;
+        print "Hist max:",cut
+    
+    new_img = np.tanh(slope*(img-cut)) + 1.;
+    
+    return new_img;
+
+# --
 def histogram(image, percent=99):
     """
     Modifiies image's histogram
@@ -27,7 +59,7 @@ def histogram(image, percent=99):
     if min==max:
         return False;
     
-    delta_h = (max-min)/(steps-1.);
+    delta_h = float(max-min)/(steps-1);
     hist,bins = np.histogram(image.ravel(),bins=steps);
     
     #histmax_val = hist.max();
