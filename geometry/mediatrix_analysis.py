@@ -1,5 +1,5 @@
 from geometry import *
-from get_extrema_2loops import *
+from sltools.geometry.get_extrema_pts import *
 import os
 import numpy
 from math import sin, cos ,sqrt, fabs, atan 
