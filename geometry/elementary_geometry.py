@@ -1,27 +1,26 @@
 """
-The following functions execute elementar geometrical calculations.
+The following functions execute elementary geometrical calculations.
 """
 
 from math import sin, cos ,sqrt, fabs, atan, tan 
 
 
-def three_points_to_circle(x,y):
+def three_points_to_circle(p1, p2, p3):
 
     """
     Function that calculates circle parameters defined by three points.
     
     Input:
-     - x          <list float> : three x coordinates from the points
-     - y          <list float> : three y coordinates from the points
+	 - p1 <list> : pair (x,y) of coordinates of the 1st point
+	 - p2 <list> : pair (x,y) of coordinates of the 2nd point
+	 - p3 <list> : pair (x,y) of coordinates of the 3rd point
         
     Output:
      - <float> : center x coordinate
      - <float> : center y coordinate
      - <float> : circle radius
     """
-    p1=[x[0],y[0]]
-    p2=[x[1],y[1]]
-    p3=[x[2],y[2]]
+
     theta1,b1=define_perpendicular_bisector(p1,p2)
     theta2,b2=define_perpendicular_bisector(p2,p3)
     xc,yc,Flag=get_intercept_point(theta1,b1,theta2,b2)
@@ -30,6 +29,54 @@ def three_points_to_circle(x,y):
     r=((p1[0]-xc)*(p1[0]-xc))+((p1[1]-yc)*(p1[1]-yc))
     r=sqrt(r)
     return xc,yc,r
+
+
+def three_points_to_circle_2(p1, p2, p3):
+	"""
+	Determines the circunference that passes through 3 points.
+
+	Given 3 points (x,y) on a plane, returns circunference radius and center. The method implemented
+	in this funcion is the one described in <A HREF="http://en.wikipedia.org/wiki/Circumcircle"> 
+	CircumcircleWikipedia</A> .
+
+	Input:
+	 - p1 <list> : pair (x,y) of coordinates of the 1st point
+	 - p2 <list> : pair (x,y) of coordinates of the 2nd point
+	 - p3 <list> : pair (x,y) of coordinates of the 3rd point
+
+	Output: 
+	 - <float> : circunference radius
+	 - <float> : x position of the circunference center
+	 - <float> : y position of the circunference center
+
+	"""
+
+	x1, y1 = p1
+	x2, y2 = p2
+	x3, y3 = p3
+
+	# definitions
+	P1_P2 = ( (x1 - x2)**2 + (y1 - y2)**2 )**0.5
+	P2_P3 = ( (x2 - x3)**2 + (y2 - y3)**2 )**0.5
+	P3_P1 = ( (x3 - x1)**2 + (y3 - y1)**2 )**0.5
+	P1_P2_vec_P2_P3 = abs( (x1 - x2)*(y2 - y3) - (x2 - x3)*(y1 - y2) )
+	# ==================================================================
+	# radius
+
+	R = (P1_P2 * P2_P3 * P3_P1)/( 2*P1_P2_vec_P2_P3 )
+
+	# definitions
+	alpha = ( P2_P3**2 * ( ( (x1 - x2)* (x1 - x3) ) + ( (y1 - y2)* (y1 - y3) ) ) )/ (2*P1_P2_vec_P2_P3**2)
+	beta  = ( P3_P1**2 * ( ( (x2 - x1)* (x2 - x3) ) + ( (y2 - y1)* (y2 - y3) ) ) )/ (2*P1_P2_vec_P2_P3**2)
+	gamma = ( P1_P2**2 * ( ( (x3 - x1)* (x3 - x2) ) + ( (y3 - y1)* (y3 - y2) ) ) )/ (2*P1_P2_vec_P2_P3**2)
+	# ==================================================================
+	# center (x0, y0)
+
+	x0 = alpha*x1 + beta*x2 + gamma*x3
+	y0 = alpha*y1 + beta*y2 + gamma*y3
+
+
+	return x0, y0, R
 
 
 def get_intercept_point(theta,b_t,phi,b_p):
@@ -187,6 +234,52 @@ def get_distance_from_line_to_point(p,theta,c):
         Distance=dy
     return Distance 
 
+def width_ellipse(l,area):
+    """
+    Function to calculate wiidth of an ellipse of given area and length l.
+
+    Input:
+     - l      <float> : the ellipse length.
+     - area      <float> : the ellipse area.
+     
+     
+    Output: 
+     - <float> : the width.  
+     
+    """
+
+
+	w=area/(atan(1)*l)
+	return w
+
+def length_from_connected_dots(points): 
+    """
+    Function to calculate the sum of distance from a previous point to the next on a list of points.
+
+    Input:
+     - points      <list> : list  of p_i points where p_i=(x_i,y_i).
+     
+     
+    Output: 
+     - <float> : the length.  
+     
+    """
+    x=[]
+    y=[]
+    for i in range(0,len(points)):
+        x.append(points[i][0])
+        y.append(points[i][1])
+    l=0
+    err=0
+    for j in range(0,len(X)-1):
+        dx=x[j]-x[j+1]
+        dy=x[j]-y[j+1]
+        dx=dx*dx
+        dy=dy*dy
+        dl=sqrt(dx+dy)
+        l=l+dl
+
+    return float(l)	
 
 
 
