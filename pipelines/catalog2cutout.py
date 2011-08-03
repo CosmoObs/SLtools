@@ -107,10 +107,6 @@ if __name__ == "__main__" :
         sys.exit(0)
 
 
-
-    print "\n -------------------- Rodando o main -------------------- \n"
-    #print opts
-    print "\n -------------------- rodando catalog2cutout_pipe"
     catalog2cutout_pipe(opts.im_path, opts.cat_path, opts.dim)
 
 
