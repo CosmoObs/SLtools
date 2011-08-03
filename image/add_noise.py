@@ -1,69 +1,52 @@
-""" add_noise """
+#!/usr/bin/env python
+# ==================================
+# Authors:
+# Carlos Brandt - chbrandt@lncc.br
+# Pedro Ferreira - pferreira@dfte.ufrn.br
+# ==================================
+
+""" Module to add noise to the image data """
 
 ##@package add_noise
+#
+# Module to add noise to the image data
 
-"""
-Add poisson noise to a list of FITS images
-"""
 
-import pyfits
-import string
 import numpy as np
 from numpy.random import poisson
 
-def add_poisson_noise(list_fitsFiles):
 
-    """ Add poissonian noise to given list of FITS files.
+def add_poisson_noise(img_array):
+
+    """
+    Add poissonian noise to given image array.
+
+    Each nonzero pixel has its value updated from a Poisson distribution.    
 
     Input:
-    -> list of fits filenames
+     - img_array <ndarray> : numpy.ndarray(ndim=2,dtype=float). Input data of an image
 	
     Output:
-    <- list of fits filenames with poisson noise added
+     - <ndarray> : numpy.ndarray(ndim=2,dtype=float). The input array with Poisson noise added
 
     """
 
-    list_noisyFiles = []
-    for Arc_filename in list_fitsFiles:
-
-        # Unfortunately the convolution process outputs to a file..
-        # Lets open it to an array..
-        #
-        ArcImg_array,ArcImg_header = pyfits.getdata( Arc_filename, header=True );
-
-        ###########################################################################
-        # Here I am treating a strange "behavior" (negative counts)
-        #
-        Arc_tmp = np.zeros( ArcImg_array.shape, dtype=float );
-        non_null = np.where( ArcImg_array > 0.0 );
-        Arc_tmp[ non_null ] = ArcImg_array[ non_null ];
-        ArcImg_array = Arc_tmp.copy();
-        del Arc_tmp;
-        ###########################################################################
+    ###########################################################################
+    # Here I am treating a strange "behavior" (negative counts)
+    #
+    Arc_tmp = np.zeros( img_array.shape, dtype=float );
+    non_null = np.where( img_array > 0.0 );
+    Arc_tmp[ non_null ] = img_array[ non_null ];
+    img_array = Arc_tmp.copy();
+    del Arc_tmp;
+    ###########################################################################
 
 
-        # Re-sort pixel intensities of arc image in a poissonian fashion
-        #    >>> arco = poisson(arco)
-        #
-        ArcImg_array = poisson( ArcImg_array );
+    # Re-sort pixel intensities of arc image in a poissonian fashion
+    #
+    img_array = poisson( img_array );
 
 
-        # Outputs Image to fits files
-        #
-        Filename_OUT = ''
-        for i in range( len(Arc_filename) - 6): # the last 6 characters corresponds to 'color.fits'
-            Filename_OUT = Filename_OUT + Arc_filename[i]
-        Filename_OUT = Filename_OUT + 'ns_' + Arc_filename[-6] + '.fits' # Arc_filename[-6] is the 6th str from the end (the colour)
+    return img_array;
 
 
-#        _part = string.split( Arc_filename, sep="_");
-#        root = string.join( _part[:-1], sep="_");
-#        ext = _part[-1];
-#        Filename_OUT = root+'_ns_'+ext;
-
-
-        pyfits.writeto( Filename_OUT, ArcImg_array, ArcImg_header );
-        
-        list_noisyFiles.append( Filename_OUT );
-
-    return (list_noisyFiles);
