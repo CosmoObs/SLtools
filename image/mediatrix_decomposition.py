@@ -23,21 +23,35 @@ from sltools.geometry.elementary_geometry import define_perpendicular_bisector, 
 def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
     Function to calculate the keydot points in Mediatrix Decomposition.
+
+    This function performs the full Mediatrix Decomposition method and returns 
+    a numpy array with the [x,y] coordinates of all the keydot points. The 
+    input 'method' allows the user to choose how to define the mediatrix 
+    point (medium between width extrema or the brightest point along the 
+    perpendicular bisector). 
+
+    To find all the keydots, a recursion is used. To choose between the two 
+    possible criteria to stop the recursion, the user must either set the 
+    input 'alpha' to zero and choose a value for the input 'n' or leave 'n' 
+    at its default value -1 and choose alpha. The default of the function 
+    is to work with 'alpha' = 1.
     
     Input:
      - p1            <ndarray> : coordinates (x,y) of the first extreme point.
      - p2            <ndarray> : coordinates (x,y) of the second extreme point.
      - image_pixels     <list> : list of points' coordinates fitting the object.
      - image         <ndarray> : the image matrix.
-     - keydots       <ndarray> : list with the two p_i extreme points and p_i=[p_i_x,p_i_y].
+     - keydots       <ndarray> : array of coordinates [p_i_x,p_i_y] of the two 
+                                 extreme points.
      - area          <ndarray> : the object area.
      - method         <string> : possible values are 'medium' or 'brightest'.
-     - alpha           <float> : the factor alpha=l_i/w to stop the bisection. Set alpha=0 to use n as criterium.
-     - n                 <int> : the number of level iterations. Default is -1, in which cases the code uses the alpha criterium.
-     - near_distance   <float> : the distance (in pixels) to consider a point close to the perpendicular bisector.
+     - alpha           <float> : the factor alpha=l_i/w to stop the bisection.
+     - n                 <int> : the number of level iterations.
+     - near_distance   <float> : the distance (in pixels) to consider a point close 
+                                 to the perpendicular bisector.
      
     Output:
-     - <array> : list  with the keydots points.  
+     - keydots       <ndarray> : array with the coordinate pairs of all the keydots.  
      
     """
     if (p1 in keydots) and (p2 in keydots):
@@ -107,15 +121,17 @@ def run_mediatrix_decomposition(image_name,image_dir='', method="medium",alpha=1
     Function to perform the mediatrix decomposition method on a given object. 
 
     Input:
-     - image_name       <str> : the image file name.
-     - image_dir        <str> : the image directory. If it is on the same directory, directory=''.
-     - method           <string> : possible values are 'medium'  or 'brightest'.
-     - alpha            <float> : the factor alpha=l_i/w to stop the bisection.
-     - n                <int> : the number of level interation. The default is -1. If is -1 the function uses alpha criteria
-     - near_distance    <float> : the distance (in pixels) to consider a point close to the perpendicular bisector.
+     - image_name        <str> : the image file name.
+     - image_dir         <str> : the image directory. If it is on the same 
+                                 directory, directory=''.
+     - method         <string> : possible values are 'medium' or 'brightest'.
+     - alpha           <float> : the factor alpha=l_i/w to stop the bisection.
+     - n                 <int> : the number of level iterations.
+     - near_distance   <float> : the distance (in pixels) to consider a point 
+                                 close to the perpendicular bisector.
      
     Output:
-     - <dic> :  Dictionary structure. The two keys 'origin' and 'end' represents each mediatrix vector. The 'origin' key is a list of points (x,y) of the vector origin,  and 'end'  key is a list of points (x,y) of the vector end. The 'id' key contains the image_name and 'center' key the object center (x,y) defined by the first mediatrix point in the first mediatrix level. The 'circle_params' key is a list where '0' index is the center (x,y) of the circle defined by two extrema and object center, the '1' and '2' index are the two extrema (x,y)
+     - <dic> : Dictionary structure. The two keys 'origin' and 'end' represents each mediatrix vector. The 'origin' key is a list of points (x,y) of the vector origin,  and 'end'  key is a list of points (x,y) of the vector end. The 'id' key contains the image_name and 'center' key the object center (x,y) defined by the first mediatrix point in the first mediatrix level. The 'circle_params' key is a list where '0' index is the center (x,y) of the circle defined by two extrema and object center, the '1' and '2' index are the two extrema (x,y)
          
     """
     image,hdr = getdata(image_dir+image_name, header = True )
@@ -144,16 +160,19 @@ def run_mediatrix_decomposition(image_name,image_dir='', method="medium",alpha=1
 
 def get_length_from_mediatrix(image_name,image_dir='', method="medium",alpha=1,near_distance=(sqrt(2)/2)):
     """
-    Function to calculate length of an object using the Mediatrix Decomposition.
+    Function to calculate the length of an object using the Mediatrix Decomposition.
+
+    The length is defined as the sum of the distances between the keydots.
 
     Input:
-     - image_name         <array> : the image file name.
-     - method             <string> : possible values are 'medium'  or 'brightest'.
-     - alpha              <float> : the factor alpha=l_i/w.
-     - near_distance      <float> : the distance to consider a point close to the perpendicular bisector.
+     - image_name      <array> : the image file name.
+     - method         <string> : possible values are 'medium' or 'brightest'.
+     - alpha           <float> : the factor alpha=l_i/w.
+     - near_distance   <float> : the distance to consider a point 
+                                 close to the perpendicular bisector.
      
     Output:
-     - <Float> : the object length  
+     - L <float> : the object length. 
      
     """
     image,hdr = getdata(image_dir+image_name, header = True )
@@ -172,13 +191,21 @@ def get_length_from_mediatrix(image_name,image_dir='', method="medium",alpha=1,n
 
 def find_mediatrix_vectors(points): 
     """
-    From a given set of points, this function returns the mediatrix decomposition vector between those points.
+    From a given set of points, this function returns the mediatrix decomposition 
+    vector between those points.
+
+    The output is a dictionary with keys 'origin' and 'end'. Each key corresponds
+    to a list of tuples, each tuple containing the x and y coordinate-values of a 
+    given point. Therefore, the 'origin' key gives all vector origin points and 
+    respectively for 'end'.
   
     Input:
-     - points      <list> : list  of p_i  mediatrix points where p_i=(x_i,y_i).
+     - points <list> : list of tuples of float - p_i mediatrix points where 
+                       p_i=(x_i,y_i).
      
     Output:
-     - <dic> : Dictionary with two keys 'origin' and 'end' of each mediatrix vector. The 'origin' key is a list of points (x,y) of the vector origin,  and 'end'  key is a list of points (x,y) of the vector end.
+     - mediatrix_vectors <dic> : Dictionary with two <string> keys for lists
+                                 of tuples of floats.
     """
     mediatrix_vectors= {'origin': [] , 'end': [], }
     vectors=[]
@@ -221,14 +248,18 @@ def find_mediatrix_vectors(points):
     return mediatrix_vectors
 
 def print_mediatrix_Object_graph(mediatrix_data,image_dir='', keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"},alpha=1, plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
+
     """
     Make a plot presenting the object, keydots and mediatrix vectors. 
 
     Input:
     - mediatrix_data <list> : the output from mediatrix_decomposition.
-    - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
-    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
-    - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
+    - image_dir       <str> : the image directory. If it is on the same directory, 
+                              directory=''.
+    - keydots        <bool> : 'True' -> display keydots, 'False' -> do not display. 
+    - colors          <dic> : set the plot colors. The possible keys are 'object', 
+                              'vector' and 'keydots'.  
+     
     Output:
      - <bool> or <subplot>: If save=='True' it returns a <bool> that indicates if the graph was su  if the graph was saved or 'false' if it was not. If sava=='False' retunrs the subplot instance. 
          
