@@ -17,13 +17,12 @@ def sort_by_column(tbhdu,fieldname):
     """
     Sort a FITS table HDU by the its "fieldname" column in increasing order. 
     
-	Inputs:
-	- tbhdu: FITS table HDU
-    - fieldname <str> : field name of the column to sort
+    Inputs:
+     - tbhdu: FITS table HDU
+     - fieldname <str> : field name of the column to sort
 
     Output:
-
-    - new tbhdu with data sorted according to 'fieldname' column
+     - new tbhdu with data sorted according to 'fieldname' column
     
     """
     from operator import itemgetter, attrgetter
