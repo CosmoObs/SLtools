@@ -26,21 +26,7 @@ from optparse import OptionParser
 
 def catalog2cutout_pipe(im_path, catalog_path, dim):
     """
-    Do a snapshot from given fits image.
-
-    cutout( img ... ) -> (ndarray, header)
-
-    The function can deal with 'pixel' and 'degrees' cordinate units. As input, besides the image FITS 
-    filename (input_file), it receives a central position (xo,yo) and side lengths (x_size,y_size) for
-    output image position and dimensioning. Function returns two values: a numpy.array with resultant 
-    image pixel intensities and respective header object.
-
-    In addition, an image mask information can be given to use as interest region selection. 'mask' is
-    expected to be a numpy.where like structure (i.e, mask=numpy.where()). If given, returned image will
-    have all pixels null except the ones listed in 'mask' parameter.
-
-    If 'xo=0' and 'yo=0', given image (input_file) central pixel will be chosen as (xo,yo).
-    If 'x_size=0' and 'y_size=0', half length of each side will be used for output dimensions.
+    make cuts in images given a coordinate catalogue
 
 
     Input:
