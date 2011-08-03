@@ -18,9 +18,9 @@ from numpy import where
 from math import sin, cos ,sqrt, fabs, atan, tan 
 from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, title, savefig, Circle
 from pyfits import getdata
-from geometry import define_perpendicular_bisector, get_distance_from_line_to_point, two_points_to_line, three_points_to_circle
+from sltools.geometry.elementary_geometry import define_perpendicular_bisector, get_distance_from_line_to_point, length_from_connected_dots, two_points_to_line, three_points_to_circle, width_ellipse
 
-def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,near_distance=(sqrt(2)/2)):
+def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
     Function to calculate the keydots Points in Mediatrix Decomposition.
     
@@ -32,7 +32,8 @@ def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1
      - keydots         <array>  : list with the two p_i extreme points and p_i=[p_i_x,p_i_y].
      - area            <array>  : the object area.
      - method          <string> : possible values are 'medium' or 'brightest'.
-     - alpha           <float>  : the factor alpha=l_i/w.
+     - alpha           <float>  : the factor alpha=l_i/w to stop the bisection.
+     - n                <int>   : the number of level interation. The default is -1. If is -1 the function uses alpha criteria
      - near_distance   <float>  : the distance (in pixels) to consider a point close to the perpendicular bisector.
      
     Output:
@@ -60,30 +61,48 @@ def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1
     dx=(x1-x2)
     dy=(y1-y2)
     dl=sqrt((dx*dx)+(dy*dy))
-    L=get_length(keydots)
+    L=length_from_connected_dots(keydots)
     W=width_ellipse(L,area)
+    coefficients=define_perpendicular_bisector(p1,p2)
+    p3x,p3y,p3Flag=choose_near_point(coefficients[0],coefficients[1],image_pixels,image,method,near_distance)
+    p3=[p3x,p3y]
+    if n==-1:
+        if dl>(alpha*W) and len(keydots)<100:
+            if (p3Flag==0):		
+                if (not(p3 in keydots)):
+                    keydots.insert(indexNext,p3)
+                    keydots=find_keydots(p1,p3,image_pixels,image,keydots,area, method,alpha,near_distance)
+                    keydots=find_keydots(p3,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
+            else:
+                xmed=float(x1+x2)/2.
+                ymed=float(y1+y2)/2.
+                pmed=[xmed,ymed]
+                if p1 in keydots: 
+                    keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area, method,alpha,near_distance)
+                if p2 in keydots:
+                    keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
+    else:
+        if n>0:
+            n=n-1
+            if (p3Flag==0):		
+                if (not(p3 in keydots)):
+                    keydots.insert(indexNext,p3)
+                    keydots=find_keydots(p1,p3,image_pixels,image,keydots,area, method,alpha=0,n,near_distance)
+                    keydots=find_keydots(p3,p2,image_pixels,image,keydots,area, method,alpha=0,n,near_distance)
+            else:
+                xmed=float(x1+x2)/2.
+                ymed=float(y1+y2)/2.
+                pmed=[xmed,ymed]
+                if p1 in keydots: 
+                    keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area, method,alpha=0,n,near_distance)
+                if p2 in keydots:
+                    keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area, method,alpha=0,n,near_distance)
 
-    if dl>(alpha*W) and len(keydots)<100:
-        coefficients=define_perpendicular_bisector(p1,p2)
-        p3x,p3y,p3Flag=choose_near_point(coefficients[0],coefficients[1],image_pixels,image,method,near_distance)
-        p3=[p3x,p3y]
-        if (p3Flag==0):		
-            if (not(p3 in keydots)):
-                keydots.insert(indexNext,p3)
-                keydots=find_keydots(p1,p3,image_pixels,image,keydots,area, method,alpha,near_distance)
-                keydots=find_keydots(p3,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
-        else:
-            xmed=float(x1+x2)/2.
-            ymed=float(y1+y2)/2.
-            pmed=[xmed,ymed]
-            if p1 in keydots: 
-                keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area, method,alpha,near_distance)
-            if p2 in keydots:
-                keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
+
 
     return keydots
 
-def run_mediatrix_decomposition(image_name,image_dir='', method="medium",alpha=1,near_distance=(sqrt(2)/2)):
+def run_mediatrix_decomposition(image_name,image_dir='', method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
     Function to perform the mediatrix decomposition method on a given object. 
 
@@ -92,31 +111,31 @@ def run_mediatrix_decomposition(image_name,image_dir='', method="medium",alpha=1
      - image_dir        <str> : the image directory. If it is on the same directory, directory=''.
      - method           <string> : possible values are 'medium'  or 'brightest'.
      - alpha            <float> : the factor alpha=l_i/w to stop the bisection.
+     - n                <int> : the number of level interation. The default is -1. If is -1 the function uses alpha criteria
      - near_distance    <float> : the distance (in pixels) to consider a point close to the perpendicular bisector.
      
     Output:
-     - <dic> :  Dictionary structure. The two keys 'origin' and 'end' represents each mediatrix vector. The 'origin' key is a list of points (x,y) of the vector origin,  and 'end'  key is a list of points (x,y) of the vector end. The 'id' key contains the image_name and 'center' key is the keeps the object center (x,y) defined by the first mediatrix point in the first mediatrix level.
+     - <dic> :  Dictionary structure. The two keys 'origin' and 'end' represents each mediatrix vector. The 'origin' key is a list of points (x,y) of the vector origin,  and 'end'  key is a list of points (x,y) of the vector end. The 'id' key contains the image_name and 'center' key the object center (x,y) defined by the first mediatrix point in the first mediatrix level. The 'circle_params' key is a list where '0' index is the center (x,y) of the circle defined by two extrema and object center, the '1' and '2' index are the two extrema (x,y)
          
     """
     image,hdr = getdata(image_dir+image_name, header = True )
     pixels=where(image>0)
-    E1,E2=get_extrema_2loops( pixels[0], pixels[1], 0 )
+    e_1,e_2=get_extrema_2loops(pixels[0], pixels[1], 0 )
     Area=len(pixels[1])
-    p1=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
-    p2=[pixels[0][E2],pixels[1][E2]]
+    p1=[pixels[0][e_1],pixels[1][e_1]] # the extreme points p_1 and p_3
+    p3=[pixels[0][e_2],pixels[1][e_2]]
     keydots=[p1,p2]
-    keydots=find_keydots(p1,p2,pixels,image,keydots,Area, method=method,alpha=alpha,near_distance=near_distance)
+    keydots=find_keydots(p1,p3,pixels,image,keydots,Area, method=method,alpha=alpha,n,near_distance=near_distance)
     mediatrix_vectors=find_mediatrix_vectors(keydots)
     mediatrix_vectors['id']=image_name
     medium=int(float(len(keydots))/2)
     mediatrix_vectors['center']=keydots[medium]
-    L=get_length(keydots)
+    L=length_from_connected_dots(keydots)
     W=len(pixels[0])/(atan(1)*L)
     mediatrix_vectors['L/W']=L/W
     mediatrix_vectors['L']=L
-    x=[pixels[0][E1],mediatrix_vectors['center'][0],pixels[0][E2]]
-    y=[pixels[1][E1],mediatrix_vectors['center'][1],pixels[1][E2]]
-    x_c,y_c,r=three_points_to_circle(x,y)
+    p2=[mediatrix_vectors['center'][0],mediatrix_vectors['center'][1]]
+    x_c,y_c,r=three_points_to_circle(p1,p2,p3)
     circle_center=[x_c,y_c]
     mediatrix_vectors['circle_params']=[circle_center,p1,p2]
 
@@ -145,7 +164,7 @@ def get_length_from_mediatrix(image_name,image_dir='', method="medium",alpha=1,n
     p2=[pixels[0][E2],pixels[1][E2]]
     keypoints=[p1,p2]
     keypoints=find_keydots(p1,p2,pixels,image,keypoints,Area, method="brightest",alpha=alpha,near_distance=near_distance)
-    L_f=get_length(keypoints)
+    L_f=length_from_connected_dots(keypoints)
     W=width_ellipse(L_f,Area)
     
     return L_f, W
@@ -330,10 +349,11 @@ def print_mediatrix_Object_circle_graph(mediatrix_data,image_dir='', keydots=Fal
         
 
     
-    last=len(mediatrix_data['origin'])-1
-    x=[pixels[0][e_1],mediatrix_data['center'][0],pixels[0][e_2]]
-    y=[pixels[1][e_1],mediatrix_data['center'][1],pixels[1][e_2]]
-    x_c,y_c,r=three_points_to_circle(x,y)
+    #last=len(mediatrix_data['origin'])-1
+    p1=[pixels[0][e_1],pixels[1][e_1]] # the extreme points p_1 and p_3
+    p2=[mediatrix_data['center'][0],mediatrix_data['center'][1]]
+    p3=[pixels[0][e_2],pixels[1][e_2]]
+    x_c,y_c,r=three_points_to_circle(p1,p2,p3)
     if r>0:
         xy=[y_c,x_c]
         cir=Circle(xy,r,fc='none',ec='m', zorder=501)
@@ -372,8 +392,7 @@ def choose_near_point(nearsX,nearsY,image,method='brightest'):
      - nears_ys        <list>   : linear coeficient the line.
      - image           <array>  : the image matrix.
      - method          <string> : possible methods are 'medium'  or 'brightest'.
-     - near_distance   <float>  : the distance to consider a point near to the perpendicular bisector.
-     
+          
     Output:
      - <list> : the chosen point x coordinate.  
      - <list> : the chosen point y coordinate.
@@ -442,50 +461,6 @@ def pick_near_points(theta,b,object_pixels,near_distance):
 
 
 
-def get_length(points): 
-    """
-    Function to calculate the sum of distance from a previous point to the next on a list of points.
-
-    Input:
-     - points      <list> : list  of p_i points where p_i=(x_i,y_i).
-     
-     
-    Output: 
-     - <float> : the length.  
-     
-    """
-    x=[]
-    y=[]
-    for i in range(0,len(points)):
-        x.append(points[i][0])
-        y.append(points[i][1])
-    l=0
-    err=0
-    for j in range(0,len(X)-1):
-        dx=x[j]-x[j+1]
-        dy=x[j]-y[j+1]
-        dx=dx*dx
-        dy=dy*dy
-        dl=sqrt(dx+dy)
-        l=l+dl
-
-    return float(l)	
-
-def width_ellipse(l,area):
-    """
-    Function to calculate wiidth of an ellipse of given area and length l.
-
-    Input:
-     - l      <float> : the ellipse length.
-     - area      <float> : the ellipse area.
-     
-     
-    Output: 
-     - <float> : the width.  
-     
-    """
 
 
-	w=area/(atan(1)*l)
-	return w
 
