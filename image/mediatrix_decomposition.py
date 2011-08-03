@@ -22,19 +22,19 @@ from sltools.geometry.elementary_geometry import define_perpendicular_bisector, 
 
 def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
-    Function to calculate the keydots Points in Mediatrix Decomposition.
+    Function to calculate the keydot points in Mediatrix Decomposition.
     
     Input:
-     - p1              <array>  : coordinates (x,y) of the first extreme point.
-     - p2              <array>  : coordinates (x,y) of the second extreme point.
-     - image_pixels    <list>   : list of points coordidates fitting the object.
-     - image           <array>  : the image matrix.
-     - keydots         <array>  : list with the two p_i extreme points and p_i=[p_i_x,p_i_y].
-     - area            <array>  : the object area.
-     - method          <string> : possible values are 'medium' or 'brightest'.
-     - alpha           <float>  : the factor alpha=l_i/w to stop the bisection.
-     - n                <int>   : the number of level interation. The default is -1. If is -1 the function uses alpha criteria
-     - near_distance   <float>  : the distance (in pixels) to consider a point close to the perpendicular bisector.
+     - p1            <ndarray> : coordinates (x,y) of the first extreme point.
+     - p2            <ndarray> : coordinates (x,y) of the second extreme point.
+     - image_pixels     <list> : list of points' coordinates fitting the object.
+     - image         <ndarray> : the image matrix.
+     - keydots       <ndarray> : list with the two p_i extreme points and p_i=[p_i_x,p_i_y].
+     - area          <ndarray> : the object area.
+     - method         <string> : possible values are 'medium' or 'brightest'.
+     - alpha           <float> : the factor alpha=l_i/w to stop the bisection. Set alpha=0 to use n as criterium.
+     - n                 <int> : the number of level iterations. Default is -1, in which cases the code uses the alpha criterium.
+     - near_distance   <float> : the distance (in pixels) to consider a point close to the perpendicular bisector.
      
     Output:
      - <array> : list  with the keydots points.  
