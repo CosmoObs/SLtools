@@ -253,12 +253,12 @@ def print_mediatrix_Object_graph(mediatrix_data,image_dir='', keydots=False, col
     Make a plot presenting the object, keydots and mediatrix vectors. 
 
     Input:
-    - mediatrix_data <list> : the output from mediatrix_decomposition.
-    - image_dir       <str> : the image directory. If it is on the same directory, 
-                              directory=''.
-    - keydots        <bool> : 'True' -> display keydots, 'False' -> do not display. 
-    - colors          <dic> : set the plot colors. The possible keys are 'object', 
-                              'vector' and 'keydots'.  
+    - mediatrix_data     <list> : the output from mediatrix_decomposition.
+    - image_dir           <str> : the image directory. If it is on the same directory, 
+                                  directory=''.
+    - keydots            <bool> : 'True' -> display keydots, 'False' -> do not display. 
+    - colors              <dic> : set the plot colors. The possible keys are 'object', 
+                                  'vector' and 'keydots'.  
      
     Output:
      - <bool> or <subplot>: If save=='True' it returns a <bool> that indicates if the graph was su  if the graph was saved or 'false' if it was not. If sava=='False' retunrs the subplot instance. 
@@ -330,10 +330,10 @@ def print_mediatrix_Object_circle_graph(mediatrix_data,image_dir='', keydots=Fal
     Make a plot presenting the object, keydots and mediatrix vectors. 
 
     Input:
-    - mediatrix_data <list> : the output from mediatrix_decomposition.
-    - image_dir <str> : the image directory. If it is on the same directory directory=''.
-    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
-    - colors    <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
+    - mediatrix_data  <list> : the output from mediatrix_decomposition.
+    - image_dir        <str> : the image directory. If it is on the same directory directory=''.
+    - keydots         <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
+    - colors           <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
     Output:
     - <bool> or <subplot>: If save=='True' it returns a <bool> that indicates if the graph was su  if the graph was saved or 'false' if it was not. If sava=='False' retunrs the subplot instance.   
          
@@ -415,19 +415,19 @@ def print_mediatrix_Object_circle_graph(mediatrix_data,image_dir='', keydots=Fal
 
 def choose_near_point(nearsX,nearsY,image,method='brightest'):
     
-     """
-    From a sample of  points nears to a perpendicular bisector this function chooses the mediatrix point.
+    """
+    Function to choose the mediatrix point from a sample of selected points near a perpendicular bisector.
 
     Input:
-     - near_xs         <list>   : straight line angle with x axis.
-     - nears_ys        <list>   : linear coeficient the line.
-     - image           <array>  : the image matrix.
-     - method          <string> : possible methods are 'medium'  or 'brightest'.
+     - near_xs        <list> : straight-line angle with respect to the x-axis.
+     - nears_ys       <list> : linear coefficient of the line.
+     - image       <ndarray> : the image matrix.
+     - method       <string> : possible methods are 'medium'  or 'brightest'.
           
     Output:
      - <list> : the chosen point x coordinate.  
      - <list> : the chosen point y coordinate.
-     - <int>  : a Flag error. if Flag=1, there is not any close point.
+     -  <int> : a Flag error. if Flag=1, there is not any close point.
     """
 
     if (len(near_xs)<1):
@@ -462,15 +462,15 @@ def pick_near_points(theta,b,object_pixels,near_distance):
     From a sample of points this function returns the ones that are close to a perpendicular bisector.
 
     Input:
-     - theta           <float>  : straight line angle with x axis.
-     - b               <float>  : linear coeficient the line.
-     - object_pixels   <list>   : list coordidates of object pixels, where the '0' index are x coordinates and '1' index are y coordinates, e.g. [x[i],y[i]].
-     - near_distance   <float>  : the distance to decide if a point is close to the perpendicular bisector.
+     - theta           <float> : straight-line angle with respect to the x axis.
+     - b               <float> : linear coefficient of the line.
+     - object_pixels    <list> : a list of lists of floats, e.g. [x[i],y[i]].
+     - near_distance   <float> : maximum distance to the perpendicular bisector.
      
     Output:
-     - <list> : the x coordinates of the close points.  
-     - <list> : the y coordinates of the close points.
-     - <int>  : a Flag error. if Flag=1, it there is not any close point.
+     - <list> : x-coordinates of the selected points.  
+     - <list> : y-coordinates of the selected points.
+     -  <int> : a Flag error. If Flag=1, there is no close point.
     """
 
     near_xs= []
