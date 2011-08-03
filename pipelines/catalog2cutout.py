@@ -39,9 +39,6 @@ def catalog2cutout_pipe(im_path, catalog_path, dim):
      - dim : str
         Output stamps shape
 
-
-    Output:
-     - (ndarray, header) : Resultant image array and (updated) header instance
     
     ---
     """
