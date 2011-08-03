@@ -29,8 +29,9 @@ def sort_by_column(tbhdu,fieldname):
 
     coldefs = tbhdu.columns
     tbdata = tbhdu.data
-
-    sorted_data = np.transpose(sorted(tbdata,key=itemgetter(0)))
+    index = tbdata.names.index(fieldname)
+	
+    sorted_data = np.transpose(sorted(tbdata,key=itemgetter(index)))
 
 
     cols = [];
