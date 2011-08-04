@@ -1,7 +1,7 @@
 
 *** get_nfw_concentration code versio 1.3 ***
 
-get_nfw_concentration returns the concentration parameter for a given halo mass and redshift based on Millennium Simulation results  for c(M) at z=0, 0.5, 1, 2 and 3. (Gao et al. 2008). We assume for z>0 the probability distribution function (P.D.F) for concentrations measured by Neto et al. (2007) at z=0. See more details on the get_nfw_concentration development code at http://twiki.on.br/bin/edit/StrongLensing/CMdist
+get_nfw_concentration returns the concentration parameter for a given halo mass and redshift based on Millennium Simulation results  for c(M) at z=0, 0.5, 1, 2 and 3. (Gao et al. 2008). We assume for z>0 the probability distribution function (P.D.F) for concentrations measured by Neto et al. (2007) at z=0. See more details on the get_nfw_concentration development code at http://twiki.linea.gov.br/bin/edit/StrongLensing/CMdist
 
 This release contains the files:
 

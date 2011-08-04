@@ -23,7 +23,7 @@
 # standard deviation sigma of the gaussian kernel and multiple of sigma that defines
 # the size of the 2D gaussian kernel.
 #
-# See <A HREF="http://twiki.on.br/bin/view/StrongLensing/CompareConvolutionCodes"> CompareConvolutionCodes</A> 
+# See <A HREF="http://twiki.linea.gov.br/bin/view/StrongLensing/CompareConvolutionCodes"> CompareConvolutionCodes</A> 
 # wiki page for a quantitative comparison with the results of IRAF and Gravlens convolution tasks. 
 
 

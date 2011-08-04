@@ -19,7 +19,7 @@
  *
  * By default get_nfw_concentration uses the c(M,z) relation from Gao et al. 2008, but other results from cosmological simulations can be set in the configuration file.
  *
- * See also the documentation <A HREF="http://twiki.on.br/bin/view/StrongLensing/CMdist">wiki</A>.
+ * See also the documentation <A HREF="http://twiki.linea.gov.br/bin/view/StrongLensing/CMdist">wiki</A>.
  *
  */
 
