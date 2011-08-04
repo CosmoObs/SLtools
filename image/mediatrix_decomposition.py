@@ -7,7 +7,17 @@ Set of functions used in Mediatrix Decomposition.
 
 ##@package mediatrix_decomposition 
 #
-# This module includes all functions developed to perform mediatrix decomposition method.
+# This module includes functions developed to perform the Mediatrix 
+# Decomposition method.
+#
+# The Mediatrix Decomposition method assigns a set of N oriented segments to 
+# high length-to-width ratio (L/W) objects. It divides the object in segments 
+# following an iterative process that consists of finding the mediatrix of two 
+# points and using it to subdivide the segments.
+# 
+# For more detailed information on how this method works, see:
+#
+# http://twiki.linea.gov.br/bin/view/StrongLensing/MediatrixS
 #
 #
 
@@ -19,6 +29,7 @@ from math import sin, cos ,sqrt, fabs, atan, tan
 from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, title, savefig, Circle
 from pyfits import getdata
 from sltools.geometry.elementary_geometry import define_perpendicular_bisector, get_distance_from_line_to_point, length_from_connected_dots, two_points_to_line, three_points_to_circle, width_ellipse
+
 
 def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
@@ -39,7 +50,8 @@ def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1
     Input:
      - p1            <ndarray> : coordinates (x,y) of the first extreme point.
      - p2            <ndarray> : coordinates (x,y) of the second extreme point.
-     - image_pixels     <list> : list of points' coordinates fitting the object.
+     - image_pixels     <list> : list of tuples of float - coordinates of points 
+                                 fitting the object.
      - image         <ndarray> : the image matrix.
      - keydots       <ndarray> : array of coordinates [p_i_x,p_i_y] of the two 
                                  extreme points.
@@ -47,11 +59,11 @@ def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1
      - method         <string> : possible values are 'medium' or 'brightest'.
      - alpha           <float> : the factor alpha=l_i/w to stop the bisection.
      - n                 <int> : the number of level iterations.
-     - near_distance   <float> : the distance (in pixels) to consider a point close 
-                                 to the perpendicular bisector.
+     - near_distance   <float> : the distance (in pixels) to consider a point 
+                                 close to the perpendicular bisector.
      
     Output:
-     - keydots       <ndarray> : array with the coordinate pairs of all the keydots.  
+     - keydots <ndarray> : array with the coordinate pairs of all the keydots.  
      
     """
     if (p1 in keydots) and (p2 in keydots):
@@ -416,13 +428,14 @@ def print_mediatrix_Object_circle_graph(mediatrix_data,image_dir='', keydots=Fal
 def choose_near_point(nearsX,nearsY,image,method='brightest'):
     
     """
-    Function to choose the mediatrix point from a sample of selected points near a perpendicular bisector.
+    Function to choose the mediatrix point from a sample of selected points near the perpendicular bisector.
 
     Input:
-     - near_xs        <list> : straight-line angle with respect to the x-axis.
-     - nears_ys       <list> : linear coefficient of the line.
+     - near_xs        <list> : list of floats - straight-line angle with 
+                               respect to the x-axis.
+     - nears_ys       <list> : list of floats - linear coefficient of the line.
      - image       <ndarray> : the image matrix.
-     - method       <string> : possible methods are 'medium'  or 'brightest'.
+     - method       <string> : possible methods are 'medium' or 'brightest'.
           
     Output:
      - <list> : the chosen point x coordinate.  
@@ -459,7 +472,8 @@ def choose_near_point(nearsX,nearsY,image,method='brightest'):
 
 def pick_near_points(theta,b,object_pixels,near_distance): 
     """
-    From a sample of points this function returns the ones that are close to a perpendicular bisector.
+    From a sample of points this function returns the ones that are close to the perpendicular bisector.
+
 
     Input:
      - theta           <float> : straight-line angle with respect to the x axis.
@@ -468,8 +482,8 @@ def pick_near_points(theta,b,object_pixels,near_distance):
      - near_distance   <float> : maximum distance to the perpendicular bisector.
      
     Output:
-     - <list> : x-coordinates of the selected points.  
-     - <list> : y-coordinates of the selected points.
+     - <list> : list of floats - x-coordinates of the selected points.  
+     - <list> : list of floats - y-coordinates of the selected points.
      -  <int> : a Flag error. If Flag=1, there is no close point.
     """
 
