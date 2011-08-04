@@ -59,6 +59,8 @@ After all is set up, just type:
 
 $ ./install.sh
 
+WARNING: Do not install sltools in the same directory where you unpacked it. 
+
 You will be prompted to especify a instalation directory and then to add some lines to your login file (.login, .bashrc or equivalent).
 
 Now you can import sltools in the Pyton console:
