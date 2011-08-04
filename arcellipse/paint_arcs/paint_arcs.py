@@ -30,6 +30,7 @@ import sltools
 import string
 from sltools.image import gauss_convolution
 from sltools.image import add_noise
+#import add_noise
 from sltools.image import get_header_parameter
 from sltools.image import imcp
 from sltools.io import config_parser as cp
@@ -311,26 +312,22 @@ def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_
 	return s,s_sum,ps_size
 
 
-def paint_arcs(params,image_name):
+def paint_arcs(params):
 	"""	
-	Function to create the arc image. 
+	Function to digitalize the arc surface brightness map and write it on a HDU.
     
 	It computes the arcellipse_sbmap_r_theta derivative to find the size of the "new" pixel for 
 	digitalization. Then it calls the function create_arcellipse_sbmap to create the surface 
 	brightness map and digitalize it. 
     
-	The arc image is written in a fits file with suffix "_arc.fits" and the arc properties are 
-	written in a ascii file with suffix "_arc.txt". This function returns the array resultant of 
-	the digitalization of the surface brightness map.
-
-	The arc image has the same size as the input image.
+ 	This function returns the HDU resultant of the digitalization of the surface brightness map.
+ 	The parameters of the arc are added to the HDU header. 
 
 	Input:
 	- params: list with all necessary parameters (ellip,n,r_e,r_c,theta_0,mag,seeing,x_0,y_0,mag_zpt,dim_x,dim_y)
-	- image_name: name of the image where the arc will be added
 	
 	Output:
-	- ndarray: resultant array of the digitalization of the surface brightness map 
+	- hdu: resultant hdu of the digitalization of the surface brightness map 
 	"""
 
 	ellip = 1. - (1./float(params[0]))
@@ -339,12 +336,10 @@ def paint_arcs(params,image_name):
 	r_c = convert_arcsec_pix(float(params[3]),pix_scale)
 	theta_0 = math.radians(float(params[4]))
 	mag = float(params[5])
-#	seeing = convert_arcsec_pix(float(params[6]),pix_scale)	
 	x_0 = float(params[6])
 	y_0 = float(params[7])
 	mag_zpt = float(params[8])
 
-	
 	x_arc = x_0 + r_c * math.cos(theta_0)
 	y_arc = y_0 + r_c * math.sin(theta_0)
 
@@ -353,7 +348,6 @@ def paint_arcs(params,image_name):
 	signal_total = 10. ** (-0.4 * (mag - mag_zpt))
 
 	I_0 = signal_total / I_0_integral(n,r_e,r_c,theta_0,ellip)
-	print I_0,mag,mag_zpt,signal_total
 
 	b_n = get_b_n(n)
 
@@ -367,160 +361,72 @@ def paint_arcs(params,image_name):
 	
 	error = abs(s_sum - signal_total)/signal_total
 
-	img_name,img_ext = os.path.splitext(image_name)
 
-	#Writing arc properties in a file
-	arc_prop_file = open( img_name + "_arc.txt", "w")
-	#arc_prop_file.write("ellip=%f, n=%f, r_e=%f, r_c=%f, theta=%f, mag=%f, seeing=%f \n" %(ellip,n,r_e,r_c,theta_0,mag,seeing))
-	arc_prop_file.write("x_arc=%f, y_arc=%f \n" %(x_arc,y_arc))
-	arc_prop_file.write("Signal total= %f, I_0= %f \n" %(signal_total,I_0))
-	arc_prop_file.write("epsilon= %f \n" %epsilon)
-	arc_prop_file.write("Derivative= %f \nn=1/pix_size= %f \nSignal_distributed= %f \nerror %f \n \n" %(d_arcellipse,int(1./pix_size),s_sum,error))
+	hdu=pyfits.PrimaryHDU(sbmap)
 
-	#Writing the arc to a fits file
-	arc_file = img_name + "_arc" + img_ext
+	hdr = hdu.header
+
+	hdr.update('ALW',params[0],comment='Arc lenght-width ratio')
+	hdr.update('ARC',params[3],comment='Arc curvature radius (arcsec)')
+	hdr.update('ATHETA',params[4],comment='Arc theta (degree)')
+	hdr.update('AMAG',mag,comment='Arc magnitude')
+	hdr.update('MAG_ZPT',mag_zpt,comment='Zero point magnitude')	
+	hdr.update('NINDEX',params[1],comment='Arc Sersic profile index')
+	hdr.update('RE',params[2],comment='Arc Sersic effective radius (arcsec)')
+	hdr.update('XARC',x_arc,comment='Arc x center')
+	hdr.update('YARC',y_arc,comment='Arc y center')
 	
-	#image_header.update('ALW',l_w_header,comment='Arc lenght-width ratio')
-	#image_header.update('ARC',r_c_header,comment='Arc curvature radius (arcsec)')
-	#image_header.update('ATHETA',theta_0_header,comment='Arc theta (degree)')
-	#image_header.update('AMAG',mag_header,comment='Arc magnitude')
-	#image_header.update('ASEEING',seeing_header,comment='Arc seeing (arcsec)')
-	#image_header.update('NINDEX',n_header,comment='Arc Sersic profile index')
-	#image_header.update('RE',r_e_header,comment='Arc Sersic effective radius (arcsec)')
-	#image_header.update('XARC',x_arc_header,comment='Arc x center')
-	#image_header.update('YARC',y_arc_header,comment='Arc y center')
-
-	pyfits.writeto(arc_file,sbmap)
+	hdr.update('ASIG',signal_total,comment='Total signal of the arc (from the input)')
+	hdr.update('ASIGDIST',s_sum,comment='Signal of the arc distributed by PaintArcs')
+	hdr.update('FLUXERR',error,comment='Error on the distributed arc flux')
 	
-	return sbmap
+	return hdu
 
 
 
+def run_paint_arcs(params,seeing,background):
 
-
-
-
-
-
-
-
-
-
-
-
-#-------------------------------------Funcoes preservadas para consulta futura ------------------
-
-
-def run_paint_arcs(input_image,params_list):
-	"""	
-	Function to run PaintArcs and add an arc to an image.
-    
-	It calls the function digitalize_arc_sbmap to digitalize the arc surface brightness map and 
-	create the arc image (with suffix "_arc.fits"). Then it convolves the arc image with a gaussian
-	kernel, to add the seeing effect. After that, it add Poissonic noise to the arc image. Finally, 
-	it adds the arc to the input image. The final image with the added arc has the suffix "_final.fits". 
-    
- 
-	Input:
-	- image_name: name of the image where the arc will be added
-	- params_list: list with arc parameters (ellip,n,r_e,r_c,theta_0,mag,seeing,x_0,y_0,mag_zpt,dim_x,dim_y)
-
+	hdu = paint_arcs(params)
 	
-	Output:
-	- ndarray: final arc array
-	"""
+	arc_array = hdu.data
+	arc_header = hdu.header
 	
-	image_name = string.split(input_image,sep='/')[-1]
-	image_root,image_extension = os.path.splitext(image_name) 
-
-	image_array,image_header = pyfits.getdata(input_image,header=True)	
+	pyfits.writeto("arc.fits",arc_array,arc_header)
 	
-	#Digitalize and create arc image
-	sbmap,ps_size,x_arc,y_arc = paint_arcs(params,image_name)
-
-	ps_xmin = int(x_arc - ps_size/2.)
-	ps_xmax = int(x_arc + ps_size/2.)+1
-	ps_ymin = int(y_arc - ps_size/2.)
-	ps_ymax = int(y_arc + ps_size/2.)+1
-
-
-
-	#Convolving arc image with a gaussian kernel
-	seeing = convert_arcsec_pix(float(params[6]),pix_scale)	
+	dim_x = arc_header["NAXIS1"]
+	dim_y = arc_header["NAXIS2"]
+	
+	# Convolving the arc
+	seeing = convert_arcsec_pix(seeing,pix_scale)	
 	sigma = seeing / (2.*math.sqrt(2.*math.log(2.)))
+	arc_header.update('APSF',seeing,comment='Arc psf (arcsec)')	
 	
-	fftconv_image = gauss_convolution.fftconvolve_image(sbmap,3.,sigma)
+	arc_conv_array = gauss_convolution.fftconvolve_image(arc_array,3.,sigma)
+	pyfits.writeto("arc_conv.fits",arc_conv_array,arc_header)
+		
+	# Adding Poisson noise
+	arc_conv_noise_array = add_noise.add_poisson_noise(arc_conv_array)
+	pyfits.writeto("arc_conv_noise.fits",arc_conv_noise_array,arc_header)	
 	
-	#Adding convolved arc to image array
-	#img_array = image_array + fftconv_image
-	background_array = numpy.zeros((ps_size+1,ps_size+1))
-
-	#Adding noise
-	pyfits.writeto("arc_conv2.fits",fftconv_image)	
-	pyfits.writeto("background.fits",background_array)
-	noise_file_list = ["arc_conv2.fits","background.fits"]
-	noisy_files_list = add_noise.add_noise(noise_file_list)
+	# Creating background image with noise
+	bkg_array = background * numpy.ones((dim_y,dim_x)) 
 	
-	for filename in noisy_files_list:
-		arc_array = pyfits.getdata(filename)
-				
-		image_array[ps_ymin:ps_ymax,ps_xmin:ps_xmax] = image_array[ps_ymin:ps_ymax,ps_xmin:ps_xmax] + arc_array
+	bkg_noise_array = add_noise.add_poisson_noise(bkg_array)
 	
-
-	#Writing final image to a fits file
-	final_image = paths['output'] + image_root + "_final" + image_extension
-
-	pyfits.writeto(final_image,image_array,image_header)
+	pyfits.writeto("background.fits",bkg_noise_array)
 	
-	os.system("rm arc_conv2.fits")
-	os.system("rm arc_convns_2.fits")	
-
-	return image_array
-
-
-#-----------------------------------------------------------------------------		
-#Reading configuration file and input file to get parameters
-
-#configfile = "paint_arc_config.cfg"
-#paint_arcs_config = cp.read_config( configfile )
-
-#input = paint_arcs_config['input']
-#paths = paint_arcs_config['paths']
-#output = paths['output']
-
-
-#images_path = os.path.expanduser( paths['input_images'])
-#catalogs_path = os.path.expanduser( paths['input_catalogs'])
-
-# Scalars:
-#input_file = str( input['input'])	
-#pix_scale = float(input['dimpix'])
-
-
-#images_list,params_list = read_input_file(images_path + input_file)
-
-
-#for i in range(len(images_list)):
-
-#	input_image = paths['input'] + images_list[i]
-
-#	params = params_list[i]	
-
-#	mag_zpt,dim_x,dim_y = get_header_parameter.get_header_parameter(input_image,'SEXMGZPT','NAXIS1','NAXIS2') 
-
-
-#	if len(params) == 7:  
-	#Add the position where the arc is centered (x_0,y_0) as the image center to params list in the 
-	#case these parameters are not in the input file.
+	# Adding arc to the background image
+	arc_conv_noise_bkg = arc_conv_noise_array + bkg_noise_array
+	arc_header.update('BKG',background,comment='Background mean value')	
 	
-#		params.insert(7,dim_x / 2.)
-#		params.insert(8,dim_y / 2.)
-	
-	#Add mag_zpt, dim_x and dim_y to parameters list
-#	params.insert(9,mag_zpt)
-#	params.insert(10,dim_x)
-#	params.insert(11,dim_y)	
+	pyfits.writeto("arc_conv_noise_bkg.fits",arc_conv_noise_bkg,arc_header)	
 
 	
-	#Run PaintArcs
-#	img_array = run_paint_arcs(input_image,params_list)
+
+
+
+
+
+
+
+
