@@ -30,16 +30,44 @@ from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, title, 
 from pyfits import getdata
 from sltools.geometry.elementary_geometry import define_perpendicular_bisector, get_distance_from_line_to_point, length_from_connected_dots, two_points_to_line, three_points_to_circle, width_ellipse
 
+from imcp import segstamp
 
-def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
+def run_mediatrix_decomposition(image_name,image_seg_name,catalog_name,method="Brightest",alpha=1,n=-1,near_distance=(sqrt(2)/2), ids=[], ignore_flags=False)
+    hdu_img=pyfits.open(image_name)
+    hdu_seg=pyfits.open(image_seg_name)
+    hdu_cat=pyfits.open(catalog_name)
+    catalogs_data =hdu_cat[1].data
+    img_data=hdu_img[1].data
+    seg_data=hdu_seg[1].data
+    hdr = pyfits.getheader(image_name)
+
+    if ids==[]:
+        i=_id-1
+        for i in range(0,len(caralogos_data)):
+            _id=i+1
+            if ignore_flags==True:
+                flag=catalogs_data[i]['FLAGS']
+                if int(flags)==0:
+                    _otmp,_htmp = imcp.segstamp(seg_data,_id,img_data,hdr,increase=2,connected=False)
+                    mediatrix_output=mediatrix_decomposition(_otmp, method=method, alpha=alpha,n=n, near_distance=near_distance)  
+
+            else:
+                _otmp,_htmp = imcp.segstamp(seg_data,_id,img_data,hdr,increase=2,connected=False)
+                mediatrix_output=mediatrix_decomposition(_otmp, method=method, alpha=alpha,n=n, near_distance=near_distance)  
+
+            
+                    
+
+
+def find_keydots (p1,p2,image,image_pixels=[],keydots,area, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
     Function to calculate the keydot points in Mediatrix Decomposition.
 
-    This function performs the full Mediatrix Decomposition method and returns 
-    a numpy array with the [x,y] coordinates of all the keydot points. The 
-    input 'method' allows the user to choose how to define the mediatrix 
-    point (medium between width extrema or the brightest point along the 
-    perpendicular bisector). 
+    This function performs the keydots calculation in Mediatrix Decomposition
+    method and returns a numpy array with the [x,y] coordinates of all the
+    keydot points. The input 'method' allows the user to choose how to define
+    the mediatrix    point (medium between width extrema or the brightest 
+    point along the perpendicular bisector). 
 
     To find all the keydots, a recursion is used. To choose between the two 
     possible criteria to stop the recursion, the user must either set the 
@@ -48,24 +76,30 @@ def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1
     is to work with 'alpha' = 1.
     
     Input:
-     - p1            <ndarray> : coordinates (x,y) of the first extreme point.
-     - p2            <ndarray> : coordinates (x,y) of the second extreme point.
-     - image_pixels     <list> : list of tuples of float - coordinates of points 
-                                 fitting the object.
-     - image         <ndarray> : the image matrix.
-     - keydots       <ndarray> : array of coordinates [p_i_x,p_i_y] of the two 
+     - p1             ndarray : coordinates [x,y] of the first extreme point.
+     - p2             ndarray : coordinates [x,y] of the second extreme point.
+     - image          ndarray : the image matrix. If image_pixels=[] it must
+                      be a single object image
+     - image_pixels   [[float,...][float,...]] : list of object coordinates, 
+                      e.g. [[x_1,x_2...][y_1,y_2,...]], fitting the object.
+     - keydots        ndarray   : array of coordinates [p_i_x,p_i_y] of the two 
                                  extreme points.
-     - area          <ndarray> : the object area.
-     - method         <string> : possible values are 'medium' or 'brightest'.
-     - alpha           <float> : the factor alpha=l_i/w to stop the bisection.
-     - n                 <int> : the number of level iterations.
-     - near_distance   <float> : the distance (in pixels) to consider a point 
+     - area           ndarray   : the object area.
+     - method         str       : possible values are 'medium' or 'brightest'.
+     - alpha          float     : the factor alpha=l_i/w to stop the bisection.
+     - n              int       : the number of level iterations.
+     - near_distance  float     : the distance (in pixels) to consider a point 
                                  close to the perpendicular bisector.
      
     Output:
-     - keydots <ndarray> : array with the coordinate pairs of all the keydots.  
+     - keydots        [[float,float],...] : array with the coordinate pairs of
+                      all the keydots.  
      
     """
+   
+    if image_pixels==[]:
+      image_pixels=where(image>0)
+
     if (p1 in keydots) and (p2 in keydots):
         index1=keydots.index(p1)
         index2=keydots.index(p2)
@@ -90,39 +124,48 @@ def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1
     L=length_from_connected_dots(keydots)
     W=width_ellipse(L,area)
     coefficients=define_perpendicular_bisector(p1,p2)
-    p3x,p3y,p3Flag=choose_near_point(coefficients[0],coefficients[1],image_pixels,image,method,near_distance)
+    p3x,p3y,p3Flag=choose_near_point(coefficients[0],coefficients[1],
+    image_pixels,image,method,near_distance)
     p3=[p3x,p3y]
     if n==-1:
         if dl>(alpha*W) and len(keydots)<100:
             if (p3Flag==0):		
                 if (not(p3 in keydots)):
                     keydots.insert(indexNext,p3)
-                    keydots=find_keydots(p1,p3,image_pixels,image,keydots,area, method,alpha,near_distance)
-                    keydots=find_keydots(p3,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
+                    keydots=find_keydots(p1,p3,image_pixels,image,keydots,area,
+                    method,alpha,near_distance)
+                    keydots=find_keydots(p3,p2,image_pixels,image,keydots,area,
+                    method,alpha,near_distance)
             else:
                 xmed=float(x1+x2)/2.
                 ymed=float(y1+y2)/2.
                 pmed=[xmed,ymed]
                 if p1 in keydots: 
-                    keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area, method,alpha,near_distance)
+                    keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area,
+                    method,alpha,near_distance)
                 if p2 in keydots:
-                    keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
+                    keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area,
+                    method,alpha,near_distance)
     else:
         if n>0:
             n=n-1
             if (p3Flag==0):		
                 if (not(p3 in keydots)):
                     keydots.insert(indexNext,p3)
-                    keydots=find_keydots(p1,p3,image_pixels,image,keydots,area, method,alpha=0,n,near_distance)
-                    keydots=find_keydots(p3,p2,image_pixels,image,keydots,area, method,alpha=0,n,near_distance)
+                    keydots=find_keydots(p1,p3,image_pixels,image,keydots,area,
+                    method,alpha=0,n,near_distance)
+                    keydots=find_keydots(p3,p2,image_pixels,image,keydots,area,
+                    method,alpha=0,n,near_distance)
             else:
                 xmed=float(x1+x2)/2.
                 ymed=float(y1+y2)/2.
                 pmed=[xmed,ymed]
                 if p1 in keydots: 
-                    keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area, method,alpha=0,n,near_distance)
+                    keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area,
+                    method,alpha=0,n,near_distance)
                 if p2 in keydots:
-                    keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area, method,alpha=0,n,near_distance)
+                    keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area,
+                    method,alpha=0,n,near_distance)
 
 
 
@@ -133,7 +176,7 @@ def mediatrix_decomposition(image, method="medium",alpha=1,n=-1,near_distance=(s
     Function to perform the mediatrix decomposition method on a given object. 
 
     Input:
-     - image             str   : the image matrix.
+     - image         ndarray   : the image matrix with single object
      - image_dir          str  : the image directory. If it is on the same 
                                  directory, directory=''.
      - method          string  : possible values are 'medium' or 'brightest'.
@@ -176,21 +219,21 @@ def mediatrix_decomposition(image, method="medium",alpha=1,n=-1,near_distance=(s
     return mediatrix_vectors
 
 
-def get_length_from_mediatrix(image_name,image_dir='', method="medium",alpha=1,near_distance=(sqrt(2)/2)):
+def get_length_from_mediatrix(image_name,image_dir='', method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
     Function to calculate the length of an object using the Mediatrix Decomposition.
 
     The length is defined as the sum of the distances between the keydots.
 
     Input:
-     - image_name      str : the image file name.
-     - method          str : possible values are 'medium' or 'brightest'.
+     - image         ndarray : the image matrix of a single object.
+     - method            str : possible values are 'medium' or 'brightest'.
      - alpha           float : the factor alpha=l_i/w.
      - near_distance   float : the distance to consider a point 
                               close to the perpendicular bisector.
      
     Output:
-     - L <float> : the object length. 
+     - L   float : the object length. 
      
     """
     image,hdr = getdata(image_dir+image_name, header = True )
