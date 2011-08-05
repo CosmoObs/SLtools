@@ -133,17 +133,17 @@ def update_coordinates(hdr, x_ini, y_ini):
 
 def get_ra_dec_limits(image):
 
-	"""
-	This function reads RA and DEC values correponding to the spatial limits of the sky image. 
+    """
+    This function reads RA and DEC values correponding to the spatial limits of the sky image. 
 
-	Input:
-	- image <str>: name of image(tile) fits file.
+    Input:
+    - image <str>: name of image(tile) fits file.
 
-	Output:
-	- ra,dec <tuple>: two tuples with image sky region limits.
-	"""
+    Output:
+    - ra,dec <tuple>: two tuples with image sky region limits.
+    """
 
-    hdr = pyfits.getheader( image)
+    hdr = pyfits.getheader(image)
     
     wcs = pywcs.WCS(hdr) 
 
@@ -165,17 +165,16 @@ def get_ra_dec_limits(image):
     
     
 def get_header_parameter( image_file, *parargs ):
-	"""
-	Read parameter value from image header. 
+    """
+    Read parameter value from image header. 
 
-	Input:
-	- image_file <str>: image FITS filename
-	- parargs <str>: parameters
+    Input:
+    - image_file <str>: image FITS filename
+    - parargs <str>: parameters
 
-	Output:
-	- parvalue <str>: header parameter value
-	"""
-
+    Output:
+    - parvalue <str>: header parameter value
+    """
 
     _header = pyfits.getheader( image_file );
 
@@ -186,3 +185,4 @@ def get_header_parameter( image_file, *parargs ):
         param_list.append( _header[_param] ); 
 
     return (param_list);
+    

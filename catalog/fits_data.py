@@ -209,23 +209,27 @@ def sample_entries(tbhdu, **kwargs):
     ---
     """
 
-    indices = [];
+    indices = []
     for _key in kwargs.keys():
-    
-        data = tbhdu.data.field(_key);
+
         try:
             _min,_max = kwargs[_key];
-            inds = np.where(data >= _min) * np.where(data >= _max);
-            inds = inds[0].tolist();
-            
+            _in = np.where(tbhdu.data.field(_key) >= _min)[0].tolist();
+            _ax = np.where(tbhdu.data.field(_key) <= _max)[0].tolist();
+            inds = list(set.intersection(set(_in),set(_ax)));
+        
         except:
             _min = kwargs[_key];
-            inds = np.where(data >= _min)[0].tolist();
+            inds = np.where(tbhdu.data.field(_key) >= _min)[0].tolist();
+    
+        if (len(indices) == 0):
+            indices = inds
+        else:
+            indices = list(set.intersection(set(indices),set(inds)))
 
-        indices.extend(inds);
-
-
-    return select_rows(tbhdu,indices);
+    tbsamp = select_rows(tbhdu,indices);
+    
+    return tbsamp;
 
 # ---
 

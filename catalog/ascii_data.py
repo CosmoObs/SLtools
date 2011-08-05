@@ -1,11 +1,11 @@
-""" Module to deal with ascii (CSV/Block-Data) catalog files """
+""" Module to deal with ascii catalog files (CSV and DS9)"""
 
 ##@package ascii_data
 
 """
-The following functions are meant to help in reading and
-writing text/csv catalogs given fieldnames and data.
-
+The following functions are meant to help in reading and writing text/csv catalogs 
+as well as DS9 region files. Main structure used is dictionaries do deal with catalog 
+data in a proper way.
 """
 
 import sys;
@@ -16,23 +16,22 @@ import string;
 
 # ---
 
-def dict_to_csv(dictionary, fieldnames=[], filename='cat.csv', mode='w', delimiter=','):
-    """ Write a CSV catalog from dictionary contents
+def dict_to_csv(columns, fieldnames=[], filename='cat.csv', mode='w', delimiter=','):
+    """ Write a CSV catalog from a dictionary contents
+    
+    Given dictionary is meant to store lists of values corresponding to key/column on the
+    csv file. So that each entry 'fieldnames' is expected to be found within 'dictionary'
+    keys, and the associated value (list) will be written in a csv column
     
     Input:
-     - dictionary : {str,}
-        Contents to be write in csv catalog
-     - fieldnames : [str,]
-        Fieldnames to read from 'dictionary'
-     - filename : str
-        Name of csv catalog to write
-     - mode : str
-        Write a new catalog, 'w', or append to an existing one, 'a'.
-     - delimiter : str
-        Delimiter to use between columns in 'filename'
+     - columns     {str:[]}  : Contents to be write in csv catalog
+     - fieldnames  [str]     : List with fieldnames/keys to read from 'columns'
+     - filename    str       : Name of csv catalog to write
+     - mode        str       : Write a new catalog, 'w', or append to an existing one, 'a'.
+     - delimiter   str       : Delimiter to use between columns in 'filename'
     
     Output:
-     <bool>
+     - void
     
     
     Example:
@@ -52,29 +51,35 @@ def dict_to_csv(dictionary, fieldnames=[], filename='cat.csv', mode='w', delimit
     >>> 
     
     """
+
+    dictionary  = columns.copy()
     
     if fieldnames == []:
-        fieldnames = dictionary.keys();
+        fieldnames = dictionary.keys()
         
-    list_lengths = [ len(dictionary[_k])  for _k in fieldnames if type(dictionary[_k])==type([]) ];
-    leng = max(list_lengths);
-    
-    for _k in fieldnames:
-        if type(dictionary[_k])!=type([]) and type(dictionary[_k])!=type(()):
-            dictionary[_k] = [dictionary[_k]]*leng;
+    for k in fieldnames:
+        if type(dictionary[k])!=type([]) and type(dictionary[k])!=type(()):
+            dictionary[k] = [dictionary[k]]
         
     logging.debug("Fields being written to (csv) catalog: %s",fieldnames);
+    
+    max_leng = max([ len(dictionary[k])  for k in fieldnames if type(dictionary[k])==type([]) ])
+
+    for k in fieldnames:
+        leng = len(dictionary[k])
+        if leng != max_leng:
+            dictionary[k].extend(dictionary[k]*(max_leng-leng))
     
     catFile = open(filename,mode);
     catObj = csv.writer(catFile, delimiter=delimiter);
     catObj.writerow(fieldnames);
     
-    LL = [ dictionary[_k] for _k in fieldnames ];
+    LL = [ dictionary[k] for k in fieldnames ];
     for _row in zip(*LL):
         catObj.writerow(_row);
     catFile.close();
 
-    return
+    return True
     
 # ---
 

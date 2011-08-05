@@ -27,16 +27,16 @@ import numpy
 import math
 import pyfits
 import sltools
-import string
+import string 
+from paint_arcs_functions import *
 from sltools.image import gauss_convolution
-from sltools.image import add_noise
-#import add_noise
+#from sltools.image import add_noise
+import add_noise
 from sltools.image import get_header_parameter
 from sltools.image import imcp
 from sltools.io import config_parser as cp
 from sltools.catalog import open_fits_catalog
 from sltools.catalog.halos import *
-#from sltools.image import get_image_limits
 from scipy.integrate import dblquad, quad
 
 sys.path.append( os.path.abspath( '.' ))
@@ -45,41 +45,6 @@ cwd = os.getcwd()+'/'
 ps_factor = 5.
 pix_scale = 0.27
 
-def convert_arcsec_pix(x,pix_scale):
-	'''Convert the units from arcsec to pixels.
-	@param x value in arcsec
-	@param pix_scale pixel scale (arcsec/pix)
-	@return value in pixels
-	'''
-	return x / pix_scale
-
-def convert_pix_arcsec(x,pix_scale):
-	'''Convert the units from pixels to arcsec.
-	@param x value in pixel
-	@param pix_scale pixel scale (arcsec/pix)
-	@return value in arcsec
-	'''
-	return x * pix_scale
-
-def get_b_n(m):
-
-	''' Finds the b_n coefficient of the Sersic profile.
-	This expression is more accurate thant the usual b_n = 1.9992*n - 0.3271
-	Reference: Ciotti, L., Bertin, G. 1999, A&A, 352, 447
-	MacArthur, L.A., Courteau, S., & Holtzman, J.A. 2003, ApJ, 582, 689
-	b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e .
-
-	@param m Sersic index 
-
-	@return b_n coefficient of the Sersic profile 	
-	'''
-
-	if m == 0.0: return -0.3271
-	b_n = 2.0*m - 1.0/3.0 + 4.0/m/405.0 + 46.0/m/m/25515.0 \
-		+ 131.0/m/m/m/1148175.0  \
-                - 2194697.0/m/m/m/m/30690717750.0
-
-	return b_n
 
 
 def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
@@ -285,23 +250,24 @@ def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_
 				y_max = y #+ 0.5 # shift +0.5 to take the upper value of the pixel
 
 
-		       	theta = math.atan2((y - y_0),(x - x_0))
+			theta = math.atan2((y - y_0),(x - x_0))
 		
 			r = math.sqrt((x - x_0)**2 + (y - y_0)**2)
 
 
 			theta_diff = abs(theta - theta_0)
+			
 			if (theta_diff >= (math.pi)):
 				theta_diff = 2. * math.pi - theta_diff
 
 
-		       	if (r_c - 10.*r_e)<= r <= (r_c+10.*r_e): #and theta_diff <= (math.pi/4.):
+			if (r_c - 10.*r_e)<= r <= (r_c+10.*r_e): #and theta_diff <= (math.pi/4.):
 				
-			       	s[y_new][x_new] = sum([sum([arcellipse_sbmap_x_y((x_min+i*h),(y_min+j*h),x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip) for j in range(0,m)]) for i in range(0,m)])/float(m)/float(m)
+				s[y_new][x_new] = sum([sum([arcellipse_sbmap_x_y((x_min+i*h),(y_min+j*h),x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip) for j in range(0,m)]) for i in range(0,m)])/float(m)/float(m)
 				s_total.append(s[y_new][x_new])	
 				
 
-		       	else:
+			else:
 				
 				s[y_new][x_new]= 0.
 	
@@ -342,6 +308,7 @@ def paint_arcs(params):
 
 	x_arc = x_0 + r_c * math.cos(theta_0)
 	y_arc = y_0 + r_c * math.sin(theta_0)
+	
 
 	print ellip,n,r_e,r_c,theta_0,mag,x_0,y_0,mag_zpt,x_arc,y_arc
 
@@ -373,8 +340,8 @@ def paint_arcs(params):
 	hdr.update('MAG_ZPT',mag_zpt,comment='Zero point magnitude')	
 	hdr.update('NINDEX',params[1],comment='Arc Sersic profile index')
 	hdr.update('RE',params[2],comment='Arc Sersic effective radius (arcsec)')
-	hdr.update('XARC',x_arc,comment='Arc x center')
-	hdr.update('YARC',y_arc,comment='Arc y center')
+	hdr.update('XARC',ps_size/2.+1.,comment='Arc x center')
+	hdr.update('YARC',ps_size/2.+1.,comment='Arc y center')
 	
 	hdr.update('ASIG',signal_total,comment='Total signal of the arc (from the input)')
 	hdr.update('ASIGDIST',s_sum,comment='Signal of the arc distributed by PaintArcs')
@@ -423,9 +390,16 @@ def run_paint_arcs(params,seeing,background):
 
 	
 
+params = [7.,1.,0.6,30.,230.,20.,100.,1000.,31.04]
+#params = [7.,1.,0.6,30.,230.,20.,100.,1000.,31.04]
+#params = [10.,4.,0.6,100.,300.,20.,100.,1000.,31.04]
 
 
 
+
+
+
+run_paint_arcs(params,0.6,500.)
 
 
 
