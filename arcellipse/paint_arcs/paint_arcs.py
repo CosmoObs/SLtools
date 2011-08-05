@@ -27,7 +27,8 @@ import numpy
 import math
 import pyfits
 import sltools
-import string
+import string 
+from paint_arcs_functions import *
 from sltools.image import gauss_convolution
 #from sltools.image import add_noise
 import add_noise
@@ -36,7 +37,6 @@ from sltools.image import imcp
 from sltools.io import config_parser as cp
 from sltools.catalog import open_fits_catalog
 from sltools.catalog.halos import *
-#from sltools.image import get_image_limits
 from scipy.integrate import dblquad, quad
 
 sys.path.append( os.path.abspath( '.' ))
@@ -45,41 +45,6 @@ cwd = os.getcwd()+'/'
 ps_factor = 5.
 pix_scale = 0.27
 
-def convert_arcsec_pix(x,pix_scale):
-	'''Convert the units from arcsec to pixels.
-	@param x value in arcsec
-	@param pix_scale pixel scale (arcsec/pix)
-	@return value in pixels
-	'''
-	return x / pix_scale
-
-def convert_pix_arcsec(x,pix_scale):
-	'''Convert the units from pixels to arcsec.
-	@param x value in pixel
-	@param pix_scale pixel scale (arcsec/pix)
-	@return value in arcsec
-	'''
-	return x * pix_scale
-
-def get_b_n(m):
-
-	''' Finds the b_n coefficient of the Sersic profile.
-	This expression is more accurate thant the usual b_n = 1.9992*n - 0.3271
-	Reference: Ciotti, L., Bertin, G. 1999, A&A, 352, 447
-	MacArthur, L.A., Courteau, S., & Holtzman, J.A. 2003, ApJ, 582, 689
-	b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e .
-
-	@param m Sersic index 
-
-	@return b_n coefficient of the Sersic profile 	
-	'''
-
-	if m == 0.0: return -0.3271
-	b_n = 2.0*m - 1.0/3.0 + 4.0/m/405.0 + 46.0/m/m/25515.0 \
-		+ 131.0/m/m/m/1148175.0  \
-                - 2194697.0/m/m/m/m/30690717750.0
-
-	return b_n
 
 
 def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
