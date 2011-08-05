@@ -1,14 +1,127 @@
 #!/usr/bin/env python
 import sys;
 import os;
+import logging
 
-"""Python interface fo Lenzen's arc-finder"""
+"""Python interface fo Lenzen's arc detector"""
 
-import pyfits;
-from sltools.catalog import ascii_data;
-from sltools.catalog import fits_data;
+import pyfits
+import ConfigParser
+import re
+
+from sltools.catalog import ascii_data
+from sltools.catalog import fits_data
+from sltools.io import config_parser as cp
 
 # ---
+
+class Config(dict):
+    """Store input.par section contents"""
+    
+    def __init__(self,imagefile=None,configfile=None):
+        self.default()
+        self.sections = ['INPUT','SCALE_INPUT','SMOOTHING','DETECTION','OUTPUT']
+        self.head_lines = []
+        self.begin_ini = 0
+        if configfile:
+            self.read_config(configfile)
+        if imagefile:
+            input_sec = self['INPUT']
+            input_sec['Infile'] = imagefile
+        
+    
+    def default(self):
+        """Default Arc Detector config params"""
+        self['INPUT'] = {'Infile':'<?>',
+                            'Resize':'no',
+                            'x1':'',
+                            'y1':'',
+                            'x2':'',
+                            'y2':'',
+                            'Origin_x':'0',
+                            'Origin_y':'0'
+                            }
+        self['SCALE_INPUT'] = {'Mode':'4',
+                                'Min':'auto',
+                                'Max':'99%'
+                                }
+        self['SMOOTHING'] = {'Steps':'1',
+                                'Tau':'10',
+                                'K':'0.00001',
+                                'Sigma':'1',
+                                'Rho':'10',
+                                'Outputfile':'smooth',
+                                'Outputformat':'fits'
+                            }
+        self['DETECTION'] = {'Minlevel':'0.1',
+                                'Mindiff':'0.3',
+                                'Minecc':'0.7',
+                                'Maxthick':'30',
+                                'Use_center_of_gc':'no',
+                                'Center_x':'',
+                                'Center_y':''
+                            }
+        self['OUTPUT'] = {'Extra_output':'none',
+                            'Outputfile':'output_img.fits',
+                            'Data_directory':'data/',
+                            'Catalogfile':'output_cat.fit',
+                            'Catalogtype':'large'
+                            }
+
+    def get(self,section,key):
+        """ = """
+        sec = self[section]
+        return sec[key]
+        
+    def set(self,section,key,value):
+        """ = """
+        sec = self[section]
+        if not sec.has_key(key):
+            logging.error("Key %s not found in section %s" % (key,section))
+            return
+        sec[key] = str(value)
+        
+    def read_config(self,configfile):
+        """ Returns a dictionary containing config sec->key:val structure """
+        parser = ConfigParser.ConfigParser()
+        parser.optionxform = str
+        cfg = open(configfile);
+        self.__head_lines__(cfg)
+        cfg.seek(self.begin_ini)
+        parser.readfp(cfg)
+        config = {}
+        for section in parser.sections():
+            sec = self[section.upper()]
+            for k,v in parser.items(section):
+                sec[k.capitalize()] = re.sub('\s+','',re.sub('#.*','',v))
+        cfg.close()
+    
+    def __head_lines__(self,cfg):
+        head_lines = [];
+        while True:
+            pos = cfg.tell();
+            line = cfg.readline();
+            if (line.find('[') >= 0) and (line.find('#') != 0): break;
+            if (line.rstrip('\n') != ''): head_lines.append(line);
+        self.head_lines = head_lines
+        self.begin_ini = pos
+        
+    def write_config(self,filename='input.par'):
+        """ Function to write an INI file: [section] key:value """
+        fp = open(filename,'w')
+        [ fp.write(line+'\n') for line in self.head_lines ]
+        fp.close()
+        for section in self.sections:
+            fp = open(filename,'a')
+            _sec = self[section]
+            config.add_section(section);
+            for key,value in _sec.items():
+                config.set(section, key, value);
+        config.write(fp);
+        fp.seek(0);
+        
+
+    
 def init(imagefile,eccentricity=0.7,outputimage='lenzen_out.fits',outputcat='lenzen_out.cat'):
 
     # Atualizar variaveis:
@@ -116,17 +229,28 @@ def process_output(imgfile,catfile,clean=False):
 
 # --
 
-def run(imgfile='img.fits', inputfile=None, clean=False):
+def run(imgfile=None, inputfile=None, clean=False):
 
+    if inputfile == None:
+    
+        if imgfile == None:
+            logging.error("Neither an image file nor an input.par file given. Nothing to do.");
+            return False;
+        else:
+            inputfile = init(imgfile,ecc,outputimage,outputcat);
+
+    else:
+        pass;
+        
     outputimage = 'lenzen_out.fits';
     outputcat = 'lenzen_out.cat';
     ecc = 0.7;
     
     # Initialize Horesh: read out necessary values from header
     # and write it down to the input file.
-    if not inputfile:
-        inputfile = init(imgfile,ecc,outputimage,outputcat);
-
+    if inputfile is None:
+        pass;
+        
     os.system('lenzen %s' % (inputfile));
     
     finalcat = process_output(outputimage,outputcat);
