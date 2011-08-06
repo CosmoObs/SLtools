@@ -42,7 +42,7 @@ import numpy as np;
 
 import sltools;
 from sltools.string import regexp;
-from sltools.image import segobjs;
+from sltools.image import segmentation_ids;
 from sltools.image import header_funcs as _hf_;
 
 
