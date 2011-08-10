@@ -39,7 +39,7 @@ def gauss_kernel(n_sig,sigma):
     of sigma.
     
     Input:
-    - n_sig <float> : multiple of sigma that defines the size of the 2D gaussian kernel
+    - n_sig <float> : multiple of sigma that defines the size of the 2D gaussian kernel (usually n_sig=4)
     - sigma <float>: standard deviation sigma of the gaussian kernel
 
 	Output:
@@ -62,7 +62,7 @@ def gauss_convolution_fft(im_array, n_sig, sig) :
 
     Input:
     - im_array <ndarray>: image array to be convolved
-    - n_sig <float>: multiple of sigma that defines the size of the 2D gaussian kernel
+    - n_sig <float>: multiple of sigma that defines the size of the 2D gaussian kernel (usually n_sig=4)
     - sig <float>: standard deviation sigma of the gaussian kernel
     
     Output:
@@ -82,7 +82,7 @@ def gauss_convolution(im_array, n_sig, sig) :
 	
 	Input:    
 	- im_array <ndarray>: image array to be convolved
-	- n_sig <float>: multiple of sigma that defines the size of the 2D gaussian kernel
+	- n_sig <float>: multiple of sigma that defines the size of the 2D gaussian kernel (usually n_sig=4)
 	- sig <float>: standard deviation sigma of the gaussian kernel
         
 	Output:
