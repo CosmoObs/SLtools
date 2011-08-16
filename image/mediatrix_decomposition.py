@@ -32,7 +32,7 @@ from sltools.geometry.elementary_geometry import define_perpendicular_bisector, 
 
 from imcp import segstamp
 
-def run_mediatrix_decomposition(image_name,image_seg_name,catalog_name,method="Brightest",alpha=1,n=-1,near_distance=(sqrt(2)/2), ids=[], ignore_flags=False)
+def run_mediatrix_decomposition(image_name,image_seg_name,catalog_name,method="Brightest",alpha=1,n=-1,near_distance=(sqrt(2)/2), ids=[],graphics=False, ignore_flags=False, colors_gra={'object': "g", 'vector': "b", 'keydots': "k"},plot_title="Mediatrix Decomposition graph",show_keydots=False)
     hdu_img=pyfits.open(image_name)
     hdu_seg=pyfits.open(image_seg_name)
     hdu_cat=pyfits.open(catalog_name)
@@ -40,20 +40,34 @@ def run_mediatrix_decomposition(image_name,image_seg_name,catalog_name,method="B
     img_data=hdu_img[1].data
     seg_data=hdu_seg[1].data
     hdr = pyfits.getheader(image_name)
-
+    image_name.
+    Output_file = open("mediatrix_"+tipo+".data", "wb")
     if ids==[]:
         i=_id-1
         for i in range(0,len(caralogos_data)):
             _id=i+1
-            if ignore_flags==True:
+            _otmp,_htmp = imcp.segstamp(seg_data,_id,img_data,hdr,increase=2,connected=False)
+            if ignore_flags==False:
                 flag=catalogs_data[i]['FLAGS']
                 if int(flags)==0:
-                    _otmp,_htmp = imcp.segstamp(seg_data,_id,img_data,hdr,increase=2,connected=False)
-                    mediatrix_output=mediatrix_decomposition(_otmp, method=method, alpha=alpha,n=n, near_distance=near_distance)  
-
-            else:
-                _otmp,_htmp = imcp.segstamp(seg_data,_id,img_data,hdr,increase=2,connected=False)
-                mediatrix_output=mediatrix_decomposition(_otmp, method=method, alpha=alpha,n=n, near_distance=near_distance)  
+                    
+                    mediatrix_output=run_mediatrix_decomposition_on_stamp(_otmp, method=method, alpha=alpha,n=n,
+                    near_distance=near_distance)  
+                    if graphics==True:
+                    print_mediatrix_object_graph(mediatrix_output,_otmp,show_keydots=show_keydots, colors=colors ,alpha=alpha, plot_title=plot_title, save=True) 
+                    print_mediatrix_object_circle_graph(mediatrix_output,image_dir='', show_keydots=show_keydots, 
+colors= colors, show_mediatrix_vectors=mediatrix_vectors, 
+alpha=alpha, plot_title=plot_title, save=True, save_dir='')
+            else:                
+                mediatrix_output=run_mediatrix_decomposition_on_stamp(_otmp, method=method, alpha=alpha,n=n,
+                near_distance=near_distance)
+                if graphics==True:
+                    print_mediatrix_object_graph(mediatrix_output,_otmp,show_keydots=show_keydots, colors=colors ,alpha=alpha, plot_title=plot_title, save=True) 
+                    print_mediatrix_object_circle_graph(mediatrix_output,image_dir='', show_keydots=show_keydots, 
+colors= colors, show_mediatrix_vectors=mediatrix_vectors, 
+alpha=alpha, plot_title=plot_title, save=True, save_dir='')
+    else:
+                              
 
             
                     
@@ -171,7 +185,7 @@ def find_keydots (p1,p2,image,image_pixels=[],keydots,area, method="medium",alph
 
     return keydots
 
-def mediatrix_decomposition(image, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
+def run_mediatrix_decomposition_on_stamp(image, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
     Function to perform the mediatrix decomposition method on a given object. 
 
@@ -310,7 +324,7 @@ def find_mediatrix_vectors(points):
         
     return mediatrix_vectors
 
-def print_mediatrix_object_graph(mediatrix_data,image_dir='', keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"},alpha=1, plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
+def print_mediatrix_object_graph(mediatrix_data,image,pixels,show_keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"},alpha=1, plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
 
     """
     Make a plot presenting the object, keydots and mediatrix vectors. 
@@ -320,7 +334,7 @@ def print_mediatrix_object_graph(mediatrix_data,image_dir='', keydots=False, col
       See image.mediatrix_decomposition for details
     - image_dir        str : the image directory. If it is on the same directory
       directory=''.
-    - keydots         bool : 'True' if you want to display the keydots and 'False'
+    - show_keydots         bool : 'True' if you want to display the keydots and 'False'
       if you do not. 
     - colors          {'objects': str, 'vector': str, 'keydots': str} :
       set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
@@ -328,7 +342,7 @@ def print_mediatrix_object_graph(mediatrix_data,image_dir='', keydots=False, col
     Output:
     - bool or matplot figure instance : If save=='True' it returns a <bool>
       that indicates if the graph was su  if the graph was saved or 'false' if it was 
-      not. If sava=='False' retunrs the subplot instance.  
+      not. If save=='False' retunrs the subplot instance.  
      
    
          
@@ -396,8 +410,8 @@ def print_mediatrix_object_graph(mediatrix_data,image_dir='', keydots=False, col
 
 
 
-def print_mediatrix_object_circle_graph(mediatrix_data,image_dir='', keydots=False, 
-colors= {'object': "g", 'vector': "b", 'keydots': "k"}, mediatrix_vectors=False, 
+def print_mediatrix_object_circle_graph(mediatrix_data,image_dir='', show_keydots=False, 
+colors= {'object': "g", 'vector': "b", 'keydots': "k"}, show_mediatrix_vectors=False, 
 alpha=1, plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
     """
     Make a plot presenting the object, keydots and mediatrix vectors. 
@@ -407,7 +421,7 @@ alpha=1, plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
       See image.mediatrix_decomposition for details
     - image_dir        str : the image directory. If it is on the same directory
       directory=''.
-    - keydots         bool : 'True' if you want to display the keydots and 'False'
+    - show_keydots         bool : 'True' if you want to display the keydots and 'False'
       if you do not. 
     - colors          {'objects': str, 'vector': str, 'keydots': str} :
       set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
