@@ -164,21 +164,19 @@ def tang_caustic(inputlens):
 
 
 #=======================================================================================================
-def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, source_selector_control_params):
+def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, control_rectangle):
 	"""
 	Determines the 4 cusps of the tangential caustic and determines a rectangle that encloses it. 
 
 	The rectangle vertices are on distances proportional to the cusp distance.
 
 	Input:
-	 - thetal  <float>                        : inclination of the lens with respect to the vertical
-						    (counterclockwise)
-	 - tan_caustic_x  <list>                  : list of x coordinates of the tangential caustic
-	 - tan_caustic_y  <list>                  : list of y coordinates of the tangential caustic
-	 - source_selector_control_params  <dict> : dictionary with the key 'control_rectangle'. This 
-						    value determines how many times the vertices of the
-						    losangle (inscribed in the rectangle) will be away 
-						    from the cusps.
+	 - thetal             <float> : inclination of the lens with respect to the vertical
+					(counterclockwise)
+	 - tan_caustic_x       <list> : list of x coordinates of the tangential caustic
+	 - tan_caustic_y       <list> : list of y coordinates of the tangential caustic
+	 - control_rectangle  <float> : determines how many times the vertices of the losangle 
+	                                (inscribed in the rectangle) will be away from the cusps.
 
 	Output:
 	 - deformation_rectangle_pt1  <list> : pair (x,y) of upper right corner of the rectangle
@@ -186,14 +184,13 @@ def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, source_s
 
 	"""
 
-	control_rectangle = float(source_selector_control_params['control_rectangle'])
 	# converts tan_caustic_x and tan_caustic_y to the system of coordinates in which thetal = 0 (to find the 4 cusps)
 	# xcrit0 = cos(theta)*x + sin(theta)*y
 	# ycrit0 = -sin(theta)*x + cos(theta)*y
-	theta = thetal*(math.pi)/180 # convert thetal to radians
+	theta = thetal*(math.pi)/180. # convert thetal to radians
 	tan_caustic_x = np.array(tan_caustic_x)
 	tan_caustic_y = np.array(tan_caustic_y)
-	xcrit0 = math.cos(theta)*tan_caustic_x + math.sin(theta)*tan_caustic_y
+	xcrit0 =  math.cos(theta)*tan_caustic_x + math.sin(theta)*tan_caustic_y
 	ycrit0 = -math.sin(theta)*tan_caustic_x + math.cos(theta)*tan_caustic_y
 	#global cusp1, cusp2, cusp3, cusp4, xlosango, ylosango
 	cusp1 = np.argmax(ycrit0)
@@ -202,23 +199,16 @@ def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, source_s
 	cusp4 = np.argmin(xcrit0)
 	xlosango1 = tan_caustic_x[cusp1]*control_rectangle # x coord of point 1 of the losangle
 	ylosango1 = tan_caustic_y[cusp1]*control_rectangle # y coord of point 1 of the losangle
-	xlosango2 = tan_caustic_x[cusp2]*control_rectangle  # x coord of point 2 of the losangle
+	xlosango2 = tan_caustic_x[cusp2]*control_rectangle # x coord of point 2 of the losangle
 	ylosango2 = tan_caustic_y[cusp2]*control_rectangle # y coord of point 2 of the losangle
-	xlosango3 = tan_caustic_x[cusp3]*control_rectangle  # x coord of point 3 of the losangle
+	xlosango3 = tan_caustic_x[cusp3]*control_rectangle # x coord of point 3 of the losangle
 	ylosango3 = tan_caustic_y[cusp3]*control_rectangle # y coord of point 3 of the losangle
 	xlosango4 = tan_caustic_x[cusp4]*control_rectangle # x coord of point 4 of the losangle
 	ylosango4 = tan_caustic_y[cusp4]*control_rectangle # y coord of point 4 of the losangle
 	xlosango = [xlosango1, xlosango2, xlosango3, xlosango4]
 	ylosango = [ylosango1, ylosango2, ylosango3, ylosango4]
 
-	# vert_1 : upper right corner
-	# vert_2 : lower left corner
-	x_vert_1 = max(xlosango)
-	y_vert_1 = max(ylosango)
-	x_vert_2 = min(xlosango)
-	y_vert_2 = min(ylosango)
-	deformation_rectangle = [x_vert_1,y_vert_1],[x_vert_2, y_vert_2]
-	return deformation_rectangle
+	return xlosango, ylosango
 
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -302,8 +292,8 @@ def source_positions(source_selector_control_params, deformation_rectangle, nsou
 			a11 = float(f[nlinha + (contj)*6].split()[0]) # element 11 of the mag tensor
 			a12 = float(f[nlinha + (contj)*6].split()[1]) # element 12 (=21) of the mag tensor
 			a22 = float(f[nlinha + (contj)*6 + 1].split()[1]) # element 22 of the mag tensor
-			mu_t = ( ((a11 + a22)/2)/(a11*a22 - a12**2) - ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
-			mu_r = ( ((a11 + a22)/2)/(a11*a22 - a12**2) + ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
+			mu_t = ( ((a11 + a22)/2.)/(a11*a22 - a12**2) - ((( (a22 - a11)/2. )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
+			mu_r = ( ((a11 + a22)/2.)/(a11*a22 - a12**2) + ((( (a22 - a11)/2. )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
 			distortion_temp.append( [mu_t,mu_r] )
 			contj = contj + 1
 			if abs(mu_t/mu_r) > mutemp:
@@ -357,13 +347,19 @@ def select_source_positions(lens_model, gravlens_params, source_selector_control
 	#----------------------------------------------------------------------------------------------
 
 	#------------ call compute_deformation_rectangle ---------------------------
-	deformation_rectangle = compute_deformation_rectangle(float(lens_model['thetal']), tan_caustic_x, tan_caustic_y, source_selector_control_params)
+	control_rectangle = float(source_selector_control_params['control_rectangle'])
+	xlosango, ylosango = compute_deformation_rectangle(float(lens_model['thetal']), tan_caustic_x, tan_caustic_y, control_rectangle)
 	logging.debug('Obtained the deformation rectangle: %s' % str(deformation_rectangle) )
 	#---------------------------------------------------------------------------
 
 	#-----------------------------------------------------------------------------------------------------------
-	x_vert_1, y_vert_1 = deformation_rectangle[0]
-	x_vert_2, y_vert_2 = deformation_rectangle[1]
+
+	# vert_1 : upper right corner
+	# vert_2 : lower left corner
+	x_vert_1, y_vert_1 = max(xlosango), max(ylosango)
+	x_vert_2, y_vert_2 = min(xlosango), min(ylosango)
+	deformation_rectangle = [x_vert_1,y_vert_1],[x_vert_2, y_vert_2]
+
 	rectangle_area = ( x_vert_1 - x_vert_2 )*( y_vert_1 - y_vert_2 ) # deltaX*deltaY
 	# if src_density_or_number is a float, it is a density, if it is a integer it is the number of sources
 	if type(src_density_or_number) == int:
