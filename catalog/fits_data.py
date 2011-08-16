@@ -273,16 +273,16 @@ def dict_to_tbHDU(dic, tbname='', *fieldnames):
     #
     def is_numeric(lit):
         try:
-            return int(lit);
-        except ValueError:
+            return complex(lit);
+        except:
             pass;
         try:
             return float(lit);
         except ValueError:
             pass;
         try:
-            return complex(lit);
-        except:
+            return int(lit);
+        except ValueError:
             pass;
         return lit;
         
@@ -293,28 +293,33 @@ def dict_to_tbHDU(dic, tbname='', *fieldnames):
         if type(dic[_arg]) == type(str()):
             to_header[_arg] = dic[_arg];
             continue;
-        
-        valores = [ is_numeric(s_i) for s_i in dic[_arg] ];
+
+        try:
+            valores = dic[_arg]
+            tipo = valores.dtype
+            ndim = valores.ndim
+        except AttributeError:
+            valores = [ is_numeric(s_i) for s_i in dic[_arg] ];
+            tipo = np.asarray(valores).dtype
+            ndim = np.asarray(valores).ndim
         
         try:
-            tipo = np.max(np.abs(valores)).dtype
-            ndim = np.asarray(dic[_arg]).ndim
-            if tipo == 'int64':
+            if tipo == np.dtype('int64'):
                 tipo = str(ndim)+'K'
-            elif tipo == 'int32' or tipo == 'int':
+            elif tipo == np.dtype('int32') or tipo == np.dtype('int'):
                 tipo = str(ndim)+'J'
-            elif tipo == 'float64':
+            elif tipo == np.dtype('float64') or tipo == np.dtype('float'):
                 tipo = str(ndim)+'D'
-            elif tipo == 'float32' or tipo == 'float':
+            elif tipo == np.dtype('float32'):
                 tipo = str(ndim)+'E'
-            elif tipo == 'complex':
+            elif tipo == np.dtype('complex'):
                 tipo = str(ndim)+'C'
-            elif tipo == 'bool':
+            elif tipo == np.dtype('bool'):
                 tipo = str(ndim)+'L'
-            elif tipo == 'object':
+            elif tipo == np.dtype('object'):
                 tipo = str(ndim)+'K'
             else:
-                tipo = '20A'
+                tipo = '40A'
         except:
             tipo = '40A'
             
