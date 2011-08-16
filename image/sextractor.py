@@ -26,7 +26,7 @@ import sltools;
 def se_presets(instrument):
 
 
-   if instrument == 'DC4':
+    if instrument == 'DC4':
         _dic = {
             'FILTER_NAME' : 'default.conv',
             'STARNNW_NAME' : 'default.nnw',
