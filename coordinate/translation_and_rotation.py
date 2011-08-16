@@ -6,6 +6,12 @@
 
 import numpy as np
 
+##@package translation_and_rotation
+# 
+#
+# This package contains a function to change the coordinate system by a translation and a rotation
+#
+# In the future, functions for other coordinate transformations may be added here.
 
 def translate_and_rotate_coord_system(x, y, x_0, y_0, theta_0, angle='radian'):
     """
