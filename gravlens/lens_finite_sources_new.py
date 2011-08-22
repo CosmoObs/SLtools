@@ -29,7 +29,7 @@ from sltools.image.sextractor import run_segobj
 
 
 
-def define_source_model(source_type, rs_i, rs_f, es_i, es_f, thetas_i, thetas_f, ns_i=0.5, ns_f=0.5, nover=1, mag=24.0):
+def source_model_sampler(source_type, rs_i, rs_f, es_i, es_f, thetas_i, thetas_f, ns_i=0.5, ns_f=0.5, nover=1, mag=24.0):
     """ 
     Generates dictionary with source properties ("source_model") custom made for lens_finite_sources.
 
@@ -83,7 +83,7 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
             theta_L, shear, theta_shear, gravlens_params, dimpix, source_centers, source_model, 
             ref_magzpt, reference_band, base_name='sbmap', nover_max=3):
     """
-    Lenses sources with the given lens model. 
+    Lenses sources for the given lens model. 
     
     The lensing is performed with the gravlens software, using command SBmap2.
 
