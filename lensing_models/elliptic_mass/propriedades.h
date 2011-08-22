@@ -1,3 +1,14 @@
+/** @file
+* Example of doxygen documentation for C functions FIXME. 
+*/
+
+/** @package propriedades
+*  Package.
+*
+*  Detailed descrition FIXME
+*
+*/
+
 #ifndef PROPRIEDADES_H
 #define PROPRIEDADES_H
 
