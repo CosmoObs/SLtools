@@ -95,3 +95,77 @@ def gauss_convolution(im_array, n_sig, sig) :
 
     return (conv_image)   
 
+
+def moffat_kernel(n_rs,beta,r_s):
+    """ 
+    Creates a normalized 2D Moffat kernel array for convolution.
+    The size of the 2D kernel array is defined as a multiple (n_rs)
+    of the scale radius (r_s).
+	    
+    Input:
+    - n_rs <float>: multiple of r_s that defines the size of the 2D Moffat kernel (usually n_rs=4)
+    - beta <float>: profile slope
+    - r_s <float>: scale radius
+	
+    Output:
+    - <ndarray>: normalized 2D kernel array for convolution
+    """
+
+    x_length = int(n_rs * r_s + 0.5) #Add 0.5 to approximate to nearest integer
+    y_length = x_length
+        
+
+    x, y = mgrid[-x_length:x_length+1, -y_length:y_length+1]
+	
+    m = 1. /((1+(x**2+y**2)/r_s**2)**beta)
+		
+
+    return m / m.sum()	
+	
+	
+	
+def moffat_convolution_fft(im_array,n_rs,beta,r_s) :
+    """ 
+    Convolves the image array with an Moffat kernel of size defined as a 
+    multiple (n_rs) of r_s using FFT. 
+
+    Input:
+    - im_array <ndarray>: image array to be convolved
+    - n_rs <float>: multiple of r_s that defines the size of the 2D Moffat kernel (usually n_rs=4)
+    - beta <float>: profile slope
+    - r_s <float>: scale radius
+    
+    Output:
+    - <ndarray>: image (fft) convolved array 
+    
+    """
+
+    im_kernel_array = moffat_kernel(n_rs,beta,r_s)
+    fftconv_image = signal.fftconvolve(im_array,im_kernel_array,mode = 'same')
+
+    return (fftconv_image) 
+
+
+
+def moffat_convolution(im_array,n_rs,beta,r_s) :
+    """ 
+    Convolves the image array with an Moffat kernel of size defined as a 
+    multiple (n_rs) of r_s. 
+	
+    Input:    
+    - im_array <ndarray>: image array to be convolved
+    - n_rs <float>: multiple of r_s that defines the size of the 2D Moffat kernel (usually n_rs=4)
+    - beta <float>: profile slope
+    - r_s <float>: scale radius	
+	
+    Output:
+    - <ndarray>: image convolved array 
+        
+    """
+
+    im_kernel_array = gauss_kernel(n_rs,beta,r_s)
+    conv_image = signal.convolve(im_array,im_kernel_array,mode = 'same')
+
+    return (conv_image)   
+
+
