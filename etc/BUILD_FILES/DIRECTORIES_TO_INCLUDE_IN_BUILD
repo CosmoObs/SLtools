@@ -11,3 +11,4 @@ pipelines
 plot
 string
 PerturbativeMethod
+numerical_methods
