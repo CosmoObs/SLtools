@@ -9,7 +9,7 @@
 
 ##@package convolve_frame
 #
-# This one-function package convolves given images with a Gaussian function using gravlens
+# This one-function package convolves images with a Gaussian function using gravlens
 # this package will be superseded by sltools.image.gauss_convolution
 
 from math import sqrt

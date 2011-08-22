@@ -53,7 +53,7 @@ def set_gravlens_default():
     return gravlens_params_default
 
 
-def lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}):
+def lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}):
     """
     Determine the 'base string' that defines the lens and gravlens properties.
 
@@ -79,6 +79,8 @@ def lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, mo
      - <dic> : all gravlens defaults (defined at 'set_gravlens_default') plus the ones used as input
 
     """
+
+    galaxy_position = list(galaxy_position)
 
     gravlens_params_updated = set_gravlens_default() # sets the gravlens default
 
