@@ -210,34 +210,29 @@ def get_src_img_coords(source_name, image_name):
     return x_src, y_src, x_img, y_img
 
 
-def pix_2_arcsec(x_src, y_src, x_img, y_img, half_frame_size, dimpix):
+def pix_2_arcsec(x_pix, y_pix, half_frame_size, dimpix):
     """
-    Convert from pixel to arcsec coordinates.
+    Convert from pixel to arcsec coordinates. 
+
+    The x and y coordinates in arcsec are calculated relative to the center of the image.
     
     Input:
-     - x_src          <ndarray> : 1d array (int) of the source x coordinates (in pixels)
-     - y_src          <ndarray> : 1d array (int) of the source y coordinates (in pixels)
-     - x_img          <ndarray> : 1d array (int) of the images x coordinates (in pixels)
-     - y_img          <ndarray> : 1d array (int) of the images y coordinates (in pixels)
+     - x_pix          <ndarray> : 1d array (int) of the source x coordinates (in pixels)
+     - y_pix          <ndarray> : 1d array (int) of the source y coordinates (in pixels)
      - half_frame_size  <float> : half the size of the FITS file (in arcsec)
      - dimpix           <float> : size of the pixel, in arcsec
 
     Output:
-     - x_src_arcsec  <ndarray> : 1d array (int) of the source x coordinates (in arcsec)
-     - y_src_arcsec  <ndarray> : 1d array (int) of the source y coordinates (in arcsec)
-     - x_img_arcsec  <ndarray> : 1d array (int) of the images x coordinates (in arcsec)
-     - y_img_arcsec  <ndarray> : 1d array (int) of the images y coordinates (in arcsec)
+     - x_arcsec  <ndarray> : 1d array (int) of the source x coordinates (in arcsec)
+     - y_arcsec  <ndarray> : 1d array (int) of the source y coordinates (in arcsec)
 
     """
     
     Npix = int( (2*half_frame_size) / dimpix )
-    x_src_arcsec = (2*half_frame_size/(Npix-1))*x_src - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec x coordinate
-    y_src_arcsec = (2*half_frame_size/(Npix-1))*y_src - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec y coordinate
+    x_arcsec = (2*half_frame_size/(Npix-1))*x_pix - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec x coordinate
+    y_arcsec = (2*half_frame_size/(Npix-1))*y_pix - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec y coordinate
 
-    x_img_arcsec = (2*half_frame_size/(Npix-1))*x_img - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec x coordinate
-    y_img_arcsec = (2*half_frame_size/(Npix-1))*y_img - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec y coordinate
-
-    return x_src_arcsec, y_src_arcsec, x_img_arcsec, y_img_arcsec, 
+    return x_arcsec, y_arcsec 
 
 #=================================================================================================================
 def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='caustic_CC_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.2, accept_res_limit=2E-4, nover_max=3, SE_params={}, SE_args={}, preset='sims', base_name='sbmap'):
@@ -294,7 +289,9 @@ def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, mo
 
         # plot sources and images with the caustics and critical curves 
         x_src, y_src, x_img, y_img = get_src_img_coords(source_names[n], image_names[n])
-        x_src_arcsec, y_src_arcsec, x_img_arcsec, y_img_arcsec, = pix_2_arcsec(x_src, y_src, x_img, y_img, half_frame_size, dimpix)
+
+        x_src_arcsec, y_src_arcsec = pix_2_arcsec(x_src, y_src, half_frame_size, dimpix)
+        x_img_arcsec, y_img_arcsec = pix_2_arcsec(x_img, y_img, half_frame_size, dimpix)
 
         plot_cc(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, 'src_imgs.png', show_plot=0, src_x=x_src_arcsec, src_y=y_src_arcsec, img_x=x_img_arcsec, img_y=y_img_arcsec )
         # ==============================================================
