@@ -9,7 +9,7 @@
 
 ##@package convolve_frame
 #
-# This one-function package convolves images with a Gaussian function using gravlens
+# This one-function package convolves a list of images with a Gaussian function using gravlens.
 # this package will be superseded by sltools.image.gauss_convolution
 
 from math import sqrt
@@ -21,7 +21,7 @@ import os;
 # ======================================================================================================
 def convolve_frame(ArcFiles_list, PSF, dimpix):
 	"""
-	Uses gravlens to convolve given images.
+	Uses gravlens to convolve a list of images.
 
 	Input:
 	 - ArcFiles_list <list>  : list of names (<str>) of the fits files to be convolved
