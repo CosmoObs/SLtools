@@ -90,21 +90,7 @@ def compute_deformation_rhombus(thetal, tan_caustic_x, tan_caustic_y, control_rh
     ylosango = [ylosango1, ylosango2, ylosango3, ylosango4]
 
     return xlosango, ylosango
-
-#---------------------------------------------------------------------------------------------------------------------
-
-## nsource
-# determines the number of point sources to be generated using a poisson of rhombus_area*source_surface_density.
-#
-#@param rhombus_area
-#@param source_surface_density
-#@return number of point sources to be generated
-def nsource(rhombus_area, source_surface_density):
-
-    nsources = np.random.poisson(rhombus_area*source_surface_density )
-    return nsources
-
-#---------------------------------------------------------------------------------------------------------------------    
+ 
 
 ## source_positions
 # determines the source centers that are candidates to generate an arc
