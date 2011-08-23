@@ -1,5 +1,5 @@
 /** @file
-* Package useful to calculate some function related to the NFW lensing model
+* Package to calcule quantities related to the NFW model
 *
 * - Lensing Function (Angle Deflection, Convergence, Shear)
 *
@@ -27,7 +27,7 @@
 #include "../numerical_methods/root_find.h"
 //#include "general_methods.h"
 
-//! Function useful to define the convergence and angle deflection of the NFW model.
+//! Function used to define the convergence and angle deflection of the NFW model.
 //!
 //! \f$ \mathcal{F}(x)=\left\{\begin{array}{lc} \dfrac{1}{\sqrt{1-x^2}}\tanh^{-1}{(\sqrt{1-x^2})} & (x<1)\\  \\ 1 & (x=1)\\ \\ \dfrac{1}{\sqrt{x^2-1}}\tan^{-1}{(\sqrt{x^2-1})} & (x>1) \end{array}\right.  \f$, 
 /*!   \param x: dimensionless coordinate   \return \f$ \mathcal{F}(x)\f$ */
@@ -60,7 +60,7 @@ double F(double X)
     return f;
 }
 
-//! Derivative of F
+//! Derivative of F function
 /*!
   \param X radial coordinate in units of r_s (r_s is the NFW profile parameter)
   \return \f$ \frac{dF(x)}{dx} = \frac{1-x^2 F(x)}{x(x^2-1)}\f$

@@ -12,4 +12,4 @@ plot
 string
 perturbative_method
 numerical_methods
-lensing_models
+models
