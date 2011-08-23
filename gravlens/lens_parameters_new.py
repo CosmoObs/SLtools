@@ -6,11 +6,11 @@
 
 """ Package to deal with gravlens configuration """
 
-##@package lens_parameters_new
+##@package lens_parameters
 # 
 #
 # Deals with gravlens configuration. The function set_gravlens_default defines default values for 
-# gravlens configuration. Function lens_parameters_new generates the basis gravlens configuration
+# gravlens configuration. Function lens_parameters generates the basis gravlens configuration
 # so the user can start his calculations with gravlens. 
 
 
@@ -19,12 +19,12 @@ def set_gravlens_default():
     """
     Defines the configuration of gravlens
 
-    In order to make broader aplication of these modules we have set some default values more 
-    accurate. For instance, separating the critical curves and caustics (see gravlens.find_CC_new 
-    and gravlens.run_find_CC) of some models demand crittol = 1e-7 and inttol = 1e-8 (see 
-    description below). The identified cases where this is needed are the NFW with the combination 
-    of parameters: kappas = [0.4], rs = [34., 54., 94.], theta = [0, 180] and e_L=0.5 (note that the 
-    problem for these values were not in gravlens itself, but in the separation of the curves).
+    In order to make broader application of these modules we have set some default values more 
+    accurate. For instance, separating the critical curves and caustics (see pipelines.find_CC.run) of 
+    some models demand crittol = 1e-7 and inttol = 1e-8 (see description below). The identified cases 
+    where this is needed are the NFW with the combination of parameters: kappas = [0.4], 
+    rs = [34., 54., 94.], theta = [0, 180] and e_L=0.5 (note that the problem for these values were not 
+    in gravlens itself, but in the separation of the curves).
 
     The default configurations is:
 
@@ -53,7 +53,7 @@ def set_gravlens_default():
     return gravlens_params_default
 
 
-def lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}):
+def lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}):
     """
     Determine the 'base string' that defines the lens and gravlens properties.
 

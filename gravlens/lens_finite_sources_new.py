@@ -6,12 +6,12 @@
 
 """ Package to lens finite sources with gravlens and measure the images. """
 
-##@package lens_finite_sources_new
+##@package lens_finite_sources
 # 
 #
 # This package contains functions to lens finite sources (lensing), extract the image plane images 
 # determining mergers, plot sources and images with the caustics and critical curves and apply 
-# measurement methods to individual images. Also, the pipeline lens_finite_sources_new concatenates and 
+# measurement methods to individual images. Also, the pipeline lens_finite_sources concatenates and 
 # runs the above functions.
 
 from __future__ import division
@@ -21,9 +21,9 @@ import numpy as np
 import pyfits
 import random
 
-from sltools.gravlens.lens_parameters_new import lens_parameters_new
-from sltools.gravlens.find_CC_new import run_find_CC
-from sltools.gravlens.find_CC_new import plot_CC
+from sltools.gravlens.lens_parameters import lens_parameters
+from sltools.pipelines.find_cc import run as run_find_cc
+from sltools.gravlens.find_cc import plot_cc
 from sltools.image.imcp import elliminate_disconected as elliminate_disconected
 from sltools.image.sextractor import run_segobj
 
@@ -109,7 +109,7 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
 
     """
 
-    inputlens, setlens, same_gravlens_params = lens_parameters_new(lens_model, mass_scale, model_param_8, 
+    inputlens, setlens, same_gravlens_params = lens_parameters(lens_model, mass_scale, model_param_8, 
                                                   model_param_9, model_param_10, galaxy_position, e_L, 
                                                   theta_L, shear, theta_shear, gravlens_params)
 
@@ -164,7 +164,7 @@ def identify_images(frame_name, params=[], args={}, preset='sims'):
     dict_run_segobj = run_segobj(frame_name, params=[], args={}, preset='') # 'params' are the SExtractor 
     # parameters to output (strings, see SE's default.param). 'args' ({str:str,}) are SE command-line arguments
 
-    objimgname, segimgname, catfilename = dict_run_segobj['OBJECTS'], dict_run_segobj['SEGMENTATION'], dict_run_segobj['CATALOG'] # catfilename is the SE output catalog with the 'params' collumns
+    objimgname, segimgname, catfilename = dict_run_segobj['OBJECTS'], dict_run_segobj['SEGMENTATION'], dict_run_segobj['CATALOG'] # catfilename is the SE output catalog with the 'params' columns
 
     frame_data = pyfits.getdata(frame_name) # to get the header add 'header=True'
     nonzero_frame_data = np.nonzero(frame_data)
@@ -240,7 +240,7 @@ def pix_2_arcsec(x_src, y_src, x_img, y_img, half_frame_size, dimpix):
     return x_src_arcsec, y_src_arcsec, x_img_arcsec, y_img_arcsec, 
 
 #=================================================================================================================
-def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='caustic_CC_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.2, accept_res_limit=2E-4, nover_max=3, SE_params={}, SE_args={}, preset='sims', base_name='sbmap'):
+def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='caustic_CC_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.2, accept_res_limit=2E-4, nover_max=3, SE_params={}, SE_args={}, preset='sims', base_name='sbmap'):
     """
     This is a pipeline that ...
 
@@ -266,10 +266,10 @@ def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9
 
     """
 
-    rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
+    rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = run_find_cc(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
 
     index_CC = np.argmax(tan_CC_x**2 + tan_CC_y**2) # it is not necessary to use the lens center since we want the furthest point anyway
-    # gridhi1_CC_factor must be defined/iterated internaly to encompass all images
+    # gridhi1_CC_factor must be defined/iterated internally to encompass all images
     gravlens_params['gridhi1'] =  gridhi1_CC_factor * ( (tan_CC_x[index_CC]**2 + tan_CC_y[index_CC]**2)**0.5 )
 
     # obtain the sources
@@ -296,7 +296,7 @@ def lens_finite_sources_new(lens_model, mass_scale, model_param_8, model_param_9
         x_src, y_src, x_img, y_img = get_src_img_coords(source_names[n], image_names[n])
         x_src_arcsec, y_src_arcsec, x_img_arcsec, y_img_arcsec, = pix_2_arcsec(x_src, y_src, x_img, y_img, half_frame_size, dimpix)
 
-        plot_CC(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, 'src_imgs.png', show_plot=0, src_x=x_src_arcsec, src_y=y_src_arcsec, img_x=x_img_arcsec, img_y=y_img_arcsec )
+        plot_cc(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, 'src_imgs.png', show_plot=0, src_x=x_src_arcsec, src_y=y_src_arcsec, img_x=x_img_arcsec, img_y=y_img_arcsec )
         # ==============================================================
 
     # extract the image plane images 

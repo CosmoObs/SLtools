@@ -22,8 +22,8 @@ import numpy as np
 import logging
 
 
-from sltools.gravlens.find_CC_new import run_find_CC
-from sltools.gravlens.lens_parameters_new import lens_parameters_new
+from sltools.pipelines.find_cc import run as run_find_cc
+from sltools.gravlens.lens_parameters import lens_parameters
 
 
 #=======================================================================================================
@@ -125,7 +125,7 @@ def source_positions(minimum_distortion, deformation_rectangle, nsources, inputl
     vsq = []
     for i in range(0,nsources):
         xrand =  x_vert_2 + ( x_vert_1 - x_vert_2 ) * random.random() # x coordinate inside the square
-        yrand =  y_vert_2 + ( y_vert_1 - y_vert_2 ) * random.random() # y coordenada inside the square
+        yrand =  y_vert_2 + ( y_vert_1 - y_vert_2 ) * random.random() # y coordinate inside the square
         usq.append(xrand) # x coord of a point inside the square, but outside the losangle
         vsq.append(yrand) # y coord of a point inside the square, but outside the losangle
     #----------------------------------------------------------------------------------------------------------------------
@@ -208,11 +208,11 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
     """
 
     # find and separate critical curves
-    out_run_find_CC = run_find_CC(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
+    out_run_find_cc = run_find_cc(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
 
-    logging.info('Ran run_find_CC and obtained and separated the caustic and critical curves')
+    logging.info('Ran pipelines.find_cc.run and obtained and separated the caustic and critical curves')
 
-    rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = out_run_find_CC
+    rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = out_run_find_cc
     #----------------------------------------------------------
 
     #------------ call compute_deformation_rectangle ---------------------------
@@ -242,13 +242,13 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
     index = np.argmax(tan_CC_x**2 + tan_CC_y**2)
     image_plane_factor = float(gridhi1_CC_factor);
     gravlens_params['gridhi1'] =  image_plane_factor * ( (tan_CC_x[index]**2 + tan_CC_y[index]**2)**0.5 )
-    inputlens, setlens, gravlens_params = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params)
+    inputlens, setlens, gravlens_params = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params)
     #-----------------------------------------------------------------------------------------------------------
     source_positions_output = source_positions(minimum_distortion, deformation_rectangle, nsources, inputlens)
     while source_positions_output == False:
         gravlens_params['gridhi1'] = float( gravlens_params['gridhi1'] ) * 1.15;
         logging.debug( 'loop in source_positions: gridhi1 = %f' % float( gravlens_params['gridhi1'] ) )
-        inputlens, setlens, gravlens_params = lens_parameters_new(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params)       
+        inputlens, setlens, gravlens_params = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params)       
         source_positions_output = source_positions(minimum_distortion, deformation_rectangle, nsources, inputlens)
     logging.debug( 'gridhi1 = %s' % float( gravlens_params['gridhi1'] ) )
     source_centers = source_positions_output[0]
