@@ -26,6 +26,22 @@ from sltools.gravlens.find_CC_new import run_find_CC
 from sltools.gravlens.lens_parameters_new import lens_parameters_new
 
 
+#=======================================================================================================
+# find mu_t and mu_r for a point
+def get_distortions(inputlens, x, y):
+	f = open('gravlensmagtensor2.txt', 'w')
+	f.write(inputlens)
+	f.write('magtensor %0.9f %0.9f \n' % (x, y))
+	f.close()
+	os.system('gravlens gravlensmagtensor2.txt > out_magtensor2.txt')
+	f = open('out_magtensor2.txt' , 'r').readlines()
+	nlinha = len(f) - 6
+	a11 = float(f[nlinha].split()[0]) # element 11 of the magnification tensor
+	a12 = float(f[nlinha].split()[1]) # element 12 (=21) of the magnification tensor
+	a22 = float(f[nlinha + 1].split()[1]) # element 22 of the magnification tensor
+	mu_t = ( ((a11 + a22)/2)/(a11*a22 - a12**2) - ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
+	mu_r = ( ((a11 + a22)/2)/(a11*a22 - a12**2) + ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
+	return mu_t, mu_r
 
 
 #=======================================================================================================
