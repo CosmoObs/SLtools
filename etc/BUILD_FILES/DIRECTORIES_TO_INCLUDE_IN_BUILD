@@ -1,5 +1,4 @@
 # Mandatory: bin doc etc
-arcellipse
 catalog
 coordinate
 geometry
@@ -7,9 +6,14 @@ gravlens
 image
 io
 lens
+models
+numerical_methods
+paint_arcs
+perturbative_method
 pipelines
 plot
+statistics
 string
-perturbative_method
-numerical_methods
-models
+
+
+
