@@ -10,6 +10,6 @@ lens
 pipelines
 plot
 string
-PerturbativeMethod
+perturbative_method
 numerical_methods
 lensing_models
