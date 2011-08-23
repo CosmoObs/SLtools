@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os 
-from sltools.gravlens.find_CC_new import run_find_CC as run
+from sltools.pipelines.find_cc import run
 
 ks=2.0
 rs=1.0
