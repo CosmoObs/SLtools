@@ -45,23 +45,23 @@ def get_distortions(inputlens, x, y):
 
 
 #=======================================================================================================
-def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, control_rectangle):
+def compute_deformation_rhombus(thetal, tan_caustic_x, tan_caustic_y, control_rhombus):
     """
-    Determines the 4 cusps of the tangential caustic and determines a rectangle that encloses it. 
+    Determines the 4 cusps of the tangential caustic and determines a rhombus that encloses it. 
 
-    The rectangle vertices are on distances proportional to the cusp distance.
+    The rhombus vertices are on distances proportional to the cusp distance.
 
     Input:
      - thetal             <float> : inclination of the lens with respect to the vertical
                                    (counterclockwise)
      - tan_caustic_x       <list> : list of x coordinates of the tangential caustic
      - tan_caustic_y       <list> : list of y coordinates of the tangential caustic
-     - control_rectangle  <float> : determines how many times the vertices of the losangle 
-                                    (inscribed in the rectangle) will be away from the cusps.
+     - control_rhombus  <float> : determines how many times the vertices of the losangle 
+                                    (inscribed in the rhombus) will be away from the cusps.
 
     Output:
-     - deformation_rectangle_pt1  <list> : pair (x,y) of upper right corner of the rectangle
-     - deformation_rectangle_pt2  <list> : pair (x,y) of lower left corner of the rectangle
+     - deformation_rhombus_pt1  <list> : pair (x,y) of upper right corner of the rhombus
+     - deformation_rhombus_pt2  <list> : pair (x,y) of lower left corner of the rhombus
 
     """
 
@@ -78,14 +78,14 @@ def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, control_
     cusp2 = np.argmax(xcrit0)
     cusp3 = np.argmin(ycrit0)
     cusp4 = np.argmin(xcrit0)
-    xlosango1 = tan_caustic_x[cusp1]*control_rectangle # x coord of point 1 of the losangle
-    ylosango1 = tan_caustic_y[cusp1]*control_rectangle # y coord of point 1 of the losangle
-    xlosango2 = tan_caustic_x[cusp2]*control_rectangle # x coord of point 2 of the losangle
-    ylosango2 = tan_caustic_y[cusp2]*control_rectangle # y coord of point 2 of the losangle
-    xlosango3 = tan_caustic_x[cusp3]*control_rectangle # x coord of point 3 of the losangle
-    ylosango3 = tan_caustic_y[cusp3]*control_rectangle # y coord of point 3 of the losangle
-    xlosango4 = tan_caustic_x[cusp4]*control_rectangle # x coord of point 4 of the losangle
-    ylosango4 = tan_caustic_y[cusp4]*control_rectangle # y coord of point 4 of the losangle
+    xlosango1 = tan_caustic_x[cusp1]*control_rhombus # x coord of point 1 of the losangle
+    ylosango1 = tan_caustic_y[cusp1]*control_rhombus # y coord of point 1 of the losangle
+    xlosango2 = tan_caustic_x[cusp2]*control_rhombus # x coord of point 2 of the losangle
+    ylosango2 = tan_caustic_y[cusp2]*control_rhombus # y coord of point 2 of the losangle
+    xlosango3 = tan_caustic_x[cusp3]*control_rhombus # x coord of point 3 of the losangle
+    ylosango3 = tan_caustic_y[cusp3]*control_rhombus # y coord of point 3 of the losangle
+    xlosango4 = tan_caustic_x[cusp4]*control_rhombus # x coord of point 4 of the losangle
+    ylosango4 = tan_caustic_y[cusp4]*control_rhombus # y coord of point 4 of the losangle
     xlosango = [xlosango1, xlosango2, xlosango3, xlosango4]
     ylosango = [ylosango1, ylosango2, ylosango3, ylosango4]
 
@@ -94,14 +94,14 @@ def compute_deformation_rectangle(thetal, tan_caustic_x, tan_caustic_y, control_
 #---------------------------------------------------------------------------------------------------------------------
 
 ## nsource
-# determines the number of point sources to be generated using a poisson of rectangle_area*source_surface_density.
+# determines the number of point sources to be generated using a poisson of rhombus_area*source_surface_density.
 #
-#@param rectangle_area
+#@param rhombus_area
 #@param source_surface_density
 #@return number of point sources to be generated
-def nsource(rectangle_area, source_surface_density):
+def nsource(rhombus_area, source_surface_density):
 
-    nsources = np.random.poisson(rectangle_area*source_surface_density )
+    nsources = np.random.poisson(rhombus_area*source_surface_density )
     return nsources
 
 #---------------------------------------------------------------------------------------------------------------------    
@@ -110,14 +110,14 @@ def nsource(rectangle_area, source_surface_density):
 # determines the source centers that are candidates to generate an arc
 #
 #@param source_selector_control_params
-#@param deformation_rectangle
+#@param deformation_rhombus
 #@param nsources
 #@param inputlens
 #@return source_centers [former potarcxy], image_centers, image_distortions    
-def source_positions(minimum_distortion, deformation_rectangle, nsources, inputlens):
+def source_positions(minimum_distortion, deformation_rhombus, nsources, inputlens):
 
-    x_vert_1, y_vert_1 = deformation_rectangle[0]
-    x_vert_2, y_vert_2 = deformation_rectangle[1]
+    x_vert_1, y_vert_1 = deformation_rhombus[0]
+    x_vert_2, y_vert_2 = deformation_rhombus[1]
     #-----------------------------------------------------------------------------------------------------------
     #GENERATE RANDOM POINTS NEAR THE CAUSTIC -------------------------------------------------------------------
     #global usq, vsq, usq2, vsq2
@@ -137,7 +137,7 @@ def source_positions(minimum_distortion, deformation_rectangle, nsources, inputl
         #f = open('findimginput.txt', 'a')
         f.write('findimg %0.6f %0.6f findimgoutput%05d.txt\n'  % ( usq[i],vsq[i], i ))
     f.close()
-    # runs gravlens to obtain the images of the positions inside the rectangle (usq,vsq)
+    # runs gravlens to obtain the images of the positions inside the rhombus (usq,vsq)
     os.system('gravlens findimginput.txt > /dev/null')
     f1 = open('gravlensmagtensorcorte.txt', 'w')
     f1.write(inputlens)
@@ -197,12 +197,12 @@ def source_positions(minimum_distortion, deformation_rectangle, nsources, inputl
 # 
 #@param lens_model (kappas, xsl,el,thetal) currently a dictionary with the lens model parameters 
 #@param gravlens_params (set of gravlens parameters: gridhi1, maxlev, etc)
-#@param source_selector_control_params (minimum_distortion, control_rectangle) 
+#@param source_selector_control_params (minimum_distortion, control_rhombus) 
 #@param minimum_distortion : minimum ratio of the tangential and radial magnifications to an image be considered an arc 
-#@param control_rectangle : control parameter to define distance to cusps 
+#@param control_rhombus : control parameter to define distance to cusps 
 #@param src_density_or_number
 #@return source_centers [former potarcxy] or "False" (in cases where no critical curves are found), and image_centers, image_distortions
-def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, src_density_or_number=1, minimum_distortion=0., control_rectangle=2., caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4):
+def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, src_density_or_number=1, minimum_distortion=0., control_rhombus=2., caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4):
     """
     
     """
@@ -215,8 +215,8 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
     rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = out_run_find_cc
     #----------------------------------------------------------
 
-    #------------ call compute_deformation_rectangle ---------------------------
-    xlosango, ylosango = compute_deformation_rectangle(float(theta_L), tan_caustic_x, tan_caustic_y, control_rectangle)
+    #------------ call compute_deformation_rhombus ---------------------------
+    xlosango, ylosango = compute_deformation_rhombus(float(theta_L), tan_caustic_x, tan_caustic_y, control_rhombus)
     #---------------------------------------------------------------------------
 
     #-----------------------------------------------------------------------------------------------------------
@@ -225,15 +225,15 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
     # vert_2 : lower left corner
     x_vert_1, y_vert_1 = max(xlosango), max(ylosango)
     x_vert_2, y_vert_2 = min(xlosango), min(ylosango)
-    deformation_rectangle = [x_vert_1,y_vert_1],[x_vert_2, y_vert_2]
-    logging.debug('Obtained the deformation rectangle: %s' % str(deformation_rectangle) )
+    deformation_rhombus = [x_vert_1,y_vert_1],[x_vert_2, y_vert_2]
+    logging.debug('Obtained the deformation rhombus: %s' % str(deformation_rhombus) )
 
-    rectangle_area = ( x_vert_1 - x_vert_2 )*( y_vert_1 - y_vert_2 ) # deltaX*deltaY
+    rhombus_area = ( x_vert_1 - x_vert_2 )*( y_vert_1 - y_vert_2 ) # deltaX*deltaY
     # if src_density_or_number is a float, it is a density, if it is a integer it is the number of sources
     if type(src_density_or_number) == int:
         nsources = src_density_or_number
     if type(src_density_or_number) == float:    
-        nsources = nsource(rectangle_area, src_density_or_number) # generates 'nsource' sources per arcsec^2
+        nsources = nsource(rhombus_area, src_density_or_number) # generates 'nsource' sources per arcsec^2
     logging.debug('Number of point sources generated = %d' % nsources)
     #-----------------------------------------------------------------------------------------------------------
     # redefine gridhi1
@@ -244,12 +244,12 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
     gravlens_params['gridhi1'] =  image_plane_factor * ( (tan_CC_x[index]**2 + tan_CC_y[index]**2)**0.5 )
     inputlens, setlens, gravlens_params = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params)
     #-----------------------------------------------------------------------------------------------------------
-    source_positions_output = source_positions(minimum_distortion, deformation_rectangle, nsources, inputlens)
+    source_positions_output = source_positions(minimum_distortion, deformation_rhombus, nsources, inputlens)
     while source_positions_output == False:
         gravlens_params['gridhi1'] = float( gravlens_params['gridhi1'] ) * 1.15;
         logging.debug( 'loop in source_positions: gridhi1 = %f' % float( gravlens_params['gridhi1'] ) )
         inputlens, setlens, gravlens_params = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params)       
-        source_positions_output = source_positions(minimum_distortion, deformation_rectangle, nsources, inputlens)
+        source_positions_output = source_positions(minimum_distortion, deformation_rhombus, nsources, inputlens)
     logging.debug( 'gridhi1 = %s' % float( gravlens_params['gridhi1'] ) )
     source_centers = source_positions_output[0]
     image_centers = source_positions_output[1]
