@@ -1,4 +1,4 @@
-/** @file
+/** @file perturbative_method
 * This module compute or define several quantities related to the Perturbative Approach as
 * - structure for the elliptical source
 * - \f$ \bar{f}_n(\theta)\f$  and their derivatives

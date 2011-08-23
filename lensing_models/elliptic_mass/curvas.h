@@ -1,3 +1,14 @@
+/** @file
+* Example of doxygen documentation for C functions FIXME. 
+*/
+
+/** @package curvas
+*  Package.
+*
+*  Detailed descrition FIXME
+*
+*/
+
 #ifndef CURVAS_H
 #define CURVAS_H
 
