@@ -111,6 +111,7 @@ double wr_theta(f_type f1_in, f_type Df0Dtheta_in, double kappa2, elliptical_sou
 
 double y1_src(elliptical_source source_in, double theta);
 
-double slc_y2_src(elliptical_source source_in, double theta);
+double y2_src(elliptical_source source_in, double theta);
 
+double slc_test_func();
 #endif
