@@ -28,20 +28,53 @@ from sltools.gravlens.lens_parameters import lens_parameters
 
 #=======================================================================================================
 # find mu_t and mu_r for a point
-def get_distortions(inputlens, x, y):
-	f = open('gravlensmagtensor2.txt', 'w')
-	f.write(inputlens)
-	f.write('magtensor %0.9f %0.9f \n' % (x, y))
-	f.close()
-	os.system('gravlens gravlensmagtensor2.txt > out_magtensor2.txt')
-	f = open('out_magtensor2.txt' , 'r').readlines()
-	nlinha = len(f) - 6
-	a11 = float(f[nlinha].split()[0]) # element 11 of the magnification tensor
-	a12 = float(f[nlinha].split()[1]) # element 12 (=21) of the magnification tensor
-	a22 = float(f[nlinha + 1].split()[1]) # element 22 of the magnification tensor
-	mu_t = ( ((a11 + a22)/2)/(a11*a22 - a12**2) - ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
-	mu_r = ( ((a11 + a22)/2)/(a11*a22 - a12**2) + ((( (a22 - a11)/2 )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
-	return mu_t, mu_r
+def get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}):
+    """
+    Computes the tangential and radial local distortions in a list of points.
+
+    
+   Input:
+     - x                  [float,...] : x coordinates of the points the local distortions will be calculated
+     - y                  [float,...] : y coordinates of the points the local distortions will be calculated
+     - lens_model                 str : Lens name (see gravlens manual table 3.1)
+     - mass_scale               float : Mass scale of the lens - "parameter 1"
+     - model_param_8            float : misc. lens parameter - often scale radio (depends on the lens model)
+     - model_param_9            float : misc. lens parameter - often scale radio (depends on the lens model)
+     - model_param_10           float : misc. lens parameter - often a power law index (depends on the lens model)
+     - galaxy_position  [float,float] : [x,y] position of the lens
+     - e_L                      float : Horizontal central position for output (cut) image
+     - theta_L                  float : Vertical central position for output (cut) image
+     - shear                    float : 'pixel' or 'degrees' for size (x_size,y_size) values
+     - theta_shear              float : Horizontal size (in pixels) of output image
+
+
+    Output:
+     -  [[float,float],...] :
+
+    """
+
+    inputlens, setlens, gravlens_params_updated = lens_parameters(lens_model, kappas, rs, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0.3, theta_L=theta_L, shear=0, theta_shear=0, gravlens_params={})
+
+    f = open('gravlensmagtensor2.txt', 'w')
+    f.write(inputlens)
+    for i in range(len(x)):
+        f.write('magtensor %0.9f %0.9f \n' % (x[i], y[i]))
+    f.close()
+    os.system('gravlens gravlensmagtensor2.txt > out_magtensor2.txt')
+
+    f = open('out_magtensor2.txt' , 'r').readlines()
+    nlinha = len(f) - 6*len(x) # I am using this to get the matrix elements without worrying about the number of lines the file has (which depends on the number of parameters of gravlens we modify). 'nlinha' is the number of lines that DON'T contain the output data of magtensor
+    distortions = []
+    for i in range(len(x)): # calculates the magnifications at each point
+        a11 = float(f[nlinha + i*6].split()[0]) # element 11 of the mag tensor
+        a12 = float(f[nlinha + i*6].split()[1]) # element 12 (=21) of the mag tensor
+        a22 = float(f[nlinha + i*6 + 1].split()[1]) # element 22 of the mag tensor
+        mu_t = ( ((a11 + a22)/2.)/(a11*a22 - a12**2) - ((( (a22 - a11)/2. )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
+        mu_r = ( ((a11 + a22)/2.)/(a11*a22 - a12**2) + ((( (a22 - a11)/2. )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
+        distortions.append([mu_t,mu_r])
+    os.system('rm -f gravlensmagtensor2.txt out_magtensor2.txt')
+
+    return distortions
 
 
 #=======================================================================================================
