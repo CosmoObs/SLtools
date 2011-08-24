@@ -15,7 +15,7 @@
 #ifndef PNFW_MODEL_H
 #define PNFW_MODEL_H
 
-#include "nfw_circular_model.h"
+#include "../../models/elliptical/nfw_circular_model.h"
 #include "pseudo_elliptical_model.h"
 
 /**  First perturbative field for the PNFW model as Perturbation.

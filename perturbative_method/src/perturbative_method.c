@@ -399,11 +399,15 @@ double y1_src(elliptical_source source_in, double theta){
  *  
  * Returns: a double.
  */
-double slc_y2_src(elliptical_source source_in, double theta){
+double y2_src(elliptical_source source_in, double theta){
       double theta_0 = source_in.theta0;  
       double y1s=source_in.R0*cos(theta)/sqrt(1.-source_in.eta0);
       double y2s=source_in.R0*sin(theta)/sqrt(1.+source_in.eta0);
       double y2_linha_src=y1s*sin(theta_0)+y2s*cos(theta_0)+source_in.y0 ;
       return y2_linha_src;
+}
+
+double slc_test_func(){
+    return 0.0;
 }
 
