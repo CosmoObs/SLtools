@@ -230,6 +230,8 @@ def source_positions(minimum_distortion, deformation_rhombus, nsources, inputlen
 def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, src_density_or_number=1, minimum_distortion=0., control_rhombus=2., caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4):
     """
     
+    If src_density_or_number is a float (and therefore a density), nsources is given by np.random.poisson(rectangle_area*src_density_or_number )
+
     """
 
     # find and separate critical curves
@@ -253,12 +255,12 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
     deformation_rhombus = [x_vert_1,y_vert_1],[x_vert_2, y_vert_2]
     logging.debug('Obtained the deformation rhombus: %s' % str(deformation_rhombus) )
 
-    rhombus_area = ( x_vert_1 - x_vert_2 )*( y_vert_1 - y_vert_2 ) # deltaX*deltaY
+    rectangle_area = ( x_vert_1 - x_vert_2 )*( y_vert_1 - y_vert_2 ) # deltaX*deltaY
     # if src_density_or_number is a float, it is a density, if it is a integer it is the number of sources
     if type(src_density_or_number) == int:
         nsources = src_density_or_number
     if type(src_density_or_number) == float:    
-        nsources = nsource(rhombus_area, src_density_or_number) # generates 'nsource' sources per arcsec^2
+        nsources = np.random.poisson(rectangle_area*src_density_or_number )
     logging.debug('Number of point sources generated = %d' % nsources)
     #-----------------------------------------------------------------------------------------------------------
     # redefine gridhi1
