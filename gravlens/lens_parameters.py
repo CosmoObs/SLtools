@@ -71,7 +71,8 @@ def lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_
      - theta_L         <float> : Vertical central position for output (cut) image
      - shear           <float> : 'pixel' or 'degrees' for size (x_size,y_size) values
      - theta_shear     <float> : Horizontal size (in pixels) of output image
-
+     - gravlens_params    dict : contains the keys and values of the gravlens configuration (see default 
+                                 parameters at function set_gravlens_default,inside lens_parameters)
 
     Output:
      - <str> : a string with all the lines gravlens needs to its configuration
