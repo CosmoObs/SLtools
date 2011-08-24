@@ -14,8 +14,17 @@ import pyfits;
 import pywcs
 import numpy
 
-def get_pixelscale( hdr ):
-    """ Read out header dimpix (pixel_scale) from CD_* keys """
+def get_pixelscale(hdr):
+    """ Read out header dimpix (pixel_scale) from CD_* keys
+
+    Input:
+     - hdr  <pyfits.Header> : Image header instance
+
+    Output:
+     - pixel_scale  float : Image sky-to-pixel scale ("/px)
+
+    ---
+    """
 
     try:
         pixel_scale = hdr['PIXSCALE'];
@@ -41,17 +50,19 @@ def get_pixelscale( hdr ):
         CUNIT2 = 'deg';
 
     conv_factor = 1.;
-
+    CUNIT = CUNIT1
     # Convertion from degrees to arcsec units..
     #
     if ( CUNIT1 == 'deg' and CUNIT2 == 'deg' ):
         conv_factor = 3600.0;
+        CUNIT = 'arcsec'
 
     # Scale is given, using CD1_1, CD1_2, CD2_1, CD2_2 header keys:
     #
     pixel_scale = m.sqrt((CD1_1**2 + CD1_2**2 + CD2_1**2 + CD2_2**2)/2.) * conv_factor;
+    print "Unit: %s/px" % CUNIT
 
-    return (pixel_scale);
+    return pixel_scale;
 
 # ---
 
