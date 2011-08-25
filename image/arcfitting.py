@@ -29,10 +29,11 @@ import sltools
 import string
 import minuit
 from sltools.image.header_funcs import get_header_parameter
+from sltools.paint_arcs.paint_arcs import arcellipse_sbmap_x_y
 from stools.geometry.get_extrema_pts import *
 from sltools.geometry.elementary_geometry import *
 from tools.get_bisectrix_pts import *
-from tools.circle3points import *
+
 
 
 #========================================================================
@@ -40,48 +41,6 @@ from tools.circle3points import *
 sig_frac = 0.95 #Fraction of the total arc signal used for segmentation.
 frac_n = 1.E-2
 #========================================================================
-
-
-def f(x,y,x0,y0,rc,ellip,I0,re,n,theta0):
-
-	'''
-	Function to compute the value of the surface brightness of the
-	(x,y) pixel following the ArcEllipse prescription.
-
-	Input:
-	- x: x position (pixel)
-	- y: y position (pixel)
-	- x0: x position of the point where the arc is centered (pixel)
-	- y0: y position of the point where the arc is centered (pixel)
-	- r_c: distance of the arc center related to the point where the arc is centered (pixel)
-	- ellip: ellipticity of the arc
-	- I_0: central surface brightness of the Sersic profile
-	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
-	- n: index that describes the slope of the Sersic profile 
-	- theta0: orientation of the arc center related to the x-axis (radians)
-
-	Output:
-	- the value of the surface brightness of the (x,y) point following the ArcEllipse prescription
-	
-	'''
-	
-	x = float(x)
-	y = float(y)	
-
-	theta = math.atan2((y - y0),(x - x0))
-		
-	r = math.sqrt((x - x0)**2 + (y - y0)**2)
-	theta_diff = abs(theta - theta0)
-	if (theta_diff >= (math.pi)):
-		theta_diff = 2. * math.pi - theta_diff
-
-	r_prof = math.sqrt((rc * theta_diff * (1. - ellip))**2 + (r - rc)**2 )
-        bn = 1.9992*float(n) - 0.3271
-	exponent = (1. / float(n))
-	
-	exp_arg = - bn * (r_prof/re)**exponent
-	
-	return I0 * math.exp(exp_arg)	
 
 
 
@@ -96,14 +55,14 @@ def segmentation(img_name):
 	equal to a fraction of the total arc signal.
 
 	Input:
-	- img_name: arc image name
+	- img_name <str>: arc image name
 
 	Output:
 	- (ximg): list of x pixels of the segmented arc
 	- (yimg): list of y pixels of the segmented arc
 	- (seg_index): list of the pixel index of the segmented arc in the original image
-	- xmax: x position corresponding to the maximum arc intensity
-	- ymax: y position corresponding to the maximum arc intensity
+	- xmax <float>: x position corresponding to the maximum arc intensity
+	- ymax <float>: y position corresponding to the maximum arc intensity
 	
 	'''
 
@@ -181,12 +140,12 @@ def initial_guesses(img_name,ximg,yimg,seg_index,xmax,ymax):
 
 
 	Input:
-	- img_name: arc image name
+	- img_name <str>: arc image name
 	- ximg: list of x pixels of the segmented arc
 	- yimg: list of y pixels of the segmented arc
 	- seg_index: list of the pixel index of the segmented arc in the original image
-	- xmax: x position corresponding to the maximum arc intensity
-	- ymax: y position corresponding to the maximum arc intensity
+	- xmax <float>: x position corresponding to the maximum arc intensity
+	- ymax <float>: y position corresponding to the maximum arc intensity
 
 	Output:
 	- (x0,y0,rc,ellip,I0,re,theta0): list with the initial guesses values of the parameters 
@@ -295,17 +254,17 @@ def chi2(x0,y0,rc,ellip,I0,re,n,theta0):
 	(sigma[i][j] = sqrt(data[i][j]) ).
 
 	Input:
-	- x0: x position of the point where the arc is centered (pixel)
-	- y0: y position of the point where the arc is centered (pixel)
-	- r_c: distance of the arc center related to the point where the arc is centered (pixel)
-	- ellip: ellipticity of the arc
-	- I_0: central surface brightness of the Sersic profile
-	- r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
-	- n: index that describes the shape of the Sersic profile 
-	- theta0: orientation of the arc center related to the x-axis (radians)
+	- x0 <float>: x position of the point where the arc is centered (pixel)
+	- y0 <float>: y position of the point where the arc is centered (pixel)
+	- r_c <float>: distance of the arc center related to the point where the arc is centered (pixel)
+	- ellip <float>: ellipticity of the arc
+	- I_0 <float>: central surface brightness of the Sersic profile
+	- r_e <float>: radius that encloses half of the total luminosity of the Sersic profile (pixel)
+	- n <float>: index that describes the shape of the Sersic profile 
+	- theta0 <float>: orientation of the arc center related to the x-axis (radians)
 
 	Output:
-	- the value of the reduced chi2
+	- <float>: the value of the reduced chi2
 	
 	'''
 
@@ -314,8 +273,10 @@ def chi2(x0,y0,rc,ellip,I0,re,n,theta0):
 	for k in range(len(ximg)):
 		i = ximg[k]
 		j = yimg[k]
-
-		c2 += ((f(i,j,x0,y0,rc,ellip,I0,re,n,theta0)-data[j][i])**2)/(data[j][i])
+		
+		b_n = get_sersic_b_n(n)
+		f = acellipse_sbmap_x_y(i,j,x0,y0,theta0,n,b_n,rc,re,I0,ellip)
+		c2 += ((f-data[j][i])**2)/(data[j][i])
 
 	return c2/float(len(ximg) - 1)
 
@@ -331,12 +292,12 @@ def find_n_scan(params,n_ini,n_fin,n_n):
 
 	Input:
 	- params: list with the initial guesses values of the parameters (x0,y0,rc,ellip,I0,re,theta0)
-	- n_ini: initial value for n for scan evaluation
-	- n_fin: final value for n for scan evaluation
-	- n_n: the number of subdivisions to evaluate 
+	- n_ini <float>: initial value for n for scan evaluation
+	- n_fin <float>: final value for n for scan evaluation
+	- n_n <float>: the number of subdivisions to evaluate 
 
 	Output:
-	- n_scan: best fit value for n
+	- n_scan <float>: best fit value for n
 	'''
 	
 
@@ -370,10 +331,10 @@ def find_n_migrad(params,n_scan):
 
 	Input:
 	- params: list with the initial guesses values of the parameters (x0,y0,rc,ellip,I0,re,theta0)
-	- n_scan: initial guess value for n
+	- n_scan <float>: initial guess value for n
 
 	Output:
-	- n_migrad:best fit value for n
+	- n_migrad <float>: best fit value for n
 	
 	'''
 
@@ -410,11 +371,11 @@ def find_best_fit(params,nf):
 
 	Input:
 	- params: list with the initial guesses values of the parameters (x0,y0,rc,ellip,I0,re,theta0)
-	- n_f: initial guess value for n
+	- n_f <float>: initial guess value for n
 
 	Output:
 	- params_new: list with the best fit values of the parameters (x0,y0,rc,ellip,I0,re,theta0)
-	- chi2_min: reduced chi2 minimum value
+	- chi2_min <float>: reduced chi2 minimum value
 	
 	'''
 
@@ -458,11 +419,11 @@ def find_best_fit_all(params,nf):
 
 	Input:
 	- params: list with the initial guesses values of the parameters (x0,y0,rc,ellip,I0,re,theta0)
-	- n_f: initial guess value for n
+	- n_f <float>: initial guess value for n
 
 	Output:
 	- params_new: list with the best fit values of the parameters (x0,y0,rc,ellip,I0,re,theta0)
-	- chi2_min: reduced chi2 minimum value
+	- chi2_min <float>: reduced chi2 minimum value
 	
 	'''
 
