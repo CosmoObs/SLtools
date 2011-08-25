@@ -28,8 +28,9 @@ import pyfits
 import sltools
 import string
 import minuit
-from sltools.image.get_header_parameter import *
-from tools.get_extrema_2loops import *
+from sltools.image.header_funcs import get_header_parameter
+from stools.geometry.get_extrema_pts import *
+from sltools.geometry.elementary_geometry import *
 from tools.get_bisectrix_pts import *
 from tools.circle3points import *
 
@@ -262,7 +263,7 @@ def initial_guesses(img_name,ximg,yimg,seg_index,xmax,ymax):
 	output.write("p1 = %s, p2= %s, p3=%s\n" %(p1,p2,p3))
 	
 	#Get rc,x0 and y0 by finding a circle that fits the 3 points (p1,p2 and p3)
-	r_c,x_0,y_0 = circ_3pts(p1, p2, p3)
+	x_0,y_0,r_c = three_points_to_circle(p1, p2, p3)
 
 	#Get arc position angle
 	theta_0 = math.atan2((yb_mean-y_0),(xb_mean-x_0)) 

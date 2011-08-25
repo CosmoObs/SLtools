@@ -162,7 +162,7 @@ def I_0_integral(n,r_e,r_c,theta_0,ellip):
     - <float>: value of the definite double integral of the Sersic profile (where I_0 = 1)
     '''
 
-    b_n = get_b_n(n)
+    b_n = get_sersic_b_n(n)
     
     return dblquad(lambda r, theta: r * math.exp(- b_n * ( (math.sqrt((r_c * (theta - theta_0) * \
         (1. - ellip))**2 + (r - r_c)**2 ) ) / r_e)**(1. / n)),theta_0 - math.pi, theta_0 + math.pi, lambda r: 0, lambda r: 7*r_c)[0]
@@ -309,7 +309,7 @@ def paint_arcs(params,pix_scale):
 
     I_0 = signal_total / I_0_integral(n,r_e,r_c,theta_0,ellip)
 
-    b_n = get_b_n(n)
+    b_n = get_sersic_b_n(n)
 
     d_arcellipse = derivative(arcellipse_sbmap_r_theta)(r_c+r_e,0,n,b_n,r_c,r_e,I_0,ellip)
     
