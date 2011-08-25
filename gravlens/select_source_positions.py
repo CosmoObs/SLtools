@@ -23,7 +23,7 @@ import logging
 
 
 from sltools.pipelines.find_cc import run as run_find_cc
-from sltools.gravlens.lens_parameters import lens_parameters
+from sltools.gravlens.init_gravlens_parameter import lens_parameters
 
 
 #========================================================================================================

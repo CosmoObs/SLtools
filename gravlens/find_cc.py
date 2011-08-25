@@ -25,7 +25,7 @@ import matplotlib.pyplot as pyplot
 import string
 import time
 
-from sltools.gravlens.lens_parameters import lens_parameters
+from sltools.gravlens.init_gravlens_parameter import lens_parameters
 from sltools.geometry.separate_curves import separate_curves
 from sltools.coordinate.translation_and_rotation import translate_and_rotate_coord_system
 
