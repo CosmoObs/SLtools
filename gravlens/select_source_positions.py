@@ -10,10 +10,9 @@
 ##@package select_source_positions
 #
 #
-#  Select the position of sources near the tangential caustic (documentation in the old style)
+#  Select the position of sources near the tangential caustic
 
 
-from __future__ import division
 import os
 import pyfits
 import math
@@ -24,7 +23,7 @@ import logging
 
 from sltools.pipelines.find_cc import run as run_find_cc
 from sltools.gravlens.init_gravlens_parameter import lens_parameters
-
+from sltools.coordinate.translation_and_rotation import translate_and_rotate_coord_system
 
 #========================================================================================================
 # find mu_t and mu_r for a point
@@ -84,34 +83,33 @@ def get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, 
 
 
 #=======================================================================================================
-def compute_deformation_rhombus(thetal, tan_caustic_x, tan_caustic_y, control_rhombus):
+def compute_deformation_rhombus(thetal, tan_caustic_x, tan_caustic_y, control_rhombus=1):
     """
     Determines the 4 cusps of the tangential caustic and determines a rhombus that encloses it. 
 
     The rhombus vertices are on distances proportional to the cusp distance.
 
     Input:
-     - thetal             <float> : inclination of the lens with respect to the vertical
-                                   (counterclockwise)
-     - tan_caustic_x       <list> : list of x coordinates of the tangential caustic
-     - tan_caustic_y       <list> : list of y coordinates of the tangential caustic
-     - control_rhombus  <float> : determines how many times the vertices of the losangle 
+     - thetal               float : inclination (in degrees) of the lens with respect to the vertical
+                                    (counterclockwise)
+     - tan_caustic_x  [float,...] : list of x coordinates of the tangential caustic
+     - tan_caustic_y  [float,...] : list of y coordinates of the tangential caustic
+     - control_rhombus      float : determines how many times the vertices of the losangle 
                                     (inscribed in the rhombus) will be away from the cusps.
 
     Output:
-     - deformation_rhombus_pt1  <list> : pair (x,y) of upper right corner of the rhombus
-     - deformation_rhombus_pt2  <list> : pair (x,y) of lower left corner of the rhombus
+     - deformation_rhombus_x  [float,...] :  list of the four x coordinates of the rhombus corners
+     - deformation_rhombus_y  [float,...] : list of the four y coordinates of the rhombus corners
 
     """
 
     # converts tan_caustic_x and tan_caustic_y to the system of coordinates in which thetal = 0 (to find the 4 cusps)
     # xcrit0 = cos(theta)*x + sin(theta)*y
     # ycrit0 = -sin(theta)*x + cos(theta)*y
-    theta = thetal*(math.pi)/180. # convert thetal to radians
+    #theta = thetal*(math.pi)/180. # convert thetal to radians
     tan_caustic_x = np.array(tan_caustic_x)
     tan_caustic_y = np.array(tan_caustic_y)
-    xcrit0 =  math.cos(theta)*tan_caustic_x + math.sin(theta)*tan_caustic_y
-    ycrit0 = -math.sin(theta)*tan_caustic_x + math.cos(theta)*tan_caustic_y
+    xcrit0, ycrit0 = translate_and_rotate_coord_system(tan_caustic_x, tan_caustic_ y, 0, 0, -theta, angle='degree')
     #global cusp1, cusp2, cusp3, cusp4, xlosango, ylosango
     cusp1 = np.argmax(ycrit0)
     cusp2 = np.argmax(xcrit0)
