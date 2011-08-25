@@ -70,7 +70,7 @@ def gauss_convolution_fft(im_array, n_fwhm, fwhm) :
     
     """
     
-	sigma = fwhm / (2.*math.sqrt(2.*math.log(2.)))
+    sigma = fwhm / (2.*math.sqrt(2.*math.log(2.)))
 	
     im_kernel_array = gauss_kernel(n_fwhm, sigma)
     fftconv_image = signal.fftconvolve(im_array,im_kernel_array,mode = 'same')
@@ -92,7 +92,7 @@ def gauss_convolution(im_array, n_fwhm, fwhm) :
         
     """
     
-	sigma = fwhm / (2.*math.sqrt(2.*math.log(2.)))
+    sigma = fwhm / (2.*math.sqrt(2.*math.log(2.)))
 	
     im_kernel_array = gauss_kernel(n_fwhm, sigma)
     conv_image = signal.convolve(im_array,im_kernel_array,mode = 'same')
