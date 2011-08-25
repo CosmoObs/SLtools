@@ -129,31 +129,24 @@ def compute_deformation_rhombus(thetal, tan_caustic_x, tan_caustic_y, control_rh
     return xlosango, ylosango
  
 
-## source_positions
-# determines the source centers that are candidates to generate an arc
-#
-#@param source_selector_control_params
-#@param deformation_rhombus
-#@param nsources
-#@param inputlens
-#@return source_centers [former potarcxy], image_centers, image_distortions    
+#=======================================================================================================
 def source_positions(minimum_distortion, deformation_rhombus, nsources, inputlens):
 
-    x_vert_1, y_vert_1 = deformation_rhombus[0]
-    x_vert_2, y_vert_2 = deformation_rhombus[1]
-    #-----------------------------------------------------------------------------------------------------------
-    #GENERATE RANDOM POINTS NEAR THE CAUSTIC -------------------------------------------------------------------
-    #global usq, vsq, usq2, vsq2
-    usq = []
-    vsq = []
-    for i in range(0,nsources):
-        xrand =  x_vert_2 + ( x_vert_1 - x_vert_2 ) * random.random() # x coordinate inside the square
-        yrand =  y_vert_2 + ( y_vert_1 - y_vert_2 ) * random.random() # y coordinate inside the square
-        usq.append(xrand) # x coord of a point inside the square, but outside the losangle
-        vsq.append(yrand) # y coord of a point inside the square, but outside the losangle
-    #----------------------------------------------------------------------------------------------------------------------
+    """ Determines the source centers that are candidates to generate an arc. """
+
+    # source_positions must be divided. a function to calculate the random points; a function to calculate
+    # the point images of a list of sources, a function to calculate mu_t and mu_r of a list of points (done!)
+    # and maybe a function to identify which sources will be selected
+
+    x_vert_1, y_vert_1 = deformation_rhombus[0] # vert_1 : lower left  corner 
+    x_vert_2, y_vert_2 = deformation_rhombus[1] # vert_2 : upper right corner
+
+    #GENERATE RANDOM POINTS NEAR THE CAUSTIC ------------------------------------------------------------
+    usq = np.random.uniform(x_vert_1, x_vert_2, nsources) # x coord of a point inside the square, but outside the rhombus
+    vsq = np.random.uniform(y_vert_1, y_vert_2, nsources) # y coord of a point inside the square, but outside the rhombus
+
     ########### DETERMINE WHICH CENTERS HAS mu_t/mu_r > minimum_distortion IN ORDER TO GENERATE SERSIC SOURCES IN THESE CENTERS ############
-    #----------------------------------------------------------------------------------------------------------------------
+
     f = open('findimginput.txt', 'w')
     f.write(inputlens)
     for i in range (0,len(usq)): # determine the positions of the images of the source
@@ -246,10 +239,8 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
 
     #-----------------------------------------------------------------------------------------------------------
 
-    # vert_1 : upper right corner
-    # vert_2 : lower left corner
-    x_vert_1, y_vert_1 = max(xlosango), max(ylosango)
-    x_vert_2, y_vert_2 = min(xlosango), min(ylosango)
+    x_vert_1, y_vert_1 = min(xlosango), min(ylosango) # vert_1 : lower left corner 
+    x_vert_2, y_vert_2 = max(xlosango), max(ylosango) # vert_2 : upper right corner
     deformation_rhombus = [x_vert_1,y_vert_1],[x_vert_2, y_vert_2]
     logging.debug('Obtained the deformation rhombus: %s' % str(deformation_rhombus) )
 
