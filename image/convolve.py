@@ -32,21 +32,21 @@ import numpy
 from scipy import mgrid,signal
 
 
-def gauss_kernel(n_sig,sigma):
+def gauss_kernel(n_fwhm,sigma):
     """ 
     Creates a normalized 2D isotropic gaussian kernel array for convolution.
-    The size of the 2D gaussian kernel array is defined as a multiple (n_sig)
-    of sigma.
+    The size of the 2D gaussian kernel array is defined as a multiple (n_fwhm)
+    of the FWHM.
     
     Input:
-    - n_sig <float> : multiple of sigma that defines the size of the 2D gaussian kernel (usually n_sig=4)
+    - n_fwhm <float> : multiple of FWHM that defines the size of the 2D gaussian kernel (usually n_fwhm=4)
     - sigma <float>: standard deviation sigma of the gaussian kernel
 
 	Output:
     - <ndarray>: normalized 2D gaussian kernel array for convolution
     """
 
-    x_length = int(n_sig * sigma + 0.5) #Add 0.5 to approximate to nearest integer
+    x_length = int(n_fwhm * sigma + 0.5) #Add 0.5 to approximate to nearest integer
     y_length = x_length
         
        
@@ -55,55 +55,59 @@ def gauss_kernel(n_sig,sigma):
     return g / g.sum()
 
 
-def gauss_convolution_fft(im_array, n_sig, sig) :
+def gauss_convolution_fft(im_array, n_fwhm, fwhm) :
     """ 
     Convolves the image array with an isotropic gaussian kernel of size defined as a 
-    multiple (n_sig) of sigma (sig) using FFT. 
+    multiple (n_fwhm) of the FWHM (fwhm) using FFT. 
 
     Input:
     - im_array <ndarray>: image array to be convolved
-    - n_sig <float>: multiple of sigma that defines the size of the 2D gaussian kernel (usually n_sig=4)
-    - sig <float>: standard deviation sigma of the gaussian kernel
+    - n_fwhm <float>: multiple of FWHM that defines the size of the 2D gaussian kernel (usually n_fwhm=4)
+    - fwhm <float>: FWHM that defines the standard deviation of the 2D gaussian kernel
     
     Output:
     - <ndarray>: image (fft) convolved array 
     
     """
-
-    im_kernel_array = gauss_kernel(n_sig, sig)
+    
+	sigma = fwhm / (2.*math.sqrt(2.*math.log(2.)))
+	
+    im_kernel_array = gauss_kernel(n_fwhm, sigma)
     fftconv_image = signal.fftconvolve(im_array,im_kernel_array,mode = 'same')
 
     return (fftconv_image) 
 
-def gauss_convolution(im_array, n_sig, sig) :
+def gauss_convolution(im_array, n_fwhm, fwhm) :
     """ 
     Convolves the image array with an isotropic gaussian kernel of size defined as a 
-	multiple (n_sig) of sigma (sig). 
+	multiple (n_fwhm) of the FWHM (fwhm). 
 	
 	Input:    
 	- im_array <ndarray>: image array to be convolved
-	- n_sig <float>: multiple of sigma that defines the size of the 2D gaussian kernel (usually n_sig=4)
-	- sig <float>: standard deviation sigma of the gaussian kernel
+	- n_fwhm <float>: multiple of FWHM that defines the size of the 2D gaussian kernel (usually n_fwhm=4)
+	- fwhm <float>: FWHM that defines the standard deviation of the 2D gaussian kernel
         
 	Output:
 	- <ndarray>: image convolved array 
         
     """
-
-    im_kernel_array = gauss_kernel(n_sig, sig)
+    
+	sigma = fwhm / (2.*math.sqrt(2.*math.log(2.)))
+	
+    im_kernel_array = gauss_kernel(n_fwhm, sigma)
     conv_image = signal.convolve(im_array,im_kernel_array,mode = 'same')
 
     return (conv_image)   
 
 
-def moffat_kernel(n_rs,beta,r_s):
+def moffat_kernel(n_fwhm,beta,r_s):
     """ 
     Creates a normalized 2D Moffat kernel array for convolution.
-    The size of the 2D kernel array is defined as a multiple (n_rs)
-    of the scale radius (r_s).
+    The size of the 2D kernel array is defined as a multiple (n_fwhm)
+    of the FWHM.
 	    
     Input:
-    - n_rs <float>: multiple of r_s that defines the size of the 2D Moffat kernel (usually n_rs=4)
+    - n_fwhm <float>: multiple of the FWHM that defines the size of the 2D Moffat kernel (usually n_fwhm=4)
     - beta <float>: profile slope
     - r_s <float>: scale radius
 	
@@ -124,46 +128,50 @@ def moffat_kernel(n_rs,beta,r_s):
 	
 	
 	
-def moffat_convolution_fft(im_array,n_rs,beta,r_s) :
+def moffat_convolution_fft(im_array,n_fwhm,beta,fwhm) :
     """ 
     Convolves the image array with an Moffat kernel of size defined as a 
-    multiple (n_rs) of r_s using FFT. 
+    multiple (n_fwhm) of the FWHM using FFT. 
 
     Input:
     - im_array <ndarray>: image array to be convolved
-    - n_rs <float>: multiple of r_s that defines the size of the 2D Moffat kernel (usually n_rs=4)
+    - n_fwhm <float>: multiple of the FWHM that defines the size of the 2D Moffat kernel (usually n_fwhm=4)
     - beta <float>: profile slope
-    - r_s <float>: scale radius
-    
+	- fwhm <float>: FWHM that defines the scale radius (r_s) of the 2D Moffat kernel  
+	
     Output:
     - <ndarray>: image (fft) convolved array 
     
     """
 
-    im_kernel_array = moffat_kernel(n_rs,beta,r_s)
+    r_s = fwhm/(2. *math.sqrt(2.**(1./beta)-1.))
+
+    im_kernel_array = moffat_kernel(n_fwhm,beta,r_s)
     fftconv_image = signal.fftconvolve(im_array,im_kernel_array,mode = 'same')
 
     return (fftconv_image) 
 
 
 
-def moffat_convolution(im_array,n_rs,beta,r_s) :
+def moffat_convolution(im_array,n_fwhm,beta,fwhm) :
     """ 
     Convolves the image array with an Moffat kernel of size defined as a 
-    multiple (n_rs) of r_s. 
+    multiple (n_fwhm) of the FWHM. 
 	
     Input:    
     - im_array <ndarray>: image array to be convolved
-    - n_rs <float>: multiple of r_s that defines the size of the 2D Moffat kernel (usually n_rs=4)
+    - n_fwhm <float>: multiple of the FWHM that defines the size of the 2D Moffat kernel (usually n_fwhm=4)
     - beta <float>: profile slope
-    - r_s <float>: scale radius	
+    - fwhm <float>: FWHM that defines the scale radius (r_s) of the 2D Moffat kernel
 	
     Output:
     - <ndarray>: image convolved array 
         
     """
 
-    im_kernel_array = gauss_kernel(n_rs,beta,r_s)
+    r_s = fwhm/(2. *math.sqrt(2.**(1./beta)-1.))
+	
+    im_kernel_array = gauss_kernel(n_fwhm,beta,r_s)
     conv_image = signal.convolve(im_array,im_kernel_array,mode = 'same')
 
     return (conv_image)   

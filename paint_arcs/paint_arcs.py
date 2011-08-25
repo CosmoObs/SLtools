@@ -28,15 +28,13 @@ import math
 import pyfits
 import sltools
 import string 
-from paint_arcs_functions import *
 from sltools.image import convolve
-#from sltools.image import add_noise
 from sltools.image import add_noise
 from sltools.image.header_funcs import get_header_parameter
 from sltools.image import imcp
 from sltools.io import config_parser as cp
-#from sltools.catalog import open_fits_catalog
-#from sltools.catalog.halos import *
+from sltools.models.radial import *
+from sltools.coordinate.convert_arcsec_pix import *
 from scipy.integrate import dblquad, quad
 import logging
 
@@ -44,8 +42,6 @@ sys.path.append( os.path.abspath( '.' ))
 cwd = os.getcwd()+'/'
 
 ps_factor = 5.
-pix_scale = 0.27
-
 
 
 def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
@@ -55,19 +51,19 @@ def arcellipse_sbmap_r_theta(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip):
     (r,theta) point following the ArcEllipse prescription.
 
     Input:
-    - r: radius (pixel)
-    - theta_diff: difference between the position angle (theta) and the arc center position angle (theta_0) (radians)
+    - r <float>: radius (pixel)
+    - theta_diff <float>: difference between the position angle (theta) and the arc center position angle (theta_0) (radians)
         the angles are measured conterclockwise starting in the x-axis
-    - n: index that describes the slope of the Sersic profile 
-    - b_n: coefficient of the Sersic profile that depends on the n index
+    - n <float>: index that describes the slope of the Sersic profile 
+    - b_n <float>: coefficient of the Sersic profile that depends on the n index
         b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e 
-    - r_c: distance of the arc center to the point where the arc is centered (pixel)
-    - r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
-    - I_0: central surface brightness of the Sersic profile
-    - ellip: ellipticity of the arc
+    - r_c <float>: distance of the arc center to the point where the arc is centered (pixel)
+    - r_e <float>: radius that encloses half of the total luminosity of the Sersic profile (pixel)
+    - I_0 <float>: central surface brightness of the Sersic profile
+    - ellip <float>: ellipticity of the arc
 
     Output:
-    - the value of the surface brightness of the (r,theta) point following the ArcEllipse prescription
+    - <float>: the value of the surface brightness of the (r,theta) point following the ArcEllipse prescription
     """
 
     r_prof = math.sqrt((r_c * theta_diff * (1. - ellip))**2 + (r - r_c)**2 )
@@ -84,21 +80,21 @@ def arcellipse_sbmap_x_y(x,y,x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip):
     (x,y) pixel following the ArcEllipse prescription.
 
     Input:
-    - x: x position (pixel)
-    - y: y position (pixel)
-    - x_0: x position of the point where the arc is centered (pixel)
-    - y_0: y position of the point where the arc is centered (pixel)
-    - theta_0: orientation of the arc center related to the x-axis (radians)
-    - n: index that describes the slope of the Sersic profile 
-    - b_n: coefficient of the Sersic profile that depends on the n index
+    - x <float>: x position (pixel)
+    - y <float>: y position (pixel)
+    - x_0 <float>: x position of the point where the arc is centered (pixel)
+    - y_0 <float>: y position of the point where the arc is centered (pixel)
+    - theta_0 <float>: orientation of the arc center related to the x-axis (radians)
+    - n <float>: index that describes the slope of the Sersic profile 
+    - b_n <float>: coefficient of the Sersic profile that depends on the n index
         b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e 
-    - r_c: distance of the arc center related to the point where the arc is centered (pixel)
-    - r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
-    - I_0: central surface brightness of the Sersic profile
-    - ellip: ellipticity of the arc
+    - r_c <float>: distance of the arc center related to the point where the arc is centered (pixel)
+    - r_e <float>: radius that encloses half of the total luminosity of the Sersic profile (pixel)
+    - I_0 <float>: central surface brightness of the Sersic profile
+    - ellip <float>: ellipticity of the arc
 
     Output:
-    - the value of the surface brightness of the (x,y) point following the ArcEllipse prescription
+    - <float>: the value of the surface brightness of the (x,y) point following the ArcEllipse prescription
     """
 
     theta = math.atan2((y - y_0),(x - x_0))
@@ -125,19 +121,19 @@ def derivative(f):
     Function to compute the numerical derivative of the arcellipse_sbmap_r_theta function at (r,theta). 
 
     Input:
-    - r: radius (pixel)
-    - theta_diff: difference between the position angle (theta) and the arc center position angle (theta_0) - (radians)
-    - n: index that describes the slope of the Sersic profile 
-    - b_n: coefficient of the Sersic profile that depends on the n index
+    - r <float>: radius (pixel)
+    - theta_diff <float>: difference between the position angle (theta) and the arc center position angle (theta_0) - (radians)
+    - n <float>: index that describes the slope of the Sersic profile 
+    - b_n <float>: coefficient of the Sersic profile that depends on the n index
         b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e 
-    - r_c: distance of the arc center related to the point where the arc is centered (pixel)
-    - r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
-    - I_0: central surface brightness of the Sersic profile
-    - ellip: ellipticity of the arc
-    - h: factor used to define dr as a fraction of the r (dr = r/h)
+    - r_c <float>: distance of the arc center related to the point where the arc is centered (pixel)
+    - r_e <float>: radius that encloses half of the total luminosity of the Sersic profile (pixel)
+    - I_0 <float>: central surface brightness of the Sersic profile
+    - ellip <float>: ellipticity of the arc
+    - h <float>: factor used to define dr as a fraction of the r (dr = r/h)
 
     Output:
-    - the value of the derivative of the arcellipse_sbmap_r_theta function at (r,theta)
+    - <float>: the value of the derivative of the arcellipse_sbmap_r_theta function at (r,theta)
     """
     
     def df(r,theta_diff,n,b_n,r_c,r_e,I_0,ellip,h=1.e4):
@@ -156,14 +152,14 @@ def I_0_integral(n,r_e,r_c,theta_0,ellip):
     I_0 is the central surface brightness and r_prof comes from the ArcEllipse prescription.
 
     Input:
-    - n: Sersic index
-    - r_e: radius that encloses half of the total luminosity of the Sersic profile (pix)
-    - r_c: distance of the arc center related to the point where the arc is centered (pix)
-    - theta_0: orientation of the arc center related to x-axis 
-    - ellip: ellipticity of the arc
+    - n <float>: Sersic index
+    - r_e <float>: radius that encloses half of the total luminosity of the Sersic profile (pix)
+    - r_c <float>: distance of the arc center related to the point where the arc is centered (pix)
+    - theta_0 <float>: orientation of the arc center related to x-axis 
+    - ellip <float>: ellipticity of the arc
 
     Output:
-    - value of the definite double integral of the Sersic profile (where I_0 = 1)
+    - <float>: value of the definite double integral of the Sersic profile (where I_0 = 1)
     '''
 
     b_n = get_b_n(n)
@@ -179,20 +175,20 @@ def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_
     and digitalize ("pixelize") it to an image with the same size as the input image. 
 
     Input:
-    - x_0: x position of the point where the arc is centered (pixel)
-    - y_0: y position of the point where the arc is centered (pixel)
-    - theta_0: orientation of the arc center related to the x-axis (radians)
-    - n: index that describes the shape of the Sersic profile 
-    - b_n: coefficient of the Sersic profile that depends on the n index
+    - x_0 <float>: x position of the point where the arc is centered (pixel)
+    - y_0 <float>: y position of the point where the arc is centered (pixel)
+    - theta_0 <float>: orientation of the arc center related to the x-axis (radians)
+    - n <float>: index that describes the shape of the Sersic profile 
+    - b_n <float>: coefficient of the Sersic profile that depends on the n index
         b_n is chosen so that half the total luminosity predicted by the Sersic profile comes from r <= r_e 
-    - r_c: distance of the arc center related to the point where the arc is centered (pixel)
-    - r_e: radius that encloses half of the total luminosity of the Sersic profile (pixel)
-    - I_0: central surface brightness of the Sersic profile
-    - ellip: ellipticity of the arc
-    - mag_zpt: zero-point magnitude of the image
-    - pix_size: size of the "new" pixel for the digitalization
-    - dim_x: x dimension of the image
-    - dim_y: y dimension of the image
+    - r_c <float>: distance of the arc center related to the point where the arc is centered (pixel)
+    - r_e <float>: radius that encloses half of the total luminosity of the Sersic profile (pixel)
+    - I_0 <float>: central surface brightness of the Sersic profile
+    - ellip <float>: ellipticity of the arc
+    - mag_zpt <float>: zero-point magnitude of the image
+    - pix_size <float>: size of the "new" pixel for the digitalization
+    - dim_x <int>: x dimension of the image
+    - dim_y <int>: y dimension of the image
 
     Output:
     - (ndarray,s_total): resultant array of the digitalization of the surface brightness map and the
@@ -201,7 +197,9 @@ def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_
     # Determine the size of the postage stamp of the arc, which is equal to a factor (ps_factor) of the lenght of the arc
     # l = w / (1-ellip); w = 2b; b=r_e
     ps_size = int(ps_factor *  2.* r_e / (1. - ellip))
-    print ps_size,ps_factor,r_e / (1. - ellip)
+	
+  #  print ps_size,ps_factor,r_e / (1. - ellip)
+  
     s = numpy.zeros((ps_size+1,ps_size+1))
     s_total = []
 
@@ -273,7 +271,7 @@ def create_arcellipse_sbmap(x_0,y_0,theta_0,n,b_n,r_c,r_e,I_0,ellip,mag_zpt,pix_
     return s,s_sum,ps_size
 
 
-def paint_arcs(params):
+def paint_arcs(params,pix_scale):
     """	
     Function to digitalize the arc surface brightness map and write it on a HDU.
     
@@ -343,3 +341,5 @@ def paint_arcs(params):
     hdr.update('FLUXERR',error,comment='Error on the distributed arc flux')
     
     return hdu
+	
+	
