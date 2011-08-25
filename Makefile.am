@@ -1,6 +1,6 @@
 ## Comentario nos Makefiles.am sao com #
 
-SUBDIRS = perturbative_method/src/
+SUBDIRS = perturbative_method/src/ models/radial/src
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = sltoolsc.pc
