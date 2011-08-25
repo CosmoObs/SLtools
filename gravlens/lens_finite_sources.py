@@ -14,7 +14,6 @@
 # measurement methods to individual images. Also, the pipeline lens_finite_sources concatenates and 
 # runs the above functions.
 
-from __future__ import division
 import os
 import logging
 import numpy as np
@@ -26,7 +25,7 @@ from sltools.pipelines.find_cc import run as run_find_cc
 from sltools.gravlens.find_cc import plot_cc
 from sltools.image.imcp import elliminate_disconected as elliminate_disconected
 from sltools.image.sextractor import run_segobj
-
+from sltools.coordinate import pix_2_arcsec
 
 
 def source_model_sampler(source_type, rs_i, rs_f, es_i, es_f, thetas_i, thetas_f, ns_i=0.5, ns_f=0.5, nover=1, mag=24.0):
@@ -114,7 +113,7 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
                                                   theta_L, shear, theta_shear, gravlens_params)
 
     half_frame_size = gravlens_params['gridhi1']
-    Npix = int( (2*half_frame_size) / dimpix )
+    Npix = int( (2.*half_frame_size) / dimpix )
     image_names = []
     f199 = open('sersicinput.txt', 'w')
     f199.write(inputlens)
@@ -210,29 +209,6 @@ def get_src_img_coords(source_name, image_name):
     return x_src, y_src, x_img, y_img
 
 
-def pix_2_arcsec(x_pix, y_pix, half_frame_size, dimpix):
-    """
-    Convert from pixel to arcsec coordinates. 
-
-    The x and y coordinates in arcsec are calculated relative to the center of the image.
-    
-    Input:
-     - x_pix          <ndarray> : 1d array (int) of the source x coordinates (in pixels)
-     - y_pix          <ndarray> : 1d array (int) of the source y coordinates (in pixels)
-     - half_frame_size  <float> : half the size of the FITS file (in arcsec)
-     - dimpix           <float> : size of the pixel, in arcsec
-
-    Output:
-     - x_arcsec  <ndarray> : 1d array (int) of the source x coordinates (in arcsec)
-     - y_arcsec  <ndarray> : 1d array (int) of the source y coordinates (in arcsec)
-
-    """
-    
-    Npix = int( (2*half_frame_size) / dimpix )
-    x_arcsec = (2*half_frame_size/(Npix-1))*x_pix - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec x coordinate
-    y_arcsec = (2*half_frame_size/(Npix-1))*y_pix - half_frame_size -2*half_frame_size/(Npix - 1) # arcsec y coordinate
-
-    return x_arcsec, y_arcsec 
 
 #=================================================================================================================
 def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='caustic_CC_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.2, accept_res_limit=2E-4, nover_max=3, SE_params={}, SE_args={}, preset='sims', base_name='sbmap'):
@@ -261,6 +237,8 @@ def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, mo
 
     """
 
+    dimpix = float(dimpix)
+
     rad_CC_x, rad_CC_y, tan_CC_x, tan_CC_y, rad_caustic_x, rad_caustic_y, tan_caustic_x, tan_caustic_y = run_find_cc(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
 
     index_CC = np.argmax(tan_CC_x**2 + tan_CC_y**2) # it is not necessary to use the lens center since we want the furthest point anyway
@@ -269,11 +247,11 @@ def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, mo
 
     # obtain the sources
     source_names = lensing('none', mass_scale, model_param_8, model_param_9, model_param_10, 
-                          galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, float(dimpix), 
+                          galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, dimpix, 
                           source_centers, source_model, ref_magzpt, reference_band, 'src_sbmap', nover_max)[0]
     # obtain the images
     image_names, half_frame_size = lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, 
-                          galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, float(dimpix), 
+                          galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, dimpix, 
                           source_centers, source_model, ref_magzpt, reference_band, base_name, nover_max)
 
     # loop nos frames (each image plane)
