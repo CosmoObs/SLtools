@@ -388,9 +388,6 @@ double y1_src(elliptical_source source_in, double theta){
       return y1_linha_src;
 }
 
-
-
-
 /**
  * pm_y2_src:
  * @source_in: source_in.
@@ -407,7 +404,65 @@ double y2_src(elliptical_source source_in, double theta){
       return y2_linha_src;
 }
 
-double slc_test_func(){
-    return 0.0;
+
+/** Functions to compute the tangential magnification
+* 
+*  \param f1_in function related to the perturbed potential
+*  \param Df0Dtheta_in function related to the perturbed potential
+*  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
+*  \param source_in a struct that define elliptical sources
+*  \param pert_params[] a vector that contains all the perturbation parameters
+*  \param _r_e Einstein Radius (\f$ R_{_{\mathrm{E}}}\f$ )
+*  \param npts (number to divide the range of limits of the integral, if it isn´t given, the code assumes 2001. Note: must be a non number)
+*  \param ifile_in File to write all the results. If it isn´t given, the results will be written in the screen.
+*  \return ifile_in 
+*  \sa lw_k, width_q, method_L2, method_L3, method_L4
+*/
+
+double tangential_magnification(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double pert_params[], double x, double theta, double _r_e){
+    double scriptf=(1./_r_e)*D2f0Dtheta2_in(theta,pert_params,_r_e)-(kappa2*(x-_r_e)-f1_in(theta,pert_params,_r_e));
+    return scriptf/x;
+}
+
+/** Functions to compute the tangential and radial magnification ratio
+* 
+*  \param f1_in function related to the perturbed potential
+*  \param Df0Dtheta_in function related to the perturbed potential
+*  \param kappa2 \f$  \kappa_2 = 1 - \left[\frac{d^2 \phi_0(r)}{dr^2}\right]_{r=r_e} \f$
+*  \param source_in a struct that define elliptical sources
+*  \param pert_params[] a vector that contains all the perturbation parameters
+*  \param _r_e Einstein Radius (\f$ R_{_{\mathrm{E}}}\f$ )
+*  \param npts (number to divide the range of limits of the integral, if it isn´t given, the code assumes 2001. Note: must be a non number)
+*  \param ifile_in File to write all the results. If it isn´t given, the results will be written in the screen.
+*  \return ifile_in 
+*  \sa lw_k, width_q, method_L2, method_L3, method_L4
+*/
+
+double eigenv_ratio(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double pert_params[], double x, double theta, double _r_e){
+  double eig_num=kappa2*(x);
+  double scriptf=(1./_r_e)*D2f0Dtheta2_in(theta,pert_params,_r_e)-(kappa2*(x-_r_e)-f1_in(theta,pert_params,_r_e));
+  double eig_den=-scriptf;
+  return fabs(eig_num/eig_den);
+  }
+
+
+/**
+ * SECTION:sltoolsc
+ * 
+ * @brief: A brief discription. 
+ *
+ * More details about testfunc
+ * 
+ */
+
+
+/**
+ * tangential_magnification:
+ * @a: (in) (array): is double. 
+ *  
+ * Returns: x1 times x2.
+ */
+double slc_tangential_magnification(double a){
+    return a;
 }
 

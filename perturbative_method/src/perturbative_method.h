@@ -113,5 +113,9 @@ double y1_src(elliptical_source source_in, double theta);
 
 double y2_src(elliptical_source source_in, double theta);
 
-double slc_test_func();
+double tangential_magnification(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double pert_params[], double x, double theta, double _r_e);
+
+double eigenv_ratio(f_type f1_in, f_type D2f0Dtheta2_in, double kappa2, double pert_params[], double x, double theta, double _r_e);
+
+double slc_tangential_magnification(double a);
 #endif

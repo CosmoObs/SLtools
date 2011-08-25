@@ -21,7 +21,7 @@
 #define SIS_MODEL_H
 
 #include <math.h>
-#include <cstdlib>
+#include <stdlib.h>
 
 
 //! Convergence of the SIS model.
