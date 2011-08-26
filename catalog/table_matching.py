@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" Module to deal with tables matching """
+"""Module to do tables matching, functions to deal with it"""
 
 import sys;
 import os;
@@ -13,44 +13,50 @@ import sltools;
 from sltools.catalog import fits_data,ascii_data;
 from sltools.io import log;
 
-def nearest_neighbour(centroids_A, centroids_B):
+# ---
+
+def nearest_neighbour(xy_check, xy_truth):
     """ Function to compute and return the set of nearest point
         
-    This function computes for each entry of 'centroids_A', the
-    nearest point in 'centroids_B'.
+    This function computes for each entry of 'xy_check', the
+    nearest point in 'xy_truth'.
     
     Is returned, respective to each entry, the index and the
     distance measured correspondig to each identified nearest
     point.
     
     Input:
-     - centroids_A : [(x_A0,y_A0),(x_A1,y_A1), ]
-     - centroids_B : [(x_B0,y_B0),(x_B1,y_B1), ]
+     - xy_check  [(int,int),...] : List of (x,y) positions for matching against "B"
+     - xy_truth  [(int,int),...] : List of (x,y) positions to check "A" for
     
     Output:
-     - [(index_BtoA0,distance_BtoA0), ]
+     - near_to  [(int,float),...] : List of (index,distance) of nearby object from "A"
 
+    * hint: [(a,b),...] is the output of zip(A,B) command
     ---
     """
     
-    length_A = len(centroids_A);
-    length_B = len(centroids_B);
+    centroids_A = xy_check
+    centroids_B = xy_truth
     
-    x_A,y_A = zip(*centroids_A);
-    x_B,y_B = zip(*centroids_B);
+    length_A = len(centroids_A)
+    length_B = len(centroids_B)
     
-    Mat = np.zeros((length_A,length_B));
+    x_A,y_A = zip(*centroids_A)
+    x_B,y_B = zip(*centroids_B)
+    
+    Mat = np.zeros((length_A,length_B))
     
     for i in xrange(length_A):
-        Mat[i] = (x_A[i] - x_B[:])**2 + (y_A[i] - y_B[:])**2;
+        Mat[i] = (x_A[i] - x_B[:])**2 + (y_A[i] - y_B[:])**2
     
-    dist_min_BtoA = np.sqrt(np.amin(Mat,axis=1));
-    indx_min_BtoA = np.argmin(Mat,axis=1);
+    dist_min_BtoA = np.sqrt(np.amin(Mat,axis=1))
+    indx_min_BtoA = np.argmin(Mat,axis=1)
     
-    ind_dist_BtoA = zip(indx_min_BtoA,dist_min_BtoA);
-    
+    ind_dist_BtoA = zip(indx_min_BtoA,dist_min_BtoA)
 
-    return (ind_dist_BtoA);
+    near_to = ind_dist_BtoA
+    return (near_to)
 
 # ---
 
@@ -58,20 +64,23 @@ def match_positions(tbhdu_check, tbhdu_truth, radius):
     """
     Check if positions in tables match within a given radius
     
-    "tbhdu"s 'x' and 'y' fields are expected for the processing.
+    Required fieldnames inside tbhdu's:
+     'X' and 'Y' or 'X_IMAGE' and 'Y_IMAGE'
     
     Input:
-     - tbhdu_check : tbHDU
-        Binary table HDU, from FITS catalog
-     - tbhdu_truth : tbHDU
-        Binary table HDU, from FITS catalog
-     - radius : float
-        Distance parameters for objects position matching
+     - tbhdu_check  tbHDU : Being-checked Table (FITS)
+     - tbhdu_truth  tbHDU : Truth Table (FITS)
+     - radius       float : Distance parameters for objects position matching
     
     Output:
-     - new_tbhdu : tbHDU
-        New table (check) with the matching information added
-        
+     - new_tbhdu tbHDU : New table with matching information (fields):
+            'X'        = [int] x position of input table
+            'Y'        = [int] y position of input table
+            'XY_MATCH' = [bool] was X,Y object matched within 'radius'?
+            'X_NEAR'   = [int] x position of nearest object
+            'Y_NEAR'   = [int] y position of nearest object
+
+    * tbHDU = pyfits.BinTableHDU
     ---
     """
     
@@ -156,7 +165,12 @@ def run(tbhdu_check, tbhdu_truth, radius=1):
     logging.info("Contamination (N_false/N_total): %s" % (Cont));
 
     return tbhdu_A_wneib;
-    
+
+
+# =====
+# \cond
+# =====
+
 def run_fit(filename_A, filename_B, radius=1):
     """
     Input:
@@ -197,8 +211,10 @@ def run_ds9(filename_A, filename_B, radius=1):
     
     return run(tbhdu_check,tbhdu_truth,radius);
 
-# ==========================
 
+# ==========================
+# Shell interface
+# 
 if __name__ == '__main__' :
 
     import optparse;
@@ -263,3 +279,7 @@ if __name__ == '__main__' :
 
     print >> sys.stdout, "Done.";
     sys.exit(0);
+
+# ========
+# \endcond
+# ========
