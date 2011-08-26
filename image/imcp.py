@@ -6,7 +6,8 @@
 
 """Package to make FITS image copy/cuts and update their header"""
 
-##@package imcp
+##@package image
+##@file imcp
 #
 #
 # This package contains functions to cutout smaller regions
