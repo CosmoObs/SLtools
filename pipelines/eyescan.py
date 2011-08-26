@@ -72,6 +72,7 @@ def run(regionfile, imagefile, args={}, preset='', shape=(100,100), tablefile="o
     X = asarray(D_in['x'])
     Y = asarray(D_in['y'])
     centroids = XY = zip(X,Y)
+    R = asarray(D_in['size'])
     logging.debug("Centroids: %s",XY)
     if len(XY) == 0:
         logging.warning("No objects in given Centroids list. Finishing.")
