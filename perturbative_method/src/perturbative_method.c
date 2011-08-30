@@ -200,6 +200,15 @@ double caustic_y2(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, doub
     return y2_c;
 }
 
+/** Tangential Caustic Line (RadialComponent)
+*  \param D2f0Dtheta2_in function related to the perturbed potential (second derivative in relation to \f$ theta \f$)
+*  \param f1_in function related to the perturbed potential
+*  \param theta angular coordinate in the lens plane 
+*  \param pert_params[] a vector containing all the perturbation parameters
+*   \param _r_e is the einstein radius (\f$ R_{_{\mathrm{E}}}\f$ ) of the circular model
+*   This caustic line, in polar coordinates, is defined by :
+*   \return \f$ y_2=\frac{1}{R_{_\mathrm{E}}}\frac{d^2f_0}{d \theta^2}\sin{\theta}-\frac{1}{R_{_\mathrm{E}}}\frac{df_0}{d \theta}\cos{\theta}\f$
+**/
 double r_caust(f_type Df0Dtheta_in, f_type D2f0Dtheta2_in, double theta, double pert_params[],double _r_e){
     double y1_temp=caustic_y1( Df0Dtheta_in, D2f0Dtheta2_in, theta, pert_params, _r_e);  
     double y2_temp=caustic_y2( Df0Dtheta_in, D2f0Dtheta2_in, theta, pert_params, _r_e);  
