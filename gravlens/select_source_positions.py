@@ -83,7 +83,7 @@ def get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, 
 
 
 #=======================================================================================================
-def compute_deformation_rhombus(thetal, tan_caustic_x, tan_caustic_y, control_rhombus=1):
+def compute_deformation_rhombus(theta_L, tan_caustic_x, tan_caustic_y, control_rhombus=1):
     """
     Determines the 4 cusps of the tangential caustic and determines a rhombus that encloses it. 
 
@@ -109,7 +109,7 @@ def compute_deformation_rhombus(thetal, tan_caustic_x, tan_caustic_y, control_rh
     #theta = thetal*(math.pi)/180. # convert thetal to radians
     tan_caustic_x = np.array(tan_caustic_x)
     tan_caustic_y = np.array(tan_caustic_y)
-    xcrit0, ycrit0 = translate_and_rotate_coord_system(tan_caustic_x, tan_caustic_ y, 0, 0, -theta, angle='degree')
+    xcrit0, ycrit0 = translate_and_rotate_coord_system(tan_caustic_x, tan_caustic_y, 0, 0, -theta_L, angle='degree')
     #global cusp1, cusp2, cusp3, cusp4, xlosango, ylosango
     cusp1 = np.argmax(ycrit0)
     cusp2 = np.argmax(xcrit0)
