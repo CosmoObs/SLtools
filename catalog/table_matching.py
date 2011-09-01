@@ -2,21 +2,24 @@
 
 """Module to do tables matching, functions to deal with it"""
 
-import sys;
-import os;
-import logging;
+##@package catalog
+##@file table_matching
 
-import numpy as np;
-import pyfits;
+import sys
+import os
+import logging
 
-import sltools;
-from sltools.catalog import fits_data,ascii_data;
-from sltools.io import log;
+import numpy as np
+import pyfits
+
+from sltools.catalog import fits_data,ascii_data
+from sltools.io import log
+
 
 # ---
-
 def nearest_neighbour(xy_check, xy_truth):
-    """ Function to compute and return the set of nearest point
+    """
+    Function to compute and return the set of nearest point
         
     This function computes for each entry of 'xy_check', the
     nearest point in 'xy_truth'.
@@ -32,35 +35,98 @@ def nearest_neighbour(xy_check, xy_truth):
     Output:
      - near_to  [(int,float),...] : List of (index,distance) of nearby object from "A"
 
+
     * hint: [(a,b),...] is the output of zip(A,B) command
+
     ---
     """
     
-    centroids_A = xy_check
-    centroids_B = xy_truth
-    
-    length_A = len(centroids_A)
-    length_B = len(centroids_B)
-    
-    x_A,y_A = zip(*centroids_A)
-    x_B,y_B = zip(*centroids_B)
-    
-    Mat = np.zeros((length_A,length_B))
-    
-    for i in xrange(length_A):
-        Mat[i] = (x_A[i] - x_B[:])**2 + (y_A[i] - y_B[:])**2
-    
-    dist_min_BtoA = np.sqrt(np.amin(Mat,axis=1))
-    indx_min_BtoA = np.argmin(Mat,axis=1)
-    
-    ind_dist_BtoA = zip(indx_min_BtoA,dist_min_BtoA)
+    x_check,y_check = zip(*xy_check)
+    x_truth,y_truth = zip(*xy_truth)
+    logging.debug("X,Y of Check table: \n(X):%s \n(Y):%s",x_check,y_check)
+    logging.debug("X,Y of Truth table: \n(X):%s \n(Y):%s",x_truth,y_truth)
 
-    near_to = ind_dist_BtoA
+    length_check = len(xy_check)
+    length_truth = len(xy_truth)    
+    logging.debug("Size of given point lists: %d(check), %d(truth)",length_check,length_truth)
+
+    Mat = np.zeros((length_check,length_truth))
+    
+    for i in xrange(length_check):
+        Mat[i] = (x_check[i] - x_truth[:])**2 + (y_check[i] - y_truth[:])**2
+    
+    dist_min_truth2check = np.sqrt(np.amin(Mat,axis=1))
+    indx_min_truth2check = np.argmin(Mat,axis=1)
+    logging.info("Nearst neibour distance: %s",dist_min_truth2check)
+    logging.info("Nearst neibour index: %s",indx_min_truth2check)
+    
+    ind_dist_truth2check = zip(indx_min_truth2check,dist_min_truth2check)
+    logging.debug("Index and Distante of nearest neibours: %s",ind_dist_truth2check)
+    
+    near_to = ind_dist_truth2check
     return (near_to)
 
 # ---
+def match_positions(xy_check, xy_truth, radius):
+    """
+    Check if positions in tables match within a given radius
+    
+    Required fieldnames inside tbhdu's:
+     'X' and 'Y' or 'X_IMAGE' and 'Y_IMAGE'
+    
+    Input:
+     - xy_check  [(int,int),...] : Being-checked centroids
+     - xy_truth  [(int,int),...] : Truth positions
+     - radius              float : Distance parameters for objects position matching
+    
+    Output:
+     - dict_check {} : New table with matching information (fields):
+            'X'        = [int] x position of input table
+            'Y'        = [int] y position of input table
+            'XY_MATCH' = [bool] was X,Y object matched within 'radius'?
+            'X_NEAR'   = [int] x position of nearest object
+            'Y_NEAR'   = [int] y position of nearest object
 
-def match_positions(tbhdu_check, tbhdu_truth, radius):
+
+    * hint: [(a,b),...] is the output of zip(A,B) command
+
+    ---
+    """
+    
+    x_check,y_check = zip(*xy_check)
+    x_truth,y_truth = zip(*xy_truth)
+    logging.debug("X,Y of Check table: \n(X):%s \n(Y):%s",x_check,y_check)
+    logging.debug("X,Y of Truth table: \n(X):%s \n(Y):%s",x_truth,y_truth)
+
+    len_check = len(xy_check)
+    len_truth = len(xy_truth)
+    logging.debug("Size of given point lists: %d(check), %d(truth)",len_check,len_truth)
+    
+    Check_near_neibors = nearest_neighbour(xy_check,xy_truth)
+    Check_nn_indx,Check_nn_dist = zip(*Check_near_neibors)
+    logging.debug("Check-table (from Truth) nearest neighbours (index,distance): %s",Check_near_neibors)
+    
+    logging.info("Matching radius: %s", radius)
+    Check_match_neibors = [ float(_d) < float(radius) for _d in Check_nn_dist ]
+    logging.info("Check-table matched objects: %s", Check_match_neibors)
+    
+    Check_neibor_truthX = [ x_truth[i] for i in Check_nn_indx ]
+    Check_neibor_truthY = [ y_truth[i] for i in Check_nn_indx ]
+    logging.info("Position of nearest objects: %s,%s",Check_neibor_truthX,Check_neibor_truthY)
+
+    # Alias:
+    naa = np.asarray
+
+    dict_check = {'X_NEAR':naa(Check_neibor_truthX),'Y_NEAR':naa(Check_neibor_truthY)}
+    dict_check.update({'XY_MATCH':naa(Check_match_neibors)})
+    dict_check.update({'X':naa(x_check),'Y':naa(y_check)})
+    logging.info("Matching infos: \n(Did match?): %s \n(X): %s \n(Y): %s \n(X_NEAR): %s \n(Y_NEAR): %s",
+        dict_check['XY_MATCH'],dict_check['X'],dict_check['Y'],dict_check['X_NEAR'],dict_check['Y_NEAR'])
+    
+    return (dict_check);
+
+# ---
+def run(tbhdu_check, tbhdu_truth, radius=1):
     """
     Check if positions in tables match within a given radius
     
@@ -80,92 +146,64 @@ def match_positions(tbhdu_check, tbhdu_truth, radius):
             'X_NEAR'   = [int] x position of nearest object
             'Y_NEAR'   = [int] y position of nearest object
 
-    * tbHDU = pyfits.BinTableHDU
+
+    * obs: tbHDU = pyfits.BinTableHDU
+    
     ---
     """
     
-    logging.debug("Input params (tbC,tbT,radius): %s,%s,%s" % (tbhdu_check.name,tbhdu_truth.name,radius));
-    
-    tbhdu_A = tbhdu_check;
-    tbhdu_B = tbhdu_truth;
-    
-    tbname_A = tbhdu_A.name;
-    tbname_B = tbhdu_B.name;
+    Ntotal_truth = tbhdu_truth.header['naxis2']
+    Ntotal_check = tbhdu_check.header['naxis2']
+    logging.debug("Input params (tbC,tbT,radius): %s,%s,%s" % (tbhdu_check.name,tbhdu_truth.name,radius))
+    logging.debug("Check table length: %d",Ntotal_check)
+    logging.debug("Truth table length: %d",Ntotal_truth)
+
+    tbname_check = tbhdu_check.name
+    tbname_truth = tbhdu_truth.name
+    tbname_out = tbname_check+"_matched_objs"
+
     try:
-        x_A = tbhdu_A.data.field('X');
-        y_A = tbhdu_A.data.field('Y');
+        x_A = tbhdu_check.data.field('X')
+        y_A = tbhdu_check.data.field('Y')
     except:
-        x_A = tbhdu_A.data.field('X_IMAGE');
-        y_A = tbhdu_A.data.field('Y_IMAGE');
+        x_A = tbhdu_check.data.field('X_IMAGE')
+        y_A = tbhdu_check.data.field('Y_IMAGE')
     try:
-        x_B = tbhdu_B.data.field('X');
-        y_B = tbhdu_B.data.field('Y');
+        x_B = tbhdu_truth.data.field('X')
+        y_B = tbhdu_truth.data.field('Y')
     except:
-        x_B = tbhdu_B.data.field('X_IMAGE');
-        y_B = tbhdu_B.data.field('Y_IMAGE');
+        x_B = tbhdu_truth.data.field('X_IMAGE')
+        y_B = tbhdu_truth.data.field('Y_IMAGE')
     
-    centroids_A = zip(x_A,y_A);
-    centroids_B = zip(x_B,y_B);
+    xy_check = zip(x_A,y_A)
+    xy_truth = zip(x_B,y_B)
     
-    try:
-        len_A = len(centroids_A);
-        len_B = len(centroids_B);
-    except:
-        return False;
+    dict_Matchout = match_positions(xy_check,xy_truth,radius)
     
-    A_near_neibors = nearest_neighbour(centroids_A,centroids_B);
-    [ logging.debug("Checktable nearest neighbours (indx,dist): %s",each) for each in A_near_neibors ];
-    
-    A_nn_indx,A_nn_dist = zip(*A_near_neibors);
-    
-    logging.info("Matching radius: %s", radius);
-    A_match_neibors = [ float(_d) < float(radius) for _d in A_nn_dist ];
-    logging.debug("Checktable matched objects: %s", A_match_neibors);
-    
-    A_neibor_BX = [ x_B[i] for i in A_nn_indx ];
-    A_neibor_BY = [ y_B[i] for i in A_nn_indx ];
-    
-    # Alias:
-    naa = np.asarray;
+#    Ntrue = int(tbhdu_check_wneib.header['ntrue']);
+#    Nfalse = int(tbhdu_check_wneib.header['nfalse']);
 
-    tbname = tbname_A+"_matched_objs";
-    dict_Aout = {'X':naa(x_A),'Y':naa(y_A),'XY_MATCH':naa(A_match_neibors),'X_NEAR':naa(A_neibor_BX),'Y_NEAR':naa(A_neibor_BY)};
-    new_tbhdu_A = fits_data.dict_to_tbHDU(dict_Aout,tbname);
-    
-    Ntrue = A_match_neibors.count(True);
-    Nfalse = A_match_neibors.count(False);
-    Ntotal_truth = tbhdu_truth.header['naxis2'];
-    
-    new_tbhdu_A.header.update('hierarch truthtbname',tbhdu_truth.name,"Name of Truth table used");
-    new_tbhdu_A.header.update('hierarch ntottruth',Ntotal_truth,"Total number of arcs in Truth table");
-    new_tbhdu_A.header.update('ntrue',Ntrue,"Number of found objs in Check table");
-    new_tbhdu_A.header.update('nfalse',Nfalse,"Number of not-found objs in Check table");
-
-    
-    return (new_tbhdu_A);
-
-# ---
-
-def run(tbhdu_check, tbhdu_truth, radius=1):
-    """
-    """
-    
-    tbhdu_A_wneib = match_positions(tbhdu_check,tbhdu_truth,radius);
-
-    Ntrue = int(tbhdu_A_wneib.header['ntrue']);
-    Nfalse = int(tbhdu_A_wneib.header['nfalse']);
-    Ntotal = Ntrue + Nfalse;
+    new_tbhdu = fits_data.dict_to_tbHDU(dict_Matchout,tbname_out)
+    new_tbhdu.header.update('hierarch truthtbname',tbname_truth,"Name of Truth table used")
+    new_tbhdu.header.update('hierarch ntottruth',Ntotal_truth,"Total number of arcs in Truth table")
+    new_tbhdu.header.update('ntrue',Ntrue,"Number of found objs in Check table")
+    new_tbhdu.header.update('nfalse',Nfalse,"Number of not-found objs in Check table")
+    Ntrue = np.where(new_tbhdu.data.field('XY_MATCH') == True).size
+    Nfalse = np.where(new_tbhdu.data.field('XY_MATCH') == False).size
+    Ntotal = Ntrue + Nfalse
+    logging.debug("Matched table columns/data: %s",new_tbhdu.data)
     
     # Completeza:
-    Comp = float(Ntrue)/Ntotal;
-    logging.info("Completeness (N_true/N_total): %s" % (Comp));
+    Comp = float(Ntrue)/Ntotal
+    logging.info("Completeness (N_true/N_total): %s" % (Comp))
     
     # Contaminacao:
-    Cont = float(Nfalse)/Ntotal;
-    logging.info("Contamination (N_false/N_total): %s" % (Cont));
+    Cont = float(Nfalse)/Ntotal
+    logging.info("Contamination (N_false/N_total): %s" % (Cont))
 
-    return tbhdu_A_wneib;
+    return new_tbhdu
 
+# ---
 
 # =====
 # \cond
@@ -211,7 +249,7 @@ def run_ds9(filename_A, filename_B, radius=1):
     
     return run(tbhdu_check,tbhdu_truth,radius);
 
-
+"""
 # ==========================
 # Shell interface
 # 
@@ -280,6 +318,7 @@ if __name__ == '__main__' :
     print >> sys.stdout, "Done.";
     sys.exit(0);
 
+"""
 # ========
 # \endcond
 # ========

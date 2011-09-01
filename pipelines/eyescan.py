@@ -8,6 +8,7 @@ and proceed with segmentation, postage stamps and catalogs creation, etc.
 DS9 SAOImage imaging and data visualization : http://hea-www.harvard.edu/RD/ds9/
 """
 
+##@package pipelines
 ##@file eyescan
 
 import sys
@@ -17,7 +18,7 @@ import logging
 import os
 import re
 
-import sltools;
+from sltools.io import log
 from sltools.catalog import ascii_data as asc
 from sltools.catalog import fits_data as fts
 from sltools.image import imcp

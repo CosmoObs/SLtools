@@ -1,55 +1,51 @@
-""" Module to deal with ascii catalog files (CSV and DS9)"""
+"""Module to read/write ascii catalog files (CSV and DS9)"""
 
-##@package ascii_data
+##@package catalogs
+##@file ascii_data
 
 """
-The following functions are meant to help in reading and writing text/csv catalogs 
+The following functions are meant to help in reading and writing text CSV catalogs 
 as well as DS9 region files. Main structure used is dictionaries do deal with catalog 
 data in a proper way.
 """
 
-import sys;
-import logging;
-import csv;
-import re;
-import string;
+import sys
+import logging
+import csv
+import re
+import string
 
 # ---
-
 def dict_to_csv(columns, fieldnames=[], filename='cat.csv', mode='w', delimiter=','):
-    """ Write a CSV catalog from a dictionary contents
+    """
+    Write a CSV catalog from given dictionary contents
     
-    Given dictionary is meant to store lists of values corresponding to key/column on the
-    csv file. So that each entry 'fieldnames' is expected to be found within 'dictionary'
+    Given dictionary is meant to store lists of values corresponding to key/column in the
+    csv file. So that each entry 'fieldnames' is expected to be found within 'columns'
     keys, and the associated value (list) will be written in a csv column
     
     Input:
-     - columns     {str:[]}  : Contents to be write in csv catalog
-     - fieldnames  [str]     : List with fieldnames/keys to read from 'columns'
-     - filename    str       : Name of csv catalog to write
-     - mode        str       : Write a new catalog, 'w', or append to an existing one, 'a'.
-     - delimiter   str       : Delimiter to use between columns in 'filename'
+     - columns     {str:[]} : Contents to be write in csv catalog
+     - fieldnames     [str] : List with fieldnames/keys to read from 'columns'
+     - filename         str : Name of csv catalog to write
+     - mode             str : Write a new catalog, 'w', or append to an existing one, 'a'.
+     - delimiter        str : Delimiter to use between columns in 'filename'
     
     Output:
-     - void
+     * If no error messages are returned, a file 'filename' is created.
     
     
     Example:
 
-    >>> D = {'x':[0,0,1,1],'y':[0,1,0,1],'id':['0_0','0_1','1_0','1_1'],'z':[0,0.5,0.5,1]}
-    >>> fields = ['id','x','y','z']
-    >>> 
-    >>> dict_to_csv( D, fields, filename='test.csv')
-    >>> 
-    >>> import os
-    >>> s = os.system('cat test.csv')
-    id,x,y,z
-    0_0,0,0,0
-    0_1,0,1,0.5
-    1_0,1,0,0.5
-    1_1,1,1,1
-    >>> 
-    
+    >>> D = {'x':[0,0,1,1],'y':[0,1,0,1],'id':['0_0','0_1','1_0','1_1'],'z':[0,0.5,0.5,1]} #\
+    >>> fields = ['id','x','y','z'] #\
+    >>> #\
+    >>> dict_to_csv( D, fields, filename='test.csv') #\
+    >>> #\
+    >>> import os #\
+    >>> #\
+
+    ---
     """
 
     dictionary  = columns.copy()
@@ -61,7 +57,7 @@ def dict_to_csv(columns, fieldnames=[], filename='cat.csv', mode='w', delimiter=
         if type(dictionary[k])!=type([]) and type(dictionary[k])!=type(()):
             dictionary[k] = [dictionary[k]]
         
-    logging.debug("Fields being written to (csv) catalog: %s",fieldnames);
+    logging.debug("Fields being written to (csv) catalog: %s",fieldnames)
     
     max_leng = max([ len(dictionary[k])  for k in fieldnames if type(dictionary[k])==type([]) ])
 
@@ -70,49 +66,49 @@ def dict_to_csv(columns, fieldnames=[], filename='cat.csv', mode='w', delimiter=
         if leng != max_leng:
             dictionary[k].extend(dictionary[k]*(max_leng-leng))
     
-    catFile = open(filename,mode);
-    catObj = csv.writer(catFile, delimiter=delimiter);
-    catObj.writerow(fieldnames);
+    catFile = open(filename,mode)
+    catObj = csv.writer(catFile, delimiter=delimiter)
+    catObj.writerow(fieldnames)
     
-    LL = [ dictionary[k] for k in fieldnames ];
+    LL = [ dictionary[k] for k in fieldnames ]
     for _row in zip(*LL):
-        catObj.writerow(_row);
-    catFile.close();
+        catObj.writerow(_row)
+    catFile.close()
 
-    return True
+    return
     
 # ---
-
 def dict_from_csv(filename, fieldnames, header_lines=1, delimiter=',',dialect='excel'):
-    """ Read CSV catalog and return a dictionary with the contents
+    """
+    Read CSV catalog and return a dictionary with the contents
     
-    It is assumed that the first line to be read is the catalog header,
-    where the column names are defined('fieldnames'), that's why
-    'header_lines'==1 by default. (Although header lines are *not* read)
+    dict_from_csv( filename, fieldnames, ...) -> {}
+    
+     To each column data read from 'filename' is given the respective 'fieldnames' entry.
+    (So that is expected that len(filednames) == #filename-columns)
+     It is expected that the first lines of the CSV file are header lines (comments). The 
+    amount of header lines to avoid reading is given through 'header_lines'. 'delimiter' 
+    specifies the field separators and 'dialect' is the CSV pattern used.
     
     Use 'header_lines' to remove non-data lines from the head of the
     file. Header lines are taken as comments and are not read.
     
     Input:
-     - filename : str
-        Name of csv catalog to read
-     - fieldnames : [str,]
-        Fieldnames to be read from catalog
-     - remove_n_lines : int
-        Number of lines to remove from the head of 'filename'
-     - delimiter : str
-        Delimiter to use between columns in 'filename'
+     - filename      str : Name of csv catalog to read
+     - fieldnames  [str] : Fieldnames to be read from catalog
+     - header_lines  int : Number of lines to remove from the head of 'filename'
+     - delimiter     str : Delimiter to use between columns in 'filename'
+     - dialect       str : CSV file fine structure (See help(csv) for more info)
     
     Output:
-     -> {*fieldnames}
-    
+     - {*fieldnames}
     
     Example:
 
-    >>> import os    
-    >>> os.system('grep -v "^#" /etc/passwd | head -n 3 > test.asc')
-    0
-    >>> s = os.system('cat test.asc')
+#    >>> import os 
+#    >>> os.system('grep -v "^#" /etc/passwd | head -n 3 > test.asc')
+#    0
+#    >>> s = os.system('cat test.asc')
     nobody:*:-2:-2:Unprivileged User:/var/empty:/usr/bin/false
     root:*:0:0:System Administrator:/var/root:/bin/sh
     daemon:*:1:1:System Services:/var/root:/usr/bin/false
@@ -120,6 +116,7 @@ def dict_from_csv(filename, fieldnames, header_lines=1, delimiter=',',dialect='e
     >>> D = dict_from_csv('test.asc',['user','star'],delimiter=':',header_lines=0)
     >>>
 
+    ---
     """
 
     # Initialize output dictionary
@@ -140,9 +137,9 @@ def dict_from_csv(filename, fieldnames, header_lines=1, delimiter=',',dialect='e
     return Dout;
 
 # ---
-
 def write_ds9cat(x,y,size=20,marker='circle',color='red',outputfile='ds9.reg',filename='None'):
-    """ Function to write a ds9 region file given a set of centroids
+    """
+    Function to write a ds9 region file given a set of centroids
     
     It works only with a circular 'marker' with fixed
     radius for all (x,y) - 'centroids' - given.

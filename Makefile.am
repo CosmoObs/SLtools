@@ -1,6 +1,6 @@
 ## Comentario nos Makefiles.am sao com #
 
-SUBDIRS = perturbative_method/src/
+SUBDIRS = perturbative_method/src/  numerical_methods/src/
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = sltoolsc.pc

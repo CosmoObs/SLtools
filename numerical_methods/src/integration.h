@@ -12,7 +12,8 @@
 #ifndef QUADRATURE_INTEGRATION_H
 #define QUADRATURE_INTEGRATION_H
 
-#include <cmath> 
+#include "config.h"
+#include <math.h> 
 #define PI 3.1415926535897931159979634685441851615905761718750
 
 /**  Given the lower and upper limits of integration x1 and x2, and given n, this routine returns arrays x[1..n] and w[1..n] of length n, containing the abscissas and weights of the Gauss-Legendre n-point quadrature formula.
