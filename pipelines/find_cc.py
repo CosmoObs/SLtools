@@ -76,8 +76,8 @@ def run(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, ga
 	 - gravlens_input_file    <str> : name of the input file used to run gravlens
 	 - rad_curves_file        <str> : name of the file containing the radial curves (optional - see write_to_file) 
 	 - tan_curves_file        <str> : name of the file containing the radial curves (optional - see write_to_file) 
-	 - curves_plot            <str> : the name of the generated plot file (including the format, ex. 
-					'curves_plot.png'). To see the formats available see matplotlib.pyplot help 
+	 - curves_plot            <str> : the name of the generated plot file (including the extension, ex. 
+					'curves_plot.png'). To see the extensions available see matplotlib.pyplot help 
 					(default='crit_curves.png'). If curves_plot=0 means no plots.
 	 - show_plot              <int> : use 0 for 'no screen display' (default) and 1 for display on 
 					  the screen.

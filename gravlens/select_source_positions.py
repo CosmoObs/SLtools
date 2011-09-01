@@ -24,6 +24,7 @@ import logging
 from sltools.pipelines.find_cc import run as run_find_cc
 from sltools.gravlens.init_gravlens_parameter import lens_parameters
 from sltools.coordinate.translation_and_rotation import translate_and_rotate_coord_system
+from sltools.gravlens.find_cc import plot_cc
 
 #========================================================================================================
 # find mu_t and mu_r for a point
@@ -83,14 +84,14 @@ def get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, 
 
 
 #=======================================================================================================
-def compute_deformation_rhombus(thetal, tan_caustic_x, tan_caustic_y, control_rhombus=1):
+def compute_deformation_rhombus(theta_L, tan_caustic_x, tan_caustic_y, control_rhombus=1):
     """
     Determines the 4 cusps of the tangential caustic and determines a rhombus that encloses it. 
 
     The rhombus vertices are on distances proportional to the cusp distance.
 
     Input:
-     - thetal               float : inclination (in degrees) of the lens with respect to the vertical
+     - theta_L               float : inclination (in degrees) of the lens with respect to the vertical
                                     (counterclockwise)
      - tan_caustic_x  [float,...] : list of x coordinates of the tangential caustic
      - tan_caustic_y  [float,...] : list of y coordinates of the tangential caustic
@@ -103,13 +104,13 @@ def compute_deformation_rhombus(thetal, tan_caustic_x, tan_caustic_y, control_rh
 
     """
 
-    # converts tan_caustic_x and tan_caustic_y to the system of coordinates in which thetal = 0 (to find the 4 cusps)
+    # converts tan_caustic_x and tan_caustic_y to the system of coordinates in which theta_L = 0 (to find the 4 cusps)
     # xcrit0 = cos(theta)*x + sin(theta)*y
     # ycrit0 = -sin(theta)*x + cos(theta)*y
-    #theta = thetal*(math.pi)/180. # convert thetal to radians
+    #theta = theta_L*(math.pi)/180. # convert theta_L to radians
     tan_caustic_x = np.array(tan_caustic_x)
     tan_caustic_y = np.array(tan_caustic_y)
-    xcrit0, ycrit0 = translate_and_rotate_coord_system(tan_caustic_x, tan_caustic_ y, 0, 0, -theta, angle='degree')
+    xcrit0, ycrit0 = translate_and_rotate_coord_system(tan_caustic_x, tan_caustic_y, 0, 0, -theta_L, angle='degree')
     #global cusp1, cusp2, cusp3, cusp4, xlosango, ylosango
     cusp1 = np.argmax(ycrit0)
     cusp2 = np.argmax(xcrit0)
@@ -134,7 +135,7 @@ def source_positions(minimum_distortion, deformation_rhombus, nsources, inputlen
 
     """ Determines the source centers that are candidates to generate an arc. """
 
-    # source_positions must be divided. a function to calculate the random points; a function to calculate
+    # source_positions must be divided: a function to calculate the random points; a function to calculate
     # the point images of a list of sources, a function to calculate mu_t and mu_r of a list of points (done!)
     # and maybe a function to identify which sources will be selected
 
@@ -211,7 +212,7 @@ def source_positions(minimum_distortion, deformation_rhombus, nsources, inputlen
 #
 # Given the lens parameters and source surface density, identifies the source_positions that have a local distortion above minimum_distortion 
 # 
-#@param lens_model (kappas, xsl,el,thetal) currently a dictionary with the lens model parameters 
+#@param lens_model (kappas, xsl,el,theta_L) currently a dictionary with the lens model parameters 
 #@param gravlens_params (set of gravlens parameters: gridhi1, maxlev, etc)
 #@param source_selector_control_params (minimum_distortion, control_rhombus) 
 #@param minimum_distortion : minimum ratio of the tangential and radial magnifications to an image be considered an arc 
@@ -226,7 +227,7 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
     """
 
     # find and separate critical curves
-    out_run_find_cc = run_find_cc(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit)
+    out_run_find_cc = run_find_cc(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot=0, show_plot=show_plot, write_to_file=write_to_file, max_delta_count=max_delta_count, delta_increment=delta_increment, grid_factor=grid_factor, grid_factor2=grid_factor2, max_iter_number=max_iter_number, min_n_lines=min_n_lines, gridhi1_CC_factor=gridhi1_CC_factor, accept_res_limit=accept_res_limit)
 
     logging.info('Ran pipelines.find_cc.run and obtained and separated the caustic and critical curves')
 
@@ -274,6 +275,10 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
     logging.debug('Selected positions for finite sources: %s' % str(source_centers) )
     logging.debug('Images of the point sources: %s' % str(image_centers) )
     logging.debug('Corresponding mu_t and mu_r for each image: %s' % str(image_distortions) )
+
+    src_x, src_y = zip(*source_centers)
+    img_x, img_y = zip(*image_centers)
+    plot_cc(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot=0, src_x=src_x, src_y=src_y, img_x=img_x, img_y=img_y )
 
     #from arcgeneratormodules import grafico
     #grafico(tan_caustic_x,tan_caustic_y, rad_caustic_x,rad_caustic_y, usq2, vsq2, source_centers, cusp1, cusp2, cusp3, cusp4, xlosango, ylosango, usq, vsq, halo_id+'1')
