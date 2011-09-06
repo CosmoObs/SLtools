@@ -47,9 +47,10 @@ def three_points_to_circle_2(p1, p2, p3):
 	 - p3 [float,float] : pair (x,y) of coordinates of the 3rd point
 
 	Output: 
-	 - float : circunference radius
 	 - float : x position of the circunference center
 	 - float : y position of the circunference center
+         - float : circunference radius
+
 
 	"""
 

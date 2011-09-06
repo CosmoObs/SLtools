@@ -4,9 +4,10 @@
 # Carlos Brandt - chbrandt@lncc.br
 # ==================================
 
-"""Package to deal with image's copy/cuts"""
+"""Package to make FITS image copy/cuts and update their header"""
 
-##@package imcp
+##@package image
+##@file imcp
 #
 #
 # This package contains functions to cutout smaller regions
@@ -43,7 +44,7 @@ import numpy as np;
 import sltools;
 from sltools.string import regexp;
 from sltools.image import segmentation_ids;
-from sltools.image import header_funcs as _hf_;
+from sltools.image import header_funcs as hf;
 
 
 # =================================================================================================================
@@ -51,7 +52,7 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
     """
     Do a snapshot from given fits image.
 
-    cutout( img ... ) -> (ndarray, header)
+    cutout( ndarray, ...) -> (ndarray, header)
 
     The function can deal with 'pixel' and 'degrees' cordinate units. As input, besides the image FITS 
     filename (input_file), it receives a central position (xo,yo) and side lengths (x_size,y_size) for
@@ -67,33 +68,15 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
 
 
     Input:
-     - img : numpy.ndarray(ndim=2,dtype=float)
-        Image array
-
-     - hdr : FITS header instance
-        Image header
-
-     - coord_unit : <str>: 'pixel','degrees'
-         Position (xo,yo) units.
-
-     - xo : int
-        Centroid (horizontal) position for cutting window
-
-     - yo : int
-        Centroid (vertical) position for cutting window
-
-     - size_unit : <str>: 'pixel','degrees'
-        Window sizes (x_size,y_size) units
-
-     - x_size : int
-        Horizontal cutting window size
-
-     - y_size : int
-        Vertical cutting window size
-
-     - mask : numpy.where() output like
-        Tuple with index arrays for particular region of interest
-
+     - img        numpy.ndarray : Image array (ndim=2,dtype=float)
+     - hdr        pyfits.header : Image (FITS) header
+     - coord_unit           str : Position (xo,yo) units ('pixel','degrees')
+     - xo                   int : Centroid (horizontal) position for cutting window
+     - yo                   int : Centroid (vertical) position for cutting window
+     - size_unit            str : Window sizes (x_size,y_size) units ('pixel','degrees')
+     - x_size               int : Horizontal cutting window size
+     - y_size               int : Vertical cutting window size
+     - mask   (ndarray,ndarray) : Tuple with index arrays (Output like numpy.where())
 
     Output:
      - (ndarray, header) : Resultant image array and (updated) header instance
@@ -123,7 +106,7 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
 
 
     if ( hdr ):
-        dimpix = _hf_.read_pixelscale( hdr );
+        dimpix = hf.get_pixelscale( hdr );
         logging.info("Pixel_scale: %s",dimpix);
 
     y_img_size, x_img_size = imagem.shape;
@@ -195,7 +178,7 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
     # If header, update pixel<->sky information..
     #
     if ( hdr ):
-        hdr = _hf_.update_coordinates(hdr.copy(), x_ini, y_ini);
+        hdr = hf.update_coordinates(hdr.copy(), x_ini, y_ini);
         hdr.update('NAXIS1',x_cut_size);
         hdr.update('NAXIS2',y_cut_size);
 
@@ -234,7 +217,7 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
     """
     Identify objects on given images by their IDs and return object images
 
-    segstamp( segimg, objID ... )
+    segstamp( segimg, objID, ...) -> (ndarray,header)
 
     By default, if 'objIDs' is not given, postamp will scan segmentation image 
     'seg_img' for the list of object ID numbers. If 'objIDs' is given, those IDs 
@@ -249,23 +232,12 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
     object, is returned.
 
     Input:
-     - segimg : numpy.ndarray(ndim=2,dtype=int)
-        Segmented image (e.g, SEx's segmentation image)
-        
-     - objIDs : [int,]
-        List with object IDs of interest in 'segimg'.
-
-     - objimg : numpy.ndarray(ndim=2,dtype=float)
-        Objects image (e.g, SEx's objects image)
-
-     - hdr : FITS header instance
-        FITS header to be updated for each poststamp
-        
-     - increase : float
-        Value for poststamp resizing (> 0)
-        
-     - relative_increase : bool
-        Is 'increase' a additive value (default,False) or multiplicative one(True)?
+     - segimg          ndarray : Segmented image (ndim=2,dtype=int)
+     - objIDs            [int] : List with object IDs of interest in 'segimg'.
+     - objimg          ndarray : Objects image (ndim=2,dtype=float)
+     - hdr       pyfits.header : FITS header to be updated for each poststamp
+     - increase          float : Value for poststamp resizing (> 0)
+     - relative_increase  bool : Is 'increase' a additive value (default,False) or multiplicative one(True)?
         
 
     Output:
@@ -276,8 +248,7 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
 
 
     _id = objID;
-
-    ind = segobjs.create_IDmask(segimg, _id);
+    ind = segobjs.create_IDmask(segimg, objID);
 
     y_min = min( ind[0] );
     x_min = min( ind[1] );
@@ -289,16 +260,12 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
     x_size = max( x_idx ) + 1;
     
    
-
     if (connected == True ):		
       ind=elliminate_disconected(ind)
  
-
     # Central pixel on original image:
     yo = y_size/2 + y_min;
     xo = x_size/2 + x_min;
-
-
 
     if ( increase != 0 ):		
         if (relative_increase == True):
@@ -316,7 +283,32 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
     return ( image_out, hdr );
 
 # ---
+def select(segimg,objimg,objID):
+    """
+    Select pixels from a specific ID and outputs an array with the same input size
+    
+    Input:
+     - segimg  ndarray : Segmented image array (ndim=2,dtype=int)
+     - objimg  ndarray : Objects (observed) image array (ndim=2,dtype=float)
+     - objID       int : Object ID to request output for
+    
+    Output:
+     - outimg  ndarray : Same size (segimg) array with non-null pixels only for objID
+    
+    ---
+    """
 
+    outimg = np.zeros(segimg.shape)
+    
+    indxs = np.where(segimg==objID)
+    if not len(indxs):
+        return None
+    
+    outimg[indxs] = objimg[indxs]
+    
+    return outimg
+
+# ---
 
 def separate_disconected(ind, high_area=False):
 
