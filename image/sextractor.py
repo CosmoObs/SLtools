@@ -62,8 +62,8 @@ def se_presets(instrument):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
-    elif instrument == 'DC5':
-        _dic = {
+   elif instrument == 'DC5':
+       _dic = {
             'FILTER_NAME' : 'default.conv',
             'STARNNW_NAME' : 'default.nnw',
             'DETECT_TYPE' : 'CCD',
@@ -98,8 +98,8 @@ def se_presets(instrument):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
-    elif instrument == 'HST':
-        _dic = {
+   elif instrument == 'HST':
+       _dic = {
             'FILTER_NAME' : 'default.conv',
             'STARNNW_NAME' : 'default.nnw',
             'DETECT_TYPE' : 'CCD',
@@ -135,8 +135,8 @@ def se_presets(instrument):
             };
 
 
-    elif instrument == 'HST_Arcs':
-        _dic = {
+   elif instrument == 'HST_Arcs':
+       _dic = {
             'FILTER_NAME' : 'default.conv',
             'STARNNW_NAME' : 'default.nnw',
             'DETECT_TYPE' : 'CCD',
@@ -172,8 +172,8 @@ def se_presets(instrument):
             };
 
 
-    elif instrument == 'CFHT':
-        _dic = {
+   elif instrument == 'CFHT':
+       _dic = {
             'DETECT_TYPE' : 'CCD',
             'DETECT_MINAREA' : '3',
             'DETECT_THRESH' :  '3',
@@ -203,8 +203,8 @@ def se_presets(instrument):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
-    elif instrument == 'CS82':
-        _dic = {
+   elif instrument == 'CS82':
+       _dic = {
 
             'SEEING_FWHM' : '0.22',
             'THRESH_TYPE' : 'RELATIVE',
@@ -218,8 +218,8 @@ def se_presets(instrument):
             'MAG_ZEROPOINT' : '21.59'
             };
 
-    elif instrument == 'sims':
-        _dic = {
+   elif instrument == 'sims':
+       _dic = {
             'DETECT_TYPE' : 'CCD',
             'DETECT_MINAREA' : '4',
             'THRESH_TYPE' : 'ABSOLUTE',
@@ -253,11 +253,11 @@ def se_presets(instrument):
             };
 
 
-    else:
-        _dic = {};
+   else:
+       _dic = {};
 
 
-    return (_dic);
+   return (_dic);
 
 # ---
 
@@ -471,7 +471,7 @@ def flags_distribuition(hdu_cat):
     catalogs_data =hdu_cat[1].data
     for i in range(0,len(catalogs_data)):
         flag=flags_counter(hdu_cat,i+1)
-        for j in range(0,len(flag_dist)):
+        for j in range(0,len(flags_dist)):
             if int(flag[j])==1:
                     flags_dist[j]=flags_dist[j]+1
     return flags_dist     
@@ -492,7 +492,7 @@ def flags_counter(hdu_cat,_id):
 
     catalogs_data =hdu_cat[1].data
     i=_id-1
-    flag=catalogs_data[j]['FLAGS']
+    flag=catalogs_data[i]['FLAGS']
     flag=bin(flag)
     flag=str(flag)
     flag=string.replace(flag,"0b","")
@@ -501,9 +501,9 @@ def flags_counter(hdu_cat,_id):
             if int(flag)==0:
                 flags_list[0]= 1
             else:
-                if int(flag[k])==1:
-                    flags_dist[j+1]=flags_dist[j+1]+1
-    return flag_dist
+                if int(flag[j])==1:
+                    flags_list[j+1]=+1
+    return flags_list
 
 
 def read_config(SE_configfile):

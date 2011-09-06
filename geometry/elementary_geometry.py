@@ -11,14 +11,14 @@ def three_points_to_circle(p1, p2, p3):
     Function that calculates circle parameters defined by three points.
     
     Input:
-	 - p1 <list> : pair (x,y) of coordinates of the 1st point
-	 - p2 <list> : pair (x,y) of coordinates of the 2nd point
-	 - p3 <list> : pair (x,y) of coordinates of the 3rd point
+	 - p1 [float,float] : pair (x,y) of coordinates of the 1st point
+	 - p2 [float,float] : pair (x,y) of coordinates of the 2nd point
+	 - p3 [float,float] : pair (x,y) of coordinates of the 3rd point
         
     Output:
-     - <float> : center x coordinate
-     - <float> : center y coordinate
-     - <float> : circle radius
+     - float : center x coordinate
+     - float : center y coordinate
+     - float : circle radius
     """
 
     theta1,b1=define_perpendicular_bisector(p1,p2)
@@ -35,19 +35,21 @@ def three_points_to_circle_2(p1, p2, p3):
 	"""
 	Determines the circunference that passes through 3 points.
 
-	Given 3 points (x,y) on a plane, returns circunference radius and center. The method implemented
-	in this funcion is the one described in <A HREF="http://en.wikipedia.org/wiki/Circumcircle"> 
+	Given 3 points (x,y) on a plane, returns circunference radius and center. 
+        The method implemented
+	in this funcion is the one described in 
+        <A HREF="http://en.wikipedia.org/wiki/Circumcircle"> 
 	CircumcircleWikipedia</A> .
 
 	Input:
-	 - p1 <list> : pair (x,y) of coordinates of the 1st point
-	 - p2 <list> : pair (x,y) of coordinates of the 2nd point
-	 - p3 <list> : pair (x,y) of coordinates of the 3rd point
+	 - p1 [float,float] : pair (x,y) of coordinates of the 1st point
+	 - p2 [float,float] : pair (x,y) of coordinates of the 2nd point
+	 - p3 [float,float] : pair (x,y) of coordinates of the 3rd point
 
 	Output: 
-	 - <float> : circunference radius
-	 - <float> : x position of the circunference center
-	 - <float> : y position of the circunference center
+	 - float : circunference radius
+	 - float : x position of the circunference center
+	 - float : y position of the circunference center
 
 	"""
 
@@ -66,9 +68,12 @@ def three_points_to_circle_2(p1, p2, p3):
 	R = (P1_P2 * P2_P3 * P3_P1)/( 2*P1_P2_vec_P2_P3 )
 
 	# definitions
-	alpha = ( P2_P3**2 * ( ( (x1 - x2)* (x1 - x3) ) + ( (y1 - y2)* (y1 - y3) ) ) )/ (2*P1_P2_vec_P2_P3**2)
-	beta  = ( P3_P1**2 * ( ( (x2 - x1)* (x2 - x3) ) + ( (y2 - y1)* (y2 - y3) ) ) )/ (2*P1_P2_vec_P2_P3**2)
-	gamma = ( P1_P2**2 * ( ( (x3 - x1)* (x3 - x2) ) + ( (y3 - y1)* (y3 - y2) ) ) )/ (2*P1_P2_vec_P2_P3**2)
+	alpha = ( P2_P3**2 * ( ( (x1 - x2)* (x1 - x3) ) + ( (y1 - y2)* (y1 - y3) ) ) )/ \
+(2*P1_P2_vec_P2_P3**2)
+	beta  = ( P3_P1**2 * ( ( (x2 - x1)* (x2 - x3) ) + ( (y2 - y1)* (y2 - y3) ) ) )/ \
+(2*P1_P2_vec_P2_P3**2)
+	gamma = ( P1_P2**2 * ( ( (x3 - x1)* (x3 - x2) ) + ( (y3 - y1)* (y3 - y2) ) ) )/ \
+(2*P1_P2_vec_P2_P3**2)
 	# ==================================================================
 	# center (x0, y0)
 
@@ -85,15 +90,15 @@ def get_intercept_point(theta,b_t,phi,b_p):
     Function that calculates the interception point from two straight lines.
     
     Input:
-     - theta      <float> : angle defined by angular coefficient from first line.
-     - b_t        <float> : linear coeficient from the first line.
-     - phi        <float> : angle defined by angular coefficient from second line.
-     - b_p        <float> : linear coeficient from the second line.
+     - theta      float : angle defined by angular coefficient from first line.
+     - b_t        float : linear coeficient from the first line.
+     - phi        float : angle defined by angular coefficient from second line.
+     - b_p        float : linear coeficient from the second line.
    
     Output:
-     - <float> : intercept x coordinate.
-     - <float> : intercept y coordinate.
-     - <int>   : a Flag. if Flag= 1 the lines are parallels, otherwise Flag=0,
+     - float : intercept x coordinate.
+     - float : intercept y coordinate.
+     - int   : a Flag. if Flag= 1 the lines are parallels, otherwise Flag=0,
     """
 
     a_t=tan(theta)
@@ -130,15 +135,16 @@ def get_intercept_point(theta,b_t,phi,b_p):
 
 def define_perpendicular_bisector(p1,p2): 
     """
-    Function that calculates the perpendicular bisector line between two points p_i=[x_i,y_i].
+    Function that calculates the perpendicular bisector line between two points 
+    p_i=[x_i,y_i].
     
     Input:
-     - p1      <list> : first point.
-     - p2      <list> : second point.
+     - p1      [float,float] : first point.
+     - p2      [float,float] : second point.
         
     Output:
-    - <float> : angle defined by angular coefficient.
-    - <float> : linear coefficient.
+    - float : angle defined by angular coefficient.
+    - float : linear coefficient.
      
     """
 
@@ -170,12 +176,12 @@ def two_points_to_line(p1,p2):
     Function that calculates the line defined by two points  p_i=[x_i,y_i].
     
     Input:
-     - p1      <list> : first point.
-     - p2      <list> : second point.
+     - p1      [float,float] : first point.
+     - p2      [float,float] : second point.
         
     Output:
-     - <float> : angle defined by angular coefficient.
-     - <float> : linear coefficient.
+     - float : angle defined by angular coefficient.
+     - float : linear coefficient.
      
     """
 
@@ -208,11 +214,11 @@ def get_distance_from_line_to_point(p,theta,c):
     This Function calculates the distance from a line to a point.
 
     Input:
-      - p              <list>  : a point p=[x,y]. 	
-      - theta          <float> : angle defined by line angular coefficient.
-      - c              <float> : linear coefficient.
+      - p       [float,float]  : a point p=[x,y]. 	
+      - theta          float : angle defined by line angular coefficient.
+      - c              float : linear coefficient.
     Output:
-     - <float> : The distance from the line to the point p.
+     - float : The distance from the line to the point p.
 
     """
     if(theta!=2*atan(1)) and (theta!=0.):
@@ -239,12 +245,12 @@ def width_ellipse(l,area):
     Function to calculate wiidth of an ellipse of given area and length l.
 
     Input:
-     - l      <float> : the ellipse length.
-     - area      <float> : the ellipse area.
+     - l          float : the ellipse length.
+     - area       float : the ellipse area.
      
      
     Output: 
-     - <float> : the width.  
+     - float : the width.  
      
     """
 
@@ -254,14 +260,15 @@ def width_ellipse(l,area):
 
 def length_from_connected_dots(points): 
     """
-    Function to calculate the sum of distance from a previous point to the next on a list of points.
+    Function to calculate the sum of distance from a previous point to the next on 
+    a list of points.
 
     Input:
-     - points      <list> : list  of p_i points where p_i=(x_i,y_i).
+     - points  [[float,float],...] : list  of p_i points where p_i=(x_i,y_i).
      
      
     Output: 
-     - <float> : the length.  
+     - float : the length.  
      
     """
     x=[]

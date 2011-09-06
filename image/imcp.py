@@ -318,7 +318,7 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
 # ---
 
 
-def elliminate_disconected(ind, high_area=False):
+def separate_disconected(ind, high_area=False):
 
     """
     From a list of points that belongs to objects it separates in groups of connected objects. If high_area=False return a list which first index represents each object , the second and third its coordinates. if high_area=True  returns the only a list with the coordinates of the object that has greater area.

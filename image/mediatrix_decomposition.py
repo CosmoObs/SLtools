@@ -1,5 +1,5 @@
 """
-Set of functions used in Mediatrix Decomposition.
+Set of functions used in Mediatrix Decomposition data analysis.
 
 """
 
@@ -26,13 +26,20 @@ Set of functions used in Mediatrix Decomposition.
 from sltools.geometry.get_extrema_pts import get_extrema_2loops
 from numpy import where
 from math import sin, cos ,sqrt, fabs, atan, tan 
-from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, title, savefig, Circle
+from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, 
+title, savefig, Circle
 from pyfits import getdata
-from sltools.geometry.elementary_geometry import define_perpendicular_bisector, get_distance_from_line_to_point, length_from_connected_dots, two_points_to_line, three_points_to_circle, width_ellipse
+from sltools.geometry.elementary_geometry import define_perpendicular_bisector,
+get_distance_from_line_to_point, length_from_connected_dots, 
+two_points_to_line, three_points_to_circle, width_ellipse
 
 from imcp import segstamp
 
-def run_mediatrix_decomposition(image_name,image_seg_name,catalog_name,method="Brightest",alpha=1,n=-1,near_distance=(sqrt(2)/2), ids=[],graphics=False, ignore_flags=False, colors_gra={'object': "g", 'vector': "b", 'keydots': "k"},plot_title="Mediatrix Decomposition graph",show_keydots=False)
+def run_mediatrix_decomposition(image_name,image_seg_name,catalog_name,
+method="Brightest",alpha=1,n=-1,near_distance=(sqrt(2)/2), ids=[],
+graphics=False, ignore_flags=False, colors_gra={'object': "g",
+'vector': "b", 'keydots': "k"},plot_title="Mediatrix Decomposition graph",
+show_keydots=False)
     hdu_img=pyfits.open(image_name)
     hdu_seg=pyfits.open(image_seg_name)
     hdu_cat=pyfits.open(catalog_name)
@@ -46,26 +53,33 @@ def run_mediatrix_decomposition(image_name,image_seg_name,catalog_name,method="B
         i=_id-1
         for i in range(0,len(caralogos_data)):
             _id=i+1
-            _otmp,_htmp = imcp.segstamp(seg_data,_id,img_data,hdr,increase=2,connected=False)
+            _otmp,_htmp = imcp.segstamp(seg_data,_id,img_data,hdr,increase=2,
+connected=False)
             if ignore_flags==False:
                 flag=catalogs_data[i]['FLAGS']
                 if int(flags)==0:
                     
-                    mediatrix_output=run_mediatrix_decomposition_on_stamp(_otmp, method=method, alpha=alpha,n=n,
-                    near_distance=near_distance)  
+                    mediatrix_output=run_mediatrix_decomposition_on_stamp(_otmp,
+method=method, alpha=alpha,n=n,near_distance=near_distance)  
                     if graphics==True:
-                    print_mediatrix_object_graph(mediatrix_output,_otmp,show_keydots=show_keydots, colors=colors ,alpha=alpha, plot_title=plot_title, save=True) 
-                    print_mediatrix_object_circle_graph(mediatrix_output,image_dir='', show_keydots=show_keydots, 
-colors= colors, show_mediatrix_vectors=mediatrix_vectors, 
-alpha=alpha, plot_title=plot_title, save=True, save_dir='')
+                    print_mediatrix_object_graph(mediatrix_output,_otmp,
+show_keydots=show_keydots, colors=colors ,alpha=alpha, plot_title=plot_title,
+save=True) 
+                    print_mediatrix_object_circle_graph(mediatrix_output,
+image_dir='', show_keydots=show_keydots, colors= colors, 
+show_mediatrix_vectors=mediatrix_vectors,alpha=alpha, plot_title=plot_title,
+save=True, save_dir='')
             else:                
-                mediatrix_output=run_mediatrix_decomposition_on_stamp(_otmp, method=method, alpha=alpha,n=n,
-                near_distance=near_distance)
+                mediatrix_output=run_mediatrix_decomposition_on_stamp(_otmp,
+ method=method, alpha=alpha,n=n, near_distance=near_distance)
                 if graphics==True:
-                    print_mediatrix_object_graph(mediatrix_output,_otmp,show_keydots=show_keydots, colors=colors ,alpha=alpha, plot_title=plot_title, save=True) 
-                    print_mediatrix_object_circle_graph(mediatrix_output,image_dir='', show_keydots=show_keydots, 
-colors= colors, show_mediatrix_vectors=mediatrix_vectors, 
-alpha=alpha, plot_title=plot_title, save=True, save_dir='')
+                    print_mediatrix_object_graph(mediatrix_output,_otmp,
+show_keydots=show_keydots, colors=colors ,alpha=alpha, plot_title=plot_title,
+ save=True) 
+                    print_mediatrix_object_circle_graph(mediatrix_output,
+image_dir='', show_keydots=show_keydots,colors= colors, 
+show_mediatrix_vectors=mediatrix_vectors,alpha=alpha, plot_title=plot_title,
+ save=True, save_dir='')
     else:
                               
 
@@ -73,7 +87,8 @@ alpha=alpha, plot_title=plot_title, save=True, save_dir='')
                     
 
 
-def find_keydots (p1,p2,image,image_pixels=[],keydots,area, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
+def find_keydots (p1,p2,image,image_pixels=[],keydots,area, method="medium",
+alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
     Function to calculate the keydot points in Mediatrix Decomposition.
 
@@ -185,9 +200,13 @@ def find_keydots (p1,p2,image,image_pixels=[],keydots,area, method="medium",alph
 
     return keydots
 
-def run_mediatrix_decomposition_on_stamp(image, method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
+def run_mediatrix_decomposition_on_stamp(image, method="medium",alpha=1,n=-1,
+near_distance=(sqrt(2)/2)):
     """
-    Function to perform the mediatrix decomposition method on a given object. 
+    Function to perform the mediatrix decomposition method on a given object.
+
+    For further information on mediatrix decomposition see also mediatrix_decomposition 
+    high level documentation. 
 
     Input:
      - image         ndarray   : the image matrix with single object
@@ -201,8 +220,8 @@ def run_mediatrix_decomposition_on_stamp(image, method="medium",alpha=1,n=-1,nea
      
     Output:
      - {'origin': [[float,float],...] , 'end': [[float,float],...],
-       'center' : [float,float], 'circle_params' : [[float,float],[float,float],
-       [float,float]} : 
+       'center' : [float,float], 'circle_params' : [[float,float],
+       [float,float],[float,float]} : 
        Dictionary structure. For keys 'origin' and 'end' see 
        image.mediatrix_decomposition.mediatrix_vectors. The 'center' key is 
        the object center (x,y) defined by the first mediatrix point in
@@ -217,7 +236,8 @@ def run_mediatrix_decomposition_on_stamp(image, method="medium",alpha=1,n=-1,nea
     p1=[pixels[0][e_1],pixels[1][e_1]] # the extreme points p_1 and p_3
     p3=[pixels[0][e_2],pixels[1][e_2]]
     keydots=[p1,p2]
-    keydots=find_keydots(p1,p3,pixels,image,keydots,Area, method=method,alpha=alpha,n,near_distance=near_distance)
+    keydots=find_keydots(p1,p3,pixels,image,keydots,Area, method=method,
+alpha=alpha,n,near_distance=near_distance)
     mediatrix_vectors=find_mediatrix_vectors(keydots)
     medium=int(float(len(keydots))/2)
     mediatrix_vectors['center']=keydots[medium]
@@ -233,9 +253,11 @@ def run_mediatrix_decomposition_on_stamp(image, method="medium",alpha=1,n=-1,nea
     return mediatrix_vectors
 
 
-def get_length_from_mediatrix(image_name,image_dir='', method="medium",alpha=1,n=-1,near_distance=(sqrt(2)/2)):
+def get_length_from_mediatrix(image_name,image_dir='', method="medium",
+alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     """
-    Function to calculate the length of an object using the Mediatrix Decomposition.
+    Function to calculate the length of an object using the Mediatrix
+ Decomposition.
 
     The length is defined as the sum of the distances between the keydots.
 
@@ -257,7 +279,8 @@ def get_length_from_mediatrix(image_name,image_dir='', method="medium",alpha=1,n
     p1=[pixels[0][E1],pixels[1][E1]]
     p2=[pixels[0][E2],pixels[1][E2]]
     keypoints=[p1,p2]
-    keypoints=find_keydots(p1,p2,pixels,image,keypoints,Area, method="brightest",alpha=alpha,near_distance=near_distance)
+    keypoints=find_keydots(p1,p2,pixels,image,keypoints,Area, method="brightest",
+    alpha=alpha,near_distance=near_distance)
     L_f=length_from_connected_dots(keypoints)
     W=width_ellipse(L_f,Area)
     
@@ -293,7 +316,8 @@ def find_mediatrix_vectors(points):
         origin_x=float(points[t][0]+points[t+1][0])/2
         origin_y=float(points[t][1]+points[t+1][1])/2
         origin=[origin_x,origin_y]
-        modulus=(points[t][0] - points[t+1][0])**2 + (points[t][1] - points[t+1][1])**2
+        modulus=(points[t][0] - points[t+1][0])**2 + (points[t][1] -  \
+points[t+1][1])**2
         modulus=sqrt(modulus)
 	if(coefficients[0]!=2*atan(1)):
 	    a=tan(coefficients[0])
@@ -324,7 +348,9 @@ def find_mediatrix_vectors(points):
         
     return mediatrix_vectors
 
-def print_mediatrix_object_graph(mediatrix_data,image,pixels,show_keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"},alpha=1, plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
+def print_mediatrix_object_graph(mediatrix_data,image,pixels,show_keydots=False, 
+colors= {'object': "g", 'vector': "b", 'keydots': "k"},alpha=1, 
+plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
 
     """
     Make a plot presenting the object, keydots and mediatrix vectors. 
@@ -337,12 +363,15 @@ def print_mediatrix_object_graph(mediatrix_data,image,pixels,show_keydots=False,
     - show_keydots         bool : 'True' if you want to display the keydots and 'False'
       if you do not. 
     - colors          {'objects': str, 'vector': str, 'keydots': str} :
-      set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
+      set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.
+    - alpha float : see run_mediatrix_decomposition_on_stamp input description.
+    - save bool : If save='True' it the function will save the graph.
+      If save='False'  the function will return the subplot instance.        
    
     Output:
-    - bool or matplot figure instance : If save=='True' it returns a <bool>
-      that indicates if the graph was su  if the graph was saved or 'false' if it was 
-      not. If save=='False' retunrs the subplot instance.  
+    - bool or matplot subplot instance : If save='True' it returns a bool
+      that indicates if the graph was saved or 'false' if it was 
+      not. If save='False' retunrs the subplot instance.  
      
    
          
@@ -550,12 +579,14 @@ def choose_near_point(nearsX,nearsY,image,method='brightest'):
 
 def pick_near_points(theta,b,object_pixels,near_distance): 
     """
-    From a sample of points this function returns the ones that are close to the perpendicular bisector.
+    From a sample of points this function returns the ones that are close to the 
+perpendicular bisector.
 
     Input:
      - theta           float : straight-line angle with respect to the x axis.
      - b               float : linear coefficient of the line.
-     - object_pixels   [[float],[float]] : list that represent the object pixels e.g. [x[i],y[i]].
+     - object_pixels   [[float],[float]] : list that represent the object pixels 
+       e.g. [x[i],y[i]].
      - near_distance   float : maximum distance to the perpendicular bisector.
      
     Output:
