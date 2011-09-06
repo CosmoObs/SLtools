@@ -2,13 +2,12 @@
 External dependencies to install sltools
 ============================================
 
-Before installing sltools you need to instal:
+Before installing sltools you need to install:
 
-- Python 2.5 or 2.6 (sltools was not tested with Python 3.0)
+- Python 2.5 or 2.6
 - Other Python packages: numpy and matplotlib
 - Python development files (python-dev)
-- gcc, GNU Compiler Collection 
-- g++
+- gcc and g++ GNU Compiler Collection 
 - swig
 
 To install these dependencies you can install the packages from 
