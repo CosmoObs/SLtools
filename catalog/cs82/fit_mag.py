@@ -1,4 +1,4 @@
-ffrom __future__ import division
+from __future__ import division
 import sys
 import os
 import numpy as np
