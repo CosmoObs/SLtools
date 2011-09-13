@@ -8,6 +8,18 @@ from scipy import optimize
 import collections
 
 
+def bin_mag_data(mag_data, bin_size, m_inf):
+
+    bin_vals = np.arange(m_inf, mag_data.max(), bin_size)
+
+    N, m = np.histogram(data, bins = bin_vals)
+
+    binned_data = np.array(m, N, np.sqrt(N))
+
+    return binned_data
+
+
+
 def mag_function(m,a,b):
 
     if type(m) != 'numpy.ndarray':
