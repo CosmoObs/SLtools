@@ -41,7 +41,8 @@
 
 double f1_pe(f_type2 alpha_in, double R_E, double theta, double pert_params[]){
     double pot_params[]={pert_params[2],pert_params[3]};
-    double eps=pert_params[0], a_1eps,a_2eps;
+    double eps=pert_params[0];
+    double a_1eps = 0.0, a_2eps = 0.0;
     int iflag=pert_params[1];
 
     if(iflag==1){
@@ -84,7 +85,8 @@ double f1_pe(f_type2 alpha_in, double R_E, double theta, double pert_params[]){
 
 double df0dtheta_pe(f_type2 alpha_in,double R_E, double theta, double pert_params[]){
     double pot_params[]={pert_params[2],pert_params[3]};
-    double eps=pert_params[0], a_1eps,a_2eps;
+    double eps=pert_params[0];
+    double a_1eps = 0.0, a_2eps = 0.0;
     int iflag=pert_params[1];
 
     if(iflag==1){
@@ -136,7 +138,8 @@ double df0dtheta_pe(f_type2 alpha_in,double R_E, double theta, double pert_param
 
 double d2f0dtheta2_pe(f_type2 alpha_in,f_type2 shear_in, double R_E, double theta, double pert_params[]){
     double pot_params[]={pert_params[2],pert_params[3]};
-    double eps=pert_params[0], a_1eps,a_2eps;
+    double eps=pert_params[0];
+    double a_1eps = 0.0, a_2eps = 0.0;
     int iflag=pert_params[1];
 
     if(iflag==1){
