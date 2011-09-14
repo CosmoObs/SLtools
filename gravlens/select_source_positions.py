@@ -87,7 +87,7 @@ def get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, 
 # find point images of given point sources
 def get_point_images(x, y, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, gravlens_input_file='findimg_input.txt', gravlens_output_file='findimg_out.txt', keep_files=False):
     """
-    Computes the positions of point images of a list of point sources.
+    Computes the positions of point images from a list of point sources.
 
     
    Input:
