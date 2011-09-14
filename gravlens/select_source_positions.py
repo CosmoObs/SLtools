@@ -111,7 +111,7 @@ def get_point_images(x, y, lens_model, mass_scale, model_param_8, model_param_9,
 
     Output:
     ??? - x_img  [[float,float],...] : each pair has respectively the tangential and radial 
-                                          distortions of the corresponding input point (x_i,y_i) 
+                                          distortions of the corresponding input point (x_i,y_i)
 
     """
 
@@ -140,7 +140,7 @@ def get_point_images(x, y, lens_model, mass_scale, model_param_8, model_param_9,
     # ==============================================================================
 
     if keep_files == False:
-        os.system('rm -f %s %s' % (gravlens_input_file, gravlens_output_file) )
+        os.system('rm -f %s %s' % (gravlens_input_file, gravlens_output_file[:-4]+'*.txt') )
 
     return x_img, y_img, magnification, time_delay, out_file
 
