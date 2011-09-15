@@ -22,7 +22,7 @@ import logging
 
 
 from sltools.pipelines.find_cc import run as run_find_cc
-from sltools.gravlens.init_gravlens_parameter import lens_parameters
+from sltools.gravlens.init_gravlens_parameters import lens_parameters
 from sltools.coordinate.translation_and_rotation import translate_and_rotate_coord_system
 from sltools.gravlens.find_cc import plot_cc
 

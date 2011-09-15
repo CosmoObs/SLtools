@@ -6,7 +6,7 @@
 
 """ Package to deal with gravlens configuration """
 
-##@package lens_parameters
+##@package init_gravlens_parameters
 # 
 #
 # Deals with gravlens configuration. The function set_gravlens_default defines default values for 
@@ -72,7 +72,7 @@ def lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_
      - shear           <float> : 'pixel' or 'degrees' for size (x_size,y_size) values
      - theta_shear     <float> : Horizontal size (in pixels) of output image
      - gravlens_params    dict : contains the keys and values of the gravlens configuration (see default 
-                                 parameters at function set_gravlens_default,inside init_gravlens_parameter)
+                                 parameters at function set_gravlens_default,inside init_gravlens_parameters)
 
     Output:
      - <str> : a string with all the lines gravlens needs to its configuration
