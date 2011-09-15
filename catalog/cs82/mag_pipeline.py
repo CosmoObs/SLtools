@@ -1,4 +1,5 @@
 from __future__ import division
+from ast import literal_eval as lit
 import sys
 import os
 import numpy as np
@@ -17,9 +18,14 @@ def mag_pipeline(input_file, field_names, mag_inf, bin_size, gal_cut, mag99, S2N
     hdu = pyfits.open(input_file,ignore_missing_end=True)
 
     magdata = hdu[2].data.field(field_names[0])
+    magdata = magdata.astype(np.float64)
+    
     magerrdata = hdu[2].data.field(field_names[1])
+    magerrdata = magerrdata.astype(np.float64)
 
     class_star = hdu[2].data.field('CLASS_STAR')
+    class_star = class_star.astype(np.float64)
+
 
     # Get the file number
 
@@ -47,7 +53,7 @@ def mag_pipeline(input_file, field_names, mag_inf, bin_size, gal_cut, mag99, S2N
     
 
     data = magdata[stell_mask & mag99_mask] # & S2N_mask]
-
+    
 
     # Bin and cut the data
 
@@ -82,7 +88,7 @@ def mag_pipeline(input_file, field_names, mag_inf, bin_size, gal_cut, mag99, S2N
 
 if __name__ == "__main__" :
 
-    '''
+    
     from optparse import OptionParser;
 
     usage="\n  %prog [flags] [options] ??? ??? "
@@ -93,9 +99,9 @@ if __name__ == "__main__" :
 
     # parser.add_option('-f','--flag_cut', dest='flag_cut', default=False, help='bla');
 
-    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default=True, help='bla');
+    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default='True', help='bla');
 
-    parser.add_option('-i','--include_unidentified_magnitudes', dest='mag99', default=False, help='bla'); #Check this definition later
+    parser.add_option('-i','--include_unidentified_magnitudes', dest='mag99', default='False', help='bla'); #Check this definition later
 
     parser.add_option('-n','--signal2noise_cut', dest='S2N_cut', default=5, help='bla');
 
@@ -104,12 +110,14 @@ if __name__ == "__main__" :
 
     (opts,args) = parser.parse_args();
 
-    bin_size = opts.bin_size;
-    gal_cut = opts.galaxy_cut;
-    mag99 = opts.mag99;
-    S2N_cut = opts.S2N_cut;
-    stell_idx = opts.stell_idx;
+    bin_size = float(opts.bin_size);
 
+    gal_cut = (opts.gal_cut == 'True');
+    mag99 = (opts.mag99 == 'True');
+    S2N_cut = float(opts.S2N_cut);
+    stell_idx = float(opts.stell_idx);
+    
+    '''
     # if m_inf is not given, take the minimum for which N = 10.
 
     if ( opts=={} ):
@@ -123,16 +131,10 @@ if __name__ == "__main__" :
         parser.print_help();
         print "";
         sys.exit(1);
-
+    '''
 # Include here a series of tests for the optional parameters to avoid inconsistencies.
 
 # Get all the files in the given folder.
-'''
-    bin_size = 0.5;
-    gal_cut = True;
-    mag99 = False;
-    S2N_cut = 5;
-    stell_idx = 0.8;
 
     filenames = glob.glob(sys.argv[1])
 
