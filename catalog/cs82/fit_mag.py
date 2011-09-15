@@ -8,13 +8,23 @@ from scipy import optimize
 import collections
 
 
-def bin_mag_data(mag_data, bin_size, m_inf):
+def bin_mag_data(mag_data, bin_size):
 
-    bin_vals = np.arange(m_inf, mag_data.max(), bin_size)
+    bin_inf = math.floor(mag_data.min()/bin_size)*bin_size
 
-    N, m = np.histogram(data, bins = bin_vals)
+    bin_sup = math.ceil(mag_data.max()/bin_size)*bin_size
 
-    binned_data = np.array(m, N, np.sqrt(N))
+    bin_vals = np.arange(bin_inf-bin_size/2, bin_sup + bin_size/2, bin_size)
+
+    bin_vals = np.arange(bin_inf, bin_sup, bin_size)
+
+    N, m = np.histogram(mag_data, bins = bin_vals)
+
+    m = np.delete(m,len(m)-1)+bin_size/2
+
+    m = np.delete(m,len(m)-1)
+
+    binned_data = np.array([m, N, np.sqrt(N)])
 
     return binned_data
 
@@ -83,7 +93,7 @@ def find_mag_lim(cut_inf_data,fit_params):
 
 ############################################## Pseudo Main Function
 
-
+'''
 X = open(sys.argv[1]).readlines()
 
 # Use later in the main function: data = np.transpose(np.loadtxt("/home/brunomor/Documents/Trabalho/CS82/CS82_SExtractor/Maria_Python_Code_Temporary/test_data.txt"))
@@ -116,3 +126,4 @@ print p
 fit_params = list(p)
 
 print find_mag_lim(cut_inf_data,fit_params)
+'''
