@@ -16,13 +16,9 @@ def bin_mag_data(mag_data, bin_size):
 
     bin_vals = np.arange(bin_inf-bin_size/2, bin_sup + bin_size/2, bin_size)
 
-    bin_vals = np.arange(bin_inf, bin_sup, bin_size)
-
     N, m = np.histogram(mag_data, bins = bin_vals)
 
     m = np.delete(m,len(m)-1)+bin_size/2
-
-    m = np.delete(m,len(m)-1)
 
     binned_data = np.array([m, N, np.sqrt(N)])
 
