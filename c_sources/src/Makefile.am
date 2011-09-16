@@ -28,7 +28,10 @@ libsltoolsc_la_SOURCES =          \
         siep_model.h              \
         siep_model.c              \
         sis_model.h               \
-        sis_model.c
+        sis_model.c               \
+        solving_system.h          \
+        solving_system.c
+
 
 libsltoolsc_la_LIBADD = \
 	$(GLIB_LIBS) \
@@ -47,7 +50,8 @@ nobase_sltoolsc_include_HEADERS = \
         theta_find.h              \
         pseudo_elliptical_model.h \
         siep_model.h              \
-        sis_model.h
+        sis_model.h               \
+        solving_system.h
 
 sltoolsc_includedir = \
 	$(pkgincludedir)
