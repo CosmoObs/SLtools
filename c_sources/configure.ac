@@ -10,7 +10,7 @@ m4_define([sltoolsc_version],
           [sltoolsc_major_version.sltoolsc_minor_version.sltoolsc_micro_version])
           
 AC_INIT(sltoolsc, [sltoolsc_version])
-AC_CONFIG_SRCDIR([perturbative_method/src/perturbative_method.h])
+AC_CONFIG_SRCDIR([src/perturbative_method.h])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_PREREQ(2.62)
@@ -145,7 +145,7 @@ dnl ***************************************************************************
 AC_CONFIG_FILES([
 sltoolsc.pc
 Makefile
-perturbative_method/src/Makefile
+src/Makefile
 ])
 
 AC_OUTPUT

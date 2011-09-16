@@ -17,7 +17,7 @@ import pyfits
 import sys
 import string
 
-from sltools.image.get_image_limits import get_image_limits
+from sltools.image.header_funcs import get_ra_dec_limits
 from sltools.image.imcp import cutout
 
 from sltools.coordinate.wcs_conversion import radec2xy, xy2radec
@@ -42,7 +42,7 @@ def catalog2cutout_pipe(im_path, catalog_path, dim):
     
     ---
     """
-    im_lim = get_image_limits(im_path)
+    im_lim = get_ra_dec_limits(im_path)
     im_lim_xy = ( radec2xy(im_path, im_lim[0][0], im_lim[1][0]),
                   radec2xy(im_path, im_lim[0][1], im_lim[1][1]) )
 
