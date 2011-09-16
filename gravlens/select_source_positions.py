@@ -58,7 +58,7 @@ def get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, 
 
     """
 
-    inputlens, setlens, gravlens_params_updated = lens_parameters(lens_model, kappas, rs, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0.3, theta_L=theta_L, shear=0, theta_shear=0, gravlens_params={} )
+    inputlens, setlens, gravlens_params_updated = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0.3, theta_L=theta_L, shear=0, theta_shear=0, gravlens_params={} )
 
     f = open(gravlens_input_file, 'w')
     f.write(inputlens)
@@ -85,7 +85,7 @@ def get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, 
 
 #========================================================================================================
 # find point images of given point sources
-def get_point_images(x, y, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, gravlens_input_file='findimg_input.txt', gravlens_output_file='findimg_out.txt', keep_files=False):
+def lens_point_sources(x, y, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, gravlens_input_file='findimg_input.txt', gravlens_output_file='findimg_out.txt', keep_files=False):
     """
     Computes the positions of point images of a list of point sources.
 
@@ -115,7 +115,7 @@ def get_point_images(x, y, lens_model, mass_scale, model_param_8, model_param_9,
 
     """
 
-    inputlens, setlens, gravlens_params_updated = lens_parameters(lens_model, kappas, rs, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0.3, theta_L=theta_L, shear=0, theta_shear=0, gravlens_params={} )
+    inputlens, setlens, gravlens_params_updated = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0.3, theta_L=theta_L, shear=0, theta_shear=0, gravlens_params={} )
 
     # run gravlens to get the images ========================================================
     f = open(gravlens_input_file, 'w')
@@ -132,15 +132,15 @@ def get_point_images(x, y, lens_model, mass_scale, model_param_8, model_param_9,
     # we now read the files ======================================================== 
     x_img, y_img, magnification, time_delay = [], [], [], []
     for i in range (len(x)): # len(x) = len(out_file)
-        img_properties = loadtxt(out_file[i], comments='#', skiprows=1, unpack=True)
-        x_img.append(img_properties)[0]
-        y_img.append(img_properties)[1]
-        magnification.append(img_properties)[2]
-        time_delay.append(img_properties)[3]
+        img_properties = np.loadtxt(out_file[i], comments='#', skiprows=1, unpack=True)
+        x_img.append(img_properties[0])
+        y_img.append(img_properties[1])
+        magnification.append(img_properties[2])
+        time_delay.append(img_properties[3])
     # ==============================================================================
 
     if keep_files == False:
-        os.system('rm -f %s %s' % (gravlens_input_file, gravlens_output_file) )
+        os.system('rm -f %s %s' % (gravlens_input_file, gravlens_output_file[:-4]+'*.' + gravlens_output_file[-3:]) )
 
     return x_img, y_img, magnification, time_delay, out_file
 
