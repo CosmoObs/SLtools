@@ -85,9 +85,9 @@ def get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, 
 
 #========================================================================================================
 # find point images of given point sources
-def get_point_images(x, y, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, gravlens_input_file='findimg_input.txt', gravlens_output_file='findimg_out.txt', keep_files=False):
+def lens_point_sources(x, y, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, gravlens_input_file='findimg_input.txt', gravlens_output_file='findimg_out.txt', keep_files=False):
     """
-    Computes the positions of point images of a list of point sources.
+    Computes the positions of point images from a list of point sources.
 
     
    Input:
@@ -111,7 +111,7 @@ def get_point_images(x, y, lens_model, mass_scale, model_param_8, model_param_9,
 
     Output:
     ??? - x_img  [[float,float],...] : each pair has respectively the tangential and radial 
-                                          distortions of the corresponding input point (x_i,y_i) 
+                                          distortions of the corresponding input point (x_i,y_i)
 
     """
 
@@ -140,7 +140,7 @@ def get_point_images(x, y, lens_model, mass_scale, model_param_8, model_param_9,
     # ==============================================================================
 
     if keep_files == False:
-        os.system('rm -f %s %s' % (gravlens_input_file, gravlens_output_file) )
+        os.system('rm -f %s %s' % (gravlens_input_file, gravlens_output_file[:-4]+'*.txt') )
 
     return x_img, y_img, magnification, time_delay, out_file
 

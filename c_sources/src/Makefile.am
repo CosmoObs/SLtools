@@ -15,7 +15,23 @@ SUBDIRS =
 lib_LTLIBRARIES = libsltoolsc.la
 
 libsltoolsc_la_SOURCES =          \
-	hausdorff_distance.h
+	perturbative_method.h     \
+        perturbative_method.c     \
+        generate_curves.h         \
+        generate_curves.c         \
+        generate_arcs.h           \
+        generate_arcs.c           \
+        theta_find.h              \
+        theta_find.c              \
+        pseudo_elliptical_model.h \
+        pseudo_elliptical_model.c \
+        siep_model.h              \
+        siep_model.c              \
+        sis_model.h               \
+        sis_model.c               \
+        solving_system.h          \
+        solving_system.c
+
 
 libsltoolsc_la_LIBADD = \
 	$(GLIB_LIBS) \
@@ -28,7 +44,14 @@ AM_CPPFLAGS = \
 	$(GSL_CFLAGS)
 
 nobase_sltoolsc_include_HEADERS = \
-	hausdorff_distance.h
+	perturbative_method.h     \
+        generate_curves.h         \
+        generate_arcs.h           \
+        theta_find.h              \
+        pseudo_elliptical_model.h \
+        siep_model.h              \
+        sis_model.h               \
+        solving_system.h
 
 sltoolsc_includedir = \
 	$(pkgincludedir)
