@@ -132,9 +132,9 @@ def lens_point_sources(x, y, lens_model, mass_scale, model_param_8, model_param_
     # we now read the files ======================================================== 
     x_img, y_img, magnification, time_delay = [], [], [], []
     for i in range (len(x)): # len(x) = len(out_file)
-        img_properties = np.loadtxt(out_file[i], comments='#', skiprows=1, unpack=True)
-        x_img.append(img_properties[0])
-        y_img.append(img_properties[1])
+        img_properties = np.loadtxt(out_file[i], comments='#', skiprows=1, unpack=True) # ??? tratar aqui para se nao houver nenhuma imagem !!!
+        x_img.append( list(np.array(img_properties[0], ndmin=1)) ) # I transform to list so sum(x_img, []) will flatten this list
+        y_img.append( list(np.array(img_properties[1], ndmin=1)) ) # I transform to list so sum(y_img, []) will flatten this list
         magnification.append(img_properties[2])
         time_delay.append(img_properties[3])
     # ==============================================================================
@@ -214,7 +214,10 @@ def source_positions(minimum_distortion, deformation_rhombus, nsources, lens_mod
     x_img, y_img, magnification, time_delay, out_file = lens_point_sources(x_src, y_src, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, gravlens_img_input_file, gravlens_img_output_file, keep_img_files)
 
     # now, x_img 
-    distortions = get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, gravlens_mag_input_file, gravlens_mag_output_file, keep_mag_files)
+
+    x_img_temp, y_img_temp = sum(x_img, []), sum(y_img, []) # flattens the list (1d)
+
+    distortions = get_distortions(x_img_temp, y_img_temp, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, gravlens_mag_input_file, gravlens_mag_output_file, keep_mag_files)
 
     #====================================================================================================
 
