@@ -56,9 +56,10 @@ def convert_sexag2deg(ra,dec):
 	dec_d,dec_min,dec_sec = dec
 
 	dec_signal = "+"
-	if float(dec_d) < 0:
+	if "-" in dec_d:
 		dec_signal = "-"
 		dec_d = -1. *float(dec_d)
+
 	
 
 	ra_deg = (((((float(ra_sec) / 60.0) + float(ra_min)) / 60.0) + float(ra_h)) / 24.0) * 360.0
