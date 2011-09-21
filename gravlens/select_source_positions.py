@@ -132,7 +132,7 @@ def lens_point_sources(x, y, lens_model, mass_scale, model_param_8, model_param_
     # we now read the files ======================================================== 
     x_img, y_img, magnification, time_delay = [], [], [], []
     for i in range (len(x)): # len(x) = len(out_file)
-        img_properties = np.loadtxt(out_file[i], comments='#', skiprows=1, unpack=True)
+        img_properties = np.loadtxt(out_file[i], comments='#', skiprows=1, unpack=True) # , ndmin=4
         if len(img_properties) == 0: # in the case no images were found (means that the grid is not big enough)
             x_img.append([]); y_img.append([]); magnification.append([]); time_delay.append([])
         else:
