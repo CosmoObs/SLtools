@@ -20,7 +20,7 @@ import numpy as np
 import pyfits
 import random
 
-from sltools.gravlens.init_gravlens_parameter import lens_parameters
+from sltools.gravlens.init_gravlens_parameters import lens_parameters
 from sltools.pipelines.find_cc import run as run_find_cc
 from sltools.gravlens.find_cc import plot_cc
 from sltools.image.imcp import elliminate_disconected as elliminate_disconected

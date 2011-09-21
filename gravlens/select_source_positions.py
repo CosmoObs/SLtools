@@ -22,7 +22,7 @@ import logging
 
 
 from sltools.pipelines.find_cc import run as run_find_cc
-from sltools.gravlens.init_gravlens_parameter import lens_parameters
+from sltools.gravlens.init_gravlens_parameters import lens_parameters
 from sltools.coordinate.translation_and_rotation import translate_and_rotate_coord_system
 from sltools.gravlens.find_cc import plot_cc
 
@@ -58,7 +58,7 @@ def get_distortions(x, y, lens_model, mass_scale, model_param_8, model_param_9, 
 
     """
 
-    inputlens, setlens, gravlens_params_updated = lens_parameters(lens_model, kappas, rs, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0.3, theta_L=theta_L, shear=0, theta_shear=0, gravlens_params={} )
+    inputlens, setlens, gravlens_params_updated = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params )
 
     f = open(gravlens_input_file, 'w')
     f.write(inputlens)
@@ -115,7 +115,7 @@ def lens_point_sources(x, y, lens_model, mass_scale, model_param_8, model_param_
 
     """
 
-    inputlens, setlens, gravlens_params_updated = lens_parameters(lens_model, kappas, rs, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0.3, theta_L=theta_L, shear=0, theta_shear=0, gravlens_params={} )
+    inputlens, setlens, gravlens_params_updated = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params )
 
     # run gravlens to get the images ========================================================
     f = open(gravlens_input_file, 'w')
@@ -132,15 +132,19 @@ def lens_point_sources(x, y, lens_model, mass_scale, model_param_8, model_param_
     # we now read the files ======================================================== 
     x_img, y_img, magnification, time_delay = [], [], [], []
     for i in range (len(x)): # len(x) = len(out_file)
-        img_properties = loadtxt(out_file[i], comments='#', skiprows=1, unpack=True)
-        x_img.append(img_properties)[0]
-        y_img.append(img_properties)[1]
-        magnification.append(img_properties)[2]
-        time_delay.append(img_properties)[3]
+        img_properties = np.loadtxt(out_file[i], comments='#', skiprows=1, unpack=True) # , ndmin=4
+        if len(img_properties) == 0: # in the case no images were found (means that the grid is not big enough)
+            x_img.append([]); y_img.append([]); magnification.append([]); time_delay.append([])
+        else:
+            x_img.append( list(np.array(img_properties[0], ndmin=1)) ) # I transform to list so sum(x_img, []) will flatten this list
+            y_img.append( list(np.array(img_properties[1], ndmin=1)) ) # I transform to list so sum(y_img, []) will flatten this list
+            magnification.append(img_properties[2])
+            time_delay.append(img_properties[3])
     # ==============================================================================
 
     if keep_files == False:
-        os.system('rm -f %s %s' % (gravlens_input_file, gravlens_output_file[:-4]+'*.txt') )
+        os.system('rm -f %s %s' % (gravlens_input_file, gravlens_output_file[:-4]+ '*.' + gravlens_output_file[-3:]) )
+
 
     return x_img, y_img, magnification, time_delay, out_file
 
@@ -193,7 +197,7 @@ def compute_deformation_rhombus(theta_L, tan_caustic_x, tan_caustic_y, control_r
  
 
 #=======================================================================================================
-def source_positions(minimum_distortion, deformation_rhombus, nsources, inputlens):
+def source_positions(minimum_distortion, deformation_rhombus, nsources, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=(0,0), e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, gravlens_mag_input_file='gravlens_magtensor_in.txt', gravlens_mag_output_file='gravlens_magtensor_out.txt', keep_mag_files=False, gravlens_img_input_file='findimg_input.txt', gravlens_img_output_file='findimg_out.txt', keep_img_files=False):
 
     """ Determines the source centers that are candidates to generate an arc. """
 
@@ -205,67 +209,44 @@ def source_positions(minimum_distortion, deformation_rhombus, nsources, inputlen
     x_vert_2, y_vert_2 = deformation_rhombus[1] # vert_2 : upper right corner
 
     #GENERATE RANDOM POINTS NEAR THE CAUSTIC ------------------------------------------------------------
-    usq = np.random.uniform(x_vert_1, x_vert_2, nsources) # x coord of a point inside the square, but outside the rhombus
-    vsq = np.random.uniform(y_vert_1, y_vert_2, nsources) # y coord of a point inside the square, but outside the rhombus
+    x_src = np.random.uniform(x_vert_1, x_vert_2, nsources) # x coord of a point inside the square, but outside the rhombus
+    y_src = np.random.uniform(y_vert_1, y_vert_2, nsources) # y coord of a point inside the square, but outside the rhombus
 
     ########### DETERMINE WHICH CENTERS HAS mu_t/mu_r > minimum_distortion IN ORDER TO GENERATE SERSIC SOURCES IN THESE CENTERS ############
 
-    f = open('findimginput.txt', 'w')
-    f.write(inputlens)
-    for i in range (0,len(usq)): # determine the positions of the images of the source
-        #f = open('findimginput.txt', 'a')
-        f.write('findimg %0.6f %0.6f findimgoutput%05d.txt\n'  % ( usq[i],vsq[i], i ))
-    f.close()
-    # runs gravlens to obtain the images of the positions inside the rhombus (usq,vsq)
-    os.system('gravlens findimginput.txt > /dev/null')
-    f1 = open('gravlensmagtensorcorte.txt', 'w')
-    f1.write(inputlens)
-    imagens = [] # contains the number of images of the source j
-    image_positions = [] # image_positions[i][j] is the (x,y) position of the image j of the source i
-    for i in range (0,len(usq)):
-        filemag = open('findimgoutput%05d.txt' % i , 'r').readlines()
-        imagens.append(len(filemag)-2)
-        image_positions.append([])
-        for j in range (2,len(filemag)):    
-            f1.write('magtensor %0.6f %0.6f\n' % ( float(filemag[j].split()[0]), float(filemag[j].split()[1])  ) )
-            image_positions[i].append( [float(filemag[j].split()[0]), float(filemag[j].split()[1])] )
-    # if gravlens does not find any images, the grid is not big enough
-    if 0 in imagens and len(imagens) != 0:
-        logging.debug( 'There are %d point images outside the grid' % imagens.count(0) )
+    x_img, y_img, magnification, time_delay, out_file = lens_point_sources(x_src, y_src, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, gravlens_img_input_file, gravlens_img_output_file, keep_img_files)
+
+    if [] in x_img and len(x_img) != 0:
+        logging.debug( 'There are %d point images outside the grid' % x_img.count([]) )
         return False
-    f1.close()
-    # obtain with the magtensor all the magnifications
-    os.system('gravlens gravlensmagtensorcorte.txt > saidamagtensorcorte.txt')
-    f = open('saidamagtensorcorte.txt' , 'r').readlines()
-    nlinha = len(f) - 6*(np.sum(imagens)) # I am using this to get the matrix elements without worrying about the number of lines the file has (which depends on the number of parameters of gravlens we modify). 'nlinha' is the number of lines that DON'T contain the output data of magtensor
-    source_centers = []
-    image_centers = [] # image_positions[i][j] is the (x,y) position of the image j of the source i
-    image_distortions = [] # image_distortions[i][j] is the (mu_t,mu_r) distortion of the image j of the source i
-    usq2 = []
-    vsq2 = []
-    contj = 0
-    for i in range(0,len(imagens) ): # calculates the magnifications at each point
-        mutemp = 0    
-        distortion_temp = []
-        for j in range (0,imagens[i]): # note that the index 'i' is the same as of usq
-            a11 = float(f[nlinha + (contj)*6].split()[0]) # element 11 of the mag tensor
-            a12 = float(f[nlinha + (contj)*6].split()[1]) # element 12 (=21) of the mag tensor
-            a22 = float(f[nlinha + (contj)*6 + 1].split()[1]) # element 22 of the mag tensor
-            mu_t = ( ((a11 + a22)/2.)/(a11*a22 - a12**2) - ((( (a22 - a11)/2. )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
-            mu_r = ( ((a11 + a22)/2.)/(a11*a22 - a12**2) + ((( (a22 - a11)/2. )**2 + a12**2 )**0.5 )/(abs(a11*a22 - a12**2)) )**(-1)
-            distortion_temp.append( [mu_t,mu_r] )
-            contj = contj + 1
-            if abs(mu_t/mu_r) > mutemp:
-                mutemp = abs(mu_t/mu_r)
-        if mutemp > minimum_distortion:
-            source_centers.append([usq[i], vsq[i]])
-            image_centers.append( image_positions[i] )
-            image_distortions.append( distortion_temp )
-        else:
-            usq2.append(usq[i])
-            vsq2.append(vsq[i])
-    os.system('rm -f findimgoutput*.txt')
-    return source_centers, image_centers, image_distortions  #, usq2, vsq2, cusp1, cusp2, cusp3, cusp4, xlosango, ylosango, usq, vsq
+
+    x_img_temp, y_img_temp = sum(x_img, []), sum(y_img, []) # flattens the list (1d)
+
+    distortions = get_distortions(x_img_temp, y_img_temp, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, gravlens_mag_input_file, gravlens_mag_output_file, keep_mag_files)
+
+    # now we will reshape the distortions according to x_img
+    distortions_reshaped = []
+    count = 0
+    for i in range(len(x_img)):
+        n_img = len(x_img[i])
+        distortions_reshaped.append( distortions[count:(count+n_img)] )
+        count += n_img 
+
+    # now we select only the positions in x_img etc that has at least one image with mu_t/mu_r > minimum_distortion
+    x_src_f, y_src_f, x_img_f, y_img_f, image_distortions = [], [], [], [], []
+    for i in range(len(x_img)):
+        mu_temp = 0
+        for j in range(len(x_img[i])): # j usually ranges from [1,5] (number of images of a source)
+            temp_distort = abs(distortions_reshaped[i][j][0]/distortions_reshaped[i][j][1])
+            if temp_distort > mu_temp:
+                mu_temp = temp_distort
+        if mu_temp > minimum_distortion:
+            x_src_f.append(x_src[i]); y_src_f.append(y_src[i]) 
+            x_img_f.append(x_img[i]); y_img_f.append(y_img[i]) 
+            image_distortions.append(distortions_reshaped[i])
+    
+
+    return x_src_f, y_src_f, x_img_f, y_img_f, image_distortions
 
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -281,7 +262,8 @@ def source_positions(minimum_distortion, deformation_rhombus, nsources, inputlen
 #@param control_rhombus : control parameter to define distance to cusps 
 #@param src_density_or_number
 #@return source_centers [former potarcxy] or "False" (in cases where no critical curves are found), and image_centers, image_distortions
-def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, src_density_or_number=1, minimum_distortion=0., control_rhombus=2., caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4):
+def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position=[0.,0.], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, src_density_or_number=10, minimum_distortion=0., control_rhombus=2., caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4, gravlens_mag_input_file='gravlens_magtensor_in.txt', gravlens_mag_output_file='gravlens_magtensor_out.txt', keep_mag_files=False, gravlens_img_input_file='findimg_input.txt', gravlens_img_output_file='findimg_out.txt', keep_img_files=False):
+
     """
     
     If src_density_or_number is a float (and therefore a density), nsources is given by np.random.poisson(rectangle_area*src_density_or_number )
@@ -323,30 +305,48 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
     gravlens_params['gridhi1'] =  image_plane_factor * ( (tan_CC_x[index]**2 + tan_CC_y[index]**2)**0.5 )
     inputlens, setlens, gravlens_params = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params)
     #-----------------------------------------------------------------------------------------------------------
-    source_positions_output = source_positions(minimum_distortion, deformation_rhombus, nsources, inputlens)
+    source_positions_output = source_positions(minimum_distortion, deformation_rhombus, nsources, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, gravlens_mag_input_file, gravlens_mag_output_file, keep_mag_files, gravlens_img_input_file, gravlens_img_output_file, keep_img_files)
     while source_positions_output == False:
         gravlens_params['gridhi1'] = float( gravlens_params['gridhi1'] ) * 1.15;
         logging.debug( 'loop in source_positions: gridhi1 = %f' % float( gravlens_params['gridhi1'] ) )
         inputlens, setlens, gravlens_params = lens_parameters(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params)       
-        source_positions_output = source_positions(minimum_distortion, deformation_rhombus, nsources, inputlens)
+        source_positions_output = source_positions(minimum_distortion, deformation_rhombus, nsources, lens_model, mass_scale, model_param_8, model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, gravlens_mag_input_file, gravlens_mag_output_file, keep_mag_files, gravlens_img_input_file, gravlens_img_output_file, keep_img_files)
     logging.debug( 'gridhi1 = %s' % float( gravlens_params['gridhi1'] ) )
-    source_centers = source_positions_output[0]
-    image_centers = source_positions_output[1]
-    image_distortions = source_positions_output[2]
+    
+    x_src_f, y_src_f, x_img_f, y_img_f, image_distortions = source_positions_output
 
-    logging.debug('Selected positions for finite sources: %s' % str(source_centers) )
-    logging.debug('Images of the point sources: %s' % str(image_centers) )
+    logging.debug('Selected positions for finite sources. Coordinates x: %s. Coordinates y: %s' % (str(x_src_f), str(y_src_f)) )
+    logging.debug('Images of the point sources. Coordinates x: %s. Coordinates y: %s' % (str(x_img_f), str(y_img_f)) )
     logging.debug('Corresponding mu_t and mu_r for each image: %s' % str(image_distortions) )
 
-    src_x, src_y = zip(*source_centers)
-    img_x, img_y = zip(*image_centers)
-    plot_cc(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot=0, src_x=src_x, src_y=src_y, img_x=img_x, img_y=img_y )
+
+    img_x_plot, img_y_plot = sum(x_img_f, []), sum(y_img_f, [])
+    plot_cc(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot=0, src_x=x_src_f, src_y=y_src_f, img_x=img_x_plot, img_y=img_y_plot )
 
 
-    return source_centers, image_centers, image_distortions 
+    return x_src_f, y_src_f, x_img_f, y_img_f, image_distortions 
 
 
 
+def test_select_source_positions(lens_model='nfw', mass_scale=np.random.uniform(0.03, 0.9, 1), model_param_8=np.random.uniform(34, 94, 1), model_param_9=0, model_param_10=0, galaxy_position=[0.,0.], e_L=0.4, theta_L=np.random.uniform(0, 180, 1), shear=0, theta_shear=0, gravlens_params={}, src_density_or_number=10, minimum_distortion=0., control_rhombus=2., caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4, gravlens_mag_input_file='gravlens_magtensor_in.txt', gravlens_mag_output_file='gravlens_magtensor_out.txt', keep_mag_files=False, gravlens_img_input_file='findimg_input.txt', gravlens_img_output_file='findimg_out.txt', keep_img_files=False):
+    """ 
+    Tests the pipeline select_source_positions
+    
+    The inputs are exactly the ones in select_source_positions, so are the outputs.
+    
+    All inputs have a predefined value so it is trivial to run.
+    """
 
+    from sltools.io.log import init
+
+    init(debug=True) # verbose=True)
+
+
+    for i in range( len(mass_scale)):
+        for j in range( len(model_param_8)):
+            for k in range( len(theta_L)):	
+                x_src_f, y_src_f, x_img_f, y_img_f, image_distortions = select_source_positions(lens_model, mass_scale[i], model_param_8[j], model_param_9, model_param_10, galaxy_position, e_L, theta_L, shear, theta_shear, gravlens_params, src_density_or_number, minimum_distortion, control_rhombus, caustic_CC_file, gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit, gravlens_mag_input_file, gravlens_mag_output_file, keep_mag_files, gravlens_img_input_file, gravlens_img_output_file, keep_img_files )
+
+    return x_src_f, y_src_f, x_img_f, y_img_f, image_distortions
 
 

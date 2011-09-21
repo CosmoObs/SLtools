@@ -71,7 +71,7 @@ def run(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, ga
 	 - shear                <float> : external shear amplitude
 	 - theta_shear          <float> : external shear direction (in degrees)
 	 - gravlens_params        <dic> : Contains the keys and values of the gravlens configuration 
-					  (see default parameters at function set_gravlens_default, inside init_gravlens_parameter)
+					  (see default parameters at function set_gravlens_default, inside init_gravlens_parameters)
 	 - caustic_CC_file        <str> : name of the output file with the caustic and CC positions
 	 - gravlens_input_file    <str> : name of the input file used to run gravlens
 	 - rad_curves_file        <str> : name of the file containing the radial curves (optional - see write_to_file) 
@@ -247,8 +247,8 @@ def run(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, ga
 	logging.debug('Finished separation of the curves.')
 
 	# plot
-	logging.debug('Making the plots... \n')
 	if curves_plot != 0: # curves_plot = 0 means you don't want any plots.
+		logging.debug('Making the plots... \n')
 		plot_cc(tan_caustic_x, tan_caustic_y, rad_caustic_x, rad_caustic_y, tan_CC_x, tan_CC_y, rad_CC_x, rad_CC_y, curves_plot, show_plot)
 
 
