@@ -25,7 +25,6 @@ import sltools;
 # ------------------------------------------
 def se_presets(instrument):
 
-
     if instrument == 'DC4':
         _dic = {
             'FILTER_NAME' : 'default.conv',
@@ -62,7 +61,7 @@ def se_presets(instrument):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
-   elif instrument == 'DC5':
+    elif instrument == 'DC5':
        _dic = {
             'FILTER_NAME' : 'default.conv',
             'STARNNW_NAME' : 'default.nnw',
@@ -98,7 +97,7 @@ def se_presets(instrument):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
-   elif instrument == 'HST':
+    elif instrument == 'HST':
        _dic = {
             'FILTER_NAME' : 'default.conv',
             'STARNNW_NAME' : 'default.nnw',
@@ -133,9 +132,8 @@ def se_presets(instrument):
             'SCAN_ISOAPRATIO' : '0.6',
             'VERBOSE_TYPE' : 'NORMAL'
             };
-
-
-   elif instrument == 'HST_Arcs':
+    
+    elif instrument == 'HST_Arcs':
        _dic = {
             'FILTER_NAME' : 'default.conv',
             'STARNNW_NAME' : 'default.nnw',
@@ -171,8 +169,7 @@ def se_presets(instrument):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
-
-   elif instrument == 'CFHT':
+    elif instrument == 'CFHT':
        _dic = {
             'DETECT_TYPE' : 'CCD',
             'DETECT_MINAREA' : '3',
@@ -203,7 +200,7 @@ def se_presets(instrument):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
-   elif instrument == 'CS82':
+    elif instrument == 'CS82':
        _dic = {
 
             'SEEING_FWHM' : '0.22',
@@ -218,7 +215,7 @@ def se_presets(instrument):
             'MAG_ZEROPOINT' : '21.59'
             };
 
-   elif instrument == 'sims':
+    elif instrument == 'sims':
        _dic = {
             'DETECT_TYPE' : 'CCD',
             'DETECT_MINAREA' : '4',
@@ -252,12 +249,11 @@ def se_presets(instrument):
             'VERBOSE_TYPE' : 'NORMAL'
             };
 
-
-   else:
+    else:
        _dic = {};
 
 
-   return (_dic);
+    return (_dic);
 
 # ---
 
