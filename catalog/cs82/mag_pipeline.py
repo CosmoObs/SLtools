@@ -83,7 +83,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     cut_data = fmg.cut_mag_data(binned_data, mag_inf, mag_sup)
 
 
-    # Perform fit and get limit magnitude 
+    # Perform fit
 
     a0 = 0;  # Attention! Hard-coded initial parameter values for the fit
 
@@ -92,6 +92,8 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     p = fmg.fit_mag_data(cut_data, a0, b0)
 
     fit_params = list(p)
+
+    # Get limit magnitude
 
     cut_inf_data = fmg.cut_mag_data(binned_data, mag_sup, 99)
 
