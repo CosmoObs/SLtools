@@ -32,8 +32,11 @@ libsltoolsc_la_SOURCES =          \
         solving_system.h          \
         solving_system.c          \
         root_find.h               \
-        root_find.c
-
+        root_find.c               \
+        nfw_circular_model.h      \
+        nfw_circular_model.c      \
+        pnfw_model.h              \
+        pnfw_model.h
 
 libsltoolsc_la_LIBADD = \
 	$(GLIB_LIBS) \
@@ -54,7 +57,9 @@ nobase_sltoolsc_include_HEADERS = \
         siep_model.h              \
         sis_model.h               \
         solving_system.h          \
-        root_find.h
+        root_find.h               \
+        nfw_circular_model.h      \
+        pnfw_model.h
 
 sltoolsc_includedir = \
 	$(pkgincludedir)
