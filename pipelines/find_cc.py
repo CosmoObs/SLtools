@@ -59,38 +59,39 @@ def run(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, ga
 	 - show_plot=1 shows only one plot in the screen
 
 	Input:
-	 - lens_model             <str> : Lens name (see gravlens manual table 3.1)
-	 - mass_scale           <float> : Mass scale of the lens - "parameter 1"
-	 - model_param_8        <float> : misc. lens parameter - often scale radio (depends on the lens model)
-	 - model_param_9        <float> : misc. lens parameter - often scale radio (depends on the lens model)
-	 - model_param_10       <float> : misc. lens parameter - often a power law index (depends on the lens model)
-	 - galaxy_position <list float> : [x,y] position of the lens
-	 - e_L                  <float> : lens ellipticity (default=0)
-	 - theta_L              <float> : lens position angle (in degrees) with respect to the vertical 
-					  (counterclockwise)
-	 - shear                <float> : external shear amplitude
-	 - theta_shear          <float> : external shear direction (in degrees)
-	 - gravlens_params        <dic> : Contains the keys and values of the gravlens configuration 
+	 - lens_model               str : Lens name (see gravlens manual table 3.1)
+	 - mass_scale             float : Mass scale of the lens - "parameter 1"
+	 - model_param_8          float : misc. lens parameter - often scale radio (depends on the lens model)
+	 - model_param_9          float : misc. lens parameter - often scale radio (depends on the lens model)
+	 - model_param_10         float : misc. lens parameter - often a power law index (depends on the lens model)
+	 - galaxy_position  [float,...] : [x,y] position of the lens
+	 - e_L                    float : lens ellipticity (ellipticity = 1 - q, where 0<q<=1 is the axial ratio) 
+	 - theta_L                float : lens position angle (in degrees) with respect to the vertical 
+					                  (counterclockwise)
+	 - shear                  float : external shear amplitude
+	 - theta_shear            float : external shear direction (in degrees)
+	 - gravlens_params          dic : Contains the keys and values of the gravlens configuration 
 					  (see default parameters at function set_gravlens_default, inside init_gravlens_parameters)
-	 - caustic_CC_file        <str> : name of the output file with the caustic and CC positions
-	 - gravlens_input_file    <str> : name of the input file used to run gravlens
-	 - rad_curves_file        <str> : name of the file containing the radial curves (optional - see write_to_file) 
-	 - tan_curves_file        <str> : name of the file containing the radial curves (optional - see write_to_file) 
-	 - curves_plot            <str> : the name of the generated plot file (including the extension, ex. 
+	 - caustic_CC_file          str : name of the output file with the caustic and CC positions
+	 - gravlens_input_file      str : name of the input file used to run gravlens
+	 - rad_curves_file          str : name of the file containing the radial curves (optional - see write_to_file) 
+	 - tan_curves_file          str : name of the file containing the radial curves (optional - see write_to_file) 
+	 - curves_plot              str : the name of the generated plot file (including the extension, ex. 
 					'curves_plot.png'). To see the extensions available see matplotlib.pyplot help 
 					(default='crit_curves.png'). If curves_plot=0 means no plots.
-	 - show_plot              <int> : use 0 for 'no screen display' (default) and 1 for display on 
+	 - show_plot                int : use 0 for 'no screen display' (default) and 1 for display on 
 					  the screen.
-	 - write_to_file          <int> : Option to write the curves to a file (see rad_curves_file and 
+	 - write_to_file            int : Option to write the curves to a file (see rad_curves_file and 
 					  tan_curves_file ). The default is 0, meaning not to write to a file.
-	 - grid_factor       <float> : used in the iteration to find the critical curves. Each time no 
+     - delta_increment        float : 
+	 - grid_factor            float : used in the iteration to find the critical curves. Each time no 
 				       curves were found, the grid size is divided by grid_factor
-	 - min_n_lines         <int> : minimum number of lines demanded in the CC file to decrease the grid by grid_factor_2 
-	 - grid_factor2      <float> : if the CC file is composed of less than min_n_lines, the code divides
+	 - min_n_lines              int : minimum number of lines demanded in the CC file to decrease the grid by grid_factor_2 
+	 - grid_factor2           float : if the CC file is composed of less than min_n_lines, the code divides
 				       the grid size by grid_factor2 
-	 - max_iter_number     <int> : maximum number of time the grid size will be divided by grid_factor
-	 - gridhi1_CC_factor <float> : the final size of the grid will be gridhi1_CC_factor * (the furthest CC point)
-	 - accept_res_limit  <float> : if the furthest CC point is closer than accept_res_limit from the lens 
+	 - max_iter_number          int : maximum number of time the grid size will be divided by grid_factor
+	 - gridhi1_CC_factor      float : the final size of the grid will be gridhi1_CC_factor * (the furthest CC point)
+	 - accept_res_limit       float : if the furthest CC point is closer than accept_res_limit from the lens 
 				       center, display a warning about lack of precision in determining the curves
 	Output:
 	 - rad_CC_x       <list> : x coordinates of points from the radial CC
