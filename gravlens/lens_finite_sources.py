@@ -93,10 +93,10 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
      - model_param_9   <float> : misc. lens parameter - often scale radio (depends on the lens model)
      - model_param_10  <float> : misc. lens parameter - often a power law index (depends on the lens model)
      - galaxy_position  <list> : [x,y] position of the lens
-     - e_L             <float> : Horizontal central position for output (cut) image
-     - theta_L         <float> : Vertical central position for output (cut) image
-     - shear           <float> : 'pixel' or 'degrees' for size (x_size,y_size) values
-     - theta_shear     <float> : Horizontal size (in pixels) of output image
+	 - e_L             <float> : lens ellipticity (ellipticity = 1 - q, where 0<q<=1 is the axial ratio) 
+	 - theta_L         <float> : lens position angle (in degrees) with respect to the vertical (counterclockwise)
+	 - shear           <float> : external shear amplitude
+	 - theta_shear     <float> : external shear direction (in degrees)
      - gravlens_params   <dic> : Contains the keys and values of the gravlens configuration , dimpix, source_centers, source_model, 
      - ref_magzpt      <float> : The zero point magnitude to be used. It only affects the source fluxes.
      - reference_band    <str> :
@@ -222,10 +222,10 @@ def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, mo
      - model_param_9   <float> : misc. lens parameter - often scale radio (depends on the lens model)
      - model_param_10  <float> : misc. lens parameter - often a power law index (depends on the lens model)
      - galaxy_position  <list> : [x,y] position of the lens
-     - e_L             <float> : Horizontal central position for output (cut) image
-     - theta_L         <float> : Vertical central position for output (cut) image
-     - shear           <float> : 'pixel' or 'degrees' for size (x_size,y_size) values
-     - theta_shear     <float> : Horizontal size (in pixels) of output image
+	 - e_L             <float> : lens ellipticity (ellipticity = 1 - q, where 0<q<=1 is the axial ratio) 
+	 - theta_L         <float> : lens position angle (in degrees) with respect to the vertical (counterclockwise)
+	 - shear           <float> : external shear amplitude
+	 - theta_shear     <float> : external shear direction (in degrees)
      - gravlens_params   <dic> : Contains the keys and values of the gravlens configuration , dimpix, source_centers, source_model, 
      - ref_magzpt      <float> :
      - reference_band    <str> :
