@@ -1,0 +1,8 @@
+image_path        /home/maria/                  # path to fits image
+sex_path          /home/maria/CS82_pipeline/    # path to .sex  
+param_path        /home/maria/CS82_pipeline/    # path to .param
+out_catalog_path  /home/maria/testes/           # path where .fit catalog  will be saved
+out_segs_path     /home/maria/testes/           # path where seg.fits image will be saved
+out_obj_path       /home/maria/testes/           # path where obj.fits image will be saved 
+nnw_path          /home/maria/CS82_pipeline/    # path to .nnw
+conv_path         /home/maria/CS82_pipeline/    # path to .conv
