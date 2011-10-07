@@ -11,7 +11,21 @@ from scipy import optimize
 import collections
 
 
-def get_image_number(input_file):
+def get_image_number_tests(input_file):
+
+    string_inf = input_file.index('cut_') + 4
+    string_sup = input_file.index('.fit') - 1
+
+    if string_inf == string_sup:
+        image_number = float(input_file[input_file.find('.fit')-1])
+
+    else:
+        image_number = float(input_file[string_inf:string_sup+1])
+
+    return image_number
+
+
+def get_image_number_catalogs(input_file):
 
     string_inf = input_file.index('cut_') + 4
     string_sup = input_file.index('.fit') - 1
