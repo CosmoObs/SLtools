@@ -41,7 +41,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
     # Get the file number
 
-    image_number = fmg.get_image_number(input_file)
+    # image_number = fmg.get_image_number(input_file)
     
 
     # Perform the cuts on the data
@@ -99,16 +99,20 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
     mag_lim = fmg.find_mag_lim(cut_inf_data, fit_params, bin_size)
 
+    print mag_lim
+
+    return [99.99, bin_size, S2N_cut, fit_params[0], fit_params[1], mag_inf, mag_sup, mag_lim, objs[0], objs[1], objs[2], objs[3]]
+
 
     # Make the plots and save them to a given folder
-
+'''
     fmg.make_plot(binned_data, field_names, folder_path, fit_params, mag_inf, mag_sup, mag_lim, bin_size, gal_cut, S2N_cut, image_number, plot_inf, plot_sup)
 
 
     # Return results of the fit
 
     return [image_number, bin_size, S2N_cut, fit_params[0], fit_params[1], mag_inf, mag_sup, mag_lim, objs[0], objs[1], objs[2], objs[3]]
-
+'''
 
 # ==========================
 
@@ -151,12 +155,15 @@ if __name__ == "__main__" :
     filenames = glob.glob(sys.argv[1])
 
     field_names = [sys.argv[2],sys.argv[3]]
-
+    '''
     if gal_cut:
         folder_path = filenames[0][0:filenames[0].find('S82')] + 'Results/' + field_names[0] + '_GAL/'
 
     else:
         folder_path = filenames[0][0:filenames[0].find('S82')] + 'Results/' + field_names[0] + '_STAR/'
+    '''
+
+    folder_path = '/home/brunomoraes/' #Attention!! Hard-coded path here!!!
 
     mkdir_p(folder_path)
 
@@ -177,10 +184,14 @@ if __name__ == "__main__" :
  
     results = np.array(results)
 
+    print results
+
 
     # Sort results by sextractor run number and save to file
 
-    results = results[results[:,0].argsort(),:]
+    # results = results[results[:,0].argsort(),:]
+
+    # np.savetxt(folder_path + 'fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+'.txt',results)
 
     np.savetxt(folder_path + 'fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+'.txt',results,fmt='%-2.0f          %-3.2f         %.0f       %f    %.4f     %.2f      %.2f      %.2f      %-6.0f      %-6.0f        %-6.0f        %-6.0f')
 
