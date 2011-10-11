@@ -11,7 +11,7 @@ from scipy import optimize
 import collections
 
 
-def get_image_number_tests(input_file):
+def get_test_number(input_file):
 
     string_inf = input_file.index('cut_') + 4
     string_sup = input_file.index('.fit') - 1
@@ -25,18 +25,15 @@ def get_image_number_tests(input_file):
     return image_number
 
 
-def get_image_number_catalogs(input_file):
+def get_tile_name(input_file):
 
-    string_inf = input_file.index('cut_') + 4
-    string_sup = input_file.index('.fit') - 1
+    input_name = os.path.basename(input_file)
 
-    if string_inf == string_sup:
-        image_number = float(input_file[input_file.find('.fit')-1])
+    string_sup = input_name.index('.V2.') - 2
 
-    else:
-        image_number = float(input_file[string_inf:string_sup+1])
+    tile_name = input_name[0:string_sup]
 
-    return image_number
+    return tile_name
 
 
 
