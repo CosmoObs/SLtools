@@ -12,6 +12,9 @@ import fit_mag as fmg
 import glob
 import pyfits
 
+sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio") ### Append Bruno
+from sltools.catalog import fits_data as fd
+
 
 def mkdir_p(path):
     try:
@@ -22,65 +25,62 @@ def mkdir_p(path):
         else: raise
 
 
-
 def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cut, mag99, S2N_cut, stell_idx, plot_inf, plot_sup):
 
-    # Get the data from the file
-
-    hdu = pyfits.open(input_file,ignore_missing_end=True)
-
-    magdata = hdu[2].data.field(field_names[0])
-    magdata = magdata.astype(np.float64)
-    
-    magerrdata = hdu[2].data.field(field_names[1])
-    magerrdata = magerrdata.astype(np.float64)
-
-    class_star = hdu[2].data.field('CLASS_STAR')
-    class_star = class_star.astype(np.float64)
+    # Get the data from the file and the tile name
 
 
-    # Get the file number
+    tile_name = fmg.get_tile_name(input_file)
 
-    # image_number = fmg.get_image_number(input_file)
-    
 
+    hdu = pyfits.open(input_file,ignore_missing_end=True)[2]
+
+   
     # Perform the cuts on the data
+
+
+    # Stellarity cut
     
     if gal_cut == True:
-         stell_mask = (class_star < stell_idx)
+         hdu_stell_cut = fd.sample_entries(hdu,CLASS_STAR=(0,stell_idx))
 
     else:
-         stell_mask = (class_star > stell_idx)
+         hdu_stell_cut = fd.sample_entries(hdu,CLASS_STAR=(stell_idx,1))
 
+
+    # Mag != 99 cut
 
     if mag99 == False:
-        mag99_mask = (magdata != 99)
+        hdu_stell_mag99_cut = fd.sample_entries(hdu_stell_cut,MAG_AUTO=(0,98))
 
     else:
-        mag99_mask = (magdata != -1000) # Ugly way of getting a complete True mask, write it in a better way later
+        hdu_stell_mag99_cut = hdu_stell_cut
 
-
-    S2N_mask = magerrdata < 1.086/S2N_cut
     
-    objs = []
+    # S/N cut
 
-    objs.append(len(magdata))
-    objs.append(len(magdata[stell_mask]))
-    objs.append(len(magdata[stell_mask & mag99_mask]))
-
-    data = magdata[stell_mask & mag99_mask & S2N_mask]
+    hdu_all_cuts = fd.sample_entries(hdu_stell_mag99_cut, MAGERR_AUTO=(0,1.086/S2N_cut))
     
-    objs.append(len(data))
 
-    # Bin and cut the data
+    # Count objects in different cuts
+    
+    objs = [len(hdu.data),len(hdu_stell_cut.data),len(hdu_stell_mag99_cut.data),len(hdu_all_cuts.data)]
 
-    binned_data = fmg.bin_mag_data(data, bin_size)
+
+
+    # Bin the data and get rid of undesired bins
+    
+    magdata = hdu_all_cuts.data.field(field_names[0])
+    magdata = magdata.astype(np.float64)
+
+    binned_data = fmg.bin_mag_data(magdata, bin_size)
 
     binned_data = fmg.cut_unpopulated_bins(binned_data, 10) # Attention! Hard-coded value for the minimum number of counts for keeping bins 
 
     mag_sup = fmg.find_mag_sup(binned_data)
 
     cut_data = fmg.cut_mag_data(binned_data, mag_inf, mag_sup)
+
 
 
     # Perform fit
@@ -93,30 +93,29 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
     fit_params = list(p)
 
+
     # Get limit magnitude
 
     cut_inf_data = fmg.cut_mag_data(binned_data, mag_sup, 99)
 
     mag_lim = fmg.find_mag_lim(cut_inf_data, fit_params, bin_size)
 
-    print mag_lim
+    # Return results of the fit
 
-    return [99.99, bin_size, S2N_cut, fit_params[0], fit_params[1], mag_inf, mag_sup, mag_lim, objs[0], objs[1], objs[2], objs[3]]
+
+    return [tile_name, str(bin_size), str(S2N_cut), str(fit_params[0]), str(fit_params[1]), str(mag_inf), str(mag_sup), str(mag_lim), str(objs[0]), str(objs[1]), str(objs[2]), str(objs[3])]
 
 
     # Make the plots and save them to a given folder
 '''
     fmg.make_plot(binned_data, field_names, folder_path, fit_params, mag_inf, mag_sup, mag_lim, bin_size, gal_cut, S2N_cut, image_number, plot_inf, plot_sup)
 
-
-    # Return results of the fit
-
-    return [image_number, bin_size, S2N_cut, fit_params[0], fit_params[1], mag_inf, mag_sup, mag_lim, objs[0], objs[1], objs[2], objs[3]]
 '''
 
 # ==========================
 
 # Main function: Improve documentation of usage and optional arguments, include ifs (or try/excepts to prevent crashing), and other minor changes
+
 
 if __name__ == "__main__" :
 
@@ -155,6 +154,7 @@ if __name__ == "__main__" :
     filenames = glob.glob(sys.argv[1])
 
     field_names = [sys.argv[2],sys.argv[3]]
+
     '''
     if gal_cut:
         folder_path = filenames[0][0:filenames[0].find('S82')] + 'Results/' + field_names[0] + '_GAL/'
@@ -163,9 +163,7 @@ if __name__ == "__main__" :
         folder_path = filenames[0][0:filenames[0].find('S82')] + 'Results/' + field_names[0] + '_STAR/'
     '''
 
-    folder_path = '/home/brunomoraes/' #Attention!! Hard-coded path here!!!
-
-    mkdir_p(folder_path)
+    folder_path = os.path.dirname(filenames[0])
 
     mag_inf = float(sys.argv[4])
 
@@ -181,38 +179,29 @@ if __name__ == "__main__" :
        
         results.append(mag_pipeline(filenames[i], field_names, folder_path, mag_inf, bin_size, gal_cut, mag99, S2N_cut, stell_idx, plot_inf, plot_sup))
 
- 
     results = np.array(results)
 
-    print results
 
+    np.savetxt(folder_path + '/fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+'.txt', results,fmt='%s       %s         %s       %.8s       %.5s       %s        %s        %s      %s      %s      %s      %s')
 
-    # Sort results by sextractor run number and save to file
-
-    # results = results[results[:,0].argsort(),:]
-
-    # np.savetxt(folder_path + 'fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+'.txt',results)
-
-    np.savetxt(folder_path + 'fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+'.txt',results,fmt='%-2.0f          %-3.2f         %.0f       %f    %.4f     %.2f      %.2f      %.2f      %-6.0f      %-6.0f        %-6.0f        %-6.0f')
+    # np.savetxt(folder_path + '/fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+'.txt',results,fmt='%c          %-3.2f         %.0f       %f    %.4f     %.2f      %.2f      %.2f      %-6.0f      %-6.0f        %-6.0f        %-6.0f')
 
     # Numpy 1.5 doesn't have header options for savetxt yet (to come in Numpy 2.0). Add a header using file commands
-
-    print folder_path + 'fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+'.txt'
     
-    file = open(folder_path + 'fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+'.txt', "r+")
+    S''' 
+    file = open(folder_path + '/fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+'.txt', "r+")
      
     old = file.read() # read everything in the file
      
     file.seek(0) # rewind
 
     if gal_cut:
-        file.write("ID_test    bin_size    S/N_cut    A_fit       b_fit    mag_inf    mag_sup    mag_comp    N_tot        N_gal       N_gal_99    N_gal_99_S/N \n" + old)
+        file.write("ID_test    bin_size    S/N_cut        A_fit         b_fit     mag_inf     mag_sup    mag_comp    N_tot        N_gal      N_gal_99    N_gal_99_S/N \n" + old)
 
     else:
-        file.write("ID_test    bin_size    S/N_cut    A_fit       b_fit    mag_inf    mag_sup    mag_comp    N_tot        N_star       N_star_99    N_star_99_S/N \n" + old)
+        file.write("ID_test    bin_size    S/N_cut        A_fit         b_fit     mag_inf     mag_sup    mag_comp    N_tot        N_star      N_star_99    N_star_99_S/N \n" + old)
      
     file.close()
-    
-
+    '''
 
     sys.exit(0);
