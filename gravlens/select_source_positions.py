@@ -418,7 +418,7 @@ def select_source_positions(lens_model, mass_scale, model_param_8, model_param_9
 
 def test_select_source_positions(lens_model='nfw', mass_scale=np.random.uniform(0.03, 0.9, 1), model_param_8=np.random.uniform(34, 94, 1), model_param_9=0, model_param_10=0, galaxy_position=[0.,0.], e_L=0.4, theta_L=np.random.uniform(0, 180, 1), shear=0, theta_shear=0, gravlens_params={}, src_density_or_number=10, minimum_distortion=0., control_rhombus=2., caustic_CC_file='crit.txt', gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='crit-caust_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=2., accept_res_limit=2E-4, gravlens_mag_input_file='gravlens_magtensor_in.txt', gravlens_mag_output_file='gravlens_magtensor_out.txt', keep_mag_files=False, gravlens_img_input_file='findimg_input.txt', gravlens_img_output_file='findimg_out.txt', keep_img_files=False):
     """ 
-    Tests the pipeline select_source_positions
+    Tests the pipeline select_source_positions.
     
     The inputs are exactly the ones in select_source_positions, so are the outputs.
     

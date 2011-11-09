@@ -23,9 +23,8 @@ import random
 from sltools.gravlens.init_gravlens_parameters import lens_parameters
 from sltools.pipelines.find_cc import run as run_find_cc
 from sltools.gravlens.find_cc import plot_cc
-from sltools.image.imcp import elliminate_disconected as elliminate_disconected
 from sltools.image.sextractor import run_segobj
-from sltools.coordinate import pix_2_arcsec
+from sltools.coordinate.convert_arcsec_pix import pix_2_arcsec
 
 
 def source_model_sampler(source_type, rs_i, rs_f, es_i, es_f, thetas_i, thetas_f, ns_i=0.5, ns_f=0.5, nover=1, mag=24.0):
@@ -138,7 +137,7 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
         f199.write('0 0 0 0 0 0 0 0\n')
         image_names.append('%s%05d_%s.fits' % (base_name, i, reference_band) )
         f199.write('SBmap2 %0.9f %0.9f %d %0.9f %0.9f %d %d %s 3\n' % (-half_frame_size, half_frame_size, Npix, -half_frame_size, half_frame_size, Npix, nover, image_names[-1]) ) # <x lo> <hi> <# steps> <y lo> <hi> <# steps> <Nover> <file> <outtype>
-        logging.debug( "The source %d is centered at %s and is properties are %s" % (i+1, source_centers[i] ,str(source_model) ) )
+        logging.debug( "The source %d is centered at %s and its properties are %s" % (i+1, source_centers[i] ,str(source_model) ) )
 
     f199.close()
 
@@ -167,11 +166,6 @@ def identify_images(frame_name, params=[], args={}, preset='sims'):
 
     frame_data = pyfits.getdata(frame_name) # to get the header add 'header=True'
     nonzero_frame_data = np.nonzero(frame_data)
-
-    logging.debug('Running elliminate_disconected')
-    img_1 = elliminate_disconected(nonzero_frame_data) # get all arguments of this single image
-    logging.debug('Finished running elliminate_disconected')
-    #img[img_1] = 0
 
     # make a loop over all images on the frame
 
@@ -266,7 +260,7 @@ def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, mo
         objimgname, segimgname = identify_images(image_names[n], SE_params, SE_args, preset='sims')
 
         # plot sources and images with the caustics and critical curves 
-        x_src, y_src, x_img, y_img = get_src_img_coords(source_names[n], image_names[n])
+        x_src, y_src, x_img, y_img = get_src_img_coords(source_names[n], objimgname)
 
         x_src_arcsec, y_src_arcsec = pix_2_arcsec(x_src, y_src, half_frame_size, dimpix)
         x_img_arcsec, y_img_arcsec = pix_2_arcsec(x_img, y_img, half_frame_size, dimpix)
@@ -279,6 +273,38 @@ def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, mo
     # determine mergers
 
     # apply measurement methods to individual images
+
+
+
+
+
+
+
+
+
+
+#=================================================================================================================
+def test_lens_finite_sources(lens_model='nfw', mass_scale=np.random.uniform(0.03, 0.9, 1), model_param_8=np.random.uniform(34, 94, 1), model_param_9=0, model_param_10=0, dimpix=np.random.uniform(0.35, 0.45), source_centers=[[0,0]], ref_magzpt=30, reference_band='g', source_model=[{'source_type': 'sersic', 'nover': 1, 'rs': 0.1, 'thetas': 0, 'es': 0.4, 'ns': 0.5, 'mag': 24.}], galaxy_position=[0,0], e_L=0.5, theta_L=np.random.uniform(0, 180, 1), shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='caustic_CC_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.2, accept_res_limit=2E-4, nover_max=3, SE_params={}, SE_args={}, preset='sims', base_name='sbmap'):
+
+
+
+
+    from sltools.io.log import init
+
+
+    init(debug=True) # verbose=True)
+
+
+    for i in range( len(mass_scale)):
+        for j in range( len(model_param_8)):
+            for k in range( len(theta_L)):	
+                lens_finite_sources(lens_model, mass_scale[i], model_param_8[j], model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position, e_L, theta_L[k], shear, theta_shear, gravlens_params, caustic_CC_file,  gravlens_input_file, rad_curves_file, tan_curves_file, curves_plot, show_plot, write_to_file, max_delta_count, delta_increment, grid_factor, grid_factor2, max_iter_number, min_n_lines, gridhi1_CC_factor, accept_res_limit, nover_max, SE_params, SE_args, preset, base_name) 
+
+
+
+
+
+
 
 
 
