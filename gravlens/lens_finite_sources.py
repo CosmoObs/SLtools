@@ -155,11 +155,11 @@ def lensing(lens_model, mass_scale, model_param_8, model_param_9, model_param_10
 
 def identify_images(frame_name, params=[], args={}, preset='sims'):
     """
-    Identify the objects on an image.
+    Identify the objects at an image. Currently run SExtractor under sltools.sltools.image.sextractor.run_segobj
     
     """
 
-    dict_run_segobj = run_segobj(frame_name, params=[], args={}, preset='') # 'params' are the SExtractor 
+    dict_run_segobj = run_segobj(frame_name, params, args, preset) # 'params' are the SExtractor 
     # parameters to output (strings, see SE's default.param). 'args' ({str:str,}) are SE command-line arguments
 
     objimgname, segimgname, catfilename = dict_run_segobj['OBJECTS'], dict_run_segobj['SEGMENTATION'], dict_run_segobj['CATALOG'] # catfilename is the SE output catalog with the 'params' columns
@@ -207,7 +207,10 @@ def get_src_img_coords(source_name, image_name):
 #=================================================================================================================
 def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, model_param_10, dimpix, source_centers, ref_magzpt, reference_band, source_model, galaxy_position=[0,0], e_L=0, theta_L=0, shear=0, theta_shear=0, gravlens_params={}, caustic_CC_file='crit.txt',  gravlens_input_file='gravlens_CC_input.txt', rad_curves_file='lens_curves_rad.dat', tan_curves_file='lens_curves_tan.dat', curves_plot='caustic_CC_curves.png', show_plot=0, write_to_file=0, max_delta_count=20, delta_increment=1.1, grid_factor=5., grid_factor2=3., max_iter_number=20, min_n_lines=200, gridhi1_CC_factor=1.2, accept_res_limit=2E-4, nover_max=3, SE_params={}, SE_args={}, preset='sims', base_name='sbmap'):
     """
-    This is a pipeline that ...
+    This is a pipeline that ... (under construction)
+    Currently it lenses finite sources and plots the sources and images with the caustics and CC. 
+
+    The function source_model_sampler may be used to help to construct the source_model dictionary.
 
     Input:
      - lens_model        <str> : Lens name (see gravlens manual table 3.1)
@@ -220,7 +223,10 @@ def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, mo
 	 - theta_L         <float> : lens position angle (in degrees) with respect to the vertical (counterclockwise)
 	 - shear           <float> : external shear amplitude
 	 - theta_shear     <float> : external shear direction (in degrees)
-     - gravlens_params   <dic> : Contains the keys and values of the gravlens configuration , dimpix, source_centers, source_model, 
+     - gravlens_params   <dic> : Contains the keys and values of the gravlens configuration 
+     - dimpix
+     - source_centers
+     - source_model      <dic> :
      - ref_magzpt      <float> :
      - reference_band    <str> :
      - nover_max         <int> :
@@ -257,7 +263,7 @@ def lens_finite_sources(lens_model, mass_scale, model_param_8, model_param_9, mo
 #        args_low_count = np.where(frame_data < np.max(counts)/1000.)
 #        frame_data[args_low_count] = 0
 #        nonzero_frame_data_new = np.nonzero(frame_data)
-        objimgname, segimgname = identify_images(image_names[n], SE_params, SE_args, preset='sims')
+        objimgname, segimgname = identify_images(image_names[n], SE_params, SE_args, preset)
 
         # plot sources and images with the caustics and critical curves 
         x_src, y_src, x_img, y_img = get_src_img_coords(source_names[n], objimgname)
