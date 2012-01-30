@@ -37,7 +37,8 @@ def replace(filename, option, value, section=None):
 
 # --
 def str2lst(word, sep=",", valid_digits="a-zA-Z0-9_\ .", valid_symbols="\-\+\^"):
-    """ Function to read a string with special chars and return without them.
+    """
+    Function to read a string with special chars and return without them.
 
     This function cleans the given 'word' from non-valid ('digits' and 'symbols') 
     characters and splits it if 'sep' character is found. A list is returned with 
@@ -70,7 +71,8 @@ def str2lst(word, sep=",", valid_digits="a-zA-Z0-9_\ .", valid_symbols="\-\+\^")
 
 # ==========================================================
 def line_filter(lines, comments="#", inverse=False):
-    """ Function to return uncomment line entries from a list.
+    """
+    Function to return uncomment line entries from a list.
 
     'lines' is a list of strings, those that do not begin with 'comments' symbol/char 
     are returned (also as a list of strings). If 'inverse' is set to True, just commented 

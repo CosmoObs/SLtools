@@ -11,7 +11,7 @@ import math;
 nyticks = 4;
 
 # ---
-def scattergrid(points,sizes,colors):
+def scattergrid(points,sizes=[],colors=[]):
     """
     Plots a scatter graphic in a X,Y axes with sized symbols.
 
@@ -36,21 +36,21 @@ def scattergrid(points,sizes,colors):
     DEC_min = min(DEC);
     DEC_max = max(DEC);
 
-    _ra = abs(RA_max-RA_min)/20;
-    _dec = abs(DEC_max-DEC_min)/20;
+    ra_ = abs(RA_max-RA_min)/20
+    dec_ = abs(DEC_max-DEC_min)/20
 
     sizes = np.asarray(sizes)
-    sizes = 10*(sizes/sizes.min())**2;
-    sizes = sizes.astype('int32').tolist();
+    sizes = 100 * (sizes-sizes.min()) / (sizes.max()-sizes.min())
+    sizes = sizes.astype('uint32').tolist();
 
     x,y = zip(*points);
     
     # Sort the data just to get it(the plot) right done when 
     # 'scatter' run through datasets.
-    _tosort = zip(sizes,colors,x,y);
-    _tosort.sort();
-    _tosort.reverse();
-    sizes,colors,x,y = zip(*_tosort);
+    tosort_ = zip(sizes,colors,x,y);
+    tosort_.sort();
+    tosort_.reverse();
+    sizes,colors,x,y = zip(*tosort_);
     #
     
     plt.set_cmap('hot');
@@ -60,10 +60,14 @@ def scattergrid(points,sizes,colors):
     ax.grid(True);
     ax.set_xlabel('RA');
     ax.set_ylabel('DEC');
-    ax.set_title('Massive objects scatter (position) plot')
+#    ax.set_title('Massive objects scatter (position) plot')
 
-    ax.scatter(x,y,s=sizes,c=colors,marker='o',edgecolor='black',alpha=0.75) #,color='blue');
+    ax.scatter(x,y,s=sizes,c=colors,marker='o',edgecolor='black',alpha=0.75)
 
+
+    s2 = [sizes[0],sizes[-1]]
+    x2 = [1,1]
+    y2 = [1,2]
 #    fig.show();
 
     return fig;
