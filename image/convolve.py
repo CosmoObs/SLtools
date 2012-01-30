@@ -30,7 +30,7 @@
 
 import numpy
 from scipy import mgrid,signal
-
+import math
 
 def gauss_kernel(n_fwhm,sigma):
     """ 
