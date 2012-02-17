@@ -118,12 +118,12 @@ def match_positions(xy_check, xy_truth, radius):
     naa = np.asarray
 
     dict_check = {'X_NEAR':naa(Check_neibor_truthX),'Y_NEAR':naa(Check_neibor_truthY)}
-    dict_check.update({'XY_MATCH':naa(Check_match_neibors)})
+    dict_check.update({'XY_MATCH':naa(Check_match_neibors),'MATCH_IND':naa(Check_nn_indx)})
     dict_check.update({'X':naa(x_check),'Y':naa(y_check)})
     logging.info("Matching infos: \n(Did match?): %s \n(X): %s \n(Y): %s \n(X_NEAR): %s \n(Y_NEAR): %s",
         dict_check['XY_MATCH'],dict_check['X'],dict_check['Y'],dict_check['X_NEAR'],dict_check['Y_NEAR'])
     
-    return (dict_check);
+    return (dict_check)
 
 # ---
 def run(tbhdu_check, tbhdu_truth, radius=1):
