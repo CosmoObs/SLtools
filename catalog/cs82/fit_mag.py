@@ -36,6 +36,20 @@ def get_tile_name(input_file):
     return tile_name
 
 
+def get_entry_tile_cs82_ldac(hdulist_string, entry_name):
+
+    ra = hdulist_string[hdulist_string.find(entry_name):]
+
+    ra = ra[0:ra.find('/')]
+
+    ra = ''.join(ra.split())
+
+    ra = str(float(ra[ra.find('=')+1:]))
+
+    return ra
+
+
+
 
 def bin_mag_data(mag_data, bin_size):
 
@@ -129,7 +143,7 @@ def find_mag_lim(cut_inf_data,fit_params,bin_size):
 
 
 
-def make_plot(binned_data, field_names, folder_path, fit_params, m_inf, m_sup, mag_lim, bin_size, gal_cut, S2N_cut, image_number, plot_inf, plot_sup):
+def make_plot_mag_pipe(binned_data, tile_name, folder_path, fit_params, m_inf, m_sup, mag_lim, bin_size, gal_cut, S2N_cut, stell_idx, plot_inf, plot_sup):
 
     pl.clf()
     
@@ -143,7 +157,7 @@ def make_plot(binned_data, field_names, folder_path, fit_params, m_inf, m_sup, m
     fit_x = np.arange(m_inf, binned_data[0].max(), 0.01)
     fit_y = mag_function(fit_x, fit_params[0], fit_params[1])
 
-    plot_fit = pl.plot(fit_x, fit_y, 'r', lw=1, label='A='+str('%.3e' % float(fit_params[0]))+', b='+str('%.3f' % float(fit_params[1]))+' - ($mag_{inf}$'+'= '+str(m_inf)+', $mag_{sup}$'+'= '+str(m_sup)+') - '+'$m_{comp}$'+'= '+str(mag_lim)+' , bin='+str(bin_size)+' , S/N>='+str(S2N_cut))
+    plot_fit = pl.plot(fit_x, fit_y, 'r', lw=1, label='A='+str('%.3e' % float(fit_params[0]))+', b='+str('%.3f' % float(fit_params[1]))+' - ($mag_{inf}$'+'= '+str(m_inf)+', $mag_{sup}$'+'= '+str(m_sup)+') - '+'$m_{comp}$'+'= '+str(mag_lim)+' , bin='+str(bin_size)+' , S/N>='+str(S2N_cut)+' , CLASS_STAR >(<)'+str(stell_idx))
     
     pl.axvline(x=mag_lim, color='k',ls='--')
     
@@ -156,12 +170,12 @@ def make_plot(binned_data, field_names, folder_path, fit_params, m_inf, m_sup, m
     pl.ylabel('N', fontsize=25)
 
     if gal_cut:
-        pl.title('S82p28m_'+ field_names[0]+ '_gal_' + str(int(image_number)), fontsize=25)
-        pl.savefig(folder_path + 'S82p28m_'+ field_names[0]+ '_gal_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut)) + '_' + str(int(image_number)) + '.png')
+        pl.title(tile_name + '_gal', fontsize=25)
+        pl.savefig(folder_path + '/Plots/'+ tile_name + '_gal_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut)) + '_stell_'+ str(stell_idx) + '.png')
 
     else:
-        pl.title('S82p28m_'+ field_names[0]+ '_star_' + str(int(image_number)), fontsize=25)
-        pl.savefig(folder_path + 'S82p28m_'+ field_names[0]+ '_star_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut)) + '_' + str(int(image_number)) + '.png')
+        pl.title(tile_name + '_star', fontsize=25)
+        pl.savefig(folder_path + '/Plots/'+ tile_name + '_star_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut)) + '_stell_'+ str(stell_idx) + '.png')
 
 
 
