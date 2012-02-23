@@ -11,19 +11,10 @@ from scipy import optimize
 import collections
 
 
-def get_test_number(input_file):
+'''
 
-    string_inf = input_file.index('cut_') + 4
-    string_sup = input_file.index('.fit') - 1
-
-    if string_inf == string_sup:
-        image_number = float(input_file[input_file.find('.fit')-1])
-
-    else:
-        image_number = float(input_file[string_inf:string_sup+1])
-
-    return image_number
-
+# This is not needed, except if we can be sure that astrometry is always performed
+# with swarp. If this is the case, then we can cut out all the suffixes.
 
 def get_tile_name(input_file):
 
@@ -34,7 +25,7 @@ def get_tile_name(input_file):
     tile_name = input_name[0:string_sup]
 
     return tile_name
-
+'''
 
 def get_entry_tile_cs82_ldac(hdulist_string, entry_name):
 
