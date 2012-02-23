@@ -10,17 +10,21 @@
 ##@package mag_pipeline
 #
 # This package calculates the limiting magnitude for a given FITS catalogue.
-# It has three mandatory arguments: the (input) FITS catalogue path and name,
+# It has four mandatory arguments: the (input) FITS catalogue path and name,
 # the magnitude field name to be used for the calculations (i.e. MAG_AUTO,
-# MAG_APER, etc...) and the corresponding error field name (i.e. MAGERR_AUTO,
-# MAGERR_APER, etc...). It searches the objects in the 
-# catalog that are inside a circle with this radius and centered at this reference 
-# position.
-# For each object it uses the catalog information to create an ellipse. It uses A_IMAGE 
-# and B_IMAGE from the catalog as the ellipse semi-major axis and semi-minor axis, 
-# respectively. It also uses THETA_IMAGE from the catalog as the ellipse orientation.
-# The ellipse semi-major and semi-minor axes can be multiplied by a scale
-# factor to enlarge the size of the object region. 
+# MAG_APER, etc...), the corresponding error field name (i.e. MAGERR_AUTO,
+# MAGERR_APER, etc...) and the inferior magnitude value for which a fit of
+# of the object number count per magnitude bin should be performed. 
+# For a detailed description of the procedure,
+# check http://twiki.linea.gov.br/blabla".
+# 
+# The code can run on an arbitrary list of input FITS catalogues. The outputs
+# are a check plot of the number count fitting procedure and an ASCII file,
+# with each line corresponding to a FITS catalogue and containing information 
+# such as the center coordinates of the image, the mean seeing, the total
+# number of objects, the number of galaxies and stars per arcmin^2, the
+# limiting magnitude, etc. This output can be used as input for a QA analysis
+# of the collection of catalogues.
 #
 # Executable package: YES
 #
@@ -48,10 +52,13 @@ import fit_mag as fmg
 import glob
 import pyfits
 
+# Hard-coded use of sltools functions. Need to make a build of the library to get rid of this path.
+
 sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio") ### Append Bruno
 from sltools.catalog import fits_data as fd
 from sltools.coordinate import wcs_conversion as wcscv
 
+# =================================================================================================================
 
 def mkdir_p(path):
     try:
@@ -64,18 +71,63 @@ def mkdir_p(path):
 
 def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cut, mag99, S2N_cut, stell_idx, plot_inf, plot_sup):
 
+    """
+    Calculate the limiting magnitude for a given FITS catalogue.
+
+    This function performs specified cuts to the catalogue, proceeds to bin 
+    the data and then fit it to an analytical (number count) x (magnitude)
+    function. A difference of more than 10% between the data and the fit
+    defines the limiting magnitude. This value and several other catalogue
+    properties are returned as a list of strings. Additionally, a check plot
+    of the fitting procedure is saved to folder_path.
+
+
+    Input:
+     - input_file          str : Input file name
+     - field_names  [str, str] : Magnitude and magnitude error field names
+     - folder_path         str : Folder path
+     - mag_inf           float : Inferior magnitude to perform fitting
+     - bin_size          float : (Uniform) binning size
+     - gal_cut            bool : Galaxy or Star fit (according to stell_idx cut)
+     - mag99              bool : Inclusion of unidentified magnitudes
+     - S2N_cut           float : Signal-to-noise minimum cut
+     - stell_idx         float : CLASS_STAR value (defines what is a Galaxy/Star)
+     - plot_inf          float : Check plot inferior x-axis value
+     - plot_sup          float : Check plot superior x-axis value
+
+    Output:
+     - [str,...,str] : a list of the following properties of the catalog in
+                       string format: catalogue name, original image center RA,
+                       original image center DEC, original image seeing, fitting 
+                       bin size, S/N cut value, CLASS_STAR value, constant 
+                       coefficient of the linear fit, linear coefficient of the
+                       linear fit, inferior magnitude of the performed fit,
+                       superior magnitude of the performed fit, limiting
+                       magnitude, total number of objects, total number of
+                       galaxies (stars), total number of identified-magnitude
+                       galaxies (stars), total number of identified magnitude
+                       galaxies (stars) above S/N cut, percentage of FLAGS = 0
+                       objects over total number of objects, number of galaxies 
+                       per arcmin^2, number of stars per arcmin^2.
+
+     - check plot    : plot showing the binned number count data and the
+                       corresponding analytical fit, saved to folder_path.
+    
+    ---
+    """
+
 # Getting data and info from the header
 
     hdu = pyfits.open(input_file,ignore_missing_end=True,memmap=True)[2]
     hdudata = hdu.data
     hdulist_string = pyfits.open(input_file,ignore_missing_end=True,memmap=True)[1].data[0][0]
 
-    tile_ra = fmg.get_entry_tile_cs82_ldac(hdulist_string,'CRVAL1')
-    tile_dec = fmg.get_entry_tile_cs82_ldac(hdulist_string,'CRVAL2')
-    tile_seeing = fmg.get_entry_tile_cs82_ldac(hdulist_string,'SEEING')
+    tile_ra = fmg.get_entry_ldac_header(hdulist_string,'CRVAL1')
+    tile_dec = fmg.get_entry_ldac_header(hdulist_string,'CRVAL2')
+    tile_seeing = fmg.get_entry_ldac_header(hdulist_string,'SEEING')
     
-    tile_name = os.path.basename(input_file) # Is it always treated with swarp? If yes, we can cut the name easily
-    tile_area = (21000*0.187/60)**2 # in arcmin^2
+    tile_name = fmg.get_tile_name(input_file)
+    tile_area = (21000*0.187/60)**2 # in arcmin^2, hardcoded for Megacam pixel scale, approximative value
 
 # Performing cuts in different columns
 
@@ -159,9 +211,10 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     return [tile_name, str(tile_ra), str(tile_dec), str(tile_seeing), str(bin_size), str(S2N_cut), str(stell_idx), str(fit_params[0]), str(fit_params[1]), str(mag_inf), str(mag_sup), str(mag_lim), str(objs[0]), str(objs[1]), str(objs[3]), str(objs[4]),str(objs[5]/objs[0]),str(objs[1]/tile_area),str(objs[2]/tile_area)]
 
 
-# ==========================
+# \cond
+# ============================================================================
 
-# Main function: Improve documentation of usage and optional arguments, include ifs (or try/excepts to prevent crashing), and other minor changes
+# Main function: Include ifs (or try/excepts to prevent crashing), and other minor changes
 
 
 if __name__ == "__main__" :
@@ -169,19 +222,33 @@ if __name__ == "__main__" :
     
     from optparse import OptionParser;
 
-    usage="\n python %prog [flags] [options] 'input_file' 'mag_field_name' 'mag_error_field_name' mag_inf_value plot_x_lim_inf plot_x_lim_sup \n\n This pipeline calculates the limiting magnitude for a given FITS catalogue. It has four mandatory arguments: the (input) FITS catalogue path and name, the magnitude field name to be used for the calculations (i.e. MAG_AUTO, MAG_APER, etc...), the corresponding error field name (i.e. MAGERR_AUTO, MAGERR_APER, etc...) and the inferior magnitude value for which the fit should be performed. For a description of the procedure, check twiki.linea.blablabla"
+    usage="\n\n python %prog [flags] [options] 'input_file' 'mag_field_name' 'mag_error_field_name' \n\n This pipeline calculates the limiting magnitude for a given FITS catalogue. It has four mandatory arguments: the (input) FITS catalogue path and name, the magnitude field name to be used for the calculations (i.e. MAG_AUTO, MAG_APER, etc...) and the corresponding error field name (i.e. MAGERR_AUTO, MAGERR_APER, etc...). For a description of the procedure, check http://twiki.linea.gov.br/blabla\n\n # WARNING!: In its current state, this pipeline will only work with FITS_LDAC files generated by SExtractor (tested with v2.13.2)."
     
     parser = OptionParser(usage=usage);
 
-    parser.add_option('-b','--bin_size', dest='bin_size', default=0.2, help='magnitude bin size [default=0.2]');
+    parser.add_option('-b','--bin_size', dest='bin_size', default=0.2,
+                      help='magnitude bin size [default=0.2]');
 
-    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default='True', help='perform analysis on galaxies (CLASS_STAR < stell_idx) if True, stars  (CLASS_STAR > stell_idx) if False [default=True]');
+    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default='True',
+                      help='perform analysis on galaxies (CLASS_STAR < stell_idx) if True, stars  (CLASS_STAR > stell_idx) if False [default=True]');
 
-    parser.add_option('-i','--include_unidentified_magnitudes', dest='mag99', default='False', help='include objects with unidentified magnitudes (MAG = 99) [default=False]');
+    parser.add_option('-i','--include_unid_mags', dest='mag99', default='False', 
+                      help='include objects with unidentified magnitudes (MAG = 99) [default=False]');
 
-    parser.add_option('-n','--signal2noise_cut', dest='S2N_cut', default=5, help='S/N cut value [default=5]');
+    parser.add_option('-m','--mag_inf', dest='mag_inf', default=21, 
+                      help='inferior magnitude value for which a fit of the object number count per magnitude bin should be performed [default=21]');
 
-    parser.add_option('-s','--stellarity_index', dest='stell_idx', default=0.95, help='stellarity index value [default=0.95]');
+    parser.add_option('-n','--signal2noise_cut', dest='S2N_cut', default=5,
+                      help='S/N cut value [default=5]');
+
+    parser.add_option('--plot_x_inf', dest='plot_inf', default=16,
+                      help='x-axis inferior limit of the plots [default=16]');
+
+    parser.add_option('--plot_x_sup', dest='plot_sup', default=25,
+                      help='x-axis superior limit of the plots [default=25]');
+
+    parser.add_option('-s','--stellarity_index', dest='stell_idx', default=0.95,
+                      help='stellarity index value [default=0.95]');
 
 
     (opts,args) = parser.parse_args();
@@ -190,8 +257,17 @@ if __name__ == "__main__" :
 
     gal_cut = (opts.gal_cut == 'True'); # Ugly, improve this comparison later
     mag99 = (opts.mag99 == 'True'); # Ugly, improve this comparison later
+    mag_inf = float(opts.mag_inf);
+    plot_inf = float(opts.plot_inf);
+    plot_sup = float(opts.plot_sup);
     S2N_cut = float(opts.S2N_cut);
     stell_idx = float(opts.stell_idx);
+
+    if (len(sys.argv)!=4):
+        print "";
+        parser.print_help();
+        print "";
+        sys.exit(1);
     
 
 # Get all the files in the given folder
@@ -201,11 +277,6 @@ if __name__ == "__main__" :
     field_names = [sys.argv[2],sys.argv[3]]
 
     folder_path = os.path.dirname(filenames[0])
-
-    mag_inf = float(sys.argv[4])
-
-    plot_inf = float(sys.argv[5])
-    plot_sup = float(sys.argv[6])
 
 
 # Run the program for each file and send the results to the folder in question. The sending of plots is inside the pipeline, the sending of the final results for all files is here.
@@ -222,8 +293,6 @@ if __name__ == "__main__" :
 
 
     np.savetxt(folder_path + '/fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+ '_stell_'+str(stell_idx)+'.txt', results,fmt='%7s       %s        %s        %.4s      %s         %s       %.4s     %.8s       %.5s       %s        %s        %s           %s      %6s      %6s      %6s      %s      %s      %s')
-
-    # np.savetxt(folder_path + '/fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+ '_stell_'+str(stell_idx)+'.txt',results,fmt='%7s       %s       %s        %.4s      %s         %s       %.4s     %.8s       %.5s       %s        %s        %s           %s      %6s      %6s      %6s      %s      %s      %s')
 
     # Numpy 1.5 doesn't have header options for savetxt yet (to come in Numpy 2.0). Add a header using file commands
     
@@ -244,3 +313,8 @@ if __name__ == "__main__" :
     
 
     sys.exit(0);
+
+
+
+# ------------------
+# \endcond
