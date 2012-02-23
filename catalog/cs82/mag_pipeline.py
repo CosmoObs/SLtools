@@ -1,3 +1,39 @@
+#!/usr/bin/env python
+# ====================================================
+# Authors:
+# Bruno Moraes - bruno.a.l.moraes@gmail.com - 01/Nov/2011
+# ====================================================
+
+
+"""Module to calculate the limiting magnitude for a given FITS catalogue"""
+
+##@package mag_pipeline
+#
+# This package calculates the limiting magnitude for a given FITS catalogue.
+# It has three mandatory arguments: the (input) FITS catalogue path and name,
+# the magnitude field name to be used for the calculations (i.e. MAG_AUTO,
+# MAG_APER, etc...) and the corresponding error field name (i.e. MAGERR_AUTO,
+# MAGERR_APER, etc...). It searches the objects in the 
+# catalog that are inside a circle with this radius and centered at this reference 
+# position.
+# For each object it uses the catalog information to create an ellipse. It uses A_IMAGE 
+# and B_IMAGE from the catalog as the ellipse semi-major axis and semi-minor axis, 
+# respectively. It also uses THETA_IMAGE from the catalog as the ellipse orientation.
+# The ellipse semi-major and semi-minor axes can be multiplied by a scale
+# factor to enlarge the size of the object region. 
+#
+# Executable package: YES
+#
+# To see the package help message, type:
+#
+# > python mag_pipeline.py --help
+#
+# To run the code:
+#
+# > python mag_pipeline.py 'input_file' 'mag_field_name' 'mag_error_field_name' mag_inf_value plot_x_lim_inf plot_x_lim_sup
+
+
+
 from __future__ import division
 from ast import literal_eval as lit
 import sys
@@ -28,29 +64,28 @@ def mkdir_p(path):
 
 def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cut, mag99, S2N_cut, stell_idx, plot_inf, plot_sup):
 
+# Getting data and info from the header
 
-#######################################################
-
-    hdudata = pyfits.open(input_file,ignore_missing_end=True)[2].data
-    hdulist_string = pyfits.open(input_file,ignore_missing_end=True)[1].data[0][0]
+    hdu = pyfits.open(input_file,ignore_missing_end=True,memmap=True)[2]
+    hdudata = hdu.data
+    hdulist_string = pyfits.open(input_file,ignore_missing_end=True,memmap=True)[1].data[0][0]
 
     tile_ra = fmg.get_entry_tile_cs82_ldac(hdulist_string,'CRVAL1')
     tile_dec = fmg.get_entry_tile_cs82_ldac(hdulist_string,'CRVAL2')
     tile_seeing = fmg.get_entry_tile_cs82_ldac(hdulist_string,'SEEING')
     
-    tile_name = fmg.get_tile_name(input_file)
+    tile_name = os.path.basename(input_file) # Is it always treated with swarp? If yes, we can cut the name easily
     tile_area = (21000*0.187/60)**2 # in arcmin^2
- 
-    magdata = hdudata.field(field_names[0])
-    magdata = magdata.astype(np.float64)
-    
-    magerrdata = hdudata.field(field_names[1])
-    magerrdata = magerrdata.astype(np.float64)
- 
-    class_star = hdudata.field('CLASS_STAR')
-    class_star = class_star.astype(np.float64)
 
-    flags = hdudata.field('FLAGS')
+# Performing cuts in different columns
+
+    magdata = hdudata.field(field_names[0]).astype(np.float64)
+    
+    magerrdata = hdudata.field(field_names[1]).astype(np.float64)
+ 
+    class_star = hdudata.field('CLASS_STAR').astype(np.float64)
+
+    flags = hdudata.field('FLAGS').astype(np.float64)
 
      
     if gal_cut == True:
@@ -83,69 +118,11 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     objs.append(len(data))
 
     objs.append(len(magdata[flag_mask]))
+
  
     # Bin and cut the data
-
  
     binned_data = fmg.bin_mag_data(data, bin_size)
-
-#######################################################
-
-# Versao lenta demais com o sample_entries
-
-    '''
-    # Get the data from the file and the tile name
-
-
-    tile_name = fmg.get_tile_name(input_file)
-
-
-    hdu = pyfits.open(input_file,ignore_missing_end=True)[2]
-
-    # Count objects in different cuts
-    
-    objs = []
-
-    objs.append(len(hdu.data))
-
-   
-    # Perform the cuts on the data
-
-
-    # Stellarity cut
-    
-    if gal_cut == True:
-         hdu = fd.sample_entries(hdu,CLASS_STAR=(0,stell_idx))
-
-    else:
-         hdu = fd.sample_entries(hdu,CLASS_STAR=(stell_idx,1))
-
-    objs.append(len(hdu.data))
-
-
-    # Mag != 99 cut
-
-    if mag99 == False:
-        hdu = fd.sample_entries(hdu,MAG_AUTO=(0,98))
-
-    objs.append(len(hdu.data))
-
-    
-    # S/N cut
-
-    hdu = fd.sample_entries(hdu, MAGERR_AUTO=(0,1.086/S2N_cut))
-
-    objs.append(len(hdu.data))
-    
-
-    # Bin the data and get rid of undesired bins
-    
-    magdata = hdu.data.field(field_names[0])
-    magdata = magdata.astype(np.float64)
-
-    binned_data = fmg.bin_mag_data(magdata, bin_size)
-    '''
-####################################################################
 
     binned_data = fmg.cut_unpopulated_bins(binned_data, 10) # Attention! Hard-coded value for the minimum number of counts for keeping bins 
 
@@ -154,12 +131,9 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     cut_data = fmg.cut_mag_data(binned_data, mag_inf, mag_sup)
 
 
-
     # Perform fit
 
-    a0 = 0;  # Attention! Hard-coded initial parameter values for the fit
-
-    b0 = 0.3;
+    a0 = 0; b0 = 0.3;  # Attention! Hard-coded initial parameter values for the fit
 
     p = fmg.fit_mag_data(cut_data, a0, b0)
 
@@ -178,29 +152,10 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     mkdir_p(folder_path + '/Plots/')
 
     fmg.make_plot_mag_pipe(binned_data, tile_name, folder_path, fit_params, mag_inf, mag_sup, mag_lim, bin_size, gal_cut, S2N_cut, stell_idx, plot_inf, plot_sup)
+
     
     # Return results of the fit
     
-    hdulist_string = 0
-    hdudata = 0
-    magdata = 0
-    magerrdata = 0
-    classstar = 0
-    data = 0
-    cut_inf_data = 0
-    cut_data = 0
-    binned_data = 0
-    cut_inf_data = 0
-    stell_mask = 0
-    mag99_mask = 0
-    S2N_mask = 0
-    flags = 0
-    flag_mask = 0
-    
-    del hdudata
-    del hdulist_string
-
-
     return [tile_name, str(tile_ra), str(tile_dec), str(tile_seeing), str(bin_size), str(S2N_cut), str(stell_idx), str(fit_params[0]), str(fit_params[1]), str(mag_inf), str(mag_sup), str(mag_lim), str(objs[0]), str(objs[1]), str(objs[3]), str(objs[4]),str(objs[5]/objs[0]),str(objs[1]/tile_area),str(objs[2]/tile_area)]
 
 
@@ -214,21 +169,19 @@ if __name__ == "__main__" :
     
     from optparse import OptionParser;
 
-    usage="\n  %prog [flags] [options] ??? ??? "
+    usage="\n python %prog [flags] [options] 'input_file' 'mag_field_name' 'mag_error_field_name' mag_inf_value plot_x_lim_inf plot_x_lim_sup \n\n This pipeline calculates the limiting magnitude for a given FITS catalogue. It has four mandatory arguments: the (input) FITS catalogue path and name, the magnitude field name to be used for the calculations (i.e. MAG_AUTO, MAG_APER, etc...), the corresponding error field name (i.e. MAGERR_AUTO, MAGERR_APER, etc...) and the inferior magnitude value for which the fit should be performed. For a description of the procedure, check twiki.linea.blablabla"
     
     parser = OptionParser(usage=usage);
 
-    parser.add_option('-b','--bin_size', dest='bin_size', default=0.5, help='bla');
+    parser.add_option('-b','--bin_size', dest='bin_size', default=0.2, help='magnitude bin size [default=0.2]');
 
-    # parser.add_option('-f','--flag_cut', dest='flag_cut', default=False, help='bla'); # Add these cuts later
+    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default='True', help='perform analysis on galaxies (CLASS_STAR < stell_idx) if True, stars  (CLASS_STAR > stell_idx) if False [default=True]');
 
-    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default='True', help='bla');
+    parser.add_option('-i','--include_unidentified_magnitudes', dest='mag99', default='False', help='include objects with unidentified magnitudes (MAG = 99) [default=False]');
 
-    parser.add_option('-i','--include_unidentified_magnitudes', dest='mag99', default='False', help='bla');
+    parser.add_option('-n','--signal2noise_cut', dest='S2N_cut', default=5, help='S/N cut value [default=5]');
 
-    parser.add_option('-n','--signal2noise_cut', dest='S2N_cut', default=5, help='bla');
-
-    parser.add_option('-s','--stellarity_index', dest='stell_idx', default=0.8, help='bla');
+    parser.add_option('-s','--stellarity_index', dest='stell_idx', default=0.95, help='stellarity index value [default=0.95]');
 
 
     (opts,args) = parser.parse_args();
@@ -246,14 +199,6 @@ if __name__ == "__main__" :
     filenames = glob.glob(sys.argv[1])
 
     field_names = [sys.argv[2],sys.argv[3]]
-
-    '''
-    if gal_cut:
-        folder_path = filenames[0][0:filenames[0].find('S82')] + 'Results/' + field_names[0] + '_GAL/'
-
-    else:
-        folder_path = filenames[0][0:filenames[0].find('S82')] + 'Results/' + field_names[0] + '_STAR/'
-    '''
 
     folder_path = os.path.dirname(filenames[0])
 
