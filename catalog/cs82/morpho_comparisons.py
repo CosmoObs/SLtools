@@ -1,15 +1,35 @@
+#!/usr/bin/env python
+# ====================================================
+# Authors:
+# Bruno Moraes - bruno.a.l.moraes@gmail.com - 01/Nov/2011
+# ====================================================
+
+
+"""Module to calculate the limiting magnitude for a given FITS catalogue"""
+
+##@package morpho_comparisons
+#
+# This package does
+# 
+# The code 
+#
+# Executable package: YES
+#
+# To see the package help message, type:
+#
+# > python morpho_comparisons.py --help
+#
+# To run the code:
+#
+# > python morpho_comparisons.py 'bla' 'bla'
+
+
+
 from __future__ import division
-from ast import literal_eval as lit
 import sys
 import os
 import errno
 import numpy as np
-import math
-import cmath
-from scipy import optimize
-import collections
-import fit_mag as fmg
-import glob
 import pyfits
 import matplotlib.pyplot as pl
 import plot_templates as pltemp
@@ -22,9 +42,6 @@ from sltools.catalog import ascii_data as ascd ### Import Bruno
 from sltools.catalog import table_matching as tbm
 from sltools.coordinate import wcs_conversion as wcscnv
 
-########################################
-### SETTING FOLDERS, FILES, ETC   ######
-########################################
 
 def mkdir_p(path):
     try:
@@ -34,6 +51,115 @@ def mkdir_p(path):
             pass
         else: raise
 
+
+def create_data_subsets(data,col_name,cuts):
+
+    """
+    Creates subsets from data, cutting in numerical value ranges of a given field
+
+    This function takes different sets of input value ranges for a given field in
+    the data and uses them to create numpy masks that are then applied to the 
+    original data in order to create subsets of it. These subsets and the 
+    corresponding masks are returned.
+
+    An arbitrary number of cuts can be performed, but they must be of one of the
+    following three formats:
+
+        - ['.',b] --> performs the cut data.field(col_name) < b
+        - [a,b] ----> performs the cut a <= data.field(col_name) < b
+        - [a,'.'] --> performs the cut a <= data.field(col_name)
+
+    There's currently no support for cuts in string fields or to change from
+    semi-open to open or closed intervals.
+
+
+    Input:
+     - data                        hdr : Input data
+     - col_name                    str : Name of the column chosen to perform
+                                         the cuts
+     - cuts  [[a_1,b_1],...,[a_n,b_n]] : Cuts for different subsets
+
+    Output:
+     - cut_data         [pyfits_bla_1,...,pyfits_bla_n] : List of data subsets
+                                            (each data subset: ndim=2, dtype=)
+     - masks    [ndarray_1,...,ndarray_n] : List of masks used to create the 
+                                            data subsets 
+                                            (each mask: ndim=1,dtype=bool) 
+    """
+
+    # Try/Except if the field doesn't exist in the catalog?    
+
+    cut_data = []
+    masks = []
+
+    for i in range(len(cuts)):
+
+        if cuts[i][0] == '.':
+
+            masks.append(data.field(col_name) < cuts[i][1])
+
+        elif cuts[i][1] == '.':
+    
+            masks.append(cuts[i][0] <= data.field(col_name))
+
+        else:
+
+            masks.append((cuts[i][0] <= data.field(col_name)) & (data.field(col_name) < cuts[i][1]))
+
+
+        cut_data.append(data[masks[i]])
+
+    return cut_data, masks
+
+
+def create_matched_subsets(data_A,data_B,col_name,cuts):
+
+    """
+    Creates subsets of data A and B, cutting in numerical value ranges of a 
+    given field in data A
+
+    This function creates subsets of matched data A and B according to cuts
+    performed in a given field of data A, returning two lists, containing the 
+    subsets of A and B. Input data A and B must have the same number of rows,
+    ideally coming from a matching procedure.
+
+    For details of the cutting procedure, check the documentation of the
+    function create_data_subsets.
+
+
+    Input:
+     - data_A                      hdr : Input data set A
+     - data_B                      hdr : Input data set B (same size as A)
+     - col_name                    str : Name of the column chosen to perform
+                                         the cuts
+     - cuts  [[a_1,b_1],...,[a_n,b_n]] : Cuts for different subsets
+
+    Output:
+     - cut_data_A     [pyfits_bla_1,...,pyfits_bla_n] : List of data subsets
+                                            (each data subset: ndim=2, dtype=)
+     - cut_data_B     [pyfits_bla_1,...,pyfits_bla_n] : List of data subsets
+                                            (each data subset: ndim=2, dtype=)
+    """
+
+
+    # Try/Except here for catalogs with different sizes?
+
+    cut_data_A, masks_A = create_data_subsets(data_A,'MAG_AUTO',[['.',19],[19,20],[20,21]])
+
+    cut_data_B = []
+
+    for i in range(len(cut_data_A)):
+        
+        cut_data_B.append(data_B[masks_A[i]])
+
+    return cut_data_A, cut_data_B
+
+###############################################################################
+###############################################################################
+
+########################################
+### SETTING FOLDERS, FILES, ETC   ######
+########################################
 
 input_cs82 = sys.argv[1]
 
@@ -207,44 +333,28 @@ ascd.write_ds9cat(xlist,ylist,40,'circle','green',outputfile='cs82_new_matching.
 ##########    SEVERAL CUTS & PLOTS    ##########
 ################################################
 
-# Color cuts 
+# SECTION CUTS - IMPROVED Feb/28/2012
 
-cs82_20_to_21 = cs82_full[(20 <= cs82_full.field('MAG_AUTO'))]
+# Magnitude cuts 
 
-cs82_19_to_20 = cs82_full[(cs82_full.field('MAG_AUTO') < 20) & (19 <= cs82_full.field('MAG_AUTO'))]
-
-cs82_19 = cs82_full[(cs82_full.field('MAG_AUTO') < 19)]
-
-
-sdss_20_to_21 = sdss_data[(20 <= cs82_full.field('MAG_AUTO'))]
-
-sdss_19_to_20 = sdss_data[(cs82_full.field('MAG_AUTO') < 20) & (19 <= cs82_full.field('MAG_AUTO'))]
-
-sdss_19 = sdss_data[(cs82_full.field('MAG_AUTO') < 19)]
+cs82_mag, sdss_mag = create_matched_subsets(cs82_full,sdss_data,'MAG_AUTO',[['.',19],[19,20],[20,21]])
 
 
 # Size cuts with CS82 FWHM
 
 s_cut = 8
 
-cs82_big_cs82_FWHM = cs82_19[(cs82_19.field('FWHM_IMAGE') > s_cut)]
-cs82_small_cs82_FWHM = cs82_19[(cs82_19.field('FWHM_IMAGE') <= s_cut)]
-
-sdss_big_cs82_FWHM = sdss_19[(cs82_19.field('FWHM_IMAGE') > s_cut)]
-sdss_small_cs82_FWHM = sdss_19[(cs82_19.field('FWHM_IMAGE') <= s_cut)]
-
+cs82_size, sdss_size = create_matched_subsets(cs82_mag[0],sdss_mag[0],'FWHM_IMAGE',[['.',s_cut],[s_cut,'.']])
 
 
 # Size cuts with SDSS PSF FWHM
 
 psf_cut = 0.75
 
-cs82_big_sloan_psf = cs82_full[(sdss_data.field('psffwhm_i').real > psf_cut)]
-cs82_small_sloan_psf = cs82_full[(sdss_data.field('psffwhm_i').real <= psf_cut)]
+sdss_psf, cs82_psf = create_matched_subsets(sdss_data,cs82_data,'psffwhm_i',[['.',psf_cut],[psf_cut,'.']])
 
-sdss_big_sloan_psf = sdss_data[(sdss_data.field('psffwhm_i').real > psf_cut)]
-sdss_small_sloan_psf = sdss_data[(sdss_data.field('psffwhm_i').real <= psf_cut)]
-
+# WARNING: There was an issue with the ingestion of SDSS data here, the field 
+# was complex and needed to be transformed back to real.
 
 ###########################################################################################################
 
@@ -269,38 +379,40 @@ for i in range(len(fieldnames_cs82)):
             j=1
         
 
-        color_mag_data = [[cs82_20_to_21.field(fieldnames_cs82[i])*3600*(1.68**j),sdss_20_to_21.field(fieldnames_sdss[i]).real],[cs82_19_to_20.field(fieldnames_cs82[i])*3600*(1.68**j),sdss_19_to_20.field(fieldnames_sdss[i]).real],[cs82_19.field(fieldnames_cs82[i])*3600*(1.68**j),sdss_19.field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
+        color_mag_data = [[cs82_mag[2].field(fieldnames_cs82[i])*3600*(1.68**j),sdss_mag[2].field(fieldnames_sdss[i]).real],[cs82_mag[1].field(fieldnames_cs82[i])*3600*(1.68**j),sdss_mag[1].field(fieldnames_sdss[i]).real],[cs82_mag[0].field(fieldnames_cs82[i])*3600*(1.68**j),sdss_mag[0].field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
 
 
-        cs82_size_data = [[cs82_big_cs82_FWHM.field(fieldnames_cs82[i])*3600*(1.68**j),sdss_big_cs82_FWHM.field(fieldnames_sdss[i]).real],[cs82_small_cs82_FWHM.field(fieldnames_cs82[i])*3600*(1.68**j),sdss_small_cs82_FWHM.field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
+        cs82_size_data = [[cs82_size[1].field(fieldnames_cs82[i])*3600*(1.68**j),sdss_size[1].field(fieldnames_sdss[i]).real],[cs82_size[0].field(fieldnames_cs82[i])*3600*(1.68**j),sdss_size[0].field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
 
-        sdss_size_data = [[cs82_big_sloan_psf.field(fieldnames_cs82[i])*3600*(1.68**j),sdss_big_sloan_psf.field(fieldnames_sdss[i]).real],[cs82_small_sloan_psf.field(fieldnames_cs82[i])*3600*(1.68**j),sdss_small_sloan_psf.field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
+
+        sdss_size_data = [[cs82_psf[1].field(fieldnames_cs82[i])*3600*(1.68**j),sdss_psf[1].field(fieldnames_sdss[i]).real],[cs82_psf[0].field(fieldnames_cs82[i])*3600*(1.68**j),sdss_psf[0).field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
 
         print fieldnames_cs82[i]
 
 
     elif i == 2:
 
-        color_mag_data = [[cs82_20_to_21.field(fieldnames_cs82[i]),sdss_20_to_21.field(fieldnames_sdss[i]).real],[cs82_19_to_20.field(fieldnames_cs82[i]),sdss_19_to_20.field(fieldnames_sdss[i]).real],[cs82_19.field(fieldnames_cs82[i]),sdss_19.field(fieldnames_sdss[i]).real],[fit_x-90,fit_x]]
 
-    
-        cs82_size_data = [[cs82_big_cs82_FWHM.field(fieldnames_cs82[i]),sdss_big_cs82_FWHM.field(fieldnames_sdss[i]).real],[cs82_small_cs82_FWHM.field(fieldnames_cs82[i]),sdss_small_cs82_FWHM.field(fieldnames_sdss[i]).real],[fit_x-90,fit_x]]
+        color_mag_data = [[cs82_mag[2].field(fieldnames_cs82[i]),sdss_mag[2].field(fieldnames_sdss[i]).real],[cs82_mag[1].field(fieldnames_cs82[i]),sdss_mag[1].field(fieldnames_sdss[i]).real],[cs82_mag[0].field(fieldnames_cs82[i]),sdss_mag[0].field(fieldnames_sdss[i]).real],[fit_x-90,fit_x]]
 
 
-        sdss_size_data = [[cs82_big_sloan_psf.field(fieldnames_cs82[i]),sdss_big_sloan_psf.field(fieldnames_sdss[i]).real],[cs82_small_sloan_psf.field(fieldnames_cs82[i]),sdss_small_sloan_psf.field(fieldnames_sdss[i]).real],[fit_x-90,fit_x]]
+        cs82_size_data = [[cs82_size[1].field(fieldnames_cs82[i]),sdss_size[1].field(fieldnames_sdss[i]).real],[cs82_size[0].field(fieldnames_cs82[i]),sdss_size[0].field(fieldnames_sdss[i]).real],[fit_x-90,fit_x]]
+
+
+        sdss_size_data = [[cs82_psf[1].field(fieldnames_cs82[i]),sdss_psf[1].field(fieldnames_sdss[i]).real],[cs82_psf[0].field(fieldnames_cs82[i]),sdss_psf[0).field(fieldnames_sdss[i]).real],[fit_x-90,fit_x]]
 
         print fieldnames_cs82[i]
 
 
     else:
 
-        color_mag_data = [[cs82_20_to_21.field(fieldnames_cs82[i]),sdss_20_to_21.field(fieldnames_sdss[i]).real],[cs82_19_to_20.field(fieldnames_cs82[i]),sdss_19_to_20.field(fieldnames_sdss[i]).real],[cs82_19.field(fieldnames_cs82[i]),sdss_19.field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
+        color_mag_data = [[cs82_mag[2].field(fieldnames_cs82[i]),sdss_mag[2].field(fieldnames_sdss[i]).real],[cs82_mag[1].field(fieldnames_cs82[i]),sdss_mag[1].field(fieldnames_sdss[i]).real],[cs82_mag[0].field(fieldnames_cs82[i]),sdss_mag[0].field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
 
 
-        cs82_size_data = [[cs82_big_cs82_FWHM.field(fieldnames_cs82[i]),sdss_big_cs82_FWHM.field(fieldnames_sdss[i]).real],[cs82_small_cs82_FWHM.field(fieldnames_cs82[i]),sdss_small_cs82_FWHM.field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
+        cs82_size_data = [[cs82_size[1].field(fieldnames_cs82[i]),sdss_size[1].field(fieldnames_sdss[i]).real],[cs82_size[0].field(fieldnames_cs82[i]),sdss_size[0].field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
 
 
-        sdss_size_data = [[cs82_big_sloan_psf.field(fieldnames_cs82[i]),sdss_big_sloan_psf.field(fieldnames_sdss[i]).real],[cs82_small_sloan_psf.field(fieldnames_cs82[i]),sdss_small_sloan_psf.field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
+        sdss_size_data = [[cs82_psf[1].field(fieldnames_cs82[i]),sdss_psf[1].field(fieldnames_sdss[i]).real],[cs82_psf[0].field(fieldnames_cs82[i]),sdss_psf[0).field(fieldnames_sdss[i]).real],[fit_x,fit_x]]
 
         print fieldnames_cs82[i]
 
@@ -324,11 +436,11 @@ for i in range(len(fieldnames_cs82)):
 
 print j
 
-rel_reff_21 = [cs82_20_to_21.field(fieldnames_cs82[0])*3600*1.68**j,(sdss_20_to_21.field(fieldnames_sdss[0]).real-cs82_20_to_21.field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_20_to_21.field(fieldnames_cs82[0])*3600*1.68**j)]
+rel_reff_21 = [cs82_mag[2].field(fieldnames_cs82[0])*3600*1.68**j,(sdss_mag[2].field(fieldnames_sdss[0]).real-cs82_mag[2].field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_mag[2].field(fieldnames_cs82[0])*3600*1.68**j)]
 
-rel_reff_20 =[cs82_19_to_20.field(fieldnames_cs82[0])*3600*1.68**j,(sdss_19_to_20.field(fieldnames_sdss[0]).real-cs82_19_to_20.field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_19_to_20.field(fieldnames_cs82[0])*3600*1.68**j)]
+rel_reff_20 =[cs82_mag[1].field(fieldnames_cs82[0])*3600*1.68**j,(sdss_mag[1].field(fieldnames_sdss[0]).real-cs82_mag[1].field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_mag[1].field(fieldnames_cs82[0])*3600*1.68**j)]
 
-rel_reff_19 =[cs82_19.field(fieldnames_cs82[0])*3600*1.68**j,(sdss_19.field(fieldnames_sdss[0]).real-cs82_19.field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_19.field(fieldnames_cs82[0])*3600*1.68**j)]
+rel_reff_19 =[cs82_mag[0].field(fieldnames_cs82[0])*3600*1.68**j,(sdss_mag[0].field(fieldnames_sdss[0]).real-cs82_mag[0].field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_mag[0].field(fieldnames_cs82[0])*3600*1.68**j)]
 
 rel_reff = [rel_reff_21, rel_reff_20, rel_reff_19, [np.arange(0, 5, 0.01),0*np.arange(0, 5, 0.01)]]
 
@@ -343,9 +455,9 @@ pl.clf()
 
 print j
 
-rel_reff_big = [cs82_big_cs82_FWHM.field(fieldnames_cs82[0])*3600*1.68**j,(sdss_big_cs82_FWHM.field(fieldnames_sdss[0]).real-cs82_big_cs82_FWHM.field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_big_cs82_FWHM.field(fieldnames_cs82[0])*3600*1.68**j)]
+rel_reff_big = [cs82_size[1].field(fieldnames_cs82[0])*3600*1.68**j,(sdss_size[1].field(fieldnames_sdss[0]).real-cs82_size[1].field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_size[1].field(fieldnames_cs82[0])*3600*1.68**j)]
 
-rel_reff_small = [cs82_small_cs82_FWHM.field(fieldnames_cs82[0])*3600*1.68**j,(sdss_small_cs82_FWHM.field(fieldnames_sdss[0]).real-cs82_small_cs82_FWHM.field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_small_cs82_FWHM.field(fieldnames_cs82[0])*3600*1.68**j)]
+rel_reff_small = [cs82_size[0].field(fieldnames_cs82[0])*3600*1.68**j,(sdss_size[0].field(fieldnames_sdss[0]).real-cs82_size[0].field(fieldnames_cs82[0])*3600*1.68**j)/(cs82_size[0].field(fieldnames_cs82[0])*3600*1.68**j)]
 
 
 rel_reff_size = [rel_reff_big, rel_reff_small, [np.arange(0, 5, 0.01),0*np.arange(0, 5, 0.01)]]
@@ -362,11 +474,11 @@ pl.clf()
 
 print j
 
-hlrad_21 = [cs82_20_to_21.field(fieldnames_cs82[0])*3600*1.68**j,cs82_20_to_21.field('FLUX_RADIUS')*0.186]
+hlrad_21 = [cs82_mag[2].field(fieldnames_cs82[0])*3600*1.68**j,cs82_mag[2].field('FLUX_RADIUS')*0.186]
 
-hlrad_20 =[cs82_19_to_20.field(fieldnames_cs82[0])*3600*1.68**j,cs82_19_to_20.field('FLUX_RADIUS')*0.186]
+hlrad_20 =[cs82_mag[1].field(fieldnames_cs82[0])*3600*1.68**j,cs82_mag[1].field('FLUX_RADIUS')*0.186]
 
-hlrad_19 =[cs82_19.field(fieldnames_cs82[0])*3600*1.68**j,cs82_19.field('FLUX_RADIUS')*0.186]
+hlrad_19 =[cs82_mag[0].field(fieldnames_cs82[0])*3600*1.68**j,cs82_mag[0].field('FLUX_RADIUS')*0.186]
 
 hlrad = [hlrad_21, hlrad_20, hlrad_19, [np.arange(0, 5, 0.01),np.arange(0, 5, 0.01)]]
 
@@ -381,11 +493,11 @@ pl.clf()
 
 print j
 
-hlrad_21 = [sdss_20_to_21.field(fieldnames_sdss[0]).real,cs82_20_to_21.field('FLUX_RADIUS')*0.186]
+hlrad_21 = [sdss_mag[2].field(fieldnames_sdss[0]).real,cs82_mag[2].field('FLUX_RADIUS')*0.186]
 
-hlrad_20 =[sdss_19_to_20.field(fieldnames_sdss[0]).real,cs82_19_to_20.field('FLUX_RADIUS')*0.186]
+hlrad_20 =[sdss_mag[1].field(fieldnames_sdss[0]).real,cs82_mag[1].field('FLUX_RADIUS')*0.186]
 
-hlrad_19 =[sdss_19.field(fieldnames_sdss[0]).real,cs82_19.field('FLUX_RADIUS')*0.186]
+hlrad_19 =[sdss_mag[0].field(fieldnames_sdss[0]).real,cs82_mag[0].field('FLUX_RADIUS')*0.186]
 
 hlrad = [hlrad_21, hlrad_20, hlrad_19, [np.arange(0, 5, 0.01),np.arange(0, 5, 0.01)]]
 
@@ -449,5 +561,3 @@ for i in range(len(sdss_ra)):
 
 ascd.write_ds9cat(xlist,ylist,30,'circle','yellow', outputfile = 'boss_full_objects.reg')
 '''
-
-print len(sdss_data)
