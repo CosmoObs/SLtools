@@ -1,19 +1,9 @@
 from __future__ import division
 import sys
 import os
-import errno
 import numpy as np
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
-import math
-import cmath
-from scipy import optimize
-import collections
-import fit_mag as fmg
-import glob
-import pyfits
 import matplotlib.font_manager
-import string
 
 import plot_templates as pltemp
 
@@ -43,6 +33,7 @@ mask_mp = (np.char.count(cs82_tiles[:,0],'p') == 1)*(np.char.find(cs82_tiles[:,0
 
 cs82_tiles = np.char.replace(cs82_tiles,'p','')
 cs82_tiles = np.char.replace(cs82_tiles,'m','')
+cs82_tiles = np.char.replace(cs82_tiles,'_y','')
 cs82_tiles = cs82_tiles.astype(np.float)
 
 cs82_quadrants = []

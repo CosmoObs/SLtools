@@ -174,7 +174,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
  
     # Bin and cut the data
  
-    binned_data = fmg.bin_mag_data(data, bin_size)
+    binned_data = fmg.make_histogram(data, bin_size)
 
     binned_data = fmg.cut_unpopulated_bins(binned_data, 10) # Attention! Hard-coded value for the minimum number of counts for keeping bins 
 
@@ -187,9 +187,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
     a0 = 0; b0 = 0.3;  # Attention! Hard-coded initial parameter values for the fit
 
-    p = fmg.fit_mag_data(cut_data, a0, b0)
-
-    fit_params = list(p)
+    fit_params = fmg.fit_mag_data(cut_data, a0, b0)
 
 
     # Get limit magnitude
@@ -264,7 +262,7 @@ if __name__ == "__main__" :
     stell_idx = float(opts.stell_idx);
 
     if (len(sys.argv)!=4):
-        print "";
+        print "The number of arguments is wrong. Check documentation for usage instructions:\n\n";
         parser.print_help();
         print "";
         sys.exit(1);
