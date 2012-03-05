@@ -52,6 +52,7 @@ import fit_mag as fmg
 import glob
 import pyfits
 
+
 # Hard-coded use of sltools functions. Need to make a build of the library to get rid of this path.
 
 sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio") ### Append Bruno
@@ -118,16 +119,33 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
 # Getting data and info from the header
 
-    hdu = pyfits.open(input_file,ignore_missing_end=True,memmap=True)[2]
-    hdudata = hdu.data
-    hdulist_string = pyfits.open(input_file,ignore_missing_end=True,memmap=True)[1].data[0][0]
+    hdulist = pyfits.open(input_file,ignore_missing_end=True,memmap=True)
 
-    tile_ra = fmg.get_entry_ldac_header(hdulist_string,'CRVAL1')
-    tile_dec = fmg.get_entry_ldac_header(hdulist_string,'CRVAL2')
-    tile_seeing = fmg.get_entry_ldac_header(hdulist_string,'SEEING')
+    if fmg.check_if_ldac(hdulist):
+
+        hdudata = hdulist[2].data
     
-    tile_name = fmg.get_tile_name(input_file)
-    tile_area = (21000*0.187/60)**2 # in arcmin^2, hardcoded for Megacam pixel scale, approximative value
+        hdulist_string = hdulist[1].data[0][0]
+
+        tile_ra = fmg.get_entry_ldac_header(hdulist_string,'CRVAL1')
+        tile_dec = fmg.get_entry_ldac_header(hdulist_string,'CRVAL2')
+        tile_seeing = fmg.get_entry_ldac_header(hdulist_string,'SEEING')
+    
+        tile_name = fmg.get_tile_name(input_file)
+        tile_area = (21000*0.187/60)**2 # in arcmin^2, hardcoded for Megacam pixel scale, approximative value
+    
+    else:
+        
+        # Improve this part later for regular fits files
+
+        hdudata = hdulist[1].data
+
+        tile_ra = 1
+        tile_dec = 1
+        tile_seeing = 1
+        tile_name = 'full'
+        tile_area = 177*(21000*0.187/60)**2
+
 
 # Performing cuts in different columns
 
@@ -153,7 +171,9 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     else:
         mag99_mask = True
 
-    flag_mask = (flags == 0) 
+    flag_mask = (flags == 0)
+
+    flag_mask = stell_mask
 
     S2N_mask = magerrdata < 1.086/S2N_cut
      
@@ -261,12 +281,15 @@ if __name__ == "__main__" :
     S2N_cut = float(opts.S2N_cut);
     stell_idx = float(opts.stell_idx);
 
+    # How do I write a condition like this?
+
+    '''
     if (len(sys.argv)!=4):
-        print "The number of arguments is wrong. Check documentation for usage instructions:\n\n";
+        print "\n\nThe number of arguments is wrong. Check documentation for usage instructions:\n\n";
         parser.print_help();
         print "";
         sys.exit(1);
-    
+    '''
 
 # Get all the files in the given folder
 
