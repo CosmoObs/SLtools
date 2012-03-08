@@ -113,8 +113,6 @@ def get_entry_ldac_header(hdulist_string, entry_name):
     return entry
 
 
-
-
 def make_histogram(data, bin_size):
 
     """
