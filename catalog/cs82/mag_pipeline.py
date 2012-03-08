@@ -55,9 +55,10 @@ import pyfits
 
 # Hard-coded use of sltools functions. Need to make a build of the library to get rid of this path.
 
-sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio") ### Append Bruno
+sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio/TEMPORARY_sltools_CHE/") ### Append Bruno
 from sltools.catalog import fits_data as fd
 from sltools.coordinate import wcs_conversion as wcscv
+from sltools.image import header_funcs as hdrf
 
 # =================================================================================================================
 
@@ -114,6 +115,8 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
     hdulist = pyfits.open(input_file,ignore_missing_end=True,memmap=True)
 
+    header_info = ['CRVAL1','CRVAL2','SEEING']
+
     if fmg.check_if_ldac(hdulist):
 
         hdudata = hdulist[2].data
@@ -122,9 +125,9 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     
         hdulist_string = hdulist[1].data[0][0]
 
-        tile_ra = fmg.get_entry_ldac_header(hdulist_string,'CRVAL1')
-        tile_dec = fmg.get_entry_ldac_header(hdulist_string,'CRVAL2')
-        tile_seeing = fmg.get_entry_ldac_header(hdulist_string,'SEEING')
+        tile_ra = fmg.get_entry_ldac_header(hdulist_string, header_info[0])
+        tile_dec = fmg.get_entry_ldac_header(hdulist_string,header_info[1])
+        tile_seeing = fmg.get_entry_ldac_header(hdulist_string,header_info[2])
     
         tile_name = fmg.get_tile_name(input_file)
         tile_area = (21000*0.187/60)**2 # in arcmin^2, hardcoded for Megacam pixel scale, approximative value
@@ -137,9 +140,11 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
         column_names = hdulist[1].columns.names
 
-        tile_ra = 1
-        tile_dec = 1
-        tile_seeing = 1
+        header_vals = hdrf.get_header_parameter(input_file, header_info[0], header_info[1], header_info[2])
+
+        tile_ra = header_vals[0]
+        tile_dec = header_vals[1]
+        tile_seeing = header_vals[2]
         tile_name = 'full'
         tile_area = 177*(21000*0.187/60)**2
 
