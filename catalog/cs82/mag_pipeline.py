@@ -141,7 +141,14 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
         column_names = hdulist[1].columns.names
 
-        header_vals = hdrf.get_header_parameter(input_file, header_info[0], header_info[1], header_info[2])
+        header_vals = []
+
+        for i in xrange(len(header_info)):
+
+            header_vals.append(hdulist[0].header.get(header_info[i]))
+
+            if hdulist[0].header.get(header_info[i]) == None:
+                print "The field "+header_info[i]+ " wasn't found in the header. 'None' will be taken as its value."
 
         tile_ra = header_vals[0]
         tile_dec = header_vals[1]
