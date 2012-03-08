@@ -59,6 +59,7 @@ sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio/TEMPORARY_sltools
 from sltools.catalog import fits_data as fd
 from sltools.coordinate import wcs_conversion as wcscv
 from sltools.image import header_funcs as hdrf
+from sltools.io import io_addons as ioadd
 
 # =================================================================================================================
 
@@ -247,17 +248,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     
     # Make the plots and save them to a given folder
     
-    try:
-        os.mkdir(folder_path + '/Plots/')
-
-    except OSError as exc: # Python >2.5
-
-        if exc.errno == errno.EEXIST:
-
-            pass
-
-        else: raise    
-
+    ioadd.create_folder(folder_path + '/Plots/')
 
     fmg.make_plot_mag_pipe(binned_data, tile_name, folder_path, fit_params, mag_inf, mag_sup, mag_lim, bin_size, gal_cut, S2N_cut, stell_idx, plot_inf, plot_sup)
 
