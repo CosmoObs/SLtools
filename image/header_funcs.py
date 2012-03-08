@@ -200,7 +200,7 @@ def get_header_parameter( image_file, *parargs ):
 
         except:
             print >> sys.stderr, "Warning: Unable to find this parameter in header instance for image coordinates unit.";
-            param_list.append('NOT FOUND') 
+            param_list.append(None) 
        
     return (param_list);
     
