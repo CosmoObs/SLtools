@@ -113,6 +113,11 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     """
 
 # Getting data and info from the header
+#
+# This part can still be improved: the normal FITS part can be modularized,
+# and a Try/Except test should be written for when the field isn't present.
+# Also the tile area calculation is wrong and the pixel scale is hardcoded
+# (and doesn't need to be).
 
     hdulist = pyfits.open(input_file,ignore_missing_end=True,memmap=True)
 
@@ -134,8 +139,6 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
         tile_area = (21000*0.187/60)**2 # in arcmin^2, hardcoded for Megacam pixel scale, approximative value
     
     else:
-        
-        # Improve this part later for regular fits files
 
         hdudata = hdulist[1].data
 
