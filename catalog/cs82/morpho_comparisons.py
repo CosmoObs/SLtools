@@ -30,12 +30,13 @@ import sys
 import os
 import errno
 import numpy as np
+import numexpr as ne
 import pyfits
 import matplotlib.pyplot as pl
 from time import strftime
 
 
-sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio") ### Append Bruno
+sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio/TEMPORARY_sltools_CHE") ### Append Bruno
 from sltools.catalog import fits_data as fd ### Import Bruno
 from sltools.catalog import ascii_data as ascd ### Import Bruno
 from sltools.catalog import table_matching as tbm
@@ -87,18 +88,21 @@ def create_matching_arrays(cat_A, cat_B, coord_A_names, coord_B_names, radius):
     cat_B_ra = cat_B.field(coord_B_names[0]).real
     cat_B_dec = cat_B.field(coord_B_names[1]).real
     cat_B_radec = cat_B_ra + 1j*cat_B_dec
-
+    
+    
     # Matrix operation: C = (pA).1_(1xn) - 1_(mx1).(pB)    
 
     coord_matrix = np.outer(cat_A_radec,np.ones(len(cat_B_radec)))-np.outer(np.ones(len(cat_A_radec)),cat_B_radec)
 
+
     # Element-wise complex conjugate multiplication and square-root
 
     dist_matrix = np.real(coord_matrix*np.conjugate(coord_matrix))
+     
 
     # Logical matching matrix
 
-    match_matrix = (dist_matrix < radius**2)
+    match_matrix = (dist_matrix < radius*radius)
 
     return dist_matrix, match_matrix
 
