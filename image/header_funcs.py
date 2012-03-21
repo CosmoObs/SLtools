@@ -192,8 +192,15 @@ def get_header_parameter( image_file, *parargs ):
     # Get image parameters in header.
     #
     param_list = [];
-    for _param in parargs :
-        param_list.append( _header[_param] ); 
 
+
+    for _param in parargs :
+        try:
+            param_list.append( _header[_param] ); 
+
+        except:
+            print >> sys.stderr, "Warning: Unable to find this parameter in header instance for image coordinates unit.";
+            param_list.append(None) 
+       
     return (param_list);
     
