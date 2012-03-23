@@ -45,6 +45,7 @@ import sltools;
 from sltools.string import regexp;
 from sltools.image import segmentation_ids;
 from sltools.image import header_funcs as hf;
+from sltools.coordinate import wcs_conversion as wcsc;
 
 
 # =================================================================================================================
@@ -85,7 +86,7 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
     """
 
     image = img;
-    
+
     logging.debug("Input parameters (type(image),header,coord_unit,xo,yo,size_unit,x_size,y_size,mask): %s",(type(image),hdr,coord_unit,xo,yo,size_unit,x_size,y_size,mask));
 
     xo=float(xo);
@@ -121,7 +122,6 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
         x_cut_size = int(float(x_cut_size)/dimpix);
         y_cut_size = int(float(y_cut_size)/dimpix);
 
-
     # And if no side size was given, define a default value correspondig to half of original image..
     #
     if not ( x_size ):
@@ -147,10 +147,8 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
         y_halo = int(float(yo));
 
     elif ( coord_unit == 'degrees' and (xo != 0 and yo != 0) ):
-        _out = commands.getoutput( 'sky2xy %s %s %s' % (input_file, xo, yo) );
-        _out = string.split(_out);
-        x_halo = int(float(_out[-2]))-1;
-        y_halo = int(float(_out[-1]))-1;
+        x_halo = wcsc.radec2xy(hdr,xo,yo)[0];
+        y_halo = wcsc.radec2xy(hdr,xo,yo)[1];
 
     elif ( xo == 0 and yo == 0 ):
         x_halo = int(x_img_size/2);
