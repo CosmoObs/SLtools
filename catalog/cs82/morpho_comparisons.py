@@ -30,13 +30,10 @@ import sys
 import os
 import errno
 import numpy as np
-import numexpr as ne
 import pyfits
 import matplotlib.pyplot as pl
 from time import strftime
 
-
-sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio/TEMPORARY_sltools_CHE") ### Append Bruno
 from sltools.catalog import fits_data as fd ### Import Bruno
 from sltools.catalog import ascii_data as ascd ### Import Bruno
 from sltools.catalog import table_matching as tbm
