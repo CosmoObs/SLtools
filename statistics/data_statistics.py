@@ -8,11 +8,12 @@ def get_quantile_errors(data,quantiles):
     """
     Gets arbitrary quantile values for given data
 
-    This function uses the PypeR library to call commands from the R language
-    used to calculate an arbitrary number of quantile intervals of a numpy
-    array. In the case of bi-dimensional numpy arrays, it will calculate
-    these statistics along the first axis, meaning that each line corresponds
-    to an independent data set.
+    This function uses the PypeR library (download from 
+    http://sourceforge.net/projects/rinpy/) to call commands from the R
+    language used to calculate an arbitrary number of quantile intervals of
+    a numpy array. In the case of bi-dimensional numpy arrays, it will
+    calculate these statistics along the first axis, meaning that each line
+    corresponds to an independent data set.
 
 
     Input:
