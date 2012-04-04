@@ -304,19 +304,19 @@ def dict_to_tbHDU(dic, tbname='', *fieldnames):
             ndim = np.asarray(valores).ndim
         
         try:
-            if tipo <= np.dtype('int64'):
-                tipo = str(ndim)+'K'
-            elif tipo <= np.dtype('int32') or tipo == np.dtype('int'):
+            if tipo <= np.dtype('int32') or tipo == np.dtype('int'):
                 tipo = str(ndim)+'J'
-            elif tipo <= np.dtype('float64') or tipo == np.dtype('float'):
-                tipo = str(ndim)+'D'
-            elif tipo <= np.dtype('float32'):
+            elif tipo <= np.dtype('int64'):
+                tipo = str(ndim)+'K'
+            elif tipo <= np.dtype('float32') or tipo == np.dtype('float'):
                 tipo = str(ndim)+'E'
-            elif tipo <= np.dtype('complex'):
+            elif tipo <= np.dtype('float64'):
+                tipo = str(ndim)+'D'
+            elif tipo == np.dtype('complex'):
                 tipo = str(ndim)+'C'
-            elif tipo <= np.dtype('bool'):
+            elif tipo == np.dtype('bool'):
                 tipo = str(ndim)+'L'
-            elif tipo <= np.dtype('object'):
+            elif tipo == np.dtype('object'):
                 tipo = str(ndim)+'K'
             else:
                 tipo = '40A'
