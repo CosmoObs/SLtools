@@ -48,28 +48,19 @@ import math
 import cmath
 from scipy import optimize
 import collections
-import fit_mag as fmg
 import glob
 import pyfits
 
-# Hard-coded use of sltools functions. Need to make a build of the library to get rid of this path.
-
-sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio") ### Append Bruno
+from sltools.catalog.cs82 import fit_mag as fmg
 from sltools.catalog import fits_data as fd
 from sltools.coordinate import wcs_conversion as wcscv
+from sltools.image import header_funcs as hdrf
+from sltools.io import io_addons as ioadd
 
 # =================================================================================================================
 
-def mkdir_p(path):
-    try:
-        os.makedirs(path)
-    except OSError as exc: # Python >2.5
-        if exc.errno == errno.EEXIST:
-            pass
-        else: raise
 
-
-def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cut, mag99, S2N_cut, stell_idx, plot_inf, plot_sup):
+def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cut, flag_cut, mag99, S2N_cut, stell_idx, plot_inf, plot_sup):
 
     """
     Calculate the limiting magnitude for a given FITS catalogue.
@@ -89,6 +80,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
      - mag_inf           float : Inferior magnitude to perform fitting
      - bin_size          float : (Uniform) binning size
      - gal_cut            bool : Galaxy or Star fit (according to stell_idx cut)
+     - flag_cut           bool : Use only FLAGS=0 objects
      - mag99              bool : Inclusion of unidentified magnitudes
      - S2N_cut           float : Signal-to-noise minimum cut
      - stell_idx         float : CLASS_STAR value (defines what is a Galaxy/Star)
@@ -117,43 +109,106 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     """
 
 # Getting data and info from the header
+#
+# This part can still be improved: the normal FITS part can be modularized,
+# and a Try/Except test should be written for when the field isn't present.
+# Also the tile area calculation is wrong and the pixel scale is hardcoded
+# (and doesn't need to be).
 
-    hdu = pyfits.open(input_file,ignore_missing_end=True,memmap=True)[2]
-    hdudata = hdu.data
-    hdulist_string = pyfits.open(input_file,ignore_missing_end=True,memmap=True)[1].data[0][0]
+    hdulist = pyfits.open(input_file,ignore_missing_end=True,memmap=True)
 
-    tile_ra = fmg.get_entry_ldac_header(hdulist_string,'CRVAL1')
-    tile_dec = fmg.get_entry_ldac_header(hdulist_string,'CRVAL2')
-    tile_seeing = fmg.get_entry_ldac_header(hdulist_string,'SEEING')
+    header_info = ['CRVAL1','CRVAL2','SEEING']
+
+    if fmg.check_if_ldac(hdulist):
+
+        hdudata = hdulist[2].data
+
+        column_names = hdulist[2].columns.names
     
-    tile_name = fmg.get_tile_name(input_file)
-    tile_area = (21000*0.187/60)**2 # in arcmin^2, hardcoded for Megacam pixel scale, approximative value
+        hdulist_string = hdulist[1].data[0][0]
+
+        tile_ra = fmg.get_entry_ldac_header(hdulist_string, header_info[0])
+        tile_dec = fmg.get_entry_ldac_header(hdulist_string,header_info[1])
+        tile_seeing = fmg.get_entry_ldac_header(hdulist_string,header_info[2])
+    
+        tile_name = fmg.get_tile_name(input_file)
+        tile_area = (21000*0.187/60)**2 # in arcmin^2, hardcoded for Megacam pixel scale, approximative value
+    
+    else:
+
+        hdudata = hdulist[1].data
+
+        column_names = hdulist[1].columns.names
+
+        header_vals = []
+
+        for i in xrange(len(header_info)):
+
+            header_vals.append(hdulist[0].header.get(header_info[i]))
+
+            if hdulist[0].header.get(header_info[i]) == None:
+                print "The field "+header_info[i]+ " wasn't found in the header. 'None' will be taken as its value."
+
+        tile_ra = header_vals[0]
+        tile_dec = header_vals[1]
+        tile_seeing = header_vals[2]
+        tile_name = 'full'
+        tile_area = 177*(21000*0.187/60)**2
+
 
 # Performing cuts in different columns
 
-    magdata = hdudata.field(field_names[0]).astype(np.float64)
-    
-    magerrdata = hdudata.field(field_names[1]).astype(np.float64)
- 
-    class_star = hdudata.field('CLASS_STAR').astype(np.float64)
 
-    flags = hdudata.field('FLAGS').astype(np.float64)
+    if field_names[0] not in column_names:
+        print field_names[0]+" is not present in this FITS file! Aborting... "
+        sys.exit(1)
 
-     
-    if gal_cut == True:
-        stell_mask = (class_star < stell_idx)
- 
+    elif field_names[1] not in column_names:
+        print field_names[1]+" is not present in this FITS file! Aborting... "
+        sys.exit(1)
+
     else:
-        stell_mask = (class_star > stell_idx)
+        magdata = hdudata.field(field_names[0]).astype(np.float64)
+        magerrdata = hdudata.field(field_names[1]).astype(np.float64)
+
 
  
-    if mag99 == False:
+    try:
+        class_star = hdudata.field('CLASS_STAR').astype(np.float64)
+
+        if gal_cut:
+            stell_mask = (class_star < stell_idx)
+ 
+        else:
+            stell_mask = (class_star > stell_idx)
+
+    except:
+        print "There's no field called CLASS_STAR to perform a cut. All objects will be considered."
+        class_star = (np.zeros(len(hdudata)) == 0)
+
+
+
+    if flag_cut:
+
+        try:
+            flags = hdudata.field('FLAGS').astype(np.float64)
+            flag_mask = (flags == 0)
+        except:
+            print "There's no field called FLAGS to perform a cut. All objects will be considered."
+            flag_mask = (np.zeros(len(hdudata)) == 0)
+
+    else:
+        flag_mask = (np.zeros(len(hdudata)) == 0)
+    
+
+ 
+    if mag99:
         mag99_mask = (magdata != 99)
  
     else:
-        mag99_mask = True
+        mag99_mask = (np.zeros(len(hdudata)) == 0)
 
-    flag_mask = (flags == 0) 
+
 
     S2N_mask = magerrdata < 1.086/S2N_cut
      
@@ -199,7 +254,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     
     # Make the plots and save them to a given folder
     
-    mkdir_p(folder_path + '/Plots/')
+    ioadd.create_folder(folder_path + '/Plots/')
 
     fmg.make_plot_mag_pipe(binned_data, tile_name, folder_path, fit_params, mag_inf, mag_sup, mag_lim, bin_size, gal_cut, S2N_cut, stell_idx, plot_inf, plot_sup)
 
@@ -220,17 +275,20 @@ if __name__ == "__main__" :
     
     from optparse import OptionParser;
 
-    usage="\n\n python %prog [flags] [options] 'input_file' 'mag_field_name' 'mag_error_field_name' \n\n This pipeline calculates the limiting magnitude for a given FITS catalogue. It has four mandatory arguments: the (input) FITS catalogue path and name, the magnitude field name to be used for the calculations (i.e. MAG_AUTO, MAG_APER, etc...) and the corresponding error field name (i.e. MAGERR_AUTO, MAGERR_APER, etc...). For a description of the procedure, check http://twiki.linea.gov.br/blabla\n\n # WARNING!: In its current state, this pipeline will only work with FITS_LDAC files generated by SExtractor (tested with v2.13.2)."
+    usage="\n\n python %prog [flags] [options] 'input_file' 'mag_field_name' 'mag_error_field_name' \n\n This pipeline calculates the limiting magnitude for a given FITS catalogue. It has four mandatory arguments: the (input) FITS catalogue path and name, the magnitude field name to be used for the calculations (i.e. MAG_AUTO, MAG_APER, etc...) and the corresponding error field name (i.e. MAGERR_AUTO, MAGERR_APER, etc...). For a description of the procedure, check http://twiki.linea.gov.br/blabla"
     
     parser = OptionParser(usage=usage);
 
     parser.add_option('-b','--bin_size', dest='bin_size', default=0.2,
                       help='magnitude bin size [default=0.2]');
 
-    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default='True',
+    parser.add_option('-f','--flag_cut', dest='flag_cut', default=True,
+                      help='perform analysis using only FLAGS=0 objects [default=True]');
+
+    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default=True,
                       help='perform analysis on galaxies (CLASS_STAR < stell_idx) if True, stars  (CLASS_STAR > stell_idx) if False [default=True]');
 
-    parser.add_option('-i','--include_unid_mags', dest='mag99', default='False', 
+    parser.add_option('-i','--include_unid_mags', dest='mag99', default=False, 
                       help='include objects with unidentified magnitudes (MAG = 99) [default=False]');
 
     parser.add_option('-m','--mag_inf', dest='mag_inf', default=21, 
@@ -253,16 +311,18 @@ if __name__ == "__main__" :
 
     bin_size = float(opts.bin_size);
 
-    gal_cut = (opts.gal_cut == 'True'); # Ugly, improve this comparison later
-    mag99 = (opts.mag99 == 'True'); # Ugly, improve this comparison later
+    gal_cut = opts.gal_cut;
+    flag_cut = opts.flag_cut;
+    mag99 = opts.mag99;
     mag_inf = float(opts.mag_inf);
     plot_inf = float(opts.plot_inf);
     plot_sup = float(opts.plot_sup);
     S2N_cut = float(opts.S2N_cut);
     stell_idx = float(opts.stell_idx);
 
-    if (len(sys.argv)!=4):
-        print "The number of arguments is wrong. Check documentation for usage instructions:\n\n";
+  
+    if (len(args)!=3):
+        print "\n\nThe number of arguments is wrong. Check documentation for usage instructions:\n\n";
         parser.print_help();
         print "";
         sys.exit(1);
@@ -270,9 +330,11 @@ if __name__ == "__main__" :
 
 # Get all the files in the given folder
 
-    filenames = glob.glob(sys.argv[1])
+# Mudar de sys.argv para args
 
-    field_names = [sys.argv[2],sys.argv[3]]
+    filenames = glob.glob(args[0])
+
+    field_names = [args[1],args[2]]
 
     folder_path = os.path.dirname(filenames[0])
 
@@ -285,7 +347,7 @@ if __name__ == "__main__" :
 
         print i
        
-        results.append(mag_pipeline(filenames[i], field_names, folder_path, mag_inf, bin_size, gal_cut, mag99, S2N_cut, stell_idx, plot_inf, plot_sup))
+        results.append(mag_pipeline(filenames[i], field_names, folder_path, mag_inf, bin_size, gal_cut, flag_cut, mag99, S2N_cut, stell_idx, plot_inf, plot_sup))
 
     results = np.array(results)
 

@@ -68,7 +68,7 @@ def convert_sexag2deg(ra,dec):
 	if dec_signal == "-":
 		dec_deg = -1. * dec_deg
 	
-	print "%.6f  %.6f\n" %(ra_deg,dec_deg)
+#	print "%.6f  %.6f\n" %(ra_deg,dec_deg)
 	return ra_deg,dec_deg
 
 
@@ -116,7 +116,7 @@ def convert_deg2sexag(ra,dec):
 
 	dec_conv = (dec_d,dec_min,dec_sec)
 	
-	print "%d:%d:%f %d:%d:%f" %(ra_h,ra_min,ra_sec,dec_d,dec_min,dec_sec) 
+#	print "%d:%d:%f %d:%d:%f" %(ra_h,ra_min,ra_sec,dec_d,dec_min,dec_sec) 
 	return ra_conv,dec_conv
 
 #\cond	

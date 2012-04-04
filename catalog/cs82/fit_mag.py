@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # ====================================================
 # Authors:
 # Bruno Moraes - bruno.a.l.moraes@gmail.com - 01/Nov/2011
@@ -70,6 +69,17 @@ def get_tile_name(input_file):
     return tile_name
 
 
+def check_if_ldac(hdulist):
+
+    if hdulist[1].name == 'LDAC_IMHEAD' and hdulist[2].name == 'LDAC_OBJECTS':
+
+        return True
+
+    else:
+
+        return False
+
+
 
 def get_entry_ldac_header(hdulist_string, entry_name):
 
@@ -103,8 +113,6 @@ def get_entry_ldac_header(hdulist_string, entry_name):
     return entry
 
 
-
-
 def make_histogram(data, bin_size):
 
     """
@@ -123,13 +131,13 @@ def make_histogram(data, bin_size):
     ---
     """
 
-    bin_inf = math.floor(mag_data.min()/bin_size)*bin_size
+    bin_inf = math.floor(data.min()/bin_size)*bin_size
 
-    bin_sup = math.ceil(mag_data.max()/bin_size)*bin_size
+    bin_sup = math.ceil(data.max()/bin_size)*bin_size
 
     bin_vals = np.arange(bin_inf-bin_size/2, bin_sup + bin_size/2, bin_size)
 
-    N, m = np.histogram(mag_data, bins = bin_vals)
+    N, m = np.histogram(data, bins = bin_vals)
 
     m = np.delete(m,len(m)-1)+bin_size/2
 
@@ -349,7 +357,7 @@ def make_plot_mag_pipe(binned_data, tile_name, folder_path, fit_params, m_inf, m
     pl.axvline(x=mag_lim, color='k',ls='--')
     
     pl.xlim(plot_inf, plot_sup)
-    pl.ylim(8, 18000)
+    pl.ylim(0, binned_data[1].max()*1.1)
 
     pl.legend(loc='best')
 

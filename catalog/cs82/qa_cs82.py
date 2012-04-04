@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager
 
-import plot_templates as pltemp
+from sltools.plot import plot_templates as pltemp
 
 filename = sys.argv[1]
 
