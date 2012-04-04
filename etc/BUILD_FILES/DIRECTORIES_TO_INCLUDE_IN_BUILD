@@ -1,5 +1,6 @@
 # Mandatory: bin doc etc
 catalog
+catalog/cs82
 coordinate
 geometry
 gravlens

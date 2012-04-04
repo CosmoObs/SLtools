@@ -15,7 +15,7 @@ import pywcs
 import numpy
 
 def get_pixelscale(hdr):
-    """ Read out header dimpix (pixel_scale) from CD_* keys
+    """ Read out header dimpix (pixel_scale) from CD_* (or CDELT*) keys
 
     Input:
      - hdr  <pyfits.Header> : Image header instance
@@ -39,6 +39,16 @@ def get_pixelscale(hdr):
         CD2_2 = float(hdr['CD2_2']);
     except:
         CD1_1 = CD1_2 = CD2_1 = CD2_2 = 1;
+
+    if ( CD1_1 == 1 and CD1_2 == 1 and CD2_1 == 1 and CD2_2 == 1 ):
+        try:
+            CD1_1 = float(hdr['CDELT1']);
+            CD1_2 = 0.;
+            CD2_1 = 0.;
+            CD2_2 = float(hdr['CDELT2']);
+        except:
+            CD1_1 = CD1_2 = CD2_1 = CD2_2 = 1;
+            print "Unable to find the pixel size value";
 
     try:
         CUNIT1 = str(hdr['CUNIT1']);
@@ -89,7 +99,7 @@ def update_coordinates(hdr, x_ini, y_ini):
         CD2_2 = float(hdr['CD2_2']);
     except:
         CD1_1 = CD1_2 = CD2_1 = CD2_2 = 1.0;
-        
+
     # Check the edges and update header keyworks for new image..
     #
     #	if ( x_ini >= 0  and  y_ini >= 0 ):

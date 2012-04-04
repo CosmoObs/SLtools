@@ -48,14 +48,10 @@ import math
 import cmath
 from scipy import optimize
 import collections
-import fit_mag as fmg
 import glob
 import pyfits
 
-
-# Hard-coded use of sltools functions. Need to make a build of the library to get rid of this path.
-
-sys.path.append("/home/brunomor/Documents/Trabalho/Repositorio/TEMPORARY_sltools_CHE/") ### Append Bruno
+from sltools.catalog.cs82 import fit_mag as fmg
 from sltools.catalog import fits_data as fd
 from sltools.coordinate import wcs_conversion as wcscv
 from sltools.image import header_funcs as hdrf
