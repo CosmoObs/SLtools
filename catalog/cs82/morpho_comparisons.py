@@ -34,8 +34,9 @@ import pyfits
 import matplotlib.pyplot as pl
 from time import strftime
 
-from sltools.catalog import fits_data as fd ### Import Bruno
-from sltools.catalog import ascii_data as ascd ### Import Bruno
+from sltools.catalog import data_subsets as dts
+from sltools.catalog import fits_data as fd
+from sltools.catalog import ascii_data as ascd
 from sltools.catalog import table_matching as tbm
 from sltools.coordinate import wcs_conversion as wcscnv
 from sltools.io import io_addons as ioadd
@@ -540,21 +541,21 @@ ascd.write_ds9cat(xlist,ylist,40,'circle','green',outputfile='cs82_new_matching.
 
 # Magnitude cuts 
 
-cs82_mag, sdss_mag = create_matched_subsets(cs82_full,sdss_data,'MAG_AUTO',[['.',19],[19,20],[20,21]])
+cs82_mag, sdss_mag = dts.create_matched_subsets(cs82_full,sdss_data,'MAG_AUTO',[['.',19],[19,20],[20,21]])
 
 
 # Size cuts with CS82 FWHM
 
 s_cut = 8
 
-cs82_size, sdss_size = create_matched_subsets(cs82_mag[0],sdss_mag[0],'FWHM_IMAGE',[['.',s_cut],[s_cut,'.']])
+cs82_size, sdss_size = dts.create_matched_subsets(cs82_mag[0],sdss_mag[0],'FWHM_IMAGE',[['.',s_cut],[s_cut,'.']])
 
 
 # Size cuts with SDSS PSF FWHM
 
 psf_cut = 0.75
 
-sdss_psf, cs82_psf = create_matched_subsets(sdss_data,cs82_full,'psffwhm_i',[['.',psf_cut],[psf_cut,'.']])
+sdss_psf, cs82_psf = dts.create_matched_subsets(sdss_data,cs82_full,'psffwhm_i',[['.',psf_cut],[psf_cut,'.']])
 
 # WARNING: There was an issue with the ingestion of SDSS data here, the field 
 # was complex and needed to be transformed back to real.
