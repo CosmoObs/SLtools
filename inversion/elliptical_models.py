@@ -6,8 +6,13 @@ Package to compute NFW model quantities
 """
 
 import math
+
+import constants as cn
+
 from scipy import integrate
 from scipy.optimize import brentq
+
+
 
 class EllipticalLensIntegrals(object):
     """
@@ -171,18 +176,18 @@ class KappaGammaEll(object):
         return math.sqrt(gamma1**2.0 + gamma2**2.0)
 ################################################################################
     def mag_total(self, x_1, x_2, a_subs, b_subs, kappa_s):
-        kappa = self.kappa_in(x_1, x_2, a_subs, b_subs, kappa_s)
+        kappa = self.kappa_ell(x_1, x_2, a_subs, b_subs, kappa_s)
         gamma = self.gamma(x_1, x_2, a_subs, b_subs, kappa_s)
         out =1.0/( (1.0 - kappa)**2 - gamma**2  )
         return out
 ################################################################################
     def mag_tan(self, x_1, x_2, a_subs, b_subs, kappa_s):
-        kappa = self.kappa_in(x_1, x_2, a_subs, b_subs, kappa_s)
+        kappa = self.kappa_ell(x_1, x_2, a_subs, b_subs, kappa_s)
         gamma = self.gamma(x_1, x_2, a_subs, b_subs, kappa_s)
         out = 1.0/(1.0 - kappa - gamma)
         return out
 ################################################################################
-    def mag_tan_inv_pol(self, radial, theta, a_subs, b_subs, kappa_s):
+    def mag_tan_inv_polar(self, radial, theta, a_subs, b_subs, kappa_s):
         x_1 = radial*math.cos(theta)
         x_2 = radial*math.sin(theta)
         kappa = self.kappa_ell(x_1, x_2, a_subs, b_subs, kappa_s)
@@ -196,18 +201,26 @@ class KappaGammaEll(object):
         out = 1.0/(1.0 - kappa + gamma)
         return out
 ################################################################################
+    def mag_rad_inv_polar(self, radial, theta, a_subs, b_subs, kappa_s):
+        x_1 = radial*math.cos(theta)
+        x_2 = radial*math.sin(theta)
+        kappa = self.kappa_ell(x_1, x_2, a_subs, b_subs, kappa_s)
+        gamma = self.gamma(x_1, x_2, a_subs, b_subs, kappa_s)
+        out = (1.0 - kappa + gamma)
+        return out
+################################################################################
     def mag_all(self, x_1, x_2, a_subs, b_subs, kappa_s):
-        kappa = self.kappa_in(x_1, x_2, a_subs, b_subs, kappa_s)
+        kappa = self.kappa_ell(x_1, x_2, a_subs, b_subs, kappa_s)
         gamma = self.gamma(x_1, x_2, a_subs, b_subs, kappa_s)
 
         magtan = 1.0/(1.0 - kappa - gamma)
-        magrad = 1.0/(1.0 - kappa +gamma)
+        magrad = 1.0/(1.0 - kappa + gamma)
         magtot = magtan*magrad        
 
         return magtot, magtan, magrad
 ################################################################################
     def mag_inv_all(self, x_1, x_2, a_subs, b_subs, kappa_s):
-        kappa = self.kappa_in(x_1, x_2, a_subs, b_subs, kappa_s)
+        kappa = self.kappa_ell(x_1, x_2, a_subs, b_subs, kappa_s)
         gamma = self.gamma(x_1, x_2, a_subs, b_subs, kappa_s)
 
         magtan_inv = (1.0 - kappa - gamma)
@@ -218,8 +231,61 @@ class KappaGammaEll(object):
 ################################################################################
 class LensComputation(object):
     def __init__(self, KappaGamma):
-        self.mag_tan_inv_pol = KappaGamma.mag_tan_inv_pol
+        self.mag_tan_inv_polar = KappaGamma.mag_tan_inv_polar
+        self.mag_rad_inv_polar = KappaGamma.mag_rad_inv_polar
+        self.mag_inv_all = KappaGamma.mag_inv_all
     def find_cc_tan(self, theta, a_subs, b_subs, kappa_s):
-        out = brentq(self.mag_tan_inv_pol, a = 1E-4, b = 10.0, \
-                     args = (theta, a_subs, b_subs, kappa_s), full_output=True)
+        out = brentq(self.mag_tan_inv_polar, a = 1E-4, b = 10.0, \
+                     args = (theta, a_subs, b_subs, kappa_s), full_output=True,\
+                     xtol = 1E-12)
         return out
+################################################################################
+    def find_cc_rad(self, theta, a_subs, b_subs, kappa_s):
+        out = brentq(self.mag_rad_inv_polar, a = 1E-4, b = 10.0, \
+                     args = (theta, a_subs, b_subs, kappa_s), full_output=True,\
+                     xtol = 1E-12)
+        return out
+################################################################################
+    def mag_rad_over_mag_tan(self, radial, theta, a_subs, b_subs, kappa_s):
+        c1 = self.mag_tan_inv_polar(radial, theta, a_subs, b_subs, kappa_s)
+        c2 = self.mag_rad_inv_polar(radial, theta, a_subs, b_subs, kappa_s)
+        return c1/c2
+################################################################################
+    def arg_find_constant_distortion(self, radial, theta, a_subs, b_subs, \
+                                     kappa_s, raz):
+        c1 = self.mag_rad_over_mag_tan(radial, theta, a_subs, b_subs, kappa_s)
+        return  c1 - raz
+
+
+################################################################################
+    def find_constant_distortion(self, theta, a_subs, b_subs, kappa_s, raz):
+        cc_rad = self.find_cc_rad(theta, a_subs, b_subs, kappa_s)[0]
+        cc_tan = self.find_cc_tan(theta, a_subs, b_subs, kappa_s)[0]
+        c1 = brentq(self.arg_find_constant_distortion, a = cc_rad+1E-5, b = cc_tan, \
+                    args = (theta, a_subs, b_subs, kappa_s, -raz), \
+                    full_output=True, xtol = 1E-12)[0]
+        c2 = brentq(self.arg_find_constant_distortion, a = cc_tan, b = 100, \
+                     args = (theta, a_subs, b_subs, kappa_s, raz), \
+                     full_output=True, xtol = 1E-12)[0]
+        #print  cc_rad, c1, cc_tan, c2
+        return cc_tan, cc_rad, c1, c2
+################################################################################
+    def arg_sigma_rad(self, radial, theta, a_subs, b_subs, kappa_s):
+        x_1 = radial*math.cos(theta)
+        x_2 = radial*math.sin(theta)
+        out = self.mag_inv_all(x_1, x_2, a_subs, b_subs, kappa_s)[0]
+
+        #out = out if out > 0.0 else -out
+        return math.fabs(out)*radial
+################################################################################
+    def sigma_radial(self, theta, a_subs, b_subs, kappa_s, raz):
+        cc_tan, cc_rad, c1, c2 = \
+              self.find_constant_distortion(theta, a_subs, b_subs, kappa_s, raz)
+        return integrate.quad( self.arg_sigma_rad, a = c1, b = c2, \
+                               args = (theta, a_subs, b_subs, kappa_s), \
+                               points= [cc_tan])[0]
+################################################################################
+    def sigma(self, a_subs, b_subs, kappa_s, raz):
+        return integrate.quad( self.sigma_radial, a = 0.0, b = cn.pi/2.0, \
+                               args = (a_subs, b_subs, kappa_s, raz) )[0]*4.0
+################################################################################

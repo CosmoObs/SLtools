@@ -29,7 +29,7 @@ def strip_list(str_list, str_strip):
     for i in range(len(str_list)):
         str_list[i] = str_list[i].strip(str_strip)
     return str_list
-
+################################################################################
 def extract_parameter(file_in, identifier):
     """
     Function read the values of an ifentifier in a lenstool .par file

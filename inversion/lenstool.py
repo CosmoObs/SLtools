@@ -7,11 +7,16 @@ Package to automate some aplocations of lenstool
 """
 
 import os
+
+import shutil
+
 import numpy as np
 
 import matplotlib.pyplot as plt
 
-from functions import extract_parameter
+from functions import extract_parameter #FIXME use: import functions as fc
+
+import functions as fc
 
 def generate_par_curves(lenses_vec, file_par = 'generate_curves.par'):
     """
@@ -210,11 +215,10 @@ def plot_points(source = [], images = [], plt_show = False, \
     Output:
      - NONE
     """
-    print source, images
+    #print source, images
     if len(source) == 0 and len(images) == 0:
         return 0
 
-    
     plt.figure(1, figsize=(16, 8))
 
     if len(source) > 0:
@@ -384,3 +388,147 @@ def read_amplification(amp_file = 'dist.dat'):
     amp.append(amp_tmp)
 
     return amp
+################################################################################
+def read_inversion_info(file_dic):
+    """
+    Function to read the information from the lens inversion
+
+    Input:
+     - 
+    Output:
+     - 
+    """
+    verbose = True
+    print_file_test = open('file_test.txt','w')
+
+
+    file_generate_arcs = file_dic['file_generate_arcs']
+    info_imput_lens = fc.extract_second_identifiers( file_generate_arcs, \
+                                                     'potential' )
+    print 'Lens Information -------------------------------------------'
+    for i in info_imput_lens:
+        print '------------------------------------------------------------'
+        if verbose: print i
+        print '------------------------------------------------------------'
+    print '\n'
+    print '------------------------------------------------------------'
+#-------------------------------------------------------------------------------
+
+    file_source = file_dic['file_source']
+    info_src = np.loadtxt(file_source, unpack=False)
+    if len(info_src) == 8 and np.isscalar(info_src[0]):
+    #FIXME - check if the second condition is all we need
+        info_src = [info_src]
+    print 'Source Information -----------------------------------------'
+    for i in info_src:
+        print '------------------------------------------------------------'
+        if verbose: print i
+        print '------------------------------------------------------------'
+    print '\n'
+    print '------------------------------------------------------------'
+#-------------------------------------------------------------------------------
+
+    file_make_inversion = file_dic['file_make_inversion']
+    info_fited_param = fc.extract_second_identifiers( file_make_inversion, \
+                                                      'limit' )
+    print 'Fited parameters -------------------------------------------'
+    for i in info_fited_param:
+        print '------------------------------------------------------------'
+        if verbose: print i
+        print '------------------------------------------------------------'
+    print '\n'
+    print '------------------------------------------------------------'
+#-------------------------------------------------------------------------------
+
+    file_best_fit = file_dic['file_best_fit']
+    info_best_fit = fc.extract_second_identifiers( file_best_fit, \
+                                                   'potentiel' )
+    print 'Best Fits --------------------------------------------------'
+    for i in info_best_fit:
+        print '------------------------------------------------------------'
+        if verbose: print i
+        print '------------------------------------------------------------'
+    print '\n'
+    print '------------------------------------------------------------'
+
+    info_xi2 = fc.extract_parameter(file_best_fit, '#Chi2pos:')
+    print 'Xi2 --------------------------------------------------------'
+    for i in info_xi2:
+        print '------------------------------------------------------------'
+        if verbose: print i
+        print '------------------------------------------------------------'
+    print '\n'
+    print '------------------------------------------------------------'
+
+
+
+
+
+
+
+
+
+
+
+
+    print_file_test.write('EOF\n')
+    print_file_test.close
+################################################################################
+def copy_inversion_files(count, file_dic):
+    """
+    Function to copy files created by lenstool when doing the lens inversion
+    
+    Input:
+     - count str : srting to be added to the end of all copied files
+    Output:
+     - 
+    """
+    if not ( check_inversion_files(file_dic) ):
+        return 0
+    results_directory = 'invertion_stat_results'
+    if results_directory[len(results_directory)-1] != '/':
+        results_directory = results_directory + '/'
+    #print results_directory
+
+    file_generate_arcs = file_dic['file_generate_arcs']
+    file_source = file_dic['file_source']
+    file_make_inversion = file_dic['file_make_inversion']
+    file_best_fit = file_dic['file_best_fit']
+    file_chires = file_dic['file_chires']
+
+    file_generate_arcs_out = results_directory + str(count) + file_generate_arcs
+    file_source_out = results_directory + str(count) + file_source
+    file_make_inversion_out = results_directory + str(count) + \
+                              file_make_inversion
+    file_best_fit_out = results_directory + str(count) + file_best_fit
+    file_chires_out = results_directory + str(count) + file_chires
+
+    if not os.path.exists(results_directory):
+        os.makedirs(results_directory)
+    else:
+        print 'Directory', results_directory, 'already exists'
+
+    shutil.copyfile(file_generate_arcs, file_generate_arcs_out)
+    shutil.copyfile(file_source, file_source_out)
+    shutil.copyfile(file_make_inversion, file_make_inversion_out)
+    shutil.copyfile(file_best_fit, file_best_fit_out)
+    shutil.copyfile(file_chires, file_chires_out)
+################################################################################
+def check_inversion_files(file_dic):
+    patern_dic = {'file_generate_arcs' : 'generate_images.par', \
+                  'file_source' : 'source.mul', \
+                  'file_make_inversion' : 'make_inversion_siep.par', \
+                  'file_best_fit' : 'best.par', \
+                  'file_chires' : 'chires.dat'}
+
+
+
+
+    for i in patern_dic.keys():
+        if not ( i in file_dic.keys() ):
+            print 'ERROR: check_inversion_files: item', i, 'is not defined', \
+                  'in the input dictionary'
+            return False
+    return True
+
+

@@ -105,37 +105,3 @@ if __name__ == '__main__':
     #compute_diff('mass.fits', 'mass_gl.fits', 'dif_mass.fits')
     #compute_diff('kappa.fits', 'mass.fits', 'dif_mass.fits')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
