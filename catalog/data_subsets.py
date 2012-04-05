@@ -6,41 +6,45 @@
 
 
 from __future__ import division
+import math
 
 
 def create_data_subsets(data,col_name,cuts):
 
     """
-    Creates subsets from data, cutting in numerical value ranges of a given field
+    Creates subsets from data, cutting in value ranges of a given field
 
-    This function takes different sets of input value ranges for a given field in
-    the data and uses them to create numpy masks that are then applied to the 
-    original data in order to create subsets of it. These subsets and the 
-    corresponding masks are returned.
+    This function takes different sets of input value ranges for a given
+    field in the data and uses them to create numpy masks that are then
+    applied to the original data in order to create subsets of it. These 
+    subsets and the corresponding masks are returned.
 
-    An arbitrary number of cuts can be performed, but they must be of one of the
-    following three formats:
+    An arbitrary number of cuts can be performed, but they must be of one
+    of the following three formats:
 
-        - ['.',b] --> performs the cut data.field(col_name) < b
+        - [nan,b] --> performs the cut data.field(col_name) < b
         - [a,b] ----> performs the cut a <= data.field(col_name) < b
-        - [a,'.'] --> performs the cut a <= data.field(col_name)
+        - [a,nan] --> performs the cut a <= data.field(col_name)
 
-    There's currently no support for cuts in string fields or to change from
-    semi-open to open or closed intervals.
+    Beware: nan in this case means float('nan'). There's currently no
+    support for cuts in string fields or to change from semi-open to open
+    or closed intervals.
 
 
     Input:
      - data                        hdr : Input data
-     - col_name                    str : Name of the column chosen to perform
-                                         the cuts
+     - col_name                    str : Name of the column chosen to
+                                         perform the cuts
      - cuts  [[a_1,b_1],...,[a_n,b_n]] : Cuts for different subsets
 
     Output:
-     - cut_data         [pyfits_bla_1,...,pyfits_bla_n] : List of data subsets
-                                            (each data subset: ndim=2, dtype=)
-     - masks    [ndarray_1,...,ndarray_n] : List of masks used to create the 
-                                            data subsets 
-                                            (each mask: ndim=1,dtype=bool) 
+     - cut_data  [pyfits_bla_1,...,pyfits_bla_n] : List of data subsets
+                                                   (each data subset:
+                                                    ndim=2,dtype=)
+     - masks           [ndarray_1,...,ndarray_n] : List of masks used to
+                                                   create the data subsets 
+                                                   (each mask:
+                                                    ndim=1,dtype=bool) 
     """
 
     # Try/Except if the field doesn't exist in the catalog?    
@@ -50,11 +54,11 @@ def create_data_subsets(data,col_name,cuts):
 
     for i in range(len(cuts)):
 
-        if cuts[i][0] == '.':
+        if math.isnan(cuts[i][0]):
 
             masks.append(data.field(col_name) < cuts[i][1])
 
-        elif cuts[i][1] == '.':
+        elif math.isnan(cuts[i][1]):
     
             masks.append(cuts[i][0] <= data.field(col_name))
 
