@@ -541,21 +541,21 @@ ascd.write_ds9cat(xlist,ylist,40,'circle','green',outputfile='cs82_new_matching.
 
 # Magnitude cuts 
 
-cs82_mag, sdss_mag = dts.create_matched_subsets(cs82_full,sdss_data,'MAG_AUTO',[['.',19],[19,20],[20,21]])
+cs82_mag, sdss_mag = dts.create_matched_subsets(cs82_full,sdss_data,'MAG_AUTO',[[float('nan'),19],[19,20],[20,21]])
 
 
 # Size cuts with CS82 FWHM
 
 s_cut = 8
 
-cs82_size, sdss_size = dts.create_matched_subsets(cs82_mag[0],sdss_mag[0],'FWHM_IMAGE',[['.',s_cut],[s_cut,'.']])
+cs82_size, sdss_size = dts.create_matched_subsets(cs82_mag[0],sdss_mag[0],'FWHM_IMAGE',[[float('nan'),s_cut],[s_cut,float('nan')]])
 
 
 # Size cuts with SDSS PSF FWHM
 
 psf_cut = 0.75
 
-sdss_psf, cs82_psf = dts.create_matched_subsets(sdss_data,cs82_full,'psffwhm_i',[['.',psf_cut],[psf_cut,'.']])
+sdss_psf, cs82_psf = dts.create_matched_subsets(sdss_data,cs82_full,'psffwhm_i',[[float('nan'),psf_cut],[psf_cut,float('nan')]])
 
 # WARNING: There was an issue with the ingestion of SDSS data here, the field 
 # was complex and needed to be transformed back to real.
