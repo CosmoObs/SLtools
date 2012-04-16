@@ -44,12 +44,6 @@ from sltools.plot import plot_templates as pltemp
 
 
 
-
-#################################################
-####           MATCHING FUNCTIONS            ####
-#################################################
-
-
 def create_matching_arrays(cat_A, cat_B, coord_A_names, coord_B_names, radius):
 
     """
