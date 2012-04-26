@@ -42,6 +42,8 @@ from sltools.coordinate import wcs_conversion as wcscnv
 from sltools.io import io_addons as ioadd
 from sltools.plot import plot_templates as pltemp
 
+from esutil import htm
+
 
 
 def create_matching_arrays(cat_A, cat_B, coord_A_names, coord_B_names, radius):
@@ -340,3 +342,85 @@ def matching_pipeline(cat_A, cat_B, coord_A_names, coord_B_names, radius, exclud
         return cat_A_neighbor, cat_B_neighbor
 
 
+def htm_matching(cat_A, cat_B, coord_A_names, coord_B_names, radius, 
+                 exclude_multiple=False, n_neigh=1,depth=10):
+
+    """
+    Performs matching between two catalogs with the esutil HTM module.
+
+    This pipeline matches two catalogs in coordinates specified as input,
+    excluding unmatched objects in A and finding the neighbors in catalog B 
+    to each of catalog A objects. It then returns cat_A and cat_B reordered 
+    so that the neighbors are in the same line. For objects in A with more 
+    than one nearby neighbor, entries are repeated.
+
+    There are two additional options concerning cases where there's multiple
+    matching. The first (default is False) excludes multiple matching cases 
+    (i.e. cases where the matching is not unique in both senses). The second
+    option (default is 1), selects the number of neighbors to be kept. The 
+    value 0 will keep all the neighbors within the given radius.
+
+    For more information on the details of the procedure, refer to the
+    documentation of the esutil library in http://code.google.com/p/esutil/.
+
+
+    Input:
+     - cat_A                hdudata : FITS Table data catalog
+     - cat_B                hdudata : FITS Table data catalog
+     - coord_A_names      [str,str] : ra_A and dec_A column names
+     - coord_B_names      [str,str] : ra_B and dec_B column names
+     - radius                 float : Radius to perform matching
+     - exclude_multiple        bool : Gets only neighbors in the case of
+                                      bijective matching if True. If False,
+                                      gets nearest of multiple neighbors
+     - n_neigh                  int : Number of neighbors to keep for each
+                                      cat_A entry. 0 keeps all within radius.
+                                      Default is 1.
+     - depth                    int : Depth of the HTM triangular levels. 
+                                      Ranges from 1 to 12. Default is 10.
+    
+    Output:
+     - cat_A_matched        hdudata : FITS Table data catalog of matched objs
+     - cat_B_matched        hdudata : FITS Table data catalog of matched objs
+    
+    ---
+    """
+
+    # Create HTM triangles
+
+    h = htm.HTM(depth)
+
+    cat_A_ra = cat_A.field(coord_A_names[0])
+    cat_A_dec = cat_A.field(coord_A_names[1])
+
+    cat_B_ra = cat_B.field(coord_B_names[0])
+    cat_B_dec = cat_B.field(coord_B_names[1])
+
+    m1,m2,d12 = h.match(cat_A_ra, cat_A_dec, cat_B_ra, cat_B_dec, radius, 
+                        maxmatch = n_neigh)
+
+    # Exclude objects with multiple matching
+
+    if exclude_multiple:
+    
+        mltp = (np.arange(len(m2)) < len(m2))
+
+        for i in range(len(m2)):
+            if (m2[i] == m2).sum() > 1:
+                mltp = ~(m2[i] == m2)*mltp
+            else: pass
+    
+        m1 = m1[mltp]
+        m2 = m2[mltp]
+        d12 = d12[mltp]
+
+    else: pass
+
+    # Apply matching to catalogs
+
+    cat_A_matched = cat_A[m1]
+    cat_B_matched = cat_B[m2]
+
+    print len(m2)
+
+    return cat_A_matched, cat_B_matched
