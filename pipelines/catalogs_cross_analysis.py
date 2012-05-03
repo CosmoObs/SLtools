@@ -21,12 +21,15 @@ from sltools.catalog import ascii_data as ascd
 from sltools.io import io_addons as ioadd
 from sltools.plot import plot_templates as pltemp
 from sltools.statistics import data_statistics as dstat
+from sltools.catalog.cs82 import morpho_comparisons as mcomp
 
-plot_formats = ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
+plot_formats = ['*', '+', 'x', '*', '+', 'x', 'x', '.', '.', '.', '.', '.']
 plot_colors = ['y', 'c', 'm', 'b', 'g', 'r', 'k', 'y', 'c', 'm', 'b', 'g']
 
 
-def main(cat_A, cat_B, output_folder, plots):
+def main(cat_A, cat_B, output_folder, plots, matching, multiple, radius, 
+         coord_A_names, coord_B_names):
+
     ioadd.create_folder(output_folder)
 
     # Open FITS catalogs
@@ -43,6 +46,19 @@ def main(cat_A, cat_B, output_folder, plots):
                   MAG_AUTO=(0, 24), MAGERR_AUTO=(0, 0.2172),
                   FLAGS=(0, 3))
     data_B = cut_tbhdu_B.data
+
+    # Perform matching when necessary, *for the moment only returns nearest 
+    # neighbor*.
+
+    if matching:
+
+        data_A, data_B = mcomp.htm_matching(data_A, data_B, coord_A_names, 
+                         coord_B_names, radius=radius, 
+                         exclude_multiple=multiple, n_neigh=1,depth=10)
+
+    else: pass
+
+    
 
     # Import plotting parameters to a dictionary
     # Define fieldnames (get them from file later)
@@ -357,8 +373,8 @@ if __name__ == '__main__':
 
         The input file 'plots.txt' has to follow a specific organization, an
         example can be found on the following page: 
-        http://twiki.linea.gov.br/bin/view/CS82/FittingRobustness, and as well 
-        some examples of plots.
+        http://twiki.linea.gov.br/bin/view/CS82/FittingRobustness, and as 
+        well some examples of plots.
 
         -----
         NB: an input file may be called with the prefixe '@', containing one
@@ -366,6 +382,9 @@ if __name__ == '__main__':
 
         '''
         , fromfile_prefix_chars='@')
+
+    # WARNING: As they are, the compulsory arguments do *not* take default 
+    # values when not given! How do we use "default" in these cases?
 
     parser.add_argument(dest='cat_A',
                         default='./',
@@ -379,10 +398,64 @@ if __name__ == '__main__':
     parser.add_argument(dest='plots',
                         default='plots.txt',
                         help="Parameters file for the required plots.")
+    parser.add_argument('-m','--matching',
+                        dest='matching', 
+                        default=0,
+                        help="Perform matching of the two catalogs if != 0")
+    parser.add_argument('-x','--exclude_multiple',
+                        dest='multiple',
+                        default=0,
+                        help="Exclude cases where multiple matching occurred")
+    parser.add_argument('-r','--matching_radius',
+                        dest='radius',
+                        default='0.0002777777777777778', #1 arcsecond
+                        help="Matching radius (in degrees)")
+    parser.add_argument('--ra_A',
+                        dest='ra_A',
+                        default='ALPHA_J2000', # CS82 ra coordinate name
+                        help="Right Ascension column name in catalog A")
+    parser.add_argument('--dec_A',
+                        dest='dec_A',
+                        default='DELTA_J2000', # CS82 dec coordinate name
+                        help="Declination column name in catalog A")
+    parser.add_argument('--ra_B',
+                        dest='ra_B',
+                        default='ALPHA_J2000', # CS82 ra coordinate name
+                        help="Right Ascension column name in catalog B")
+    parser.add_argument('--dec_B',
+                        dest='dec_B',
+                        default='DELTA_J2000', # CS82 dec coordinate name
+                        help="Declination column name in catalog B")
+
+
     opts = parser.parse_args()
-    out = main(opts.cat_A, opts.cat_B, opts.output_folder, opts.plots)
 
-    if out == None:
-        parser.print_help()
+    coord_A_names = [opts.ra_A,opts.dec_A]
+    coord_B_names = [opts.ra_B,opts.dec_B]
 
-    sys.exit()
+    try:
+        
+        out = main(opts.cat_A, opts.cat_B, opts.output_folder, opts.plots, 
+                   bool(int(opts.matching)), bool(int(opts.multiple)), 
+                   float(opts.radius), coord_A_names, coord_B_names)
+
+        if out == None:
+            parser.print_help()
+
+        sys.exit(0)
+
+    except ValueError:
+
+        print '''The matching radius must be written as a floating point 
+                 number and the matching and exclude_multiple options must 
+                 be an integer. Please adapt your input file to this norm.'''
+
+        sys.exit(1)
+
+
+
+    
+
+    
+
+
