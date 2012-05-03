@@ -33,6 +33,7 @@ import numpy as np
 import pyfits
 import matplotlib.pyplot as pl
 from time import strftime
+from time import time
 
 from sltools.catalog import data_subsets as dts
 from sltools.catalog import fits_data as fd
@@ -343,7 +344,7 @@ def matching_pipeline(cat_A, cat_B, coord_A_names, coord_B_names, radius, exclud
 
 
 def htm_matching(cat_A, cat_B, coord_A_names, coord_B_names, radius, 
-                 exclude_multiple=False, n_neigh=1,depth=10):
+                 exclude_multiple=0, n_neigh=1,depth=10):
 
     """
     Performs matching between two catalogs with the esutil HTM module.
@@ -355,7 +356,7 @@ def htm_matching(cat_A, cat_B, coord_A_names, coord_B_names, radius,
     than one nearby neighbor, entries are repeated.
 
     There are two additional options concerning cases where there's multiple
-    matching. The first (default is False) excludes multiple matching cases 
+    matching. The first (default is 0) excludes multiple matching cases 
     (i.e. cases where the matching is not unique in both senses). The second
     option (default is 1), selects the number of neighbors to be kept. The 
     value 0 will keep all the neighbors within the given radius.
@@ -370,9 +371,10 @@ def htm_matching(cat_A, cat_B, coord_A_names, coord_B_names, radius,
      - coord_A_names      [str,str] : ra_A and dec_A column names
      - coord_B_names      [str,str] : ra_B and dec_B column names
      - radius                 float : Radius to perform matching
-     - exclude_multiple        bool : Gets only neighbors in the case of
-                                      bijective matching if True. If False,
-                                      gets nearest of multiple neighbors
+     - exclude_multiple         int : Keeps only the neighbor in the case of
+                                      single matching if not 0. If 0,
+                                      gets nearest of multiple neighbors.
+                                      Overrides n_neigh choice by definition.
      - n_neigh                  int : Number of neighbors to keep for each
                                       cat_A entry. 0 keeps all within radius.
                                       Default is 1.
@@ -388,6 +390,10 @@ def htm_matching(cat_A, cat_B, coord_A_names, coord_B_names, radius,
 
     # Create HTM triangles
 
+    t0 = time()
+
+    print "Performing matching between catalogs..."
+
     h = htm.HTM(depth)
 
     cat_A_ra = cat_A.field(coord_A_names[0])
@@ -396,31 +402,41 @@ def htm_matching(cat_A, cat_B, coord_A_names, coord_B_names, radius,
     cat_B_ra = cat_B.field(coord_B_names[0])
     cat_B_dec = cat_B.field(coord_B_names[1])
 
-    m1,m2,d12 = h.match(cat_A_ra, cat_A_dec, cat_B_ra, cat_B_dec, radius, 
-                        maxmatch = n_neigh)
+    print "Number of objects in catalog A: " + str(len(cat_A_ra))
+    print "Number of objects in catalog B: " + str(len(cat_B_ra))
 
     # Exclude objects with multiple matching
 
     if exclude_multiple:
+
+        print "Excluding objects in catalog A that have multiple matches..."
     
+        m1,m2,d12 = h.match(cat_A_ra, cat_A_dec, cat_B_ra, cat_B_dec, radius, 
+                        maxmatch = 0)
+
         mltp = (np.arange(len(m2)) < len(m2))
 
         for i in range(len(m2)):
             if (m2[i] == m2).sum() > 1:
-                mltp = ~(m2[i] == m2)*mltp
+                mltp = ~(m2[i] == m2)&mltp
             else: pass
     
         m1 = m1[mltp]
         m2 = m2[mltp]
         d12 = d12[mltp]
 
-    else: pass
+    else: 
+
+        m1,m2,d12 = h.match(cat_A_ra, cat_A_dec, cat_B_ra, cat_B_dec, radius, 
+                        maxmatch = n_neigh)
 
     # Apply matching to catalogs
 
     cat_A_matched = cat_A[m1]
     cat_B_matched = cat_B[m2]
 
-    print len(m2)
+    print "Number of objects in final matched catalogs: " + str(len(m2))
+    
+    print "Total matching time: " + str(time()-t0) +" sec"
 
     return cat_A_matched, cat_B_matched
