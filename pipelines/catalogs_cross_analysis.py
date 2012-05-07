@@ -23,7 +23,7 @@ from sltools.plot import plot_templates as pltemp
 from sltools.statistics import data_statistics as dstat
 from sltools.catalog.cs82 import morpho_comparisons as mcomp
 
-plot_formats = ['*', '+', 'x', '*', '+', 'x', 'x', '.', '.', '.', '.', '.']
+plot_formats = ['x', '+', 'x', '+', 'x', '+', 'x', '+', 'x', '+', 'x', '+']
 plot_colors = ['y', 'c', 'm', 'b', 'g', 'r', 'k', 'y', 'c', 'm', 'b', 'g']
 
 
@@ -346,9 +346,11 @@ def main(cat_A, cat_B, output_folder, plots, matching, multiple, radius,
                          legend_III, legend_loc_III, xlabel_III, ylabel_III,
                          xlims_III, ylims_III, title_III)
         plt.plot(ideal_x_III, ideal_y_III, '--', color='k')
+        ##### Replace this piece with the "box" code from matplotlib website
         plt.errorbar(vec_G, median_diff,
                      yerr=[error_diff_m, error_diff_p], fmt='-o',
                      color='k', zorder=10, elinewidth=2, capsize=8)
+        ####
         plt.xlim(xlims_III[0], xlims_III[1])
         plt.ylim(ylims_III[0], ylims_III[1])
         plt.savefig(output_folder + '/' + field_A + '_vs_' + field_G +
