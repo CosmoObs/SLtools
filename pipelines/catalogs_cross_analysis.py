@@ -435,24 +435,16 @@ if __name__ == '__main__':
     coord_A_names = [opts.ra_A,opts.dec_A]
     coord_B_names = [opts.ra_B,opts.dec_B]
 
-    try:
-        
-        out = main(opts.cat_A, opts.cat_B, opts.output_folder, opts.plots, 
+    out = main(opts.cat_A, opts.cat_B, opts.output_folder, opts.plots, 
                    bool(int(opts.matching)), bool(int(opts.multiple)), 
                    float(opts.radius), coord_A_names, coord_B_names)
 
-        if out == None:
-            parser.print_help()
+    if out == None:
+        parser.print_help()
 
-        sys.exit(0)
+    sys.exit(0)
 
-    except ValueError:
 
-        print '''The matching radius must be written as a floating point 
-                 number and the matching and exclude_multiple options must 
-                 be an integer. Please adapt your input file to this norm.'''
-
-        sys.exit(1)
 
 
 
