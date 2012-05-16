@@ -23,7 +23,7 @@ from sltools.plot import plot_templates as pltemp
 from sltools.statistics import data_statistics as dstat
 from sltools.catalog.cs82 import morpho_comparisons as mcomp
 
-plot_formats = ['x', '+', 'x', '+', 'x', '+', 'x', '+', 'x', '+', 'x', '+']
+plot_formats = ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+']
 plot_colors = ['y', 'c', 'm', 'b', 'g', 'r', 'k', 'y', 'c', 'm', 'b', 'g']
 
 
@@ -113,20 +113,20 @@ def main(cat_A, cat_B, output_folder, plots, matching, multiple, radius,
         formats = []
 
         for j in range(m):
-            colors.append(plot_colors[j])
+            colors.append(plot_colors[m-1-j])
             formats.append(plot_formats[j])
 
-            data_rescaled = (units_A[0] * cut_data_A[j].field(field_A) +
+            data_rescaled = (units_A[0] * cut_data_A[m-1-j].field(field_A) +
                              units_A[1])
             data1.append(data_rescaled)
             del(data_rescaled)
 
-            data_rescaled = (units_B[0] * cut_data_B[j].field(field_B) +
+            data_rescaled = (units_B[0] * cut_data_B[m-1-j].field(field_B) +
                              units_B[1])
             data2.append(data_rescaled)
             del(data_rescaled)
 
-            data_rescaled = (units_G[0] * cut_data_A[j].field(field_G) +
+            data_rescaled = (units_G[0] * cut_data_A[m-1-j].field(field_G) +
                              units_G[1])
             dataG.append(data_rescaled)
             del(data_rescaled)
@@ -174,8 +174,8 @@ def main(cat_A, cat_B, output_folder, plots, matching, multiple, radius,
         legend_loc_I = 'upper left'
         legend_I = []
         for j in range(m):
-            legend_fig = (str(cuts_G[j][0]) + ' < ' + field_G +
-                          ' < ' + str(cuts_G[j][1]))
+            legend_fig = (str(cuts_G[m-1-j][0]) + ' < ' + field_G +
+                          ' < ' + str(cuts_G[m-1-j][1]))
             legend_I.append(legend_fig)
             del(legend_fig)
 
@@ -244,8 +244,8 @@ def main(cat_A, cat_B, output_folder, plots, matching, multiple, radius,
                      dstat.get_quantile_errors(data_temp, quantiles)[0, 0]]
             del(data_temp)
 
-            legend_fig = (str(cuts_G[j][0]) + ' < ' + field_G + ' < ' +
-                          str(cuts_G[j][1]) + '/ median(95%): ' +
+            legend_fig = (str(cuts_G[m-1-j][0]) + ' < ' + field_G + ' < ' +
+                          str(cuts_G[m-1-j][1]) + '/ median(95%): ' +
                           str('%.2e (%.2e,%.2e)'
                           % (median, error[0], error[1])))
             legend_II.append(legend_fig)
@@ -322,25 +322,25 @@ def main(cat_A, cat_B, output_folder, plots, matching, multiple, radius,
             del(data_temp)
 
             G_mean = 0
-            if j == 0:
-                G_mean = G_min + (cuts_G[j][1] - G_min) / 2
+            if j == m-1:
+                G_mean = G_min + (cuts_G[m-1-j][1] - G_min) / 2
                 if G_mean < xlims_III[0]:
-                    G_mean = xlims_id[0] + (cuts_G[j][1] - xlims_id[0]) / 2
-            elif j == m - 1:
-                G_mean = cuts_G[j][0] + (G_max - cuts_G[j][0]) / 2
+                    G_mean = xlims_id[0] + (cuts_G[m-1-j][1] - xlims_id[0]) / 2
+            elif j == 0:
+                G_mean = cuts_G[m-1-j][0] + (G_max - cuts_G[m-1-j][0]) / 2
                 if G_mean > xlims_III[1]:
-                    G_mean = cuts_G[j][0] + (xlims_id[1] - cuts_G[j][0]) / 2
+                    G_mean = cuts_G[m-1-j][0] + (xlims_id[1] - cuts_G[m-1-j][0]) / 2
             else:
-                G_mean = cuts_G[j][0] + (cuts_G[j][1] - cuts_G[j][0]) / 2
+                G_mean = cuts_G[m-1-j][0] + (cuts_G[m-1-j][1] - cuts_G[m-1-j][0]) / 2
             vec_G.append(G_mean)
 
-            legend_fig = (str(cuts_G[j][0]) + ' < ' + field_G + ' < ' +
-                          str(cuts_G[j][1]) + str(' (%i objects)'
+            legend_fig = (str(cuts_G[m-1-j][0]) + ' < ' + field_G + ' < ' +
+                          str(cuts_G[m-1-j][1]) + str(' (%i objects)'
                           % (len(data2_III[j]))))
             legend_III.append(legend_fig)
             del(legend_fig)
 
-        # Plot and save type II figure
+        # Plot and save type III figure
         legend_loc_III = 'lower left'
         pltemp.plot_data(data1_III, data2_III, formats, colors,
                          legend_III, legend_loc_III, xlabel_III, ylabel_III,
