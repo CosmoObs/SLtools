@@ -13,8 +13,6 @@ from math import sqrt
 
 from scipy import integrate
 
-
-
 class CosmologyLcdm():
     """
     Package to compute cosmological quantities related do the LCDM model
@@ -27,7 +25,6 @@ class CosmologyLcdm():
         self.__H0 = self.__h * 100.0 #km/sec/mpc
         self.__H0_sec = self.__H0/const.mpc
 
-        
         self.__x = np.zeros(100)
         self.__w = np.zeros(100)
         self.__x, self.__w = self.integral_parameters()
@@ -96,8 +93,6 @@ class CosmologyLcdm():
             print 'ERROR in int_flat: you showld use a flat cosmology'
             return 0.0
 
-
-        
         #zf_minus_zi = z_final - z_init
         #integral = 0.0
 
@@ -143,14 +138,43 @@ class CosmologyLcdm():
         return 177.65287922 + 82.0*x - 39.0*x**2
 ################################################################################
     def mass_virial(self, r_vir, z_in):
-        r_vir = r_vir * const.mpc
+        """
+        Compute the virial mass
+
+        Input:
+         - r_vir float : virial radius in megaparsec
+         - z_in  float : red-shift
+        Output:
+         - virial mass in units of solar mass
+        """
+        r_vir = r_vir * const.mpc * 1E3 #from megaparsec to meter
         c1 = 4.0/3.0*const.pi*(r_vir**3.0)
         c2 = self.virial_overdensity(z_in)/( (1.0 + z_in)**3.0 )
         c3 = self.critical_density(z_in)
         return c1*c2*c3/const.solar_mass
+################################################################################
+    def virial_radius(self, mass_vir, z_in):
+        """
+        Computes the virial radius
 
+        Input:
+         - mass_vir float : virial mass in solar mass
+         - z_in     float : red-shift
+        Output:
+         - virial radius in megaparsec
+        """
+        cons_1 = 4.0/3.0*const.pi/mass_vir
+        cons_2 = self.virial_overdensity(z_in)/( (1.0 + z_in)**3.0 )
+        cons_3 = self.critical_density(z_in)/const.solar_mass
+        return (cons_1*cons_2*cons_3)**(-1.0/3.0)/const.mpc/1E3
+################################################################################
+    def lens_sigma_crit(self, z_lens, z_src):
+        cons_1 = self.ang_dis(0.0, z_src)/self.ang_dis(z_lens, z_src) \
+             /self.ang_dis(0.0, z_lens)
+        cons_2 = (const.c*1E3)**2.0/4.0/const.pi/const.g_newton \
+                 /const.solar_mass*const.mpc*1E3
 
-
+        return cons_1*cons_2
 ################################################################################
     def integral_parameters(self):
         """

@@ -22,7 +22,12 @@ def generate_fits_image(xy_matrx, file_name = 'out.fits'):
 
 
     hdu = pyfits.PrimaryHDU()
-    hdu.data = xy_matrx
+
+
+    hdu.data = np.float32(xy_matrx)
+    #hdu.scale("float32")
+
+
 
     hdu.writeto(file_name, clobber=True)
 
@@ -41,29 +46,29 @@ def creat_sehar_map():
     print pos_x[pixn], pos_y[pixn]
     print pot_xx[pixn], pot_yy[pixn], pot_xy[pixn]
     print kappa[pixn], gamma[pixn]
-     
 
-    
+
+
     #image = Image.open('exif.jpg')
     #image.show()
     #image.load()
     #xsize, ysize = image.size
     #print xsize, ysize
-    
+
     #r, g, b = image.split()
     #rdata = r.getdata()
     #gdata = g.getdata()
     #bdata = b.getdata()
     pixels = sqrt(len(pot_xx))
     #print pixels
-    
+
     gamma_dat = np.reshape( gamma, (pixels, pixels) )
     gamma_dat = np.transpose(gamma_dat)
-    
+
     gamma1 = np.reshape( 0.5*(pot_xx-pot_yy), (pixels, pixels) )
     gamma1 = np.transpose(gamma1)
-    #gamma1 = np.sqrt(gamma1)
-    
+    gamma1 = np.sqrt(gamma1)
+
     pot_xy_2 = np.reshape( pot_xy, (pixels, pixels) )
     pot_xy_2 = np.transpose(pot_xy_2)
 

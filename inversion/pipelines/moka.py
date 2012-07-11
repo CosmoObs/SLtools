@@ -27,7 +27,7 @@ def list_files(path = '.', file_extension = '.'):
      - file_extension str: string with the extension to select the files
     Output:
      - list with file names
-    """    
+"""
     dirList=os.listdir(path)
     files_out = []
     for fname in dirList:
@@ -56,7 +56,7 @@ def plot_properties():
         x_mult.append(x)
         y_mult.append(y)
         conc_mult.append(conc)
-        
+
     print len(sub_files)
     print len(x_mult)
 
@@ -77,7 +77,7 @@ def v_disp(mass_vir, R_vir, conc_vir):
      - conc_vir : halo concentration parameter [R_vir / r_s]
     Output:
      - v_disp [km / s]
-    """    
+    """
     f_conc = log(1.0 + conc_vir)/conc_vir - 1.0/(1.0 + conc_vir)
     const = 2.0/3.0 / pi / f_conc
 
@@ -101,25 +101,14 @@ def mass_vir(z_in, r_vir, cosmology):
     omega_mz = cosmology.omega_m(z_in)
     omega_m0 = cosmology.omega_m(0)
 
-
-
-
-
     print delta_vir, omega_mz, omega_m0
     return 0.0
 ################################################################################
 def subs():
     path_satinfo = 'satellites/satinfo.0.sub'
     np.loadtxt( path_satinfo, unpack=True, usecols=(1,2) )
-    subhalo_mass, x_projec, y_projec, conc
+    #subhalo_mass, x_projec, y_projec, conc
     return 0.0
-
-
-
-
-
-
-
 ################################################################################
 if __name__ == '__main__':
     Rvir0 = extract_parameter('moka.out', 'Rvir0 =')
@@ -148,12 +137,4 @@ if __name__ == '__main__':
     #mass_vir(z_lens[5], float(Rvir0[5][0]), cos_obj)
     #print cos_obj.critical_density(0.0)
     #print cos_obj.mass_virial(1.10989, 0.25)
-    print cos_obj.ang_dis(0, 0.35) * math.sin(1.0/cn.radians) * 1E3
-
-
-
-
-
-
-
-    
+    print cos_obj.ang_dis(0, 0.35) * math.sin(1.0/cn.radians) * 1E3    

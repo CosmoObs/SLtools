@@ -3,6 +3,16 @@
 # ==================================
 import numpy as np
 
+import functions as fc
+
+import constants as cs
+
+#change the matplotlib display to allow to run in a terminal with no X window
+#FIXME - not tested yet
+if not fc.is_X_running():
+    import matplotlib
+    matplotlib.use('agg')
+
 import matplotlib.pyplot as plt
 
 from matplotlib.ticker import NullFormatter
@@ -79,8 +89,6 @@ def plot_histogram(x_in, xlabel='x', bins=20, filename='', legend = ' ', \
         plt.clf()
     elif plot:
         plt.show()
-
-
 ################################################################################
 def plot_mult_hist(n_lin, n_col, data, x_axes):
     plt.figure(1, figsize=(n_col*3, n_lin*3))
@@ -96,3 +104,117 @@ def plot_mult_hist(n_lin, n_col, data, x_axes):
             sub_num = sub_num + 1
     plt.show()
 ################################################################################
+def plot_contours(x_vec, y_vec, z_vec, linestyles = '-', plt_labels = False, \
+                  manual = False, levels = None):
+    """
+    Function to plot contours givem a grid data
+
+    Input:
+     - x_vec         [] : x vector
+     - y_vec         [] : y vector
+     - z_vec         [] : z vector
+     - linestyles   str : matplotlib linestyle
+     - plt_labels  bool : plot or not the contours values
+     - manual      bool : set (or not) the labels manualy
+     - levels        [] : values for the iso-contours levels
+    Output:
+     - NONE
+    """
+
+    plt.figure(1, figsize=(10, 10))
+
+    x0_dim = len( ( y_vec == min(y_vec) ).nonzero()[0] )
+    x1_dim = len( ( x_vec == min(x_vec) ).nonzero()[0] )
+
+    print "plot_contours: Axis 1 points = ", x0_dim
+    print "plot_contours: Axis 1 min and max = ", min(x_vec), " ", max(x_vec)
+
+    print "plot_contours: Axis 2 points = ", x1_dim
+    print "plot_contours: Axis min and max = ", min(y_vec), " ", max(y_vec)
+
+    x0_vec = np.linspace(min(x_vec), max(x_vec), x0_dim)
+    x1_vec = np.linspace(min(y_vec), max(y_vec), x1_dim)
+
+    x2_vec =  np.reshape(z_vec, (x0_dim, x1_dim)).transpose()
+
+    CS = plt.contour ( x0_vec, x1_vec, x2_vec, levels = levels, colors = "k", \
+                       linewidths = 2.5, linestyles = linestyles)
+
+    if plt_labels:
+        plt.clabel(CS, fontsize=13, fmt = "%.2f", manual = manual, \
+                   rightside_up = True)
+################################################################################
+def plot_contour_func(func, x_min, x_max, x_npt, y_min, y_max, y_npt, *args):
+    """
+    Function to add plot contours for a function.
+    The contours will be ploted considering the two first arguments of 'func'
+
+    Input:
+     - func  function : function used to plot the contours
+     - x_min    float : x minimum value
+     - x_max    float : x maximum value
+     - x_npt    float : grid size along the x axies
+     - y_min    float : y minimum value
+     - y_max    float : y maximum value
+     - y_npt    float : grid size along the y axies
+     - *args    *args : 'func' arguments
+    Output:
+     - NONE
+    """
+    vec_a = np.linspace(x_min, x_max, num = x_npt)
+    vec_b = np.linspace(y_min, y_max, num = y_npt)
+
+    r_vec = np.zeros([len(vec_a), len(vec_b)])
+
+    x = []
+    y = []
+    for i in range(len(vec_a)):
+        for j in range(len(vec_b)):
+            r_vec[i][j] = func(vec_a[i], vec_b[j], *args)
+            x.append( vec_a[i] )
+            y.append( vec_b[j] )
+
+#    levels = [2, 3, 5, 10, 50]
+    levels = [0.01, 0.03, 0.05, 0.07]
+    plot_contours(x, y, r_vec, levels = levels, plt_labels = True)
+################################################################################
+def plot_circ(radius):
+    """
+    Function to plot a simple circumference
+
+    Input:
+     - radius  float : circumference radius
+    Output:
+     - NONE
+    """
+    theta = np.linspace(0.0, 2.0*cs.pi, num = 200)
+    x = radius*np.cos(theta)
+    y = radius*np.sin(theta)
+    plt.plot(x, y, linewidth = 2)
+################################################################################
+def plot_func(func, x_min, x_max, *args):
+    """
+    Function to plot a function
+
+    Input:
+     - func  function : functions to be ploted
+     - *args    *args : 'func' arguments
+    Output:
+     - NONE
+    """
+
+    n_pts = 200
+    #x_min = 1.0E6
+    #x_max = 1.0E11
+
+    loglog = False
+
+    x_vec = np.linspace(x_min, x_max, num = n_pts)
+    y_vec = []
+    for i in x_vec:
+        y_vec.append( func(i, *args) )
+
+    if loglog:
+        plt.loglog(x_vec, y_vec)
+    else:
+        plt.plot( x_vec, y_vec )

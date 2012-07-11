@@ -9,7 +9,7 @@ Package to automate some aplocations of gravlens
 
 
 from math import sqrt
-from cosmology import CosmologyLcdm 
+from cosmology import CosmologyLcdm
 from functions import extract_parameter, modulus, extract_second_identifiers
 
 import numpy as np
@@ -17,9 +17,9 @@ import matplotlib.pyplot as plt
 
 import random
 
-class GravlensPipeline():
+class GravlensPipeline(object):
     """
-    Class to automate some aplocations of gravlens
+    Class to automate some aplications of gravlens
     """
     def __init__(self, z_lens = 1.0, z_source = 2.0):
         self.cosmology = CosmologyLcdm()
@@ -51,7 +51,7 @@ class GravlensPipeline():
         Read the sources and images from a 'findimg' gravlens output file
 
         Input:
-         - mag_min float : minimum image absolute magnification 
+         - mag_min float : minimum image absolute magnification
         Output:
          - NONE
         """
@@ -69,8 +69,7 @@ class GravlensPipeline():
                 source_xy = [float(line_inf[0]), float(line_inf[1])]
 
             elif not('#' in line_inf) and len(line_inf)>0 and \
-                               np.absolute(float(line_inf[2])) > mag_min + 1E-8:
-                                   
+                     np.absolute(float(line_inf[2])) > mag_min + 1E-8:
                 image_xy.append([float(line_inf[0]), float(line_inf[1])])
                 amplification.append(float(line_inf[2]))
 
@@ -95,17 +94,17 @@ class GravlensPipeline():
                                 unpack=True)
         plt.figure(1 , figsize=(16, 8))
         plt.subplot(1, 2, 1).set_aspect(1)
-        plt.plot(u1_c, v1_c, 'b-', linewidth=3, label='gravlens')
+        plt.plot(u1_c, v1_c, 'b.', linewidth=3, label='gravlens')
         axis_limit = max( 1.075*max(np.absolute(u1_c)), \
                           1.075*max(np.absolute(v1_c)) )
         plt.axis([-axis_limit, axis_limit, -axis_limit, axis_limit])
 
         plt.subplot(1, 2, 2).set_aspect(1)
-        plt.plot(x1_c, y1_c, 'b-', linewidth=3, label='gravlens')
+        plt.plot(x1_c, y1_c, 'b.', linewidth=3, label='gravlens')
         axis_limit = max( 1.075*max(np.absolute(x1_c)), \
                           1.075*max(np.absolute(y1_c)) )
         plt.axis([-axis_limit, axis_limit, -axis_limit, axis_limit])
-        plt.legend()
+        #plt.legend()
         if plt_show:
             plt.show()
             plt.close()
@@ -124,8 +123,8 @@ class GravlensPipeline():
         crit_file = 'crit.dat'
 
         x1_c, y1_c, u1_c, v1_c = \
-            np.loadtxt(crit_file, usecols = (0, 1, 2, 3), unpack=True)
-        
+                      np.loadtxt(crit_file, usecols = (0, 1, 2, 3), unpack=True)
+
         #x1_s, y1_s, u1_s, v1_s, x2_s, y2_s, u2_s, v2_s = \
         #    np.loadtxt(src_file, usecols={0, 1, 2, 3, 4, 5, 6, 7}, unpack=True)
 
@@ -276,7 +275,7 @@ class GravlensPipeline():
         nlens = int(nlens[0][0])
 
         print nplan
-        
+
         gravlens_profil = []
         gravlens_ellipticity = []
         gravlens_masspar = []
@@ -290,7 +289,7 @@ class GravlensPipeline():
         file_opened.write('set zlens 1.0\n')
         file_opened.write('set zsrc 2.0\n')
 
-        file_opened.write('set crittol 1.0e-10')
+        file_opened.write('set crittol 1.0e-10\n')
 
         file_opened.write('gridmode 1\n')
         file_opened.write('set gridlo1 0.0\n')
@@ -341,16 +340,29 @@ class GravlensPipeline():
 ################################################################################
     def convert2(self, par_file, gravlens_file = 'test.gravlens', \
                  generate_crit = True):
-        all_identifiers = extract_second_identifiers(par_file, 'potential')
+        """
+        Convert a .par file to a gravlens input file. Only to generate point
+        images in the SIEP and NFW model
 
-        nplan = \
-        extract_parameter(par_file, identifier = 'nplan')
+        Input:
+         - par_file        str : imput .par file
+         - gravlens_file   str : output file to be used in gravlens
+         - generate_crit  bool : create (or not) critical curve in gravlens file
+        Output:
+         - NONE
+        """
+        all_identifiers = extract_second_identifiers(par_file, 'potential')
+        if all_identifiers == []:
+            all_identifiers = extract_second_identifiers(par_file, 'potentiel')
+        nplan = extract_parameter(par_file, identifier = 'nplan')
         z_src = float(nplan[0][1])
 
-        nlens = \
-        extract_parameter(file_in = par_file, identifier = 'nlens')
-        nlens = int(nlens[0][0])
+        nlens = extract_parameter(file_in = par_file, identifier = 'nlens')
+        if nlens == []:
+            nlens = \
+                 extract_parameter(file_in = par_file, identifier = 'nlentille')
 
+        nlens = int(nlens[0][0])
         #-----------------------------------------------------------------------
         file_opened = open(gravlens_file, 'w')
 
@@ -360,7 +372,7 @@ class GravlensPipeline():
         file_opened.write('set zlens 1.0\n')
         file_opened.write('set zsrc 2.0\n')
 
-        file_opened.write('set crittol 1.0e-10')
+        file_opened.write('set crittol 1.0e-10\n')
 
         file_opened.write('gridmode 1\n')
         file_opened.write('set gridlo1 0.0\n')
@@ -375,9 +387,8 @@ class GravlensPipeline():
         file_opened.write(str_out)
         #-----------------------------------------------------------------------
 
+        print all_identifiers
 
-
-        
         for i in range(nlens):
             #print i
             #print all_identifiers[i]['profil']

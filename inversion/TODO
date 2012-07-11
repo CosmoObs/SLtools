@@ -1,0 +1,4 @@
+    - check if file "optm_out.txt" is used - inversion_stat.py line 204
+    - impruve the name for the output folder that contains all the inversion
+      information - inversion_stat.py line 217
+    - check how lenstool works when you have lenses with differents red-shifts
