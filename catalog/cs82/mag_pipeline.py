@@ -190,6 +190,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
     if flag_cut:
 
+        print 'bla'
         try:
             flags = hdudata.field('FLAGS').astype(np.float64)
             flag_mask = (flags == 0)
@@ -220,7 +221,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     objs.append(len(magdata[stell_mask & mag99_mask]))
  
  
-    data = magdata[stell_mask & mag99_mask & S2N_mask]
+    data = magdata[stell_mask & mag99_mask & S2N_mask & flag_mask]
 
     objs.append(len(data))
 
@@ -282,13 +283,13 @@ if __name__ == "__main__" :
     parser.add_option('-b','--bin_size', dest='bin_size', default=0.2,
                       help='magnitude bin size [default=0.2]');
 
-    parser.add_option('-f','--flag_cut', dest='flag_cut', default=True,
+    parser.add_option('-f','--flag_cut', dest='flag_cut', default=1,
                       help='perform analysis using only FLAGS=0 objects [default=True]');
 
-    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default=True,
+    parser.add_option('-g','--galaxy_cut', dest='gal_cut', default=1,
                       help='perform analysis on galaxies (CLASS_STAR < stell_idx) if True, stars  (CLASS_STAR > stell_idx) if False [default=True]');
 
-    parser.add_option('-i','--include_unid_mags', dest='mag99', default=False, 
+    parser.add_option('-i','--include_unid_mags', dest='mag99', default=0, 
                       help='include objects with unidentified magnitudes (MAG = 99) [default=False]');
 
     parser.add_option('-m','--mag_inf', dest='mag_inf', default=21, 
@@ -311,9 +312,9 @@ if __name__ == "__main__" :
 
     bin_size = float(opts.bin_size);
 
-    gal_cut = opts.gal_cut;
-    flag_cut = opts.flag_cut;
-    mag99 = opts.mag99;
+    gal_cut = int(opts.gal_cut);
+    flag_cut = int(opts.flag_cut);
+    mag99 = int(opts.mag99);
     mag_inf = float(opts.mag_inf);
     plot_inf = float(opts.plot_inf);
     plot_sup = float(opts.plot_sup);
