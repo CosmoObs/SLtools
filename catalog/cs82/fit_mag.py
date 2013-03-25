@@ -62,7 +62,7 @@ def get_tile_name(input_file):
 
     input_name = os.path.basename(input_file)
 
-    string_sup = input_name.index('.')
+    string_sup = input_name.index('_y')
 
     tile_name = input_name[0:string_sup]
 
