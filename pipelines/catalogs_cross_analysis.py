@@ -22,6 +22,7 @@ from sltools.io import io_addons as ioadd
 from sltools.plot import plot_templates as pltemp
 from sltools.statistics import data_statistics as dstat
 from sltools.catalog.cs82 import morpho_comparisons as mcomp
+from sltools.catalog.cs82 import fit_mag as fm
 
 plot_formats = ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+']
 plot_colors = ['y', 'c', 'm', 'b', 'g', 'r', 'k', 'y', 'c', 'm', 'b', 'g']
@@ -33,13 +34,38 @@ def main(cat_A, cat_B, output_folder, plots, matching, multiple, radius,
     ioadd.create_folder(output_folder)
 
     # Open FITS catalogs
-    tbhdu_A = pyfits.open(cat_A, ignore_missing_end=True, memmap=True)[2]
-    tbhdu_B = pyfits.open(cat_B, ignore_missing_end=True, memmap=True)[2]
 
+    hdulist_A = pyfits.open(cat_A, ignore_missing_end=True, memmap=True)
+    hdulist_B = pyfits.open(cat_B, ignore_missing_end=True, memmap=True)
+
+   # Test if they are LDAC and get table data accordingly
+
+    if fm.check_if_ldac(hdulist_A):
+
+        tbhdu_A = hdulist_A[2]
+
+    else:
+
+        tbhdu_A = hdulist_A[1]
+
+
+    if fm.check_if_ldac(hdulist_B):
+
+        tbhdu_B = hdulist_B[2]
+
+    else:
+
+        tbhdu_B = hdulist_B[1]
+
+    
     # Perform standard cuts on both catalogs
+
+    # WARNING: These cuts only work for CS82! Improve this.
+
     cut_tbhdu_A = fd.sample_entries(tbhdu_A, CLASS_STAR=(0.95, 1.0),
                   MAG_AUTO=(0, 24), MAGERR_AUTO=(0, 0.2172),
                   FLAGS=(0, 3))
+   
     data_A = cut_tbhdu_A.data
     #0.2172
     cut_tbhdu_B = fd.sample_entries(tbhdu_B, CLASS_STAR=(0.95, 1.0),
@@ -47,6 +73,7 @@ def main(cat_A, cat_B, output_folder, plots, matching, multiple, radius,
                   FLAGS=(0, 3))
     data_B = cut_tbhdu_B.data
 
+    
     # Perform matching when necessary, *for the moment only returns nearest 
     # neighbor*.
 
