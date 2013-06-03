@@ -37,12 +37,12 @@ def main(cat_A, cat_B, output_folder, plots, matching, multiple, radius,
     tbhdu_B = pyfits.open(cat_B, ignore_missing_end=True, memmap=True)[2]
 
     # Perform standard cuts on both catalogs
-    cut_tbhdu_A = fd.sample_entries(tbhdu_A, CLASS_STAR=(0, 0.95),
+    cut_tbhdu_A = fd.sample_entries(tbhdu_A, CLASS_STAR=(0.95, 1.0),
                   MAG_AUTO=(0, 24), MAGERR_AUTO=(0, 0.2172),
                   FLAGS=(0, 3))
     data_A = cut_tbhdu_A.data
-
-    cut_tbhdu_B = fd.sample_entries(tbhdu_B, CLASS_STAR=(0, 0.95),
+    #0.2172
+    cut_tbhdu_B = fd.sample_entries(tbhdu_B, CLASS_STAR=(0.95, 1.0),
                   MAG_AUTO=(0, 24), MAGERR_AUTO=(0, 0.2172),
                   FLAGS=(0, 3))
     data_B = cut_tbhdu_B.data

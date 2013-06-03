@@ -117,7 +117,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
     hdulist = pyfits.open(input_file,ignore_missing_end=True,memmap=True)
 
-    header_info = ['CRVAL1','CRVAL2','SEEING']
+    header_info = ['CRVAL1','CRVAL2','SEEING','TEXPTIME','SEXBKGND','SEXBKDEV','MAGZP','MAGZPERR']
 
     if fmg.check_if_ldac(hdulist):
 
@@ -130,9 +130,14 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
         tile_ra = fmg.get_entry_ldac_header(hdulist_string, header_info[0])
         tile_dec = fmg.get_entry_ldac_header(hdulist_string,header_info[1])
         tile_seeing = fmg.get_entry_ldac_header(hdulist_string,header_info[2])
+        tile_texptime = fmg.get_entry_ldac_header(hdulist_string,header_info[3])
+        tile_bkgnd = fmg.get_entry_ldac_header(hdulist_string,header_info[4])
+        tile_bkgrms = fmg.get_entry_ldac_header(hdulist_string,header_info[5])
+        tile_magzp = fmg.get_entry_ldac_header(hdulist_string,header_info[6])
+        tile_magzperr = fmg.get_entry_ldac_header(hdulist_string,header_info[7])
     
         tile_name = fmg.get_tile_name(input_file)
-        tile_area = (21000*0.187/60)**2 # in arcmin^2, hardcoded for Megacam pixel scale, approximative value
+
     
     else:
 
@@ -153,7 +158,6 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
         tile_dec = header_vals[1]
         tile_seeing = header_vals[2]
         tile_name = 'full'
-        tile_area = 177*(21000*0.187/60)**2
 
 
 # Performing cuts in different columns
@@ -190,7 +194,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
 
     if flag_cut:
 
-        print 'bla'
+        print 'Cutting in FLAGS = 0 for calculation purposes only...'
         try:
             flags = hdudata.field('FLAGS').astype(np.float64)
             flag_mask = (flags == 0)
@@ -216,16 +220,14 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     objs = []
  
     objs.append(len(magdata))
-    objs.append(len(magdata[stell_mask]))
-    objs.append(len(magdata[~stell_mask]))
     objs.append(len(magdata[stell_mask & mag99_mask]))
+    objs.append(len(magdata[~stell_mask & mag99_mask]))
  
- 
-    data = magdata[stell_mask & mag99_mask & S2N_mask & flag_mask]
+    data = magdata[stell_mask & mag99_mask & S2N_mask]
 
     objs.append(len(data))
 
-    objs.append(len(magdata[flag_mask]))
+    objs.append(len(magdata[stell_mask & mag99_mask & S2N_mask & flag_mask]))
 
  
     # Bin and cut the data
@@ -262,7 +264,7 @@ def mag_pipeline(input_file, field_names, folder_path, mag_inf, bin_size, gal_cu
     
     # Return results of the fit
     
-    return [tile_name, str(tile_ra), str(tile_dec), str(tile_seeing), str(bin_size), str(S2N_cut), str(stell_idx), str(fit_params[0]), str(fit_params[1]), str(mag_inf), str(mag_sup), str(mag_lim), str(objs[0]), str(objs[1]), str(objs[3]), str(objs[4]),str(objs[5]/objs[0]),str(objs[1]/tile_area),str(objs[2]/tile_area)]
+    return [tile_name, str(tile_ra), str(tile_dec), str(tile_seeing), str(tile_texptime), str(tile_bkgnd), str(tile_bkgrms), str(tile_magzp), str(tile_magzperr), str(fit_params[0]), str(fit_params[1]), str(mag_inf), str(mag_sup), str(mag_lim), str(objs[0]), str(objs[1]), str(objs[2]), str(objs[3]), str(objs[4]/objs[3])]
 
 
 # \cond
@@ -353,7 +355,7 @@ if __name__ == "__main__" :
     results = np.array(results)
 
 
-    np.savetxt(folder_path + '/fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+ '_stell_'+str(stell_idx)+'.txt', results,fmt='%7s       %s        %s        %.4s      %s         %s       %.4s     %.8s       %.5s       %s        %s        %s           %s      %6s      %6s      %6s      %s      %s      %s')
+    np.savetxt(folder_path + '/fit_results_bins_'+ str(bin_size) + '_S2N_'+ str(int(S2N_cut))+ '_stell_'+str(stell_idx)+'.txt', results,fmt='%7s       %s        %s        %.4s      %.8s      %.8s      %.8s      %.8s      %.8s      %.8s       %.5s       %s        %s        %s           %s      %6s      %6s      %6s      %s')
 
     # Numpy 1.5 doesn't have header options for savetxt yet (to come in Numpy 2.0). Add a header using file commands
     
@@ -365,10 +367,10 @@ if __name__ == "__main__" :
     file.seek(0) # rewind
 
     if gal_cut:
-        file.write("ID_test       ra         dec         seeing    bin_size    S/N_cut    class_star     A_fit         b_fit     mag_inf     mag_sup    mag_comp    N_tot        N_gal      N_gal_99    N_gal_99_S/N      N_flags/N_tot    N_gal/arcmin^2       N_star/arcmin^2\n" + old)
+        file.write("ID_test       ra         dec         seeing    texptime    SEx_bkgnd     SEx_bkgrms    magzp    magzp_err    A_fit         b_fit     mag_inf     mag_sup    mag_comp    N_tot        N_gal      N_star    N_gal_S2N       N_flags_0/N_gal_S2N\n" + old)
 
     else:
-        file.write("ID_test       ra         dec         seeing    bin_size    S/N_cut    class_star     A_fit         b_fit     mag_inf     mag_sup    mag_comp    N_tot        N_star      N_star_99    N_star_99_S/N     N_flags/N_tot    N_star/arcmin^2      N_star/arcmin^2\n" + old)
+        file.write("ID_test       ra         dec         seeing    texptime    SEx_bkgnd     SEx_bkgrms    magzp    magzp_err    A_fit         b_fit     mag_inf     mag_sup    mag_comp    N_tot        N_gal      N_star    N_gal_S2N       N_flags_0/N_gal_S2N\n" + old)
      
     file.close()
     
