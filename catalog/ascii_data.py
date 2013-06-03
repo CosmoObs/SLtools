@@ -37,13 +37,13 @@ def dict_to_csv(columns, fieldnames=[], filename='cat.csv', mode='w', delimiter=
     
     Example:
 
-    >>> D = {'x':[0,0,1,1],'y':[0,1,0,1],'id':['0_0','0_1','1_0','1_1'],'z':[0,0.5,0.5,1]} #\
-    >>> fields = ['id','x','y','z'] #\
-    >>> #\
-    >>> dict_to_csv( D, fields, filename='test.csv') #\
-    >>> #\
-    >>> import os #\
-    >>> #\
+    >>> D = {'x':[0,0,1,1],'y':[0,1,0,1],'id':['0_0','0_1','1_0','1_1'],'z':[0,0.5,0.5,1]} #
+    >>> fields = ['id','x','y','z'] #
+    >>> #
+    >>> dict_to_csv( D, fields, filename='test.csv') #
+    >>> #
+    >>> import os #
+    >>> #
 
     ---
     """

@@ -74,7 +74,6 @@ def get_pixelscale(hdr):
 
     return pixel_scale;
 
-# ---
 
 def update_coordinates(hdr, x_ini, y_ini):
     """Update header information regarding world coordinate system"""
