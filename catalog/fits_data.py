@@ -359,7 +359,7 @@ def dict_from_tbHDU(tbhdu, *fieldnames):
         except KeyError:
             print "Variable %s does not exist in this catalog." % arg
     
-    return (dic); 
+    return dic; 
 
 
 
