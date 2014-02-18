@@ -62,7 +62,7 @@ def get_tile_name(input_file):
 
     input_name = os.path.basename(input_file)
 
-    string_sup = input_name.index('_y')
+    string_sup = input_name.index('_y') # Adapt this to W4 tiles
 
     tile_name = input_name[0:string_sup]
 
