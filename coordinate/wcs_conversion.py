@@ -51,8 +51,6 @@ def radec2xy(hdr,ra,dec):
 
 	y = pixcrd[0][1]
 
-	print x,y
-
 	return (x,y)
 	
 	
@@ -81,8 +79,6 @@ def xy2radec(hdr,x,y):
 	ra = skycrd[0][0]
 
 	dec = skycrd[0][1]
-
-	print ra,dec
 
 	return (ra,dec)	
 
