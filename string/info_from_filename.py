@@ -31,9 +31,9 @@ def get_catalog_name(pathtofile):
 
     filename = os.path.basename(pathtofile)
 
-    if ".fits" in filename.lower() or ".fit" in filename.lower():    
+    if re.search(".fits$",filename.lower()) or re.search(".fit$",filename.lower()):
         pass  
-    elif ".cat" in filename.lower():    
+    elif re.search(".cat$",filename.lower()):    
         pass  
     else:
         print "Catalog not found! Try again."
