@@ -138,12 +138,13 @@ def get_mag_limit_counts(mag_data, binsize, initparams=(1, 0.3), minf=None,
      - mag_data      np.array : Magnitude data array
      - binsize          float : Bin size
      - initparams       tuple : Initial parameter guesses
-     - fitparams     np.array : Fitted parameters in format [afit, bfit]
      - minf             float : Fitting range inferior limit
      - msup             float : Fitting range superior limit
      - comp_limit       float : Completeness limit
     Output:
      - maglim           float : Magnitude limit
+     - a                float : Fit parameter (see formula above)
+     - b                float : Fit parameter (see formula above)
     """
 
     # Defend against bad input - Add code later
@@ -168,5 +169,5 @@ def get_mag_limit_counts(mag_data, binsize, initparams=(1, 0.3), minf=None,
 
     #if plot is not None:
 
-    return maglim
+    return [maglim, fitparams[0], fitparams[1]]
 
