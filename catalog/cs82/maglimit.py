@@ -145,6 +145,8 @@ def get_mag_limit_counts(mag_data, binsize, initparams=(1, 0.3), minf=None,
      - maglim           float : Magnitude limit
      - a                float : Fit parameter (see formula above)
      - b                float : Fit parameter (see formula above)
+     - minf             float : Fitting range inferior limit
+     - msup             float : Fitting range superior limit
     """
 
     # Defend against bad input - Add code later
