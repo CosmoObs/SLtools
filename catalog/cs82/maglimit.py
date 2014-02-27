@@ -56,7 +56,7 @@ def counts_model(mag, a, b):
     return a*10**(b*mag)
 
 
-def fit_counts_data(counts_data, initparams=(1, 0.3), minf=None, msup=None):
+def _fit_counts_data(counts_data, initparams=(1, 0.3), minf=None, msup=None):
 
     """
     Fit count data to analytical model in a selected magnitude range.
@@ -100,6 +100,8 @@ def _calc_rel_diff(counts_data, fitparams):
 
     """
     Calculate the relative difference between number count data and model
+
+    If data_i > model_i, values are negative. Else, values are positive.
 
     Input:
      - counts_data  np.array : Counts in the format [bins, counts, errors]
@@ -154,7 +156,7 @@ def get_mag_limit_counts(mag_data, binsize, initparams=(1, 0.3), minf=None,
     if msup is not None:
         kwargsfit['msup'] = msup
 
-    fitparams = fit_counts_data(counts_data, **kwargsfit)
+    fitparams = _fit_counts_data(counts_data, **kwargsfit)
 
     rel_diff = _calc_rel_diff(counts_data, fitparams)
 
@@ -162,7 +164,7 @@ def get_mag_limit_counts(mag_data, binsize, initparams=(1, 0.3), minf=None,
 
     # Bug if all mask entries are false
 
-    maglim = counts_data[0][mask].max() - binsize
+    maglim = counts_data[0][mask].max()
 
     #if plot is not None:
 
