@@ -169,5 +169,5 @@ def get_mag_limit_counts(mag_data, binsize, initparams=(1, 0.3), minf=None,
 
     #if plot is not None:
 
-    return [maglim, fitparams[0], fitparams[1]]
+    return [maglim, fitparams[0], fitparams[1], minf, msup]
 
