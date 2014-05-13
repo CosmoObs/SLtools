@@ -413,7 +413,7 @@ if __name__ == "__main__" :
     parser.add_option('--objIDs',
                 dest='IDs',default='',
                 help="Comma-separated list of object IDs found on 'segimg' to extract");
-
+    parser.add_option('--hdu-n', default = 0, help = "HDU position")
     
     (opts,args) = parser.parse_args();
 
@@ -440,13 +440,14 @@ if __name__ == "__main__" :
     size = 'degrees' if shape_deg else 'pixel';        
 
     hdulist = pyfits.open(infits,memmap=True);
+
     if (use_header):
 #        image, hdr = pyfits.getdata(infits,header=True);
-        image = hdulist[0].data;
-        hdr = hdulist[0].header;
+        image = hdulist[int(opts.hdu_n)].data;
+        hdr = hdulist[int(opts.hdu_n)].header;
     else:
 #        image = pyfits.getdata(infits, header=False);
-        image = hdulist[0].data;
+        image = hdulist[int(opts.hdu_n)].data;
         hdr = None;
 
     try:
