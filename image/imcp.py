@@ -211,11 +211,11 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
 # ---
 
 # ==========================================================================================
-def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase=False, connected=False):
+def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase=False, connected=False, obj_centered=True):
     """
     Identify objects on given images by their IDs and return object images
 
-    segstamp( segimg, objID, ...) -> (ndarray,header)
+    segstamp( segimg, objID ... )
 
     By default, if 'objIDs' is not given, postamp will scan segmentation image 
     'seg_img' for the list of object ID numbers. If 'objIDs' is given, those IDs 
@@ -230,12 +230,23 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
     object, is returned.
 
     Input:
-     - segimg          ndarray : Segmented image (ndim=2,dtype=int)
-     - objIDs            [int] : List with object IDs of interest in 'segimg'.
-     - objimg          ndarray : Objects image (ndim=2,dtype=float)
-     - hdr       pyfits.header : FITS header to be updated for each poststamp
-     - increase          float : Value for poststamp resizing (> 0)
-     - relative_increase  bool : Is 'increase' a additive value (default,False) or multiplicative one(True)?
+     - segimg : numpy.ndarray(ndim=2,dtype=int)
+        Segmented image (e.g, SEx's segmentation image)
+        
+     - objIDs : [int,]
+        List with object IDs of interest in 'segimg'.
+
+     - objimg : numpy.ndarray(ndim=2,dtype=float)
+        Objects image (e.g, SEx's objects image)
+
+     - hdr : FITS header instance
+        FITS header to be updated for each poststamp
+        
+     - increase : float
+        Value for poststamp resizing (> 0)
+        
+     - relative_increase : bool
+        Is 'increase' a additive value (default,False) or multiplicative one(True)?
         
 
     Output:
@@ -246,7 +257,8 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
 
 
     _id = objID;
-    ind = segobjs.create_IDmask(segimg, objID);
+
+    ind = segmentation_ids.create_IDmask(segimg, _id);
 
     y_min = min( ind[0] );
     x_min = min( ind[1] );
@@ -257,22 +269,35 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
     y_size = max( y_idx ) + 1;
     x_size = max( x_idx ) + 1;
     
-   
-    if (connected == True ):		
-      ind=elliminate_disconected(ind)
- 
-    # Central pixel on original image:
-    yo = y_size/2 + y_min;
-    xo = x_size/2 + x_min;
+    if obj_centered==False:
+        pixels = np.where(segimg >=0)
+        y_size=max(pixels[0])
+        x_size=max(pixels[1]) 
+       
 
-    if ( increase != 0 ):		
+    if (connected == True ):		
+      ind=separate_disconected(ind, high_area=True)
+ 
+
+    # Central pixel on original image:
+    if obj_centered==True:
+        yo = y_size/2 + y_min;
+        xo = x_size/2 + x_min;
+    else:
+        yo = y_size/2; 
+        xo = x_size/2; 
+
+
+
+
+    if ( increase != 0 and obj_centered==True ):		
         if (relative_increase == True):
             x_size = x_size*increase;
             y_size = y_size*increase;
         else:
             x_size = x_size + 2*increase;
             y_size = y_size + 2*increase;
-
+    
     if objimg!=None:
         image_out, hdr = cutout( objimg, hdr, xo=int(xo), yo=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
     else:
@@ -367,7 +392,6 @@ def separate_disconected(ind, high_area=False):
         ind_new[1].remove(-1000)
         ind_n=[np.array(ind_new[0]),np.array(ind_new[1])]
         return ind_n          
-
 # ---
 
 # \cond
