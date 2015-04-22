@@ -1,5 +1,5 @@
 """
-Set of functions used in Mediatrix Decomposition data analysis.
+Set of functions used in Mediatrix Decomposition.
 
 """
 
@@ -7,17 +7,7 @@ Set of functions used in Mediatrix Decomposition data analysis.
 
 ##@package mediatrix_decomposition 
 #
-# This module includes functions developed to perform the Mediatrix 
-# Decomposition method.
-#
-# The Mediatrix Decomposition method assigns a set of N oriented segments to 
-# high length-to-width ratio (L/W) objects. It divides the object in segments 
-# following an iterative process that consists of finding the mediatrix of two 
-# points and using it to subdivide the segments.
-# 
-# For more detailed information on how this method works, see:
-#
-# http://twiki.linea.gov.br/bin/view/StrongLensing/MediatrixS
+# This module includes all functions developed to perform mediatrix decomposition method.
 #
 #
 
@@ -26,64 +16,33 @@ Set of functions used in Mediatrix Decomposition data analysis.
 from sltools.geometry.get_extrema_pts import get_extrema_2loops
 from numpy import where
 from math import sin, cos ,sqrt, fabs, atan, tan 
-from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, 
-title, savefig, Circle
+from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, title, savefig, Circle
 from pyfits import getdata
-from sltools.geometry.elementary_geometry import define_perpendicular_bisector,
-get_distance_from_line_to_point, length_from_connected_dots, 
-two_points_to_line, three_points_to_circle, width_ellipse
+from sltools.geometry.elementary_geometry import define_perpendicular_bisector, get_distance_from_line_to_point, two_points_to_line,three_points_to_circle
+import imcp
+import aplpy
+import numpy
+import pyfits
 
-from imcp import segstamp
-
-
-                              
-
-            
-                    
-
-
-def find_keydots (p1,p2,image,image_pixels=[],keydots,area, method="medium",
-alpha=1,n=-1,near_distance=(sqrt(2)/2)):
+def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,near_distance=(sqrt(2)/2)):
     """
-    Function to calculate the keydot points in Mediatrix Decomposition.
-
-    This function performs the keydots calculation in Mediatrix Decomposition
-    method and returns a numpy array with the [x,y] coordinates of all the
-    keydot points. The input 'method' allows the user to choose how to define
-    the mediatrix    point (medium between width extrema or the brightest 
-    point along the perpendicular bisector). 
-
-    To find all the keydots, a recursion is used. To choose between the two 
-    possible criteria to stop the recursion, the user must either set the 
-    input 'alpha' to zero and choose a value for the input 'n' or leave 'n' 
-    at its default value -1 and choose alpha. The default of the function 
-    is to work with 'alpha' = 1.
+    Function to calculate the keydots Points in Mediatrix Decomposition.
     
     Input:
-     - p1             ndarray : coordinates [x,y] of the first extreme point.
-     - p2             ndarray : coordinates [x,y] of the second extreme point.
-     - image          ndarray : the image matrix. If image_pixels=[] it must
-                      be a single object image
-     - image_pixels   [[float,...][float,...]] : list of object coordinates, 
-                      e.g. [[x_1,x_2...][y_1,y_2,...]], fitting the object.
-     - keydots        ndarray   : array of coordinates [p_i_x,p_i_y] of the two 
-                                 extreme points.
-     - area           ndarray   : the object area.
-     - method         str       : possible values are 'medium' or 'brightest'.
-     - alpha          float     : the factor alpha=l_i/w to stop the bisection.
-     - n              int       : the number of level iterations.
-     - near_distance  float     : the distance (in pixels) to consider a point 
-                                 close to the perpendicular bisector.
+     - p1      <array> : coordinates (x,y) of the first extreme point.
+     - p2      <array> : coordinates (x,y) of the second extreme point.
+     - image_pixels   <list> : list of points coordidates fitting the object.
+     - image   <array> : the image matrix.
+     - keydots  <array> : list with the two p_i extreme points and p_i=[p_i_x,p_i_y].
+     - area  <array> : the object area.
+     - method   <string> : possible values are 'medium' or 'brightest'.
+     - alpha      <float> : the factor alpha=l_i/w.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
      
     Output:
-     - keydots        [[float,float],...] : array with the coordinate pairs of
-                      all the keydots.  
+     - <array> : list  with the keydots points.  
      
     """
-   
-    if image_pixels==[]:
-      image_pixels=where(image>0)
-
     if (p1 in keydots) and (p2 in keydots):
         index1=keydots.index(p1)
         index2=keydots.index(p2)
@@ -105,126 +64,246 @@ alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     dx=(x1-x2)
     dy=(y1-y2)
     dl=sqrt((dx*dx)+(dy*dy))
-    L=length_from_connected_dots(keydots)
+    #print "list"
+    #print dl
+
+    L=get_length(keydots)
     W=width_ellipse(L,area)
-    coefficients=define_perpendicular_bisector(p1,p2)
-    p3x,p3y,p3Flag=choose_near_point(coefficients[0],coefficients[1],
-    image_pixels,image,method,near_distance)
-    p3=[p3x,p3y]
-    if n==-1:
-        if dl>(alpha*W) and len(keydots)<100:
-            if (p3Flag==0):		
-                if (not(p3 in keydots)):
-                    keydots.insert(indexNext,p3)
-                    keydots=find_keydots(p1,p3,image_pixels,image,keydots,area,
-                    method,alpha,near_distance)
-                    keydots=find_keydots(p3,p2,image_pixels,image,keydots,area,
-                    method,alpha,near_distance)
-            else:
-                xmed=float(x1+x2)/2.
-                ymed=float(y1+y2)/2.
-                pmed=[xmed,ymed]
-                if p1 in keydots: 
-                    keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area,
-                    method,alpha,near_distance)
-                if p2 in keydots:
-                    keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area,
-                    method,alpha,near_distance)
-    else:
-        if n>0:
-            n=n-1
-            if (p3Flag==0):		
-                if (not(p3 in keydots)):
-                    keydots.insert(indexNext,p3)
-                    keydots=find_keydots(p1,p3,image_pixels,image,keydots,area,
-                    method,alpha=0,n,near_distance)
-                    keydots=find_keydots(p3,p2,image_pixels,image,keydots,area,
-                    method,alpha=0,n,near_distance)
-            else:
-                xmed=float(x1+x2)/2.
-                ymed=float(y1+y2)/2.
-                pmed=[xmed,ymed]
-                if p1 in keydots: 
-                    keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area,
-                    method,alpha=0,n,near_distance)
-                if p2 in keydots:
-                    keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area,
-                    method,alpha=0,n,near_distance)
 
-
+    if dl>(alpha*W) and len(keydots)<100:
+        coefficients=define_perpendicular_bisector(p1,p2)
+        p3x,p3y,p3Flag=choose_near_point(coefficients[0],coefficients[1],image_pixels,image,method,near_distance)
+        p3=[p3x,p3y]
+        if (p3Flag==0):		
+            if (not(p3 in keydots)):
+                keydots.insert(indexNext,p3)
+                keydots=find_keydots(p1,p3,image_pixels,image,keydots,area, method,alpha,near_distance)
+                keydots=find_keydots(p3,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
+        else:
+            xmed=float(x1+x2)/2.
+            ymed=float(y1+y2)/2.
+            pmed=[xmed,ymed]
+            if p1 in keydots: 
+                keydots=find_keydots(p1,pmed,image_pixels,image,keydots,area, method,alpha,near_distance)
+            if p2 in keydots:
+                keydots=find_keydots(pmed,p2,image_pixels,image,keydots,area, method,alpha,near_distance)
 
     return keydots
 
-def run_mediatrix_decomposition_on_stamp(image, method="medium",alpha=1,n=-1,
-near_distance=(sqrt(2)/2)):
+
+
+def find_keydots_c(p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,near_distance=(sqrt(2)/2),max_level=1000,level=0):
     """
-    Function to perform the mediatrix decomposition method on a given object.
-
-    For further information on mediatrix decomposition see also mediatrix_decomposition 
-    high level documentation. 
-
+    Function to calculate the keydots Points in Mediatrix Decomposition.
+    
     Input:
-     - image         ndarray   : the image matrix with single object
-     - image_dir          str  : the image directory. If it is on the same 
-                                 directory, directory=''.
-     - method          string  : possible values are 'medium' or 'brightest'.
-     - alpha             float : the factor alpha=l_i/w to stop the bisection.
-     - n                   int : the number of level iterations.
-     - near_distance     float : the distance (in pixels) to consider a point 
-                                 close to the perpendicular bisector.
+     - p1      <array> : coordinates (x,y) of the first extreme point.
+     - p2      <array> : coordinates (x,y) of the second extreme point.
+     - image_pixels   <list> : list of points coordidates fitting the object.
+     - image   <array> : the image matrix.
+     - keydots  <array> : list with the two p_i extreme points and p_i=[p_i_x,p_i_y].
+     - area  <array> : the object area.
+     - method   <string> : possible values are 'medium' or 'brightest'.
+     - alpha      <float> : the factor alpha=l_i/w.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
      
     Output:
-     - {'origin': [[float,float],...] , 'end': [[float,float],...],
-       'center' : [float,float], 'circle_params' : [[float,float],
-       [float,float],[float,float]} : 
-       Dictionary structure. For keys 'origin' and 'end' see 
-       image.mediatrix_decomposition.mediatrix_vectors. The 'center' key is 
-       the object center (x,y) defined by the first mediatrix point in
-       the first mediatrix level. The 'circle_params' key is a list where '0' 
-       index is the center (x,y) of the circle defined by two extrema and object 
-       center, the '1' and '2' index are the two extrema (x,y)
+     - <array> : list  with the keydots points.  
+     
+    """
+    level=level+1
+    if (p1 in keydots) and (p2 in keydots):
+        index1=keydots.index(p1)
+        index2=keydots.index(p2)
+        if  index1>index2:
+            indexNext=index1
+        else:
+            indexNext=index2
+    elif (p1 in keydots):
+        indexNext=keydots.index(p1)
+    elif (p1 in keydots):
+        indexNext=keydots.index(p2)
+    else:
+        return keydots
+	
+    
+    dl=abs(p1-p2)
+    #print "complex"
+    #print dl
+    L=get_length_c(keydots)
+    W=width_ellipse(L,area)
+
+    if dl>(alpha*W) and len(keydots)<100 and level<=max_level:
+        p1_r=[p1.real,p1.imag]
+        p2_r=[p2.real,p2.imag]
+        coefficients=define_perpendicular_bisector(p1_r,p2_r)
+        p3,p3Flag=choose_near_point_c(coefficients[0],coefficients[1],image_pixels,image,method,near_distance)
+        
+        if (p3Flag==0):		
+            if (not(p3 in keydots)):
+                keydots.insert(indexNext,p3)
+                keydots=find_keydots_c(p1,p3,image_pixels,image,keydots,area, method,alpha,near_distance,max_level,level)
+                keydots=find_keydots_c(p3,p2,image_pixels,image,keydots,area, method,alpha,near_distance,max_level,level)
+        else:
+            pmed=(p1+p2)/2.
+            if p1 in keydots: 
+                keydots=find_keydots_c(p1,pmed,image_pixels,image,keydots,area, method,alpha,near_distance,max_level,level)
+            if p2 in keydots:
+                keydots=find_keydots_c(pmed,p2,image_pixels,image,keydots,area, method,alpha,near_distance, max_level,level)
+
+    return keydots
+
+
+
+
+
+
+
+
+def mediatrix_decomposition(image_name,image_dir='', method="medium",alpha=1,near_distance=(sqrt(2)/2)):
+    """
+    Function to perform the mediatrix decomposition method on a given object. 
+
+    Input:
+     - image_name   <str> : the image file name.
+     - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
+     - method   <string> : possible values are 'medium'  or 'brightest'.
+     - alpha      <float> : the factor alpha=l_i/w to stop the bisection.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
+     
+    Output:
+     - <dic> :  Dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus. The first item from the list has two extra keys 'id' wich contains the image_name and 'center' that keeps the objet center defined by the first mediatrix point in the first mediatrix level.
          
     """
+    image,hdr = getdata(image_dir+image_name, header = True )
     pixels=where(image>0)
-    e_1,e_2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+    E1,E2=get_extrema_2loops( pixels[0], pixels[1], 0 )
     Area=len(pixels[1])
-    p1=[pixels[0][e_1],pixels[1][e_1]] # the extreme points p_1 and p_3
-    p3=[pixels[0][e_2],pixels[1][e_2]]
+    p1=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+    p2=[pixels[0][E2],pixels[1][E2]]
     keydots=[p1,p2]
-    keydots=find_keydots(p1,p3,pixels,image,keydots,Area, method=method,
-alpha=alpha,n,near_distance=near_distance)
+    keydots=find_keydots(p1,p2,pixels,image,keydots,Area, method=method,alpha=alpha,near_distance=near_distance)
     mediatrix_vectors=find_mediatrix_vectors(keydots)
+    mediatrix_vectors['id']=image_name
     medium=int(float(len(keydots))/2)
     mediatrix_vectors['center']=keydots[medium]
-    L=length_from_connected_dots(keydots)
+    L=get_length(keydots)
     W=len(pixels[0])/(atan(1)*L)
     mediatrix_vectors['L/W']=L/W
     mediatrix_vectors['L']=L
-    p2=[mediatrix_vectors['center'][0],mediatrix_vectors['center'][1]]
-    x_c,y_c,r=three_points_to_circle(p1,p2,p3)
+    #x=[pixels[0][E1],mediatrix_vectors['center'][0],pixels[0][E2]]
+    #y=[pixels[1][E1],mediatrix_vectors['center'][1],pixels[1][E2]]
+    p3=[mediatrix_vectors['center'][0],mediatrix_vectors['center'][1]]
+    x_c,y_c,r=three_points_to_circle(p1,p3,p2)
     circle_center=[x_c,y_c]
     mediatrix_vectors['circle_params']=[circle_center,p1,p2]
 
     return mediatrix_vectors
 
 
-def get_length_from_mediatrix(image_name,image_dir='', method="medium",
-alpha=1,n=-1,near_distance=(sqrt(2)/2)):
-    """
-    Function to calculate the length of an object using the Mediatrix
- Decomposition.
 
-    The length is defined as the sum of the distances between the keydots.
+def mediatrix_decomposition_on_matrix_c(image, method="medium",alpha=1,near_distance=(sqrt(2)/2), max_level=1000):
+    """
+    Function to perform the mediatrix decomposition method on a given object. 
 
     Input:
-     - image         ndarray : the image matrix of a single object.
-     - method            str : possible values are 'medium' or 'brightest'.
-     - alpha           float : the factor alpha=l_i/w.
-     - near_distance   float : the distance to consider a point 
-                              close to the perpendicular bisector.
+     - image_name   <str> : the image file name.
+     - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
+     - method   <string> : possible values are 'medium'  or 'brightest'.
+     - alpha      <float> : the factor alpha=l_i/w to stop the bisection.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
      
     Output:
-     - L   float : the object length. 
+     - <dic> :  Dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus. The first item from the list has two extra keys 'id' wich contains the image_name and 'center' that keeps the objet center defined by the first mediatrix point in the first mediatrix level.
+            
+    """
+    #image,hdr = getdata(image_dir+image_name, header = True )
+    pixels=where(image>0)
+    E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+    Area=len(pixels[1])
+    p1=pixels[0][E1]+pixels[1][E1]*1j # the extreme points p_1 and p_2
+    p2=pixels[0][E2]+pixels[1][E2]*1j
+    keydots=[p1,p2]
+    keydots=find_keydots_c(p1,p2,pixels,image,keydots,Area, method=method,alpha=alpha,near_distance=near_distance,max_level=max_level,level=0)
+    #print keydots
+    mediatrix_vectors=find_mediatrix_vectors_c(keydots)
+    #mediatrix_vectors['id']=image_name
+    medium=int(float(len(keydots))/2)
+    mediatrix_vectors['center']=keydots[medium]
+    L=get_length_c(keydots)
+    W=(len(pixels[0]))/(atan(1)*L)
+    mediatrix_vectors['L/W']=L/W
+    mediatrix_vectors['L']=L
+    #x=[pixels[0][E1],mediatrix_vectors['center'].real,pixels[0][E2]]
+    #y=[pixels[1][E1],mediatrix_vectors['center'].imag,pixels[1][E2]]
+    p1_vec=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+    p2_vec=[pixels[0][E2],pixels[1][E2]]
+    p3_vec=[mediatrix_vectors['center'].real,mediatrix_vectors['center'].imag]
+    x_c,y_c,r=three_points_to_circle(p1_vec,p3_vec,p2_vec)
+    circle_center=x_c+y_c*1j
+    mediatrix_vectors['circle_params']=[circle_center,p1,p2]
+
+    return mediatrix_vectors
+
+def mediatrix_decomposition_on_matrix(image_name,image_dir='', method="medium",alpha=1,near_distance=(sqrt(2)/2)):
+    """
+    Function to perform the mediatrix decomposition method on a given object. 
+
+    Input:
+     - image_name   <str> : the image file name.
+     - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
+     - method   <string> : possible values are 'medium'  or 'brightest'.
+     - alpha      <float> : the factor alpha=l_i/w to stop the bisection.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
+     
+    Output:
+     - <dic> :  Dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus. The first item from the list has two extra keys 'id' wich contains the image_name and 'center' that keeps the objet center defined by the first mediatrix point in the first mediatrix level.
+            
+    """
+    #image,hdr = getdata(image_dir+image_name, header = True )
+    image=image_name
+    pixels=where(image>0)
+    E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+    Area=len(pixels[1])
+    p1=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+    p2=[pixels[0][E2],pixels[1][E2]]
+    keydots=[p1,p2]
+    keydots=find_keydots(p1,p2,pixels,image,keydots,Area, method=method,alpha=alpha,near_distance=near_distance)
+    #print keydots
+    mediatrix_vectors=find_mediatrix_vectors(keydots)
+    #mediatrix_vectors['id']=image_name
+    medium=int(float(len(keydots))/2)
+    mediatrix_vectors['center']=keydots[medium]
+    L=get_length(keydots)
+    W=(16*len(pixels[0]))/(atan(1)*L)
+    mediatrix_vectors['L/W']=L/W
+    mediatrix_vectors['L']=L
+    #x=[pixels[0][E1],mediatrix_vectors['center'][0],pixels[0][E2]]
+    #y=[pixels[1][E1],mediatrix_vectors['center'][1],pixels[1][E2]]
+    p3=[mediatrix_vectors['center'][0],mediatrix_vectors['center'][1]]
+    x_c,y_c,r=three_points_to_circle(p1,p3,p2)
+    circle_center=[x_c,y_c]
+    mediatrix_vectors['circle_params']=[circle_center,p1,p2]
+
+    return mediatrix_vectors
+
+
+
+
+
+
+def get_length_from_mediatrix(image_name,image_dir='', method="medium",alpha=1,near_distance=(sqrt(2)/2)):
+    """
+    Function to calculate length of an object using the Mediatrix Decomposition.
+
+    Input:
+     - image_name   <array> : the image file name.
+     - method   <string> : possible values are 'medium'  or 'brightest'.
+     - alpha      <float> : the factor alpha=l_i/w.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
+     
+    Output:
+     - <Float> : the object length  
      
     """
     image,hdr = getdata(image_dir+image_name, header = True )
@@ -234,9 +313,8 @@ alpha=1,n=-1,near_distance=(sqrt(2)/2)):
     p1=[pixels[0][E1],pixels[1][E1]]
     p2=[pixels[0][E2],pixels[1][E2]]
     keypoints=[p1,p2]
-    keypoints=find_keydots(p1,p2,pixels,image,keypoints,Area, method="brightest",
-    alpha=alpha,near_distance=near_distance)
-    L_f=length_from_connected_dots(keypoints)
+    keypoints=find_keydots(p1,p2,pixels,image,keypoints,Area, method="brightest",alpha=alpha,near_distance=near_distance)
+    L_f=get_length(keypoints)
     W=width_ellipse(L_f,Area)
     
     return L_f, W
@@ -244,36 +322,33 @@ alpha=1,n=-1,near_distance=(sqrt(2)/2)):
 
 def find_mediatrix_vectors(points): 
     """
-    From a given set of points, this function returns the mediatrix decomposition 
-    vector between those points.
-
-    The output is a dictionary with keys 'origin' and 'end'. Each key corresponds
-    to a list of list, each list[i] containing the x and y, e.g. list[i]=[x_i,y_i],
-    coordinate-values of a given point. 
-    Therefore, the 'origin' key gives all vector origin points and 
-    respectively for 'end'.
+    From a given set of points, this function returns the mediatrix decomposition vector between those points.
   
     Input:
-     - points [[float,float]] : list of tuples of float - p_i mediatrix points where 
-     p_i=(x_i,y_i).
+     - points      <list> : list  of p_i points where p_i=(x_i,y_i).
      
     Output:
-     - mediatrix_vectors {'origin': [[float,float],...] , 
-       'end': [[float,float],...]} : Dictionary with two keys for lists of points
-       with the origin and end of each mediatrix vector.
+     - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus.  
+     
     """
     mediatrix_vectors= {'origin': [] , 'end': [], }
     vectors=[]
     t=0
     theta_ext,c_ext=two_points_to_line(points[t],points[len(points)-1])
+    #print theta_ext,c_ext
     for t in range(0,len(points)-1):
+        #print points[t],points[t+1]
         coefficients=define_perpendicular_bisector(points[t],points[t+1])
+        #print coefficients
         origin_x=float(points[t][0]+points[t+1][0])/2
         origin_y=float(points[t][1]+points[t+1][1])/2
         origin=[origin_x,origin_y]
-        modulus=(points[t][0] - points[t+1][0])**2 + (points[t][1] -  \
-points[t+1][1])**2
+        modulus=(points[t][0] - points[t+1][0])**2 + (points[t][1] - points[t+1][1])**2
         modulus=sqrt(modulus)
+        #print modulus
+         
+       
+      
 	if(coefficients[0]!=2*atan(1)):
 	    a=tan(coefficients[0])
             sq_a=a*a
@@ -296,39 +371,564 @@ points[t+1][1])**2
         else:
             end=end2
 
+        #mediatrix_vector = {'theta': coefficients[0], 'linear_coefficient': coefficients[1], 'origin': origin, 'end': end, 'modulus': modulus }
         mediatrix_vectors['origin'].append(origin) 
         mediatrix_vectors['end'].append(end)
-        
+        #vectors.append(mediatrix_vector)
                 
         
     return mediatrix_vectors
 
-def print_mediatrix_object_graph(mediatrix_data,image,pixels,show_keydots=False, 
-colors= {'object': "g", 'vector': "b", 'keydots': "k"},alpha=1, 
-plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
 
+
+
+def find_mediatrix_vectors_c(points): 
+    """
+    From a given set of points, this function returns the mediatrix decomposition vector between those points.
+  
+    Input:
+     - points      <list> : list  of p_i points where p_i=(x_i,y_i).
+     
+    Output:
+     - <list> : a list of dictionary structure. Each list item is a dictionary with information of corresponding to a mediatrix vector. The keys are 'theta' for the angle with x axis, 'linear_coefficient' for the linear coefficient from the line in the vector direction, 'origin' the point (x,y) of the vector origin, 'end' the point (x,y) of the vector, 'modulus' for vector modulus.  
+     
+    """
+    mediatrix_vectors= {'origin': [] , 'end': [], }
+    vectors=[]
+    p1_r=[points[0].real,points[0].imag]
+    p2_r=[points[len(points)-1].real,points[len(points)-1].imag]
+    theta_ext,c_ext=two_points_to_line(p1_r,p2_r)
+    for t in range(0,len(points)-1):
+        p1_r=[points[t].real,points[t].imag]
+        p2_r=[points[t+1].real,points[t+1].imag]
+        #print p1_r, p2_r
+        coefficients=define_perpendicular_bisector(p1_r,p2_r)
+        
+        origin=(points[t]+points[t+1])/2.
+        modulus=abs(points[t]-points[t+1])
+           
+
+	if(coefficients[0]!=2*atan(1)):
+            end1=origin + modulus*(cos(coefficients[0]))+modulus*(sin(coefficients[0]))*1j
+            end2=origin - modulus*(cos(coefficients[0]))-modulus*(sin(coefficients[0]))*1j
+            
+            
+        else:
+            end1=origin+modulus*1j
+            end2=origin-modulus*1j
+        end1_r=[end1.real,end1.imag]
+        end2_r=[end2.real,end2.imag]
+        Dend1=get_distance_from_line_to_point(end1_r,theta_ext,c_ext)
+        Dend2=get_distance_from_line_to_point(end2_r,theta_ext,c_ext)
+        if Dend1<Dend2:
+	    end=end1
+        else:
+            end=end2
+
+        #mediatrix_vector = {'theta': coefficients[0], 'linear_coefficient': coefficients[1], 'origin': origin, 'end': end, 'modulus': modulus }
+        mediatrix_vectors['origin'].append(origin) 
+        mediatrix_vectors['end'].append(end)
+        #vectors.append(mediatrix_vector)
+                
+        
+    return mediatrix_vectors
+
+
+
+
+def plot_mediatrix_ps(mediatrix_data,ps_name, keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"}, out_title="Mediatrix Decompostion", save=True, out_image=''):
     """
     Make a plot presenting the object, keydots and mediatrix vectors. 
 
     Input:
-    - mediatrix_data     list : the output from mediatrix_decomposition. 
-      See image.mediatrix_decomposition for details
-    - image_dir        str : the image directory. If it is on the same directory
-      directory=''.
-    - show_keydots         bool : 'True' if you want to display the keydots and 'False'
-      if you do not. 
-    - colors          {'objects': str, 'vector': str, 'keydots': str} :
-      set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.
-    - alpha float : see run_mediatrix_decomposition_on_stamp input description.
-    - save bool : If save='True' it the function will save the graph.
-      If save='False'  the function will return the subplot instance.        
-   
+    - mediatrix_data <list> : the output from mediatrix_decomposition_on_matrix.
+    - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
+    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
+    - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
     Output:
-    - bool or matplot subplot instance : If save='True' it returns a bool
-      that indicates if the graph was saved or 'false' if it was 
-      not. If save='False' retunrs the subplot instance.  
-     
+     <bool>
+         
+    """
+    if out_image=='':
+        out_image=ps_name.replace(".fits","")+"_mediatrix_plot.png"
+    
+    image,hdr = getdata(ps_name, header = True )
+    pixels=where(image>0)    
+    A = subplot(111)
+    for i in range (0,len(pixels[0])):
+        xy=[pixels[1][i]-0.5,pixels[0][i]-0.5]
+        rec=Rectangle(xy, 1, 1, ec=colors['object'], fc=colors['object'], zorder=100)
+        A.add_patch(rec)
+    #A.scatter(pixels[1], pixels[0], s=200, c='b', marker='s', edgecolors='none')
+    #A.plot(pixels[1],pixels[0],colors['object'])
+    Length=0
+    
+      
+    if keydots==True:
+        E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+        Area=len(pixels[1])
+        p1=pixels[0][E1]+ pixels[1][E1]*1j # the extreme points p_1 and p_2
+        p2=pixels[0][E2]+ pixels[1][E2]*1j
+        keydots=[p1,p2]
+        keydots=find_keydots_c(p1,p2,pixels,image,keydots,Area, method="brightest",alpha=1)
+        keyX=[]
+        keyY=[]
+        for j in range(0,len(keydots)):
+            keyX.append(keydots[j].real)
+            keyY.append(keydots[j].imag)
+        
+        A.plot(keyY,keyX,colors['keydots']+'.',zorder=500)
+        #A.scatter(keyY, keyX, s=20, c='b', marker='s')
+
+    
+    for i in range(0,len(mediatrix_data['origin'])):
+        origin_x=mediatrix_data['origin'][i].real
+        origin_y=mediatrix_data['origin'][i].imag
+        end_x=mediatrix_data['end'][i].real
+        end_y=mediatrix_data['end'][i].imag
+        Length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
+        Length=Length+ sqrt(Length_aux)
+        d_x= end_x - origin_x
+        d_y= mediatrix_data['end'][i].imag - mediatrix_data['origin'][i].imag
+        arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*Length, fc=colors['vector'], ec='none',zorder=1000)
+        A.add_patch(arr)
    
+    xmin, xmax = xlim()
+    ymin, ymax = ylim()
+    min_inc_axis=40
+    #x_axis_length=(xmax+1*Length)-(xmin-1*Length)
+    #y_axis_length=(ymax+1*Length)-(ymin-1*Length)
+    #if  x_axis_length<min_inc_axis
+    A.axis("equal")
+    A.set_xlim(xmin-1*Length,xmax+1*Length)
+    A.set_ylim(ymin-1*Length,ymax+1*Length)    
+    ylabel("Y")
+    xlabel("X")
+    #A.axis("equal")
+    title(out_title) 
+    
+    if save==True:
+        savefig(out_image)
+        A.clear()
+        return True
+    else:
+        return A
+
+
+
+def plot_mediatrix_circle_ps(mediatrix_data,ps_name, keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"}, mediatrix_vectors=False, save=True, plot_title="Mediatrix Plot", out_image=""):
+    """
+    Make a plot presenting the object, keydots and mediatrix vectors. 
+
+    Input:
+    - mediatrix_data <list> : the output from mediatrix_decomposition.
+    - image_dir   <str> : the image directory. If it is on the same directory directory=''.
+    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
+    - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
+    Output:
+     <bool>
+         
+    """
+    if out_image=='':
+        out_image=ps_name.replace(".fits","")+"_mediatrix_circle.png"
+  
+    image,hdr = getdata(ps_name, header = True )
+    pixels=where(image>0)    
+    A = subplot(111)
+    for i in range (0,len(pixels[0])):
+        xy=[pixels[1][i]-0.5,pixels[0][i]-0.5]
+        rec=Rectangle(xy, 1, 1, ec=colors['object'], fc=colors['object'], zorder=100)
+        A.add_patch(rec)
+    #A.scatter(pixels[1], pixels[0], s=200, c='b', marker='s', edgecolors='none')
+    #A.plot(pixels[1],pixels[0],colors['object'])
+    Length=0
+    for i in range(0,len(mediatrix_data['origin'])):
+        origin_x=mediatrix_data['origin'][i].real
+        origin_y=mediatrix_data['origin'][i].imag
+        end_x=mediatrix_data['end'][i].real
+        end_y=mediatrix_data['end'][i].imag
+        Length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
+        Length=Length+ sqrt(Length_aux)
+        if mediatrix_vectors==True:
+            d_x= end_x - origin_x
+            d_y= mediatrix_data['end'][i].imag - mediatrix_data['origin'][i].imag
+            arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*Length, fc=colors['vector'], ec='none',zorder=1000)
+            A.add_patch(arr)
+      
+    if keydots==True:
+        E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+        Area=len(pixels[1])
+        p1=pixels[0][E1]+ pixels[1][E1]*1j # the extreme points p_1 and p_2
+        p2=pixels[0][E2]+ pixels[1][E2]*1j
+        keydots=[p1,p2]
+        keydots=find_keydots_c(p1,p2,pixels,image,keydots,Area, method="brightest",alpha=1)
+        keyX=[]
+        keyY=[]
+        for j in range(0,len(keydots)):
+            keyX.append(keydots[j].real)
+            keyY.append(keydots[j].imag)
+        
+        A.plot(keyY,keyX,colors['keydots']+'.',zorder=500)
+        #A.scatter(keyY, keyX, s=20, c='b', marker='s')
+
+    
+    last=len(mediatrix_data['origin'])-1
+    p1_vec=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+    p2_vec=[pixels[0][E2],pixels[1][E2]]
+    p3_vec=[mediatrix_vectors['center'].real,mediatrix_vectors['center'].imag]
+    #x=[pixels[0][E1],mediatrix_data['center'].real,pixels[0][E2]]
+    #y=[pixels[1][E1],mediatrix_data['center'].imag,pixels[1][E2]]
+    x_c,y_c,r=three_points_to_circle(p1_vec,p3_vec,p2_vec)
+    if r>0:
+        xy=[y_c,x_c]
+        cir=Circle(xy,r,fc='none',ec='m', zorder=501)
+        A.add_patch(cir)
+    else:
+        print "impossible to define a circle "
+      
+
+   
+    xmin, xmax = xlim()
+    ymin, ymax = ylim()
+    min_inc_axis=40
+    #x_axis_length=(xmax+1*Length)-(xmin-1*Length)
+    #y_axis_length=(ymax+1*Length)-(ymin-1*Length)
+    #if  x_axis_length<min_inc_axis
+    A.axis("equal")
+    A.set_xlim(xmin-1*Length,xmax+1*Length)
+    A.set_ylim(ymin-1*Length,ymax+1*Length)    
+    ylabel("Y")
+    xlabel("X")
+    #A.axis("equal")
+    title(plot_title) 
+    
+    if save==True and r>0:
+        savefig(out_image)
+        A.clear()
+        return True
+    else:
+        return A
+
+def plot_mediatrix(mediatrix_data,image_name,_id, keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"}, out_title="Mediatrix Decompostion", save=True, out_image=''):
+    """
+    Make a plot presenting the object, keydots and mediatrix vectors. 
+
+    Input:
+    - mediatrix_data <list> : the output from mediatrix_decomposition_on_matrix.
+    - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
+    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
+    - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
+    Output:
+     <bool>
+         
+    """
+    if out_image=='':
+        out_image=image_name.replace(".fits","")+"_mediatrix_plot.png"
+    
+    image_segname=image_name.replace(".fits","")+"_seg.fits"
+    image_objname=image_name.replace(".fits","")+"_obj.fits"
+
+    image_seg,hdr = getdata(image_segname, header = True )
+    image_obj,hdr = getdata(image_objname, header = True )
+
+    image_ps,hdr=imcp.segstamp(segimg=image_seg, objID=_id, objimg=image_obj, hdr=hdr, increase=2, relative_increase=True, connected=False)
+
+    pixels=where(image_ps>0) 
+    A = subplot(111)
+    for i in range (0,len(pixels[0])):
+        xy=[pixels[1][i]-0.5,pixels[0][i]-0.5]
+        rec=Rectangle(xy, 1, 1, ec=colors['object'], fc=colors['object'], zorder=100)
+        A.add_patch(rec)
+    #A.scatter(pixels[1], pixels[0], s=200, c='b', marker='s', edgecolors='none')
+    #A.plot(pixels[1],pixels[0],colors['object'])
+    Length=0
+    
+      
+    if keydots==True:
+        E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+        Area=len(pixels[1])
+        p1=pixels[0][E1]+ pixels[1][E1]*1j # the extreme points p_1 and p_2
+        p2=pixels[0][E2]+ pixels[1][E2]*1j
+        keydots=[p1,p2]
+        keydots=find_keydots_c(p1,p2,pixels,image_ps,keydots,Area, method="brightest",alpha=1)
+        keyX=[]
+        keyY=[]
+        for j in range(0,len(keydots)):
+            keyX.append(keydots[j].real)
+            keyY.append(keydots[j].imag)
+        
+        A.plot(keyY,keyX,colors['keydots']+'.',zorder=500)
+        #A.scatter(keyY, keyX, s=20, c='b', marker='s')
+
+    
+    for i in range(0,len(mediatrix_data['origin'])):
+        origin_x=mediatrix_data['origin'][i].real
+        origin_y=mediatrix_data['origin'][i].imag
+        end_x=mediatrix_data['end'][i].real
+        end_y=mediatrix_data['end'][i].imag
+        Length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
+        Length=Length+ sqrt(Length_aux)
+        d_x= end_x - origin_x
+        d_y= mediatrix_data['end'][i].imag - mediatrix_data['origin'][i].imag
+        arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*Length, fc=colors['vector'], ec='none',zorder=1000)
+        A.add_patch(arr)
+   
+    xmin, xmax = xlim()
+    ymin, ymax = ylim()
+    min_inc_axis=40
+    #x_axis_length=(xmax+1*Length)-(xmin-1*Length)
+    #y_axis_length=(ymax+1*Length)-(ymin-1*Length)
+    #if  x_axis_length<min_inc_axis
+    A.axis("equal")
+    A.set_xlim(xmin-1*Length,xmax+1*Length)
+    A.set_ylim(ymin-1*Length,ymax+1*Length)    
+    ylabel("Y")
+    xlabel("X")
+    #A.axis("equal")
+    title(out_title) 
+    
+    if save==True:
+        savefig(out_image)
+        A.clear()
+        return True
+    else:
+        return A
+
+def plot_mediatrixapl(image_name,_id, keydots=False,circle=True, save=True, out_image='', args={}):
+    """
+    Make a plot presenting the object, keydots and mediatrix vectors. 
+
+    Input:
+    - mediatrix_data <list> : the output from mediatrix_decomposition_on_matrix.
+    - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
+    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
+    - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.
+    - type <str> : cutout or object       
+    Output:
+     <bool>
+         
+    """
+    opt={'increase': 2, 'relative_increase': True,'connected': False,'object_centered':True, 'type':'cutout', 'pmin':0.25 , 'pmax':99.75 , 'invert':True ,'out_title': 'Mediatrix Decomposition', 'keys_color': "r" ,'alpha': 1 ,'max_level': 1000, 'near_distance': sqrt(2)/2, 'max_level': 1000, 'method':"brightest"}
+    opt.update(args)
+    if out_image=='':
+        out_image=image_name.replace(".fits","")+"_mediatrix_plot.png"
+    
+    image_segname=image_name.replace(".fits","")+"_seg.fits"
+    image_objname=image_name.replace(".fits","")+"_obj.fits"
+
+    #image_seg_hdu=pyfits.open(image_segname)
+    #image_obj_hdu=pyfits.open(image_objname)
+    
+    image_seg,hdr = getdata(image_segname, header = True )
+    image_obj,hdr = getdata(image_objname, header = True )
+
+    if opt['type']=='cutout':
+        opt['object_centered']=False
+    #else:
+    #    opt['object_centered']=True
+
+    image_ps,hdr=imcp.segstamp(segimg=image_seg, objID=_id, objimg=image_obj, hdr=hdr, increase=opt['increase'], relative_increase=opt['relative_increase'], connected=opt['connected'], obj_centered=opt['object_centered'])
+    
+    #image_ps,hdr=imcp.segstamp(segimg=image_seg, objID=_ids[i], objimg=image_obj, hdr=hdr, increase=2, relative_increase=True, connected=False, obj_centered=True)
+
+    mediatrix_data=mediatrix_decomposition_on_matrix_c(image_ps, method=opt['method'],alpha=opt['alpha'],near_distance=opt['near_distance'],max_level=opt['max_level']) 
+    
+    if opt['type']=='cutout':
+        img,hdr=getdata(image_name, header = True ) 
+    else:
+        img=image_ps
+
+    pixels=where(image_ps>0) 
+    FitsPlot = aplpy.FITSFigure(img)
+    FitsPlot.show_grayscale(pmin=opt['pmin'], pmax=opt['pmax'],invert=opt['invert'])
+    Length=0
+    
+      
+    if keydots==True:
+        E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+        Area=len(pixels[1])
+        p1=pixels[0][E1]+ pixels[1][E1]*1j # the extreme points p_1 and p_2
+        p2=pixels[0][E2]+ pixels[1][E2]*1j
+        keydots=[p1,p2]
+        keydots=find_keydots_c(p1,p2,pixels,image_ps,keydots,Area, method=opt['method'],alpha=opt['alpha'],near_distance=opt['near_distance'],max_level=opt['max_level'])
+        keyX=[]
+        keyY=[]
+        for j in range(0,len(keydots)):
+            keyX.append(keydots[j].real)
+            keyY.append(keydots[j].imag)
+        
+        FitsPlot.show_markers(keyY,keyX,c=opt['keys_color'],marker='.',zorder=500)
+    if circle==True:
+        if keydots==False:
+            E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+        x=[pixels[0][E1],mediatrix_data['center'].real,pixels[0][E2]]
+        y=[pixels[1][E1],mediatrix_data['center'].imag,pixels[1][E2]]
+        FitsPlot.show_markers([mediatrix_data['center'].imag],[mediatrix_data['center'].real],c='g',marker='D',zorder=500)
+        print "as coordenadas sao y, x"
+        print mediatrix_data['center'].imag
+        print mediatrix_data['center'].real
+        p1_vec=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+        p2_vec=[pixels[0][E2],pixels[1][E2]]
+        p3_vec=[mediatrix_vectors['center'].real,mediatrix_vectors['center'].imag]
+        x_c,y_c,r=three_points_to_circle(p1_vec,p3_vec,p2_vec)
+        if r>0:
+            xy=[y_c,x_c]
+            FitsPlot.show_circles(y_c, x_c, r, layer=False, zorder=499)
+        else:
+            print "impossible to define a circle "
+    
+
+
+        #A.scatter(keyY, keyX, s=20, c='b', marker='s')
+
+    
+    for i in range(0,len(mediatrix_data['origin'])):
+        origin_x=mediatrix_data['origin'][i].real
+        origin_y=mediatrix_data['origin'][i].imag
+        end_x=mediatrix_data['end'][i].real
+        end_y=mediatrix_data['end'][i].imag
+        Length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
+        Length=Length+ sqrt(Length_aux)
+        d_x= end_x - origin_x
+        d_y= mediatrix_data['end'][i].imag - mediatrix_data['origin'][i].imag
+        #arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*Length, fc=colors['vector'], ec='none',zorder=1000)
+    #    print "vectors"
+    #    print origin_x
+    #    print origin_y
+        FitsPlot.show_arrows(origin_y, origin_x, d_y, d_x,zorder=502 )
+   
+    #xmin, xmax = xlim()
+    #ymin, ymax = ylim()
+    #min_inc_axis=40
+    #x_axis_length=(xmax+1*Length)-(xmin-1*Length)
+    #y_axis_length=(ymax+1*Length)-(ymin-1*Length)
+    #if  x_axis_length<min_inc_axis
+    #A.axis("equal")
+    #A.set_xlim(xmin-1*Length,xmax+1*Length)
+    #A.set_ylim(ymin-1*Length,ymax+1*Length)    
+    #ylabel("Y")
+    #xlabel("X")
+    #A.axis("equal")
+    #title(out_title) 
+    
+    if save==True:
+        FitsPlot.save(out_image)
+        return True
+    else:
+        return FitsPlot, mediatrix_data, image_ps 
+
+
+def plot_mediatrix_circle(mediatrix_data,ps_name, keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"}, mediatrix_vectors=False, save=True, plot_title="Mediatrix Plot", out_image=""):
+    """
+    Make a plot presenting the object, keydots and mediatrix vectors. 
+
+    Input:
+    - mediatrix_data <list> : the output from mediatrix_decomposition.
+    - image_dir   <str> : the image directory. If it is on the same directory directory=''.
+    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
+    - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
+    Output:
+     <bool>
+         
+    """
+    if out_image=='':
+        out_image=ps_name.replace(".fits","")+"_mediatrix_circle.png"
+  
+    image,hdr = getdata(ps_name, header = True )
+    pixels=where(image>0)    
+    A = subplot(111)
+    for i in range (0,len(pixels[0])):
+        xy=[pixels[1][i]-0.5,pixels[0][i]-0.5]
+        rec=Rectangle(xy, 1, 1, ec=colors['object'], fc=colors['object'], zorder=100)
+        A.add_patch(rec)
+    #A.scatter(pixels[1], pixels[0], s=200, c='b', marker='s', edgecolors='none')
+    #A.plot(pixels[1],pixels[0],colors['object'])
+    Length=0
+    for i in range(0,len(mediatrix_data['origin'])):
+        origin_x=mediatrix_data['origin'][i].real
+        origin_y=mediatrix_data['origin'][i].imag
+        end_x=mediatrix_data['end'][i].real
+        end_y=mediatrix_data['end'][i].imag
+        Length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
+        Length=Length+ sqrt(Length_aux)
+        if mediatrix_vectors==True:
+            d_x= end_x - origin_x
+            d_y= mediatrix_data['end'][i].imag - mediatrix_data['origin'][i].imag
+            arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*Length, fc=colors['vector'], ec='none',zorder=1000)
+            A.add_patch(arr)
+      
+    if keydots==True:
+        E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+        Area=len(pixels[1])
+        p1=pixels[0][E1]+ pixels[1][E1]*1j # the extreme points p_1 and p_2
+        p2=pixels[0][E2]+ pixels[1][E2]*1j
+        keydots=[p1,p2]
+        keydots=find_keydots_c(p1,p2,pixels,image,keydots,Area, method="brightest",alpha=1)
+        keyX=[]
+        keyY=[]
+        for j in range(0,len(keydots)):
+            keyX.append(keydots[j].real)
+            keyY.append(keydots[j].imag)
+        
+        A.plot(keyY,keyX,colors['keydots']+'.',zorder=500)
+        #A.scatter(keyY, keyX, s=20, c='b', marker='s')
+
+    
+    last=len(mediatrix_data['origin'])-1
+    x=[pixels[0][E1],mediatrix_data['center'].real,pixels[0][E2]]
+    y=[pixels[1][E1],mediatrix_data['center'].imag,pixels[1][E2]]
+    p1_vec=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+    p2_vec=[pixels[0][E2],pixels[1][E2]]
+    p3_vec=[mediatrix_vectors['center'].real,mediatrix_vectors['center'].imag]
+    x_c,y_c,r=three_points_to_circle(p1_vec,p3_vec,p2_vec)
+    
+    if r>0:
+        xy=[y_c,x_c]
+        cir=Circle(xy,r,fc='none',ec='m', zorder=501)
+        A.add_patch(cir)
+    else:
+        print "impossible to define a circle "
+      
+
+   
+    xmin, xmax = xlim()
+    ymin, ymax = ylim()
+    min_inc_axis=40
+    #x_axis_length=(xmax+1*Length)-(xmin-1*Length)
+    #y_axis_length=(ymax+1*Length)-(ymin-1*Length)
+    #if  x_axis_length<min_inc_axis
+    A.axis("equal")
+    A.set_xlim(xmin-1*Length,xmax+1*Length)
+    A.set_ylim(ymin-1*Length,ymax+1*Length)    
+    ylabel("Y")
+    xlabel("X")
+    #A.axis("equal")
+    title(plot_title) 
+    
+    if save==True and r>0:
+        savefig(out_image)
+        A.clear()
+        return True
+    else:
+        return A
+
+
+
+
+
+
+
+def print_mediatrix_Object_graph_old(mediatrix_data,image_dir='', keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"}, save=True, save_dir=''):
+    """
+    Make a plot presenting the object, keydots and mediatrix vectors. 
+
+    Input:
+    - mediatrix_data <list> : the output from mediatrix_decomposition.
+    - image_dir   <str> : the image directory. If it is on the same directory, directory=''.
+    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
+    - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
+    Output:
+     <bool>
          
     """
     
@@ -340,26 +940,26 @@ plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
         xy=[pixels[1][i]-0.5,pixels[0][i]-0.5]
         rec=Rectangle(xy, 1, 1, ec=colors['object'], fc=colors['object'], zorder=100)
         A.add_patch(rec)
-   
-    length=0
+    #A.scatter(pixels[1], pixels[0], s=200, c='b', marker='s', edgecolors='none')
+    #A.plot(pixels[1],pixels[0],colors['object'])
+    Length=0
     
       
     if keydots==True:
-        e_1,e_2=get_extrema_2loops(pixels[0], pixels[1], 0 )
-        area=len(pixels[1])
-        p1=[pixels[0][e_1],pixels[1][e_1]] # the extreme points p_1 and p_2
-        p2=[pixels[0][e_2],pixels[1][e_2]]
+        E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+        Area=len(pixels[1])
+        p1=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+        p2=[pixels[0][E2],pixels[1][E2]]
         keydots=[p1,p2]
-        keydots=find_keydots(p1,p2,pixels,image,keydots,area, 
-        method="brightest",alpha)
-        key_x=[]
-        key_y=[]
+        keydots=find_keydots(p1,p2,pixels,image,keydots,Area, method="brightest",alpha=1)
+        keyX=[]
+        keyY=[]
         for j in range(0,len(keydots)):
-            key_x.append(keydots[j][0])
-            key_y.append(keydots[j][1])
+            keyX.append(keydots[j][0])
+            keyY.append(keydots[j][1])
         
-        A.plot(key_y,key_x,colors['keydots']+'.',zorder=500)
-        
+        A.plot(keyY,keyX,colors['keydots']+'.',zorder=500)
+        #A.scatter(keyY, keyX, s=20, c='b', marker='s')
 
     
     for i in range(0,len(mediatrix_data['origin'])):
@@ -367,23 +967,26 @@ plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
         origin_y=mediatrix_data['origin'][i][1]
         end_x=mediatrix_data['end'][i][0]
         end_y=mediatrix_data['end'][i][1]
-        length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
-        length=length+sqrt(length_aux)
+        Length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
+        Length=Length+ sqrt(Length_aux)
         d_x= end_x - origin_x
         d_y= mediatrix_data['end'][i][1] - mediatrix_data['origin'][i][1]
-        arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*length, 
-        fc=colors['vector'], ec='none',zorder=1000)
+        arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*Length, fc=colors['vector'], ec='none',zorder=1000)
         A.add_patch(arr)
    
     xmin, xmax = xlim()
     ymin, ymax = ylim()
     min_inc_axis=40
+    #x_axis_length=(xmax+1*Length)-(xmin-1*Length)
+    #y_axis_length=(ymax+1*Length)-(ymin-1*Length)
+    #if  x_axis_length<min_inc_axis
     A.axis("equal")
-    A.set_xlim(xmin-1*length,xmax+1*length)
-    A.set_ylim(ymin-1*length,ymax+1*length)    
+    A.set_xlim(xmin-1*Length,xmax+1*Length)
+    A.set_ylim(ymin-1*Length,ymax+1*Length)    
     ylabel("Y")
     xlabel("X")
-    title(plot_title) 
+    #A.axis("equal")
+    title("Mediatrix Decomposition applied") 
     
     if save==True:
         savefig(save_dir+image_name+"_mediatrixGraph.png")
@@ -394,26 +997,17 @@ plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
 
 
 
-def print_mediatrix_object_circle_graph(mediatrix_data,image_dir='', show_keydots=False, 
-colors= {'object': "g", 'vector': "b", 'keydots': "k"}, show_mediatrix_vectors=False, 
-alpha=1, plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
+def print_mediatrix_Object_circle_graph_old(mediatrix_data,image_dir='', keydots=False, colors= {'object': "g", 'vector': "b", 'keydots': "k"}, mediatrix_vectors=False, save=True, save_dir=''):
     """
     Make a plot presenting the object, keydots and mediatrix vectors. 
 
     Input:
-    - mediatrix_data     list : the output from mediatrix_decomposition. 
-      See image.mediatrix_decomposition for details
-    - image_dir        str : the image directory. If it is on the same directory
-      directory=''.
-    - show_keydots         bool : 'True' if you want to display the keydots and 'False'
-      if you do not. 
-    - colors          {'objects': str, 'vector': str, 'keydots': str} :
-      set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
-    
+    - mediatrix_data <list> : the output from mediatrix_decomposition.
+    - image_dir   <str> : the image directory. If it is on the same directory directory=''.
+    - keydots   <bool> : 'True' if you want to display the keydots and 'False' if you do not. 
+    - colors   <dic> : set the plot colors. The possible keys are 'object', 'vector' and 'keydots'.       
     Output:
-    - bool or matplot figure instance : If save=='True' it returns a <bool>
-   that indicates if the graph was su  if the graph was saved or 'false' if it was not.
-   If sava=='False' retunrs the subplot instance.   
+     <bool>
          
     """
     
@@ -423,152 +1017,217 @@ alpha=1, plot_title="Mediatrix Decomposition graph", save=True, save_dir=''):
     A = subplot(111)
     for i in range (0,len(pixels[0])):
         xy=[pixels[1][i]-0.5,pixels[0][i]-0.5]
-        rec=Rectangle(xy,1,1,ec=colors['object'],fc=colors['object'],zorder=99)
+        rec=Rectangle(xy, 1, 1, ec=colors['object'], fc=colors['object'], zorder=100)
         A.add_patch(rec)
-    length=0
+    #A.scatter(pixels[1], pixels[0], s=200, c='b', marker='s', edgecolors='none')
+    #A.plot(pixels[1],pixels[0],colors['object'])
+    Length=0
     for i in range(0,len(mediatrix_data['origin'])):
         origin_x=mediatrix_data['origin'][i][0]
         origin_y=mediatrix_data['origin'][i][1]
         end_x=mediatrix_data['end'][i][0]
         end_y=mediatrix_data['end'][i][1]
-        length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
-        length=length+ sqrt(length_aux)
+        Length_aux=(origin_x - end_x)**2 + (origin_y - end_y)**2
+        Length=Length+ sqrt(Length_aux)
         if mediatrix_vectors==True:
             d_x= end_x - origin_x
             d_y= mediatrix_data['end'][i][1] - mediatrix_data['origin'][i][1]
-            arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*Length,
-            fc=colors['vector'], ec='none',zorder=1000)
+            arr = Arrow(origin_y, origin_x, d_y, d_x, width=0.05*Length, fc=colors['vector'], ec='none',zorder=1000)
             A.add_patch(arr)
       
     if keydots==True:
-        e_1,e_2=get_extrema_2loops(pixels[0], pixels[1], 0 )
-        area=len(pixels[1])
-        p1=[pixels[0][e_1],pixels[1][e_1]] # the extreme points p_1 and p_2
-        p2=[pixels[0][e_2],pixels[1][e_2]]
+        E1,E2=get_extrema_2loops(pixels[0], pixels[1], 0 )
+        Area=len(pixels[1])
+        p1=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
+        p2=[pixels[0][E2],pixels[1][E2]]
         keydots=[p1,p2]
-        keydots=find_keydots(p1,p2,pixels,image,keydots,area, 
-        method="brightest",alpha=1)
-        key_x=[]
-        key_y=[]
+        keydots=find_keydots(p1,p2,pixels,image,keydots,Area, method="brightest",alpha=1)
+        keyX=[]
+        keyY=[]
         for j in range(0,len(keydots)):
-            key_x.append(keydots[j][0])
-            key_y.append(keydots[j][1])
+            keyX.append(keydots[j][0])
+            keyY.append(keydots[j][1])
         
-        A.plot(key_y,key_x,colors['keydots']+'.',zorder=500)
-    p1=[pixels[0][e_1],pixels[1][e_1]] #the extreme points p_1 and p_3
-    p2=[mediatrix_data['center'][0],mediatrix_data['center'][1]]
-    p3=[pixels[0][e_2],pixels[1][e_2]]
-    x_c,y_c,r=three_points_to_circle(p1,p2,p3)
-    if r>0:
-        xy=[y_c,x_c]
-        cir=Circle(xy,r,fc='none',ec='m', zorder=501)
-        A.add_patch(cir)
-    else:
-        print "impossible to define a circle in" +str(mediatrix_data['id'])
-      
-
-   
-    xmin, xmax = xlim()
-    ymin, ymax = ylim()
-    min_inc_axis=40
-    A.axis("equal")
-    A.set_xlim(xmin-1*length,xmax+1*length)
-    A.set_ylim(ymin-1*length,ymax+1*length)    
-    ylabel("Y")
-    xlabel("X")
-    #A.axis("equal")
-    title("Mediatrix Decomposition graph") 
-    
-    if save==True and r>0:
-        savefig(save_dir+image_name+"_mediatrixGraph_Circle.png")
-        A.clear()
-        return True
-    else:
-        return A
+        A.plot(keyY,keyX,colors['keydots']+'.',zorder=500)
+        #A.scatter(keyY, keyX, s=20, c='b', marker='s')
 
 
-def choose_near_point(nearsX,nearsY,image,method='brightest'):
-    
+
+
+
+def choose_near_point(theta,c,object_pixels,image,method,near_distance): 
     """
-    Function to choose the mediatrix point from a sample of selected points
-    near the perpendicular bisector.
+    This function choose the Mediatrix points from a perpendicular bisector parameters in an object.
 
     Input:
-     - near_xs        [float,..] : the x coordinates of the points 
-     - nears_ys       [float,..] : the x coordinates of the points
-     - image             ndarray : the image matrix
-     - method               str  : possible methods are 'medium' or 'brightest'
-          
-    Output:
-     - float : the chosen point x coordinate.  
-     - float : the chosen point y coordinate.
-     -   int : a Flag error. if Flag=1, there is not any close point.
-    """
-
-    if (len(near_xs)<1):
-        flag_err=1
-        chosen_x=0
-        chosen_y=0
-        return chosen_x, chosen_y, flag_err
-        if method=='brightest':
-            chosen_x=near_xs.pop()
-            chosen_y=near_ys.pop()
-            flag_err=0
-            while len(near_xs)>=1:
-                chosen_aux_x=near_xs.pop()
-                chosen_aux_y=near_ys.pop()
-                if (image[chosen_x][chosen_y])<(image[chosen_aux_x][chosen_aux_y]):
-                    chosen_x=chosen_aux_x
-                    chosen_y=chosen_aux_y
-            
-        elif method=='medium':
-            i,j=get_extrema_2loops(near_xs, near_ys, 0 )
-            chosenX=float(near_xs[i]+near_xs[j])/2.
-            chosenY=float(near_ys[i]+near_ys[j])/2.
-            flagErr=0
-    else:
-        flagErr=1
-        chosenX=0
-        chosenY=0
-    return chosen_x,chosen_y,flag_err
-
-def pick_near_points(theta,b,object_pixels,near_distance): 
-    """
-    From a sample of points this function returns the ones that are close to the 
-perpendicular bisector.
-
-    Input:
-     - theta           float : straight-line angle with respect to the x axis.
-     - b               float : linear coefficient of the line.
-     - object_pixels   [[float],[float]] : list that represent the object pixels 
-       e.g. [x[i],y[i]].
-     - near_distance   float : maximum distance to the perpendicular bisector.
+     - theta          <float> : straight line angle with x axis.
+     - c              <float> : linear coeficient the line.
+     - object_pixels   <list> : list of object's points coordidates.
+     - image_name   <array> : the image matrix.
+     - method   <string> : possible values are 'medium'  or 'brightest'.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
      
     Output:
-     - [float] : x-coordinates of the selected points.  
-     - [float] : y-coordinates of the selected points.
-     -   int : a Flag error. If Flag=1, there is no close point.
+     - <float> : the chosen point x coordinate.  
+     - <float> : the chosen point y coordinate.
+     - <int>   : a Flag error. if Flag=1, it was not possible to choose a point.
     """
 
-    near_xs= []
-    near_ys= []
+    nearXs= []
+    nearYs= []
 
     for i in range(0,len(object_pixels[1])):
         pixel=[object_pixels[0][i],object_pixels[1][i]]
-	d=get_distance_from_line_to_point(pixel,theta,b)
-        if(near_distance>=d):
+	D=get_distance_from_line_to_point(pixel,theta,c)
+        if(near_distance>=D):
             nearXs.append(object_pixels[0][i])
             nearYs.append(object_pixels[1][i])
-    if len(nearXs)==0:
-        flag_err=1
+           
+    if (len(nearXs)<1):
+        FlagErr=1
+        chosenX=0
+        chosenY=0
+        return chosenX, chosenY, FlagErr
+    if method=='brightest':
+        chosenX=nearXs.pop()
+        chosenY=nearYs.pop()
+        FlagErr=0
+        while len(nearXs)>=1:
+            chosenAuxX=nearXs.pop()
+            chosenAuxY=nearYs.pop()
+            if (image[chosenX][chosenY])<(image[chosenAuxX][chosenAuxY]):
+                chosenX=chosenAuxX
+                chosenY=chosenAuxY
+            
+    elif method=='medium':
+        i,j=get_extrema_2loops( nearX, nearY, 0 )
+        chosenX=float(nearX[i]+nearX[j])/2.
+        chosenY=float(nearY[i]+nearY[j])/2.
+        FlagErr=0
     else:
-        flag_err=0
+        FlagErr=1
+        chosenX=0
+        chosenY=0
+            
+            
+    return chosenX,chosenY,FlagErr
 
-    return nearsX,nearsY,flag_err
+
+
+def choose_near_point_c(theta,c,object_pixels,image,method,near_distance): 
+    """
+    This function choose the Mediatrix points from a perpendicular bisector parameters in an object.
+
+    Input:
+     - theta          <float> : straight line angle with x axis.
+     - c              <float> : linear coeficient the line.
+     - object_pixels   <list> : list of object's points coordidates.
+     - image_name   <array> : the image matrix.
+     - method   <string> : possible values are 'medium'  or 'brightest'.
+     - near_distance      <float> : the distance to consider a point near to the perpendicular bisector.
+     
+    Output:
+     - <float> : the chosen point x coordinate.  
+     - <float> : the chosen point y coordinate.
+     - <int>   : a Flag error. if Flag=1, it was not possible to choose a point.
+    """
+
+    nearXs= []
+    nearYs= []
+    for i in range(0,len(object_pixels[1])):
+        pixel=[object_pixels[0][i],object_pixels[1][i]]
+	D=get_distance_from_line_to_point(pixel,theta,c)
+        if(near_distance>=D):
+            nearXs.append(object_pixels[0][i])
+            nearYs.append(object_pixels[1][i])
+           
+    if (len(nearXs)<1):
+        FlagErr=1
+        chosenX=0
+        chosenY=0
+        return chosenX+chosenY*1j, FlagErr
+    if method=='brightest':
+        chosenX=nearXs.pop()
+        chosenY=nearYs.pop()
+        FlagErr=0
+        while len(nearXs)>=1:
+            chosenAuxX=nearXs.pop()
+            chosenAuxY=nearYs.pop()
+            if (image[chosenX][chosenY])<(image[chosenAuxX][chosenAuxY]):
+                chosenX=chosenAuxX
+                chosenY=chosenAuxY
+            
+    elif method=='medium':
+        i,j=get_extrema_2loops( nearX, nearY, 0 )
+        chosenX=float(nearX[i]+nearX[j])/2.
+        chosenY=float(nearY[i]+nearY[j])/2.
+        FlagErr=0
+    else:
+        FlagErr=1
+        chosenX=0
+        chosenY=0
+            
+            
+    return chosenX+chosenY*1j,FlagErr
 
 
 
 
 
 
+
+def get_length(points): 
+    """
+    Function to calculate the length in a path determined by several points.
+
+    Input:
+     - points      <list> : list  of p_i points where p_i=(x_i,y_i).
+     
+     
+    Output: 
+     - <float> : the length.  
+     
+    """
+    X=[]
+    Y=[]
+    for i in range(0,len(points)):
+        X.append(points[i][0])
+        Y.append(points[i][1])
+    L=0
+    err=0
+    for j in range(0,len(X)-1):
+        dx=X[j]-X[j+1]
+        dy=Y[j]-Y[j+1]
+        dx=dx*dx
+        dy=dy*dy
+        dl=sqrt(dx+dy)
+        L=L+dl
+
+    return float(L)	
+
+
+def get_length_c(points): 
+    """
+    Function to calculate the length in a path determined by several points.
+
+    Input:
+     - points      <list> : list  of p_i points where p_i=(x_i,y_i).
+     
+     
+    Output: 
+     - <float> : the length.  
+     
+    """
+    
+    L=0.
+    err=0
+    for j in range(0,len(points)-1):
+        dl=abs(points[j]-points[j+1])
+        L=L+dl
+
+    return L	
+
+def width_ellipse(L,Area):
+	W=Area/(atan(1)*L)
+	return W
 
