@@ -255,9 +255,8 @@ def width_ellipse(l,area):
      
     """
 
-
-	w=area/(atan(1)*l)
-	return w
+    w=area/(atan(1)*l)
+    return w
 
 def length_from_connected_dots(points): 
     """
