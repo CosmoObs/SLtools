@@ -254,6 +254,7 @@ def width_ellipse(l,area):
      - float : the width.  
      
     """
+
     w=area/(atan(1)*l)
     return w
 
