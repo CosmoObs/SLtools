@@ -407,20 +407,20 @@ def Evaluate_S_Statistic_on_matrix_c(mediatrix_data,obj_stamp, sigma_out=True,si
     #print circle_center
     center_comparison=abs(circle_center-minM)
     alpha=Find_angle_from_circle_section_c(mediatrix_data['circle_params'][0],mediatrix_data['circle_params'][1],mediatrix_data['circle_params'][2])
-    S_output={'id': mediatrix_data['id']}
+    S_output={'init': 0}
     try: 
         S_output['MinM_norm']=minM_val/(L*L)
     except:
         print " Impossible to define a lenght for "+str(mediatrix_data['id'])
         S_output['MinM_norm']=-1
-    try:
+    if R!=0:
         S_output['L/R']=L/R
-    except:
+    else:
         print "Impossible to define a radius and curvature for "+str(mediatrix_data['id'])
         S_output['L/R']=-1
-    try:
+    if R!=0 and alpha!=0:
         S_output['curvature_comparison']=(L/R)/alpha
-    except:
+    else:
         print "Impossible to compare curvature from circle section and mediatrix S for "+str(mediatrix_data['id'])
         S_output['curvature_comparison']=-1
     try:
