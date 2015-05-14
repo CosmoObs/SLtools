@@ -764,12 +764,12 @@ def plot_mediatrixapl(image_name,_id, keydots=False,circle=True, save=True, out_
         x=[pixels[0][E1],mediatrix_data['center'].real,pixels[0][E2]]
         y=[pixels[1][E1],mediatrix_data['center'].imag,pixels[1][E2]]
         FitsPlot.show_markers([mediatrix_data['center'].imag],[mediatrix_data['center'].real],c='g',marker='D',zorder=500)
-        print "as coordenadas sao y, x"
-        print mediatrix_data['center'].imag
-        print mediatrix_data['center'].real
+        #print "as coordenadas sao y, x"
+        #print mediatrix_data['center'].imag
+        #print mediatrix_data['center'].real
         p1_vec=[pixels[0][E1],pixels[1][E1]] # the extreme points p_1 and p_2
         p2_vec=[pixels[0][E2],pixels[1][E2]]
-        p3_vec=[mediatrix_vectors['center'].real,mediatrix_vectors['center'].imag]
+        p3_vec=[mediatrix_data['center'].real,mediatrix_data['center'].imag]
         x_c,y_c,r=three_points_to_circle(p1_vec,p3_vec,p2_vec)
         if r>0:
             xy=[y_c,x_c]
