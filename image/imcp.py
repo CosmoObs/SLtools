@@ -95,8 +95,6 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
     y_size=float(y_size);
 
     imagem = image;
-#    if hdr:
-#        hdr = hdr.copy();
     
     # Initialize some variables..
     #
@@ -115,8 +113,8 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
 
     # Get the side sides (at least, 1!) and transform for the size_unit if necessary..
     #
-    x_cut_size = max( 1, int(float(x_size)) );
-    y_cut_size = max( 1, int(float(y_size)) );
+    x_cut_size = float(x_size);
+    y_cut_size = float(y_size);
 
     if ( size_unit == 'degrees' ):
         x_cut_size = int(float(x_cut_size)/dimpix);
@@ -147,8 +145,8 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
         y_halo = int(float(yo));
 
     elif ( coord_unit == 'degrees' and (xo != 0 and yo != 0) ):
-        x_halo = wcsc.radec2xy(hdr,xo,yo)[0];
-        y_halo = wcsc.radec2xy(hdr,xo,yo)[1];
+        x_halo = int(wcsc.radec2xy(hdr,xo,yo)[0]);
+        y_halo = int(wcsc.radec2xy(hdr,xo,yo)[1]);
 
     elif ( xo == 0 and yo == 0 ):
         x_halo = int(x_img_size/2);
@@ -408,16 +406,16 @@ if __name__ == "__main__" :
 
     parser.add_option('-j', action='store_true',
                 dest='is_coord_deg', default=False,
-                help="If given (x,y) coordinates are in degrees, default is False");
+                help="If given, 'x,y' arguments (i.e, central coordinates) are in degrees. If not given (default), coordinates are expected to be in pixels");
     parser.add_option('-J', action='store_true',
                 dest='is_shape_deg', default=False,
-                help="If given 'shape' (x,y sizes) are in degrees, default is False");
+                help="If given, cutout 'shape' (see option '-s') are in degrees. If not given (default), cutout shape is expected to be in pixels.");
     parser.add_option('-s',
                 dest='dim', default='250,250',
-                help="Output stamps shape default is 250,250");
+                help="Output stamps shape. Default is 250,250");
     parser.add_option('--increase',
                 dest='incr', default=0,
-                help="Amount of border/enlarge of object poststamp. It is an additive or multiplicative factor. See 'relative_increase' flag");
+                help="Amount of border (enlarge) of object poststamp. It is an additive or multiplicative factor. See 'relative_increase' flag");
     parser.add_option('--relative_increase', action='store_true',
                 dest='rel_incr', default=False,
                 help="Turn on the multiplicative factor for increase image, otherwise, 'increase' will be treated as an absolute value.");

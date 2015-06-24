@@ -63,13 +63,14 @@ def get_pixelscale(hdr):
     CUNIT = CUNIT1
     # Convertion from degrees to arcsec units..
     #
-    if ( CUNIT1 == 'deg' and CUNIT2 == 'deg' ):
-        conv_factor = 3600.0;
-        CUNIT = 'arcsec'
+    if ( CUNIT1 != CUNIT2 ):
+        print >> sys.stderr, "Error: I do not have support for different per-axis pixel resolutions.";
+	print >> sys.stderr, "Error: CUNIT1: %s , CUNIT2: %s" % (CUNIT1,CUNIT2)
+	return None
 
     # Scale is given, using CD1_1, CD1_2, CD2_1, CD2_2 header keys:
     #
-    pixel_scale = m.sqrt((CD1_1**2 + CD1_2**2 + CD2_1**2 + CD2_2**2)/2.) * conv_factor;
+    pixel_scale = m.sqrt((CD1_1**2 + CD1_2**2 + CD2_1**2 + CD2_2**2)/2.) #* conv_factor;
     print "Unit: %s/px" % CUNIT
 
     return pixel_scale;
