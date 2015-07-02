@@ -694,9 +694,13 @@ def plot_mediatrix(mediatrix_data,image_name,_id, keydots=False, colors= {'objec
     else:
         return A
 
-def plot_mediatrixapl(image_name,_id, keydots=False,circle=True, save=True, out_image='', args={}):
+def plot_mediatrixapl(image_name,_id='', keydots=False,circle=True, save=True, out_image='', args={}):
     """
-    Make a plot presenting the object, keydots and mediatrix vectors. 
+    Make a plot presenting the object, keydots and mediatrix vectors. If the input image name is
+    not a postage stamp the code will read from the sextractor segmentation image the object
+    position with given id and pixels intensity from sextractor objects image. The   function
+    assumes that the segmentation and objects images names are *original_image_name*_seg.fits and
+    *original_image_name*_obj.fits respectively.
 
     Input:
     - mediatrix_data <list> : the output from mediatrix_decomposition_on_matrix.
@@ -722,18 +726,21 @@ def plot_mediatrixapl(image_name,_id, keydots=False,circle=True, save=True, out_
     image_seg,hdr = getdata(image_segname, header = True )
     image_obj,hdr = getdata(image_objname, header = True )
 
-    if opt['type']=='cutout':
+    if opt['out_type']=='cutout':
         opt['object_centered']=False
     #else:
     #    opt['object_centered']=True
-
-    image_ps,hdr=imcp.segstamp(segimg=image_seg, objID=_id, objimg=image_obj, hdr=hdr, increase=opt['increase'], relative_increase=opt['relative_increase'], connected=opt['connected'], obj_centered=opt['object_centered'])
+    
+    if _id=='':
+        image_ps=getdata(image_name, header = True )
+    else:
+        image_ps,hdr=imcp.segstamp(segimg=image_seg, objID=_id, objimg=image_obj, hdr=hdr, increase=opt['increase'], relative_increase=opt['relative_increase'], connected=opt['connected'], obj_centered=opt['object_centered'])
     
     #image_ps,hdr=imcp.segstamp(segimg=image_seg, objID=_ids[i], objimg=image_obj, hdr=hdr, increase=2, relative_increase=True, connected=False, obj_centered=True)
 
     mediatrix_data=mediatrix_decomposition_on_matrix_c(image_ps, method=opt['method'],alpha=opt['alpha'],near_distance=opt['near_distance'],max_level=opt['max_level']) 
     
-    if opt['type']=='cutout':
+    if opt['ou_type']=='cutout':
         img,hdr=getdata(image_name, header = True ) 
     else:
         img=image_ps
