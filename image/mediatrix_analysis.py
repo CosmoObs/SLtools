@@ -653,7 +653,7 @@ def plot_S_Statistic(mediatrix_data, ps_name, sigma_out=True,sigma=1,sigma_pre=0
 
 
 
-def plot_S_Statistic_apl(image_name,_id,keydots=False,circle=False,rc=True, save=True,out_image='', args={}):
+def plot_S_Statistic_apl(image_name,_id='',keydots=False,circle=False,rc=True, save=True,out_image='', args={}):
 
     """
     Function to make plot of S estatistic interesting measurements.
@@ -675,7 +675,7 @@ def plot_S_Statistic_apl(image_name,_id,keydots=False,circle=False,rc=True, save
 
     
 
-    mediatrix_plot,mediatrix_data,image_ps=plot_mediatrixapl(image_name,_id, keydots=keydots,circle=circle, save=False, args=opt)  
+    mediatrix_plot,mediatrix_data,image_ps=plot_mediatrixapl(image_name,_id=_id, keydots=keydots,circle=circle, save=False, args=opt)  
     
     
 
