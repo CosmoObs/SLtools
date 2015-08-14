@@ -1,0 +1,12 @@
+
+catalog/sources/get_source_redshifts.py
+geometry/elementary_geometry.py
+geometry/mediatrix_analysis.py
+image/geometry.py
+image/get_bisectrix_pts.py
+image/imcp.py
+image/mediatrix_analysis.py
+image/mediatrix_decomposition.py
+image/sextractor.py
+pipelines/eyescan.py
+pipelines/multiple_se_runs.py
