@@ -1,0 +1,1 @@
+../../pipelines/image2stamps.py
