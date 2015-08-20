@@ -1,1 +1,0 @@
-../../catalog/fits_data.py
