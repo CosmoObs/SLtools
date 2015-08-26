@@ -34,24 +34,25 @@ GenDoxygenDoc()
     # Receives app name in $1 (e.g., sltools), version number in $2,
     # and $3 gives the documentation 'mode' (pdf/web).
 
-	project_name="SLtools"
-	application=$1
-	version=$2
-	mode=$3
+    local project_name="SLtools"
+    local application=$1
+    local version=$2
+    local mode=$3
+    local folder=$4
 
-	# Check if doxypy is present 
-	[ $(which doxypy.py) ] || { echo "Failed: doxypy not found."; exit 1; }
+    # Check if doxypy is present 
+    [ $(which doxypy.py) ] || { echo "Failed: doxypy not found."; exit 1; }
 
-	dir=$(pwd)
-	cd $FOLDER &> /dev/null
-	mkdir doc
-	cp ../doc/doxygen.cfg doc/
+    dir=$(pwd)
+    cd $folder &> /dev/null
+    mkdir doc
+    cp ../doc/doxygen.cfg doc/
 
-	# Edit doxygen configuration file for the current application
-	sed -i "s/%PROJECT_NAME%/$project_name/" doc/doxygen.cfg
-	sed -i "s/%PROJECT_NUMBER%/\"Version $version\"/" doc/doxygen.cfg
+    # Edit doxygen configuration file for the current application
+    sed -i "s/%PROJECT_NAME%/$project_name/" doc/doxygen.cfg
+    sed -i "s/%PROJECT_NUMBER%/\"Version $version\"/" doc/doxygen.cfg
 
-	# work around for bug #600 [AddArcs] Fix doxygen documentation issue
+    # work around for bug #600 [AddArcs] Fix doxygen documentation issue
     for file in $(find . -name "__init__.py")
     do
     	mv $file $(dirname $file)/__init__
@@ -61,21 +62,20 @@ GenDoxygenDoc()
 
     find . -name "__init__" -exec mv '{}' '{}'.py \;
 
-	(
+    (
         cd doc/html && namespace2module html
-	)
+    )
 
-	(
+    (
         cd doc/latex && namespace2module tex
-
-	    if [ "$mode" != "--no-pdf" ]
+        if [ "$mode" != "--no-pdf" ]
         then
             make &> /dev/null || { echo "Failed to create PDF documentation."; exit 1; }
             [ -f refman.pdf ] && mv refman.pdf $application-v$version.pdf
-	    fi
-	)
+        fi
+    )
 
-	cd $dir &> /dev/null
+    cd $dir &> /dev/null
 
 }
 
@@ -120,62 +120,57 @@ build_sltools()
 {   # SLtools building function
     # It receives the building $mode and the destination $FOLDER folder
 
-    mode=$1
-	FOLDER=$2
+    local mode=$1
+    local folder=$2
 
-	if [ -d "$FOLDER" -o -f "${FOLDER}.tgz" ]
-	then
+    if [ -d "$folder" -o -f "${folder}.tgz" ]
+    then
+	echo "Removing old build ..."
+	rm -rf $folder{,.t*gz} &> /dev/null
+    fi
 
-		echo "Removing old build ..."
-		rm -rf $FOLDER{,.t*gz} &> /dev/null
+    echo "Creating package folder $folder ..."
+    mkdir $folder
 
-	fi
-
-    echo "Creating package folder $FOLDER ..."
-	mkdir $FOLDER
+    folder="${PWD}/${folder}"
+    dir=$PWD
+    cd "sltools"
 
     if [ -f "C_MODULES_TO_INCLUDE_IN_BUILD" ]
     then
-
         echo "Cleaning C modules directories ..."
         for i in `grep -v "^#" C_MODULES_TO_INCLUDE_IN_BUILD`
         do
             cd $i && { make clean; cd - &> /dev/null; }
         done
-
     fi
     
-	echo "Copying files ..."
+    echo "Copying files ..."
     if [ -f "DIRECTORIES_TO_INCLUDE_IN_BUILD" ]
     then
-
-        cp __init__.py $FOLDER
-        cp -r `grep -v "^#" DIRECTORIES_TO_INCLUDE_IN_BUILD` $FOLDER
-        cp -r -p bin $FOLDER
-        cp etc/* ${FOLDER}/. &> /dev/null
-
+        cp __init__.py $folder
+        cp -r `grep -v "^#" DIRECTORIES_TO_INCLUDE_IN_BUILD` $folder
+        cp -r -p bin $folder
+        cp etc/* ${folder}/. &> /dev/null
     else
-
-        cp -r -p * ${FOLDER}/.
-
+        cp -r -p * ${folder}/.
     fi
 
-    find $FOLDER -name "*.pyc" -delete
+    find $folder -name "*.pyc" -delete
+
+    cd $dir
 
     if [ "$mode" != "--no-doc" ]
     then
-
-		# compile documentation
-		echo "Generating Doxygen documentation ..."
-		GenDoxygenDoc "$opt" "$version" "$mode"
-
+	# compile documentation
+	echo "Generating Doxygen documentation ..."
+	GenDoxygenDoc "$opt" "$version" "$mode" "$folder"
     fi
 
-    version=${FOLDER#*'-'}
-    sed "s/%VERSION%/$version/" $FOLDER/install.sh > $FOLDER/install.tmp
-    mv $FOLDER/install.tmp $FOLDER/install.sh
-    chmod +x $FOLDER/install.sh
-
+    version=${folder#*'-'}
+    sed "s/%VERSION%/$version/" $folder/install.sh > $folder/install.tmp
+    mv $folder/install.tmp $folder/install.sh
+    chmod +x $folder/install.sh
 }
 
 
