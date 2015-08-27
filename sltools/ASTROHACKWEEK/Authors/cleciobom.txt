@@ -1,2 +1,0 @@
-geometry/elementary_geometry.py
-image/mediatrix_decomposition.py
