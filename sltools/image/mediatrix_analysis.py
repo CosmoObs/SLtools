@@ -411,22 +411,22 @@ def Evaluate_S_Statistic_on_matrix_c(mediatrix_data,obj_stamp, sigma_out=True,si
     try: 
         S_output['MinM_norm']=minM_val/(L*L)
     except:
-        print " Impossible to define a lenght for "+str(mediatrix_data['id'])
+        print " Impossible to define a lenght "#for "+str(mediatrix_data['id'])
         S_output['MinM_norm']=-1
     if R!=0:
         S_output['L/R']=L/R
     else:
-        print "Impossible to define a radius and curvature for "+str(mediatrix_data['id'])
+        print "Impossible to define a radius and curvature"# for "+str(mediatrix_data['id'])
         S_output['L/R']=-1
     if R!=0 and alpha!=0:
         S_output['curvature_comparison']=(L/R)/alpha
     else:
-        print "Impossible to compare curvature from circle section and mediatrix S for "+str(mediatrix_data['id'])
+        print "Impossible to compare curvature from circle section and mediatrix S"# for "+str(mediatrix_data['id'])
         S_output['curvature_comparison']=-1
     try:
         S_output['center_comparison']=center_comparison/L
     except:
-        print "Impossible to compare center from circle method and mediatrix S for "+str(mediatrix_data['id'])
+        print "Impossible to compare center from circle method and mediatrix S"# for "+str(mediatrix_data['id'])
         S_output['curvature_comparison']=-1
     if sigma_out==True:
         
@@ -666,7 +666,7 @@ def plot_S_Statistic_apl(image_name,_id='',keydots=False,circle=False,rc=True, s
      - <bool> :   
      
     """
-    opt={'increase': 2, 'relative_increase': True,'connected': False,'object_centered':True, 'type':'cutout', 'pmin':0.25 , 'pmax':99.75 , 'invert':True ,'out_title': 'Mediatrix Method', 'keys_color': "r" ,'alpha': 1 ,'max_level': 1000, 'near_distance': sqrt(2)/2, 'max_level': 1000, 'method':"brightest",'sigma':1,'sigma_pre':0.5, 'rc_color': 'm'}
+    opt={'increase': 2, 'relative_increase': True,'connected': False,'object_centered':True, 'out_type':'cutout', 'pmin':0.25 , 'pmax':99.75 , 'invert':True ,'out_title': 'Mediatrix Method', 'keys_color': "r" ,'alpha': 1 ,'max_level': 1000, 'near_distance': sqrt(2)/2, 'max_level': 1000, 'method':"brightest",'sigma':1,'sigma_pre':0.5, 'rc_color': 'm'}
     opt.update(args)
      
     if out_image=='':
@@ -798,7 +798,12 @@ def plot_S_Statistic_apl(image_name,_id='',keydots=False,circle=False,rc=True, s
         #mediatrix_plot.clear()
         return True
     else:
-        return mediatrix_plot
+        print " os pixels"
+        print pixels[0]
+        print pixels[1] 
+        size0=abs(max(pixels[0])-min(pixels[0]))
+        size1=abs(max(pixels[1])-min(pixels[1])) 
+        return mediatrix_plot, [mediatrix_data['center'].real,mediatrix_data['center'].imag], [MinM[0],MinM[1]],[size0,size1]
 
 
 
