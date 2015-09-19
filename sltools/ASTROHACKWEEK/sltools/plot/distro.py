@@ -19,7 +19,7 @@ def scattergrid(points,sizes=[],colors=[]):
      - points  <[(,)]> : a list of tuples of X,Y datapoints
      - sizes   <[]>    : a list of numbers for symbols sizing
      - colors  <[]>    : a list of numbers for symbols colors
-    
+
     Output:
      - fig  <pyplot.figure()>  : A matplotlib figure instance
         Save (fig.savefig()) or show (fig.show()) the object.
@@ -44,15 +44,15 @@ def scattergrid(points,sizes=[],colors=[]):
     sizes = sizes.astype('uint32').tolist();
 
     x,y = zip(*points);
-    
-    # Sort the data just to get it(the plot) right done when 
+
+    # Sort the data just to get it(the plot) right done when
     # 'scatter' run through datasets.
     tosort_ = zip(sizes,colors,x,y);
     tosort_.sort();
     tosort_.reverse();
     sizes,colors,x,y = zip(*tosort_);
     #
-    
+
     plt.set_cmap('hot');
     fig = plt.figure();
     ax = fig.add_subplot(111);
@@ -77,8 +77,8 @@ def scattergrid(points,sizes=[],colors=[]):
 def histbox(data,nbins=None,outliers=True,legend=None,xlabel="X",ylabel="Normed counts",title="Distribution plot"):
     """
     Plots data distribution in two different ways: a boxplot and (over) a histogram.
-    
-    
+
+
     Input:
      - data       < [] > : A list of data values or (for comparative plots) a list of datasets(vectors)
      - nbins     < int > : Number of bins for histogram. If None (default) nbins will be in somewhere between 10 and 100
@@ -102,9 +102,9 @@ def histbox(data,nbins=None,outliers=True,legend=None,xlabel="X",ylabel="Normed 
             ND = data.shape[1];
     except:
         ND = len(data);
-    
+
     colors=['b', 'r', 'y', 'k', 'g', 'm', 'c'];
-    
+
     # Bins width:
     #
     def binswidth(dado):
@@ -112,14 +112,14 @@ def histbox(data,nbins=None,outliers=True,legend=None,xlabel="X",ylabel="Normed 
         return width;
     ##
     if not nbins:
-        _dat = np.asarray(_dat);
+        _dat = np.asarray(data);
         _w = binswidth(_dat.ravel());
         _min = _dat.ravel().min();
         _max = _dat.ravel().max();
         nbins = (_max-_min)/_w;
         nbins = min(100,max(10,nbins));
         del _dat,_w,_min,_max;
-        
+
     # Initialize the plot environment:
     fig,(ax1,ax2) = plt.subplots(2,1,sharex=True);
 
@@ -130,7 +130,7 @@ def histbox(data,nbins=None,outliers=True,legend=None,xlabel="X",ylabel="Normed 
     _cap = bpD['caps'];
     _wsk = bpD['whiskers'];
     _flr = bpD['fliers'];
-    
+
     # Fix the colors for each boxplot plotted..
     xmin = [];
     xmax = [];
@@ -143,10 +143,10 @@ def histbox(data,nbins=None,outliers=True,legend=None,xlabel="X",ylabel="Normed 
         #_cap[2*i+1].set(color=colors[i],linewidth=2);
         xmin.extend(_wsk[i].get_xdata());
         xmax.extend(_wsk[i+1].get_xdata());
-    
+
     # HISTOGRAM
     num,bin,p = ax2.hist(data,bins=nbins,normed=True,rwidth=0.8,label=legend,color=colors[:ND],align='mid',histtype='bar',alpha=0.5,linewidth=1)#,range=xrange);
-    
+
     # Adjust the plots
     fig.subplots_adjust(hspace=0);
     ax1.yaxis.set_visible(False);
@@ -160,11 +160,10 @@ def histbox(data,nbins=None,outliers=True,legend=None,xlabel="X",ylabel="Normed 
 
     if not outliers:
         ax2.set_xlim((min(xmin),max(xmax)));
-    
+
     fig.suptitle(title)
     ax2.set_ylabel(ylabel)
     ax2.set_xlabel(xlabel)
     ax2.legend(loc='upper right')
-    
+
     return fig;
-    

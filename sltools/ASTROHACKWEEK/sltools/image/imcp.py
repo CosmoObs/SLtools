@@ -36,7 +36,7 @@ import sys;
 import logging;
 
 import os
-import pyfits
+import astropy.io.fits as pyfits
 import string
 import commands
 import numpy as np;

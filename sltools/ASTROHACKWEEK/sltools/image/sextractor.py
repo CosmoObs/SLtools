@@ -16,7 +16,7 @@ import logging;
 import os;
 import re;
 import string;
-import pyfits;
+import astropy.io.fits as pyfits;
 import numpy as np;
 import sltools;
 

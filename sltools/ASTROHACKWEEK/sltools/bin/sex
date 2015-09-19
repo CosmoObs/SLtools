@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker run --rm --name sex --volumes-from wdata chbrandt/sextractor $@
+

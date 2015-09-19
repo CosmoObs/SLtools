@@ -2,7 +2,7 @@
 #-*- coding:utf-8 -*-
 # ===================================================
 # Authors:
-# Carlos Brandt - 
+# Carlos Brandt -
 # ===================================================
 
 
@@ -10,8 +10,8 @@
 
 import sys;
 import math as m;
-import pyfits;
-import pywcs
+import astropy.io.fits as pyfits;
+import astropy.wcs as pywcs
 import numpy
 
 def get_pixelscale(hdr):
@@ -31,7 +31,7 @@ def get_pixelscale(hdr):
         return pixel_scale;
     except:
         pass;
-        
+
     try:
         CD1_1 = float(hdr['CD1_1']);
         CD1_2 = float(hdr['CD1_2']);
@@ -155,7 +155,7 @@ def update_coordinates(hdr, x_ini, y_ini):
 def get_ra_dec_limits(image):
 
     """
-    This function reads RA and DEC values correponding to the spatial limits of the sky image. 
+    This function reads RA and DEC values correponding to the spatial limits of the sky image.
 
     Input:
     - image <str>: name of image(tile) fits file.
@@ -165,8 +165,8 @@ def get_ra_dec_limits(image):
     """
 
     hdr = pyfits.getheader(image)
-    
-    wcs = pywcs.WCS(hdr) 
+
+    wcs = pywcs.WCS(hdr)
 
     naxis1 = hdr['NAXIS1']
     naxis2 = hdr['NAXIS2']
@@ -183,11 +183,11 @@ def get_ra_dec_limits(image):
 
 
     return ((ra_min,ra_max),(dec_min,dec_max))
-    
-    
+
+
 def get_header_parameter( image_file, *parargs ):
     """
-    Read parameter value from image header. 
+    Read parameter value from image header.
 
     Input:
     - image_file <str>: image FITS filename
@@ -206,11 +206,10 @@ def get_header_parameter( image_file, *parargs ):
 
     for _param in parargs :
         try:
-            param_list.append( _header[_param] ); 
+            param_list.append( _header[_param] );
 
         except:
             print >> sys.stderr, "Warning: Unable to find this parameter in header instance for image coordinates unit.";
-            param_list.append(None) 
-       
+            param_list.append(None)
+
     return (param_list);
-    

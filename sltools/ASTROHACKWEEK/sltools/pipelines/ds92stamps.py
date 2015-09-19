@@ -12,7 +12,7 @@ objects from a given image.
 """
 
 import os;
-import pyfits;
+import astropy.io.fits as pyfits;
 import numpy as np;
 from numpy import asarray as ndaa;
 import re;
@@ -21,7 +21,7 @@ import logging;
 
 #from sltools.io import check_dependencies as ckdep;
 from sltools.image import sextractor as se;
-from sltools.image import segobjs;
+from sltools.image import segmentation_ids as segobjs;
 from sltools.image import imcp;
 from sltools.catalog import fits_data as fts;
 from sltools.catalog import ascii_data as asc;
@@ -35,10 +35,10 @@ from sltools.io import log;
 def run(D_in, objimg, segimg=None, shape=(100,100), objsfile='pstamp_', hdr=None):
     """
     Function to take snapshots from objects listed in a DS9's regions file
-    
+
     Sextractor is run over given 'imagename' and take the snapshots from objects listed
     in DS9's 'regionfile'.
-    
+
     Input:
      - regionfile : str
         DS9' regions file
@@ -47,30 +47,30 @@ def run(D_in, objimg, segimg=None, shape=(100,100), objsfile='pstamp_', hdr=None
      - outname_stamps : str
         String to add to output name of the poststamp images.
      - outname_cat : str
-     
+
     Output:
      -> <bool>
-    
+
     """
 
     from numpy import asarray;
-    
+
 
     imagename_ds9 = D_in['filename'];
 
     # Detect objects corresponding to given centroids..
     #
     XY = zip(asarray(D_in['x']),asarray(D_in['y']));
-    
+
     logging.debug("Input ['x'],['y'] points: %s" % (XY));
-    
+
     if (segimg!=None):
         logging.info("Segmentation image given, looking for objects for each (x,y) on it.");
         objIDs = [ segobjs.centroid2ID(segimg,_xy) for _xy in XY ];
     else:
         logging.info("No segmentation image given.");
         objIDs = [0]*len(XY);
-    
+
     logging.debug("ObjIDs: %s " % (objIDs));
 
     D_out = D_in;
@@ -95,7 +95,7 @@ def run(D_in, objimg, segimg=None, shape=(100,100), objsfile='pstamp_', hdr=None
             os.remove(outname);
             pyfits.writeto(outname,_otmp,_htmp);
 
-    
+
     return D_out;
 
 
@@ -104,7 +104,7 @@ def run(D_in, objimg, segimg=None, shape=(100,100), objsfile='pstamp_', hdr=None
 if __name__ == '__main__' :
 
     import optparse;
-    
+
     usage="\n  %prog [options] <ds9regionfile.reg> <image.fits>"
     parser = optparse.OptionParser(usage=usage);
 
@@ -131,16 +131,16 @@ if __name__ == '__main__' :
     objsfile = opts.objsname;
     shape = opts.xy_sizes.split(",");
     segimg = opts.segfile;
-    
+
     if len(args) < 2 :
         parser.print_help();
         sys.exit(0);
-        
+
     regionfile = args[0];
     imagename = args[1];
 
     shape = (int(shape[0]),int(shape[1]));
-    
+
 
     # Logging handler:
     logfile = regionfile+'.log'
@@ -153,9 +153,9 @@ if __name__ == '__main__' :
     objimg = pyfits.getdata(imagename,header=False);
     if segimg:
         segimg = pyfits.getdata(segimg);
-        
+
     D_in['filename'] = imagename;
-    
+
     D_out = run(D_in, objimg, segimg, shape=shape, objsfile=objsfile, hdr=None);
 
     if cattype.upper() == 'FITS':
@@ -169,6 +169,6 @@ if __name__ == '__main__' :
     else:
         outname = catfile+re.sub(".reg",".csv",regionfile);
         asc.dict_to_csv(D_out,filename=outname,fieldnames=['filename','x','y','color','segmented','id','objfile']);
-    
+
     print >> sys.stdout, "Done.";
     sys.exit(0);
