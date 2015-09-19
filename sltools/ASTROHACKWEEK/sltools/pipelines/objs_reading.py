@@ -6,7 +6,7 @@ import os;
 import re;
 import string;
 import numpy as np;
-import pyfits;
+import astropy.io.fits as pyfits;
 
 import sltools;
 from sltools.image import sextractor,imcp;
@@ -17,27 +17,27 @@ from sltools.catalog. import fits_data as fts;
 def correlate_SEtables(filenames,centroids):
     """
     Look for SE features for each centroid on seg. images
-    
+
     A list of segmented image filenames is read from 'filenames'
     together with the list of 'centroids' (x,y). The (x,y) information
     is used to read the corresponding (segmented) object on seg. image
     and then - with the ID just read -, the particular object features
     is read from SE' catalog.
-    
+
     So far, the catalog filename corresponding to the image filename is
-    recovered substituting the ".fits" image filename extension with 
+    recovered substituting the ".fits" image filename extension with
     "_cat.fit" extension.
-    
+
     Input:
      - filenames : [str,]
         List of original image filenames
      - centroids : [(int,int),]
         List of objects centroids
-    
+
     Output:
      - tbhdu : pyfits.BinTableHDU
         Table (HDU) with object features
-    
+
     ---
     """
     imgname = '';
@@ -51,7 +51,7 @@ def correlate_SEtables(filenames,centroids):
             catname = re.sub(".fits","_cat.fit",imgname);
             segimg = pyfits.getdata(segname);
             tbhdu_sex = pyfits.open(catname)[1];
-            
+
         objID = segobjs.centroid2ID(segimg,centroids[i]);
         _tbList.append(fts.select_entries(tbhdu_sex,'NUMBER',objID));
 
@@ -60,26 +60,8 @@ def correlate_SEtables(filenames,centroids):
         new_tbhdu = extend_tbHDU(new_tbhdu,_tbList[i]);
 
     return new_tbhdu;
-    
+
 # ---
-
-def tabled_images(tbhdu_tbm, x='X', y='Y', filename='filename'):
-    """ Read objects from inside the given table HDU
-    
-    Already segmented, and object images filenames given by column
-    'filename', 'x' and 'y' values will be used to search for the
-    corresponding object pixels and ID in "segmentation" image.
-    """
-
-    filenames = tbhdu_tbm.data.field(filename);
-    centroids = zip(tbhdu_tbm.data.field(x),tbhdu_tbm.data.field(y));
-
-        # Access the objID (only) image,
-#        _otmp, _htmp = imcp.segstamp( segimg, objID=objID, hdr=hdr, objimg=None, increase=4, relative_increase=True );
-
-    return
-    
-#    return {'IDs' : objIDs, 'images' : objs, 'headers' : hdrs};
 
 
 # \cond
