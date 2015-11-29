@@ -407,7 +407,7 @@ def Evaluate_S_Statistic_on_matrix_c(mediatrix_data,obj_stamp, sigma_out=True,si
     #print circle_center
     center_comparison=abs(circle_center-minM)
     alpha=Find_angle_from_circle_section_c(mediatrix_data['circle_params'][0],mediatrix_data['circle_params'][1],mediatrix_data['circle_params'][2])
-    S_output={'init': 0}
+    S_output={'MinM_pos': minM}
     try: 
         S_output['MinM_norm']=minM_val/(L*L)
     except:
@@ -670,12 +670,12 @@ def plot_S_Statistic_apl(image_name,_id='',keydots=False,circle=False,rc=True, s
     opt.update(args)
      
     if out_image=='':
-        out_image=image_name.replace(".fits","")+"_mediatrixS_plot.png"
+        out_image="mediatrixS_plot.png"
  
 
     
 
-    mediatrix_plot,mediatrix_data,image_ps=plot_mediatrixapl(image_name,_id=_id, keydots=keydots,circle=circle, save=False, args=opt)  
+    mediatrix_plot,mediatrix_data,image_ps=plot_mediatrixapl(image_name.copy(),_id=_id, keydots=keydots,circle=circle, save=False, args=opt)  
     
     
 
@@ -706,9 +706,9 @@ def plot_S_Statistic_apl(image_name,_id='',keydots=False,circle=False,rc=True, s
     MinM_plot_Y=[MinM[1],MinM[1]]
     
     mediatrix_plot.show_markers(MinM_plot_Y,MinM_plot_X,c='red',marker='.',zorder=2000)
-    print 'min m'
-    print MinM_plot_X
-    print MinM_plot_Y
+    #print 'min m'
+    #print MinM_plot_X
+    #print MinM_plot_Y
     lim=round((Length/8.)+5,2)
     sigma_X=[]
     sigma_Y=[]
@@ -780,6 +780,7 @@ def plot_S_Statistic_apl(image_name,_id='',keydots=False,circle=False,rc=True, s
         for j in range(0,len(sigma_Y)):
            fill_lim = round(abs(x_up[j]-x_down[j]),1)
            for k in range(0,int(fill_lim)):
+               #mediatrix_plot.show_rectangles(sigma_Y[j],x_down[j]+k,1,1, c=opt['rc_color'],linewidths='0', zorder=999)# show_markers(sigma_Y[j],x_down[j]+k,c=opt['rc_color'],marker=".",linewidths='0', zorder=999)
                mediatrix_plot.show_markers(sigma_Y[j],x_down[j]+k,c=opt['rc_color'],marker=".",linewidths='0', zorder=999)
                mediatrix_plot.show_markers(sigma_Y[j],x_down[j]+k-0.25,c=opt['rc_color'],marker=".",linewidths='0', zorder=999)
                mediatrix_plot.show_markers(sigma_Y[j],x_down[j]+k+0.25,c=opt['rc_color'],marker=".",linewidths='0', zorder=999) 
@@ -798,9 +799,9 @@ def plot_S_Statistic_apl(image_name,_id='',keydots=False,circle=False,rc=True, s
         #mediatrix_plot.clear()
         return True
     else:
-        print " os pixels"
-        print pixels[0]
-        print pixels[1] 
+        #print " os pixels"
+        #print pixels[0]
+        #print pixels[1] 
         size0=abs(max(pixels[0])-min(pixels[0]))
         size1=abs(max(pixels[1])-min(pixels[1])) 
         return mediatrix_plot, [mediatrix_data['center'].real,mediatrix_data['center'].imag], [MinM[0],MinM[1]],[size0,size1]
