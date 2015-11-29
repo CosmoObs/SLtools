@@ -12,7 +12,8 @@ Set of functions used in Mediatrix Decomposition.
 #
 
 
-
+import matplotlib
+matplotlib.use('Agg')
 from sltools.geometry.get_extrema_pts import get_extrema_2loops
 from numpy import where
 from math import sin, cos ,sqrt, fabs, atan, tan 
@@ -20,6 +21,7 @@ from pylab import subplot, Rectangle, Arrow, xlim, ylim, ylabel, xlabel, title, 
 from pyfits import getdata
 from sltools.geometry.elementary_geometry import define_perpendicular_bisector, get_distance_from_line_to_point, two_points_to_line,three_points_to_circle
 import imcp
+import time
 import aplpy
 import numpy
 import pyfits
@@ -712,10 +714,9 @@ def plot_mediatrixapl(image_name,_id='', keydots=False,circle=True, save=True, o
      <bool>
          
     """
-    opt={'increase': 2, 'relative_increase': True,'connected': False,'object_centered':True, 'out_type':'cutout', 'pmin':0.25 , 'pmax':99.75 , 'invert':True ,'out_title': 'Mediatrix Decomposition', 'keys_color': "r" ,'alpha': 1 ,'max_level': 1000, 'near_distance': sqrt(2)/2, 'max_level': 1000, 'method':"brightest"}
+    opt={'increase': 2, 'relative_increase': True,'connected': False,'object_centered':True, 'out_type':'cutout', 'vmin':0 , 'invert':True ,'out_title': 'Mediatrix Decomposition', 'keys_color': "r" ,'alpha': 1 ,'max_level': 1000, 'near_distance': sqrt(2)/2, 'max_level': 1000, 'method':"brightest"}
     opt.update(args)
-    if out_image=='':
-        out_image=image_name.replace(".fits","")+"_mediatrix_plot.png"
+    
     
    
 
@@ -728,16 +729,24 @@ def plot_mediatrixapl(image_name,_id='', keydots=False,circle=True, save=True, o
         opt['object_centered']=False
     #else:
     #    opt['object_centered']=True
-    
-    if _id=='':
-        image_ps,hdr=getdata(image_name, header = True )
+    type_arg=type(image_name) is str
+    if type_arg:
+        if out_image=='':
+            out_image=image_name.replace(".fits","")+"_mediatrix_plot.png"
+        if _id=='':
+            image_ps,hdr=getdata(image_name, header = True )
+        else:
+            image_segname=image_name.replace(".fits","")+"_seg.fits"
+            image_objname=image_name.replace(".fits","")+"_obj.fits"
+            image_seg,hdr = getdata(image_segname, header = True )
+            image_obj,hdr = getdata(image_objname, header = True )
+            image_ps,hdr=imcp.segstamp(segimg=image_seg, objID=_id, objimg=image_obj, hdr=hdr, increase=opt['increase'], relative_increase=opt['relative_increase'], connected=opt['connected'], obj_centered=opt['object_centered'])
     else:
-        image_segname=image_name.replace(".fits","")+"_seg.fits"
-        image_objname=image_name.replace(".fits","")+"_obj.fits"
-        image_seg,hdr = getdata(image_segname, header = True )
-        image_obj,hdr = getdata(image_objname, header = True )
-        image_ps,hdr=imcp.segstamp(segimg=image_seg, objID=_id, objimg=image_obj, hdr=hdr, increase=opt['increase'], relative_increase=opt['relative_increase'], connected=opt['connected'], obj_centered=opt['object_centered'])
-    
+        image_ps=image_name.copy()
+        if out_image=='':
+            time_id=time.time()
+            out_image=str(time_id)+"_mediatrix_plot.png"
+ 
     #image_ps,hdr=imcp.segstamp(segimg=image_seg, objID=_ids[i], objimg=image_obj, hdr=hdr, increase=2, relative_increase=True, connected=False, obj_centered=True)
 
     mediatrix_data=mediatrix_decomposition_on_matrix_c(image_ps, method=opt['method'],alpha=opt['alpha'],near_distance=opt['near_distance'],max_level=opt['max_level']) 
@@ -746,10 +755,26 @@ def plot_mediatrixapl(image_name,_id='', keydots=False,circle=True, save=True, o
         img,hdr=getdata(image_name, header = True ) 
     else:
         img=image_ps
-
+    #print "depois"
+    #for j in range(0,len(img[0])):
+    #    print "\n"
+    #    for i in range(0,len(img[1])):
+    #        print img[j][i]
+    IDtime=str(time.time())
+    #pyfits.writeto(ID+".test.fits",img.astype(float),header=None)
     pixels=where(image_ps>0) 
     FitsPlot = aplpy.FITSFigure(img)
-    FitsPlot.show_grayscale(pmin=opt['pmin'], pmax=opt['pmax'],invert=opt['invert'])
+    smallest = numpy.amin(img)
+    biggest = numpy.amax(img)
+    #if opt['vmax']=='Max':
+    opt['vmax']=biggest
+    #for i in range(0,100):
+    #    print opt['invert']
+    #    FitsPlot.show_grayscale(pmin=i*0.01, pmax=1,invert=False)
+    #    FitsPlot.save("mediatrix_aplpy_withcuts/"+ID+"scaleMin"+str(i*0.01)+"Max"+str(1)+".png")
+    FitsPlot.show_grayscale(vmin=opt['vmin'], vmax=opt['vmax'],invert=opt['invert'])
+    #print biggest
+    FitsPlot.save("mediatrix_aplpy_withcuts/"+IDtime+"scaleMin"+str(0)+"Max"+str(biggest)+".png")
     Length=0
     
       
