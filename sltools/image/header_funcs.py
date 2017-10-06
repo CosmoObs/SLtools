@@ -134,19 +134,19 @@ def update_coordinates(hdr, x_ini, y_ini):
     # Header update..
     #
     if (LTV1 != None) :
-        hdr.update('LTV1',LTV1)
-        hdr.update('CRPIX1',CRPIX1)
+        hdr.update(LTV1 = LTV1)
+        hdr.update(CRPIX1 = CRPIX1)
     if (LTV2 != None) :
-        hdr.update('LTV2',LTV2)
-        hdr.update('CRPIX2',CRPIX2)
-    hdr.update('WCSDIM',WCSDIM)
-    hdr.update('CDELT1',CDELT1)
-    hdr.update('CDELT2',CDELT2)
-    hdr.update('LTM1_1',LTM1_1)
-    hdr.update('LTM2_2',LTM2_2)
-    hdr.update('WAT0_001',WAT0_001)
-    hdr.update('WAT1_001',WAT1_001)
-    hdr.update('WAT2_001',WAT2_001)
+        hdr.update(LTV2 = LTV2)
+        hdr.update(CRPIX2 = CRPIX2)
+    hdr.update(WCSDIM, WCSDIM)
+    hdr.update(CDELT1 = CDELT1)
+    hdr.update(CDELT2 = CDELT2)
+    hdr.update(LTM1_1 = LTM1_1)
+    hdr.update(LTM2_2 = LTM2_2)
+    hdr.update(WAT0_001 = WAT0_001)
+    hdr.update(WAT1_001 = WAT1_001)
+    hdr.update(WAT2_001 = WAT2_001)
 
 
     return (hdr);
