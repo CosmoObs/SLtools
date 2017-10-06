@@ -175,17 +175,17 @@ def cutout( img, hdr=None, coord_unit='pixel', xo=0, yo=0, size_unit='pixel', x_
     #
     if ( hdr ):
         hdr = hf.update_coordinates(hdr.copy(), x_ini, y_ini);
-        hdr.update('NAXIS1',x_cut_size);
-        hdr.update('NAXIS2',y_cut_size);
+        hdr.update(NAXIS1 = x_cut_size);
+        hdr.update(NAXIS2 = y_cut_size);
 
     # Initialize new image, and take all index list..
     #
-    imagemnova = np.zeros( (y_cut_size,x_cut_size), dtype=imagem.dtype );
+    imagemnova = np.zeros( (int(y_cut_size),int(x_cut_size)), dtype=imagem.dtype );
     ind_z = np.where(imagemnova == 0);
 
     # Copy requested image slice..
     #
-    imagemnova[ y_ini_new:y_fin_new, x_ini_new:x_fin_new ] = imagem[ y_ini_old:y_fin_old, x_ini_old:x_fin_old ];
+    imagemnova[ y_ini_new:int(y_fin_new), x_ini_new:int(x_fin_new) ] = imagem[ y_ini_old:int(y_fin_old), x_ini_old:int(x_fin_old) ];
 
     # If 'mask', maintain just "central" object on it..
     #
@@ -390,117 +390,3 @@ def separate_disconected(ind, high_area=False):
         ind_new[1].remove(-1000)
         ind_n=[np.array(ind_new[0]),np.array(ind_new[1])]
         return ind_n          
-# ---
-
-# \cond
-# ============================================================================
-if __name__ == "__main__" :
-
-    from optparse import OptionParser;
-    from sltools.io import log;
-    
-    logging = log.init(debug=True,verbose=False);
-    
-    usage="\n  %prog image.fits x y  [options]"
-    parser = OptionParser(usage=usage);
-
-    parser.add_option('-j', action='store_true',
-                dest='is_coord_deg', default=False,
-                help="If given, 'x,y' arguments (i.e, central coordinates) are in degrees. If not given (default), coordinates are expected to be in pixels");
-    parser.add_option('-J', action='store_true',
-                dest='is_shape_deg', default=False,
-                help="If given, cutout 'shape' (see option '-s') are in degrees. If not given (default), cutout shape is expected to be in pixels.");
-    parser.add_option('-s',
-                dest='dim', default='250,250',
-                help="Output stamps shape. Default is 250,250");
-    parser.add_option('--increase',
-                dest='incr', default=0,
-                help="Amount of border (enlarge) of object poststamp. It is an additive or multiplicative factor. See 'relative_increase' flag");
-    parser.add_option('--relative_increase', action='store_true',
-                dest='rel_incr', default=False,
-                help="Turn on the multiplicative factor for increase image, otherwise, 'increase' will be treated as an absolute value.");
-    parser.add_option('-o',
-                dest='sufx', default='pstamp',
-                help="Output images (stamps) filename suffix [pstamp_]");
-    parser.add_option('--no-header', action='store_false',
-                dest='use_header', default=True,
-                help="Do not use input image header.");
-    parser.add_option('--outdir',
-                dest='dir_name', default='out_imcp',
-                help="Directory name to store output images(poststamps)");
-
-    parser.add_option('--segimg',
-                dest='segimg', default=None,
-                help="Segmented image (e.g, SE's SEGMENTATION output)");
-    parser.add_option('--objIDs',
-                dest='IDs',default='',
-                help="Comma-separated list of object IDs found on 'segimg' to extract");
-    parser.add_option('--hdu-n', default = 0, help = "HDU position")
-    
-    (opts,args) = parser.parse_args();
-
-    segimg = opts.segimg;
-    IDs = opts.IDs;
-    incr = opts.incr;
-    rel_incr = opts.rel_incr;
-    use_header = opts.use_header;
-    dir_name = opts.dir_name;
-
-    if ( len(args) < 3 ):
-        parser.print_help();
-        sys.exit(0);
-
-    infits = args[0];
-    x = args[1];
-    y = args[2];
-    coord_deg = opts.is_coord_deg;
-    shape_deg = opts.is_shape_deg;
-    dx,dy = string.split(opts.dim,sep=',');
-    outfits = opts.sufx;
-
-    coord = 'degrees' if coord_deg else 'pixel';
-    size = 'degrees' if shape_deg else 'pixel';        
-
-    hdulist = pyfits.open(infits,memmap=True);
-
-    if (use_header):
-#        image, hdr = pyfits.getdata(infits,header=True);
-        image = hdulist[int(opts.hdu_n)].data;
-        hdr = hdulist[int(opts.hdu_n)].header;
-    else:
-#        image = pyfits.getdata(infits, header=False);
-        image = hdulist[int(opts.hdu_n)].data;
-        hdr = None;
-
-    try:
-        os.mkdir( dir_name );
-    except OSError:
-        pass;
-
-    owd = os.getcwd()+"/";
-    os.chdir( dir_name );
-
-    if (segimg):
-        IDs = regexp.str2lst(IDs);
-        imglst, hdrlst = segstamp(image, segimg, hdr=hdr, increase=incr, relative_increase=rel_incr, objIDs=objIDs)
-    else:
-        imgcut, hdr = cutout( image, hdr=hdr, coord_unit=coord, xo=x, yo=y, size_unit=size, x_size=dx, y_size=dy );
-        IDs = ['0'];
-        imglst = [imgcut];
-        hdrlst = [hdr];
-
-    for i in range(len(IDs)):
-        outfits = outfits+"%s.fits" % (IDs[i]);
-        os.system('[ -f %s ] && rm -f %s' % (outfits,outfits));
-        pyfits.writeto( outfits, imglst[i], hdrlst[i] );
-
-    print >> sys.stdout, "Done.";
-    os.chdir( owd );
-    sys.exit(0);
-
-
-
-
-
-# ------------------
-# \endcond
