@@ -20,242 +20,221 @@ import pyfits;
 import numpy as np;
 import sltools;
 
-
-# PRESET CONFIG FOR SEXTRACTOR/INSTRUMENTS #
-# ------------------------------------------
-def se_presets(instrument):
-
-    if instrument == 'DC4':
-        _dic = {
-            'FILTER_NAME' : 'default.conv',
-            'STARNNW_NAME' : 'default.nnw',
-            'DETECT_TYPE' : 'CCD',
-            'DETECT_IMAGE' : 'SAME',
-            'FLAG_IMAGE' : 'NONE',
-            'DETECT_MINAREA' : '8',
-            'THRESH_TYPE' : 'RELATIVE',
-            'DETECT_THRESH' : '2.5',
-            'ANALYSIS_THRESH' : '2.5',
-            'FILTER' : 'Y',
-            'DEBLEND_NTHRESH' : '20',
-            'DEBLEND_MINCONT' : '0.0005',
-            'CLEAN' : 'Y',
-            'CLEAN_PARAM' : '1.0',
-            'BLANK' : 'Y',
-            'PHOT_APERTURES' : '5',
-            'PHOT_AUTOPARAMS' : '2.5,3.5',
-            'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : '31.0414',
-            'MAG_GAMMA' : '4.0',
-            'GAIN' : '0.0',
-            'PIXEL_SCALE' : '0.27',
-            'SEEING_FWHM' : '1.2',
-            'BACK_SIZE' : '64',
-            'BACK_FILTERSIZE' : '3',
-            'BACKPHOTO_TYPE' : 'GLOBAL',
-            'BACKPHOTO_THICK' : '24',
-            'MEMORY_OBJSTACK' : '2000',
-            'MEMORY_PIXSTACK' : '100000',
-            'MEMORY_BUFSIZE' : '512',
-            'SCAN_ISOAPRATIO' : '0.6',
-            'VERBOSE_TYPE' : 'NORMAL'
-            };
-
-    elif instrument == 'DC5':
-       _dic = {
-            'FILTER_NAME' : 'default.conv',
-            'STARNNW_NAME' : 'default.nnw',
-            'DETECT_TYPE' : 'CCD',
-            'DETECT_IMAGE' : 'SAME',
-            'FLAG_IMAGE' : 'NONE',
-            'DETECT_MINAREA' : '10',
-            'THRESH_TYPE' : 'RELATIVE',
-            'DETECT_THRESH' : '2.5',
-            'ANALYSIS_THRESH' : '2.5',
-            'FILTER' : 'Y',
-            'DEBLEND_NTHRESH' : '20',
-            'DEBLEND_MINCONT' : '0.0005',
-            'CLEAN' : 'Y',
-            'CLEAN_PARAM' : '1.0',
-            'BLANK' : 'Y',
-            'PHOT_APERTURES' : '5',
-            'PHOT_AUTOPARAMS' : '2.5,3.5',
-            'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : '31.0414',
-            'MAG_GAMMA' : '4.0',
-            'GAIN' : '0.0',
-            'PIXEL_SCALE' : '0.27',
-            'SEEING_FWHM' : '0.8',
-            'BACK_SIZE' : '64',
-            'BACK_FILTERSIZE' : '3',
-            'BACKPHOTO_TYPE' : 'GLOBAL',
-            'BACKPHOTO_THICK' : '24',
-            'MEMORY_OBJSTACK' : '2000',
-            'MEMORY_PIXSTACK' : '100000',
-            'MEMORY_BUFSIZE' : '512',
-            'SCAN_ISOAPRATIO' : '0.6',
-            'VERBOSE_TYPE' : 'NORMAL'
-            };
-
-    elif instrument == 'HST':
-       _dic = {
-            'FILTER_NAME' : 'default.conv',
-            'STARNNW_NAME' : 'default.nnw',
-            'DETECT_TYPE' : 'CCD',
-            'DETECT_IMAGE' : 'SAME',
-            'FLAG_IMAGE' : 'NONE',
-            'DETECT_MINAREA' : '10',
-            'THRESH_TYPE' : 'RELATIVE',
-            'DETECT_THRESH' : '2.7',
-            'ANALYSIS_THRESH' : '2.7',
-            'FILTER' : 'Y',
-            'DEBLEND_NTHRESH' : '20',
-            'DEBLEND_MINCONT' : '0.0005',
-            'CLEAN' : 'Y',
-            'CLEAN_PARAM' : '1.0',
-            'BLANK' : 'Y',
-            'PHOT_APERTURES' : '5',
-            'PHOT_AUTOPARAMS' : '2.5,3.5',
-            'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : '21.59',
-            'MAG_GAMMA' : '4.0',
-            'GAIN' : '7.0',
-            'PIXEL_SCALE' : '0.1',
-            'SEEING_FWHM' : '0.22',
-            'BACK_SIZE' : '64',
-            'BACK_FILTERSIZE' : '3',
-            'BACKPHOTO_TYPE' : 'GLOBAL',
-            'BACKPHOTO_THICK' : '24',
-            'MEMORY_OBJSTACK' : '3000',
-            'MEMORY_PIXSTACK' : '300000',
-            'MEMORY_BUFSIZE' : '1024',
-            'SCAN_ISOAPRATIO' : '0.6',
-            'VERBOSE_TYPE' : 'NORMAL'
-            };
+instrument_presets = {
+    'DC4': {
+        'FILTER_NAME' : 'default.conv',
+        'STARNNW_NAME' : 'default.nnw',
+        'DETECT_TYPE' : 'CCD',
+        'DETECT_IMAGE' : 'SAME',
+        'FLAG_IMAGE' : 'NONE',
+        'DETECT_MINAREA' : '8',
+        'THRESH_TYPE' : 'RELATIVE',
+        'DETECT_THRESH' : '2.5',
+        'ANALYSIS_THRESH' : '2.5',
+        'FILTER' : 'Y',
+        'DEBLEND_NTHRESH' : '20',
+        'DEBLEND_MINCONT' : '0.0005',
+        'CLEAN' : 'Y',
+        'CLEAN_PARAM' : '1.0',
+        'BLANK' : 'Y',
+        'PHOT_APERTURES' : '5',
+        'PHOT_AUTOPARAMS' : '2.5,3.5',
+        'SATUR_LEVEL' : '50000.0',
+        'MAG_ZEROPOINT' : '31.0414',
+        'MAG_GAMMA' : '4.0',
+        'GAIN' : '0.0',
+        'PIXEL_SCALE' : '0.27',
+        'SEEING_FWHM' : '1.2',
+        'BACK_SIZE' : '64',
+        'BACK_FILTERSIZE' : '3',
+        'BACKPHOTO_TYPE' : 'GLOBAL',
+        'BACKPHOTO_THICK' : '24',
+        'MEMORY_OBJSTACK' : '2000',
+        'MEMORY_PIXSTACK' : '100000',
+        'MEMORY_BUFSIZE' : '512',
+        'SCAN_ISOAPRATIO' : '0.6',
+        'VERBOSE_TYPE' : 'NORMAL'
+    },
+    'DC5': {
+        'FILTER_NAME' : 'default.conv',
+        'STARNNW_NAME' : 'default.nnw',
+        'DETECT_TYPE' : 'CCD',
+        'DETECT_IMAGE' : 'SAME',
+        'FLAG_IMAGE' : 'NONE',
+        'DETECT_MINAREA' : '10',
+        'THRESH_TYPE' : 'RELATIVE',
+        'DETECT_THRESH' : '2.5',
+        'ANALYSIS_THRESH' : '2.5',
+        'FILTER' : 'Y',
+        'DEBLEND_NTHRESH' : '20',
+        'DEBLEND_MINCONT' : '0.0005',
+        'CLEAN' : 'Y',
+        'CLEAN_PARAM' : '1.0',
+        'BLANK' : 'Y',
+        'PHOT_APERTURES' : '5',
+        'PHOT_AUTOPARAMS' : '2.5,3.5',
+        'SATUR_LEVEL' : '50000.0',
+        'MAG_ZEROPOINT' : '31.0414',
+        'MAG_GAMMA' : '4.0',
+        'GAIN' : '0.0',
+        'PIXEL_SCALE' : '0.27',
+        'SEEING_FWHM' : '0.8',
+        'BACK_SIZE' : '64',
+        'BACK_FILTERSIZE' : '3',
+        'BACKPHOTO_TYPE' : 'GLOBAL',
+        'BACKPHOTO_THICK' : '24',
+        'MEMORY_OBJSTACK' : '2000',
+        'MEMORY_PIXSTACK' : '100000',
+        'MEMORY_BUFSIZE' : '512',
+        'SCAN_ISOAPRATIO' : '0.6',
+        'VERBOSE_TYPE' : 'NORMAL'
+    },
+    'HST': {
+        'FILTER_NAME' : 'default.conv',
+        'STARNNW_NAME' : 'default.nnw',
+        'DETECT_TYPE' : 'CCD',
+        'DETECT_IMAGE' : 'SAME',
+        'FLAG_IMAGE' : 'NONE',
+        'DETECT_MINAREA' : '10',
+        'THRESH_TYPE' : 'RELATIVE',
+        'DETECT_THRESH' : '2.7',
+        'ANALYSIS_THRESH' : '2.7',
+        'FILTER' : 'Y',
+        'DEBLEND_NTHRESH' : '20',
+        'DEBLEND_MINCONT' : '0.0005',
+        'CLEAN' : 'Y',
+        'CLEAN_PARAM' : '1.0',
+        'BLANK' : 'Y',
+        'PHOT_APERTURES' : '5',
+        'PHOT_AUTOPARAMS' : '2.5,3.5',
+        'SATUR_LEVEL' : '50000.0',
+        'MAG_ZEROPOINT' : '21.59',
+        'MAG_GAMMA' : '4.0',
+        'GAIN' : '7.0',
+        'PIXEL_SCALE' : '0.1',
+        'SEEING_FWHM' : '0.22',
+        'BACK_SIZE' : '64',
+        'BACK_FILTERSIZE' : '3',
+        'BACKPHOTO_TYPE' : 'GLOBAL',
+        'BACKPHOTO_THICK' : '24',
+        'MEMORY_OBJSTACK' : '3000',
+        'MEMORY_PIXSTACK' : '300000',
+        'MEMORY_BUFSIZE' : '1024',
+        'SCAN_ISOAPRATIO' : '0.6',
+        'VERBOSE_TYPE' : 'NORMAL'
+    },
+    'HST_Arcs': {
+        'FILTER_NAME' : 'default.conv',
+        'STARNNW_NAME' : 'default.nnw',
+        'DETECT_TYPE' : 'CCD',
+        'DETECT_IMAGE' : 'SAME',
+        'FLAG_IMAGE' : 'NONE',
+        'DETECT_MINAREA' : '20',
+        'THRESH_TYPE' : 'RELATIVE',
+        'DETECT_THRESH' : '2.7',
+        'ANALYSIS_THRESH' : '2.7',
+        'FILTER' : 'Y',
+        'DEBLEND_NTHRESH' : '10',
+        'DEBLEND_MINCONT' : '0.05',
+        'CLEAN' : 'Y',
+        'CLEAN_PARAM' : '1.0',
+        'BLANK' : 'Y',
+        'PHOT_APERTURES' : '5',
+        'PHOT_AUTOPARAMS' : '2.5,3.5',
+        'SATUR_LEVEL' : '50000.0',
+        'MAG_ZEROPOINT' : '21.59',
+        'MAG_GAMMA' : '4.0',
+        'GAIN' : '7.0',
+        'PIXEL_SCALE' : '0.1',
+        'SEEING_FWHM' : '0.22',
+        'BACK_SIZE' : '64',
+        'BACK_FILTERSIZE' : '3',
+        'BACKPHOTO_TYPE' : 'GLOBAL',
+        'BACKPHOTO_THICK' : '24',
+        'MEMORY_OBJSTACK' : '3000',
+        'MEMORY_PIXSTACK' : '300000',
+        'MEMORY_BUFSIZE' : '1024',
+        'SCAN_ISOAPRATIO' : '0.6',
+        'VERBOSE_TYPE' : 'NORMAL'
+    },
+    'CFHT': {
+        'DETECT_TYPE' : 'CCD',
+        'DETECT_MINAREA' : '3',
+        'DETECT_THRESH' :  '3',
+        'ANALYSIS_THRESH' : '3',
+        'FILTER' : 'Y',
+        'FILTER_NAME' : 'default.conv',
+        'DEBLEND_NTHRESH' : '32',
+        'DEBLEND_MINCONT' : '0.005',
+        'CLEAN' : 'Y',
+        'CLEAN_PARAM' : '1.0',
+        'MASK_TYPE' : 'CORRECT',
+        'PHOT_APERTURES' : '10',
+        'PHOT_AUTOPARAMS' : '2.5,3.5',
+        'SATUR_LEVEL' : '50000.0',
+        'MAG_GAMMA' : '4.0',
+        'GAIN' : '0.0',
+        'PIXEL_SCALE' : '1.0',
+        'SEEING_FWHM' : '1.2',
+        'STARNNW_NAME' : 'default.nnw',
+        'BACK_SIZE' : '64',
+        'BACK_FILTERSIZE' : '3',
+        'BACKPHOTO_TYPE' : 'GLOBAL',
+        'CHECKIMAGE_TYPE' : 'NONE',
+        'MEMORY_OBJSTACK' : '3000',
+        'MEMORY_PIXSTACK' : '300000',
+        'MEMORY_BUFSIZE' : '1024',
+        'VERBOSE_TYPE' : 'NORMAL'
+    },
+    'CS82': {
+        'SEEING_FWHM' : '0.22',
+        'THRESH_TYPE' : 'RELATIVE',
+        'DETECT_THRESH' : '2.5',
+        'FILTER' : 'N',
+        'DEBLEND_MINCONT' : '0.5',
+        'DEBLEND_NTHRESH' : '32',
+        'DETECT_MINAREA'  : '10',
+        'ANALYSIS_THRESH' : '2.5',
+        'PIXEL_SCALE': '0.187',
+        'MAG_ZEROPOINT' : '21.59'
+    },
+    'sims': {
+        'DETECT_TYPE' : 'CCD',
+        'DETECT_MINAREA' : '4',
+        'THRESH_TYPE' : 'ABSOLUTE',
+        'DETECT_THRESH' :  '0.000004',
+        'ANALYSIS_THRESH' : '1.0',
+        'FILTER' : 'Y',
+        'FILTER_NAME' : 'default.conv',
+        'DEBLEND_NTHRESH' : '32',
+        'DEBLEND_MINCONT' : '0.15',
+        'CLEAN' : 'Y',
+        'CLEAN_PARAM' : '1.0',
+        'MASK_TYPE' : 'CORRECT',
+        'PHOT_APERTURES' : '5',
+        'PHOT_AUTOPARAMS' : '2.5,3.5',
+        'SATUR_LEVEL' : '50000.0',
+        'MAG_GAMMA' : '4.0',
+        'GAIN' : '0.0',
+        'PIXEL_SCALE' : '1.0',
+        'SEEING_FWHM' : '0.3',
+        'BACK_TYPE' : 'MANUAL',
+        'BACK_VALUE' : '0.0,0.0',
+        'STARNNW_NAME' : 'default.nnw',
+        'BACK_SIZE' : '64',
+        'BACK_FILTERSIZE' : '3',
+        'BACKPHOTO_TYPE' : 'GLOBAL',
+        'CHECKIMAGE_TYPE' : 'NONE',
+        'MEMORY_OBJSTACK' : '3000',
+        'MEMORY_PIXSTACK' : '1000000',
+        'MEMORY_BUFSIZE' : '1024',
+        'VERBOSE_TYPE' : 'NORMAL'
+    }
+}
     
-    elif instrument == 'HST_Arcs':
-       _dic = {
-            'FILTER_NAME' : 'default.conv',
-            'STARNNW_NAME' : 'default.nnw',
-            'DETECT_TYPE' : 'CCD',
-            'DETECT_IMAGE' : 'SAME',
-            'FLAG_IMAGE' : 'NONE',
-            'DETECT_MINAREA' : '20',
-            'THRESH_TYPE' : 'RELATIVE',
-            'DETECT_THRESH' : '2.7',
-            'ANALYSIS_THRESH' : '2.7',
-            'FILTER' : 'Y',
-            'DEBLEND_NTHRESH' : '10',
-            'DEBLEND_MINCONT' : '0.05',
-            'CLEAN' : 'Y',
-            'CLEAN_PARAM' : '1.0',
-            'BLANK' : 'Y',
-            'PHOT_APERTURES' : '5',
-            'PHOT_AUTOPARAMS' : '2.5,3.5',
-            'SATUR_LEVEL' : '50000.0',
-            'MAG_ZEROPOINT' : '21.59',
-            'MAG_GAMMA' : '4.0',
-            'GAIN' : '7.0',
-            'PIXEL_SCALE' : '0.1',
-            'SEEING_FWHM' : '0.22',
-            'BACK_SIZE' : '64',
-            'BACK_FILTERSIZE' : '3',
-            'BACKPHOTO_TYPE' : 'GLOBAL',
-            'BACKPHOTO_THICK' : '24',
-            'MEMORY_OBJSTACK' : '3000',
-            'MEMORY_PIXSTACK' : '300000',
-            'MEMORY_BUFSIZE' : '1024',
-            'SCAN_ISOAPRATIO' : '0.6',
-            'VERBOSE_TYPE' : 'NORMAL'
-            };
+def presets(instrument):
+    return instrument in instrument_presets and instrument_presets[instrument] or {}
 
-    elif instrument == 'CFHT':
-       _dic = {
-            'DETECT_TYPE' : 'CCD',
-            'DETECT_MINAREA' : '3',
-            'DETECT_THRESH' :  '3',
-            'ANALYSIS_THRESH' : '3',
-            'FILTER' : 'Y',
-            'FILTER_NAME' : 'default.conv',
-            'DEBLEND_NTHRESH' : '32',
-            'DEBLEND_MINCONT' : '0.005',
-            'CLEAN' : 'Y',
-            'CLEAN_PARAM' : '1.0',
-            'MASK_TYPE' : 'CORRECT',
-            'PHOT_APERTURES' : '10',
-            'PHOT_AUTOPARAMS' : '2.5,3.5',
-            'SATUR_LEVEL' : '50000.0',
-            'MAG_GAMMA' : '4.0',
-            'GAIN' : '0.0',
-            'PIXEL_SCALE' : '1.0',
-            'SEEING_FWHM' : '1.2',
-            'STARNNW_NAME' : 'default.nnw',
-            'BACK_SIZE' : '64',
-            'BACK_FILTERSIZE' : '3',
-            'BACKPHOTO_TYPE' : 'GLOBAL',
-            'CHECKIMAGE_TYPE' : 'NONE',
-            'MEMORY_OBJSTACK' : '3000',
-            'MEMORY_PIXSTACK' : '300000',
-            'MEMORY_BUFSIZE' : '1024',
-            'VERBOSE_TYPE' : 'NORMAL'
-            };
-
-    elif instrument == 'CS82':
-       _dic = {
-
-            'SEEING_FWHM' : '0.22',
-            'THRESH_TYPE' : 'RELATIVE',
-            'DETECT_THRESH' : '2.5',
-            'FILTER' : 'N',
-            'DEBLEND_MINCONT' : '0.5',
-            'DEBLEND_NTHRESH' : '32',
-            'DETECT_MINAREA'  : '10',
-            'ANALYSIS_THRESH' : '2.5',
-            'PIXEL_SCALE': '0.187',
-            'MAG_ZEROPOINT' : '21.59'
-            };
-
-    elif instrument == 'sims':
-       _dic = {
-            'DETECT_TYPE' : 'CCD',
-            'DETECT_MINAREA' : '4',
-            'THRESH_TYPE' : 'ABSOLUTE',
-            'DETECT_THRESH' :  '0.000004',
-            'ANALYSIS_THRESH' : '1.0',
-            'FILTER' : 'Y',
-            'FILTER_NAME' : 'default.conv',
-            'DEBLEND_NTHRESH' : '32',
-            'DEBLEND_MINCONT' : '0.15',
-            'CLEAN' : 'Y',
-            'CLEAN_PARAM' : '1.0',
-            'MASK_TYPE' : 'CORRECT',
-            'PHOT_APERTURES' : '5',
-            'PHOT_AUTOPARAMS' : '2.5,3.5',
-            'SATUR_LEVEL' : '50000.0',
-            'MAG_GAMMA' : '4.0',
-            'GAIN' : '0.0',
-            'PIXEL_SCALE' : '1.0',
-            'SEEING_FWHM' : '0.3',
-            'BACK_TYPE' : 'MANUAL',
-            'BACK_VALUE' : '0.0,0.0',
-            'STARNNW_NAME' : 'default.nnw',
-            'BACK_SIZE' : '64',
-            'BACK_FILTERSIZE' : '3',
-            'BACKPHOTO_TYPE' : 'GLOBAL',
-            'CHECKIMAGE_TYPE' : 'NONE',
-            'MEMORY_OBJSTACK' : '3000',
-            'MEMORY_PIXSTACK' : '1000000',
-            'MEMORY_BUFSIZE' : '1024',
-            'VERBOSE_TYPE' : 'NORMAL'
-            };
-
-    else:
-       _dic = {};
-
-
-    return (_dic);
-
-# ---
 
 #=======================================================================
 def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
@@ -351,7 +330,7 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
     # ==========================================================================
 
 
-    cargs = se_presets(preset);
+    cargs = presets(preset);
     cargs.update( args );
 
     # Build up sextractor command line..
@@ -366,7 +345,10 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
     if quiet:
         _dev = '&>/dev/null';
 
-    status = os.system( 'sex %s %s %s' % (fits_image,cmd_line,_dev));
+    ex = 'sextractor %s %s %s' % (fits_image,cmd_line,_dev)
+    print 'command-line: %s' % ex
+
+    status = os.system(ex);
     if ( status != 0 ):
         logging.error("Error: Sextractor raised and error code '%s' during the run.",status);
         return (False);
@@ -446,10 +428,6 @@ def run_segobj(filename, params=[], args={}, preset='', temp_dir='', quiet=False
 
     return ({'OBJECTS':objimgname, 'SEGMENTATION':segimgname, 'CATALOG':catfilename});
 
-
-
-
-
 def flags_distribuition(hdu_cat):
    
     """ 
@@ -516,82 +494,3 @@ def read_config(SE_configfile):
         config[_line[0]] = string.join(_line[1:],sep="");
     
     return config;
-
-# \cond
-#==========================
-if __name__ == "__main__" :
-
-    from sltools.io import config_parser as CP;
-
-    from optparse import OptionParser;
-
-    usage="\n %prog [options] <image.fits>"
-    parser = OptionParser(usage=usage);
-
-    parser.add_option('-p',
-                    dest='params', default=None,
-                    help="Sextractor params file (e,g. default.param)");
-    parser.add_option('-c',
-                    dest='config', default=None,
-                    help="Sextractor config file (e.g, default.sex)");
-    parser.add_option('--segment', action='store_true',
-                    dest='run_seg', default=False,
-                    help="Run sextractor in SEGMENTATION mode");
-    parser.add_option('--preset',
-                    dest='instrument', default='',
-                    help="Use preset SE's configuration for different instruments: DC4, DC5, HST, CFHT");
-    parser.add_option('--temp_dir',
-                    dest='temp_dir', default='',
-                    help="Temporary directory for run-time files.");
-    parser.add_option('-q','--quiet', action='store_true',
-                    dest='quiet', default=False,
-                    help="Make Sextractor run quiet.");
-        
-    (opts,args) = parser.parse_args();
-
-    run_seg = opts.run_seg;
-    params_file = opts.params;
-    config_file = opts.config;
-    preset = opts.instrument;
-    quiet = opts.quiet;
-    temp_dir = opts.temp_dir;
-
-    if ( len(args) != 1 ):
-        parser.print_usage();
-        print "Try '--help' for more info.";
-        sys.exit(0)
-        
-    infits = args[0];
-
-    if (config_file == None):
-        config = {};
-    else:
-        config = read_config(config_file);
-
-    # SE's param file:
-    #
-    if (params_file):
-        params = [ line.rstrip("\n")   for line in open(params_file).readlines() ];
-    else:
-        params = [];
-
-    # Run SE:
-    #
-    if ( run_seg ):
-        _out = run_segobj(infits, params=params, args=config, preset=preset, temp_dir=temp_dir, quiet=quiet);
-        if not (_out):
-            sys.exit(1);
-        else:
-            print "SExtraction output files:";
-            print "CATALOG: %s" % (_out['CATALOG']);
-            print "OBJECTS: %s" % (_out['OBJECTS']);
-            print "SEGMENT: %s" % (_out['SEGMENTATION']);
-    else:
-        _out = run(infits, params=params, args=config, preset=preset, temp_dir=temp_dir, quiet=quiet);
-        if not (_out):
-            sys.exit(1);
-
-    sys.exit(0);
-
-# ------------------
-# \endcond
