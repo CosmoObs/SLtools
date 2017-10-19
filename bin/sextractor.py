@@ -64,6 +64,7 @@ if opts.run_seg:
     if not out:
         sys.exit(1)
 
+    print 'Output files'
     print 'CATALOG: %s' % (out['CATALOG'])
     print 'OBJECTS: %s' % (out['OBJECTS'])
     print 'SEGMENT: %s' % (out['SEGMENTATION'])
