@@ -10,15 +10,15 @@
 # Executable package : Yes
 
 
-import sys;
+import sys
 
-import logging;
-import os;
-import re;
-import string;
-import pyfits;
-import numpy as np;
-import sltools;
+import logging
+import os
+import re
+import string
+import pyfits
+import numpy as np
+import sltools
 
 instrument_presets = {
     'DC4': {
@@ -299,61 +299,55 @@ def run(filename, params=[], args={}, preset='', temp_dir='', quiet=False):
 
     """
     
-    fits_image = filename;
+    fits_image = filename
     if temp_dir != '':
-        temp_dir = str(temp_dir)+'/';
+        temp_dir = str(temp_dir)+'/'
     
     # Object features to output..
     #
-    if ( params != [] ):
-        param_file = temp_dir+'run_sex.param';
-        args.update( {'parameters_name' : param_file} );
-        fparam = open(param_file,'w');
+    if params != []:
+        param_file = temp_dir+'run_sex.param'
+        args.update( {'parameters_name' : param_file} )
+        fparam = open(param_file,'w')
         for _param in params:
-            fparam.write( "%s\n" % (_param) );
-        fparam.close();
+            fparam.write( "%s\n" % (_param) )
+        fparam.close()
 
 
     # ==========================================================================
     # WRITE DOWN "default.conv" for sextractor if necessary..
     #
-    if (not args.has_key('filter_name')  or  args['filter_name']=='default.conv'):
-        conv_file = temp_dir+'default.conv';
-        args.update( {'filter_name' : conv_file} );
-        fp = open(conv_file,'w');
-        fp.write("CONV NORM\n");
-        fp.write("# 3x3 ``all-ground'' convolution mask with FWHM = 2 pixels.\n");
-        fp.write("1 2 1\n");
-        fp.write("2 4 2\n");
-        fp.write("1 2 1\n");
-        fp.close();
+    if not args.has_key('filter_name') or args['filter_name'] == 'default.conv':
+        conv_file = temp_dir+'default.conv'
+        args.update( {'filter_name' : conv_file} )
+        fp = open(conv_file,'w')
+        fp.write("CONV NORM\n")
+        fp.write("# 3x3 ``all-ground'' convolution mask with FWHM = 2 pixels.\n")
+        fp.write("1 2 1\n")
+        fp.write("2 4 2\n")
+        fp.write("1 2 1\n")
+        fp.close()
     # ==========================================================================
 
 
-    cargs = presets(preset);
-    cargs.update( args );
+    cargs = presets(preset)
+    cargs.update( args )
 
-    # Build up sextractor command line..
-    #
-    cmd_line = '';
+    cmd_line = ''
     for key in cargs:
-        cmd_line = cmd_line + ' -' + string.upper(key) + ' ' + re.sub( "\s+","",str(cargs[key]));
+        cmd_line = cmd_line + ' -' + string.upper(key) + ' ' + re.sub( "\s+","",str(cargs[key]))
 
-    # Run sex..
-    #
-    _dev = '';
-    if quiet:
-        _dev = '&>/dev/null';
 
-    ex = 'sextractor %s %s %s' % (fits_image,cmd_line,_dev)
-    print 'command-line: %s' % ex
+    dev = quiet and '&>/dev/null' or ''
 
-    status = os.system(ex);
-    if ( status != 0 ):
-        logging.error("Error: Sextractor raised and error code '%s' during the run.",status);
-        return (False);
+    ex = 'sex %s %s %s' % (fits_image, cmd_line, dev)
 
-    return (True);
+    status = os.system(ex)
+    if status != 0:
+        logging.error("Error: Sextractor raised and error code '%s' during the run.",status)
+        return False
+
+    return True
 
 # -
 
@@ -400,33 +394,33 @@ def run_segobj(filename, params=[], args={}, preset='', temp_dir='', quiet=False
       
     """
 
-    fits_image = filename;
+    fits_image = filename
     
     # Now we set some Sextractor arguments for this script purposes..
     #
-    _rootname = string.split( string.replace( fits_image,".fits","" ), sep="/" )[-1];
-    objimgname = _rootname+'_obj.fits';
-    segimgname = _rootname+'_seg.fits';
-    catfilename = _rootname+'_cat.fit';
+    _rootname = string.split( string.replace( fits_image,".fits","" ), sep="/" )[-1]
+    objimgname = _rootname+'_obj.fits'
+    segimgname = _rootname+'_seg.fits'
+    catfilename = _rootname+'_cat.fit'
 
     # Update given parameters, for output; we need at least 'NUMBER'..
     #
     if not ('NUMBER' in params):
-        params.append('NUMBER');
+        params.append('NUMBER')
         
     # And update given arguments (via 'args.dic') with necessary parameters..
     #
     cargs={'checkimage_type' : 'OBJECTS,SEGMENTATION', 'checkimage_name' : objimgname+','+segimgname, 'catalog_type' : 'FITS_1.0', 'catalog_name' : catfilename}
-    cargs.update(args);
+    cargs.update(args)
 
     # Run sextractor module; output catalogues to "catalog" files..
     #
-    out = run(fits_image, params, cargs, preset, temp_dir, quiet);
+    out = run(fits_image, params, cargs, preset, temp_dir, quiet)
 
     if (out == False):
-        return (False);
+        return (False)
 
-    return ({'OBJECTS':objimgname, 'SEGMENTATION':segimgname, 'CATALOG':catfilename});
+    return ({'OBJECTS':objimgname, 'SEGMENTATION':segimgname, 'CATALOG':catfilename})
 
 def flags_distribuition(hdu_cat):
    
@@ -482,15 +476,15 @@ def flags_counter(hdu_cat,_id):
 
 def read_config(SE_configfile):
     """ Read SE config file (plain: 'key value' ascii) to a dictionary."""
-    rs = re.sub;
+    rs = re.sub
     
     def valid_line(w):
-        return ( not (bool(re.search("^$",w))  or  bool(re.search("^#",w))) );
-    lines = filter( valid_line, [ rs("#.*","",rs("\s+"," ",rs("^\s*","",w.rstrip("\n")))) for w in open(SE_configfile).readlines() ]);
+        return ( not (bool(re.search("^$",w))  or  bool(re.search("^#",w))) )
+    lines = filter( valid_line, [ rs("#.*","",rs("\s+"," ",rs("^\s*","",w.rstrip("\n")))) for w in open(SE_configfile).readlines() ])
     
-    config={};
+    config={}
     for each_line in lines:
-        _line = string.split(each_line,sep=" ");
-        config[_line[0]] = string.join(_line[1:],sep="");
+        _line = string.split(each_line,sep=" ")
+        config[_line[0]] = string.join(_line[1:],sep="")
     
-    return config;
+    return config
