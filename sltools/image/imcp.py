@@ -112,38 +112,37 @@ def _image_patches(image, hdr, x, y, x_size, y_size):
 
 def cutout(image, hdr = None, coord_unit = 'pixel', xc = 0, yc = 0,
     size_unit = 'pixel', x_size = 0, y_size = 0, mask = None):
-
     """
-    Do a snapshot from given fits image.
+    Produce a FITS image from a slice of another FITS image.
 
-    cutout( ndarray, ...) -> (ndarray, header)
+    cutout(ndarray, ...) -> (ndarray, header)
 
-    The function can deal with 'pixel' and 'degrees' cordinate units. As input, besides the image FITS 
-    filename (input_file), it receives a central position (xo,yo) and side lengths (x_size,y_size) for
-    output image position and dimensioning. Function returns two values: a numpy.array with resultant 
-    image pixel intensities and respective header object.
+    An image mask can be given in a numpy.where like structure to denote a
+    region of interest. The resulting image will have all pixels null except
+    the ones listed in the 'mask' parameter.
 
-    In addition, an image mask information can be given to use as interest region selection. 'mask' is
-    expected to be a numpy.where like structure (i.e, mask=numpy.where()). If given, returned image will
-    have all pixels null except the ones listed in 'mask' parameter.
+    If 'xc = yc = 0', the center of the new image slice is the central pixel of
+    the old one.
 
-    If 'xo=0' and 'yo=0', given image (input_file) central pixel will be chosen as (xo,yo).
-    If 'x_size=0' and 'y_size=0', half length of each side will be used for output dimensions.
+    If 'x_size = y_size = 0', the new image has half the width and height of
+    the old one.
 
 
     Input:
-     - img        numpy.ndarray : Image array (ndim=2,dtype=float)
-     - hdr        pyfits.header : Image (FITS) header
-     - coord_unit           str : Position (xo,yo) units ('pixel','degrees')
-     - xo                   int : Centroid (horizontal) position for cutting window
-     - yo                   int : Centroid (vertical) position for cutting window
-     - size_unit            str : Window sizes (x_size,y_size) units ('pixel','degrees')
-     - x_size               int : Horizontal cutting window size
-     - y_size               int : Vertical cutting window size
-     - mask   (ndarray,ndarray) : Tuple with index arrays (Output like numpy.where())
+     - image       numpy.ndarray : Image array (ndim = 2, dtype = float)
+     - hdr         pyfits.header : Image FITS header
+     - coord_unit            str : Position (xc, yc) units ('pixel', 'degrees')
+     - xc                    int : Centroid (horizontal) position for the image slice
+     - yc                    int : Centroid (vertical) position for the image slice
+     - size_unit             str : Slice sizes (x_size, y_size) units ('pixel', 'degrees')
+     - x_size                int : Horizontal slice size
+     - y_size                int : Vertical slice size
+     - mask   (ndarray, ndarray) : Tuple with index arrays (Output like numpy.where())
 
     Output:
-     - (ndarray, header) : Resultant image array and (updated) header instance
+     - (ndarray, header) : Image array of pixel intensities and (updated) headerx
+     or
+     - (False, False)    : On error
     
     ---
     """
@@ -162,7 +161,7 @@ def cutout(image, hdr = None, coord_unit = 'pixel', xc = 0, yc = 0,
 
     if x_size == image.shape[0] and y_size == image.shape[1]:
         logging.warning("Requested output sizes are the same as input image. "
-                        "Returning image and header unchanged.")
+						"Returning image and header unchanged.")
         return image, hdr
 
     xc, yc = _cutcenter(image, hdr, xc, yc, coord_unit)
