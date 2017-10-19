@@ -139,7 +139,7 @@ def update_coordinates(hdr, x_ini, y_ini):
     if (LTV2 != None) :
         hdr.update(LTV2 = LTV2)
         hdr.update(CRPIX2 = CRPIX2)
-    hdr.update(WCSDIM, WCSDIM)
+    hdr.update(WCSDIM = WCSDIM)
     hdr.update(CDELT1 = CDELT1)
     hdr.update(CDELT2 = CDELT2)
     hdr.update(LTM1_1 = LTM1_1)
