@@ -201,7 +201,9 @@ def cutout(image, hdr = None, coord_unit = 'pixel', xc = 0, yc = 0,
 
     return newimage, hdr
 
-def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase=False, connected=False, obj_centered=True):
+
+def segstamp(segimg, id, objimg = None, hdr = None, increase = 0,
+    relative_increase = False, connected = False, centered = True):
     """
     Identify objects on given images by their IDs and return object images
 
@@ -245,59 +247,50 @@ def segstamp(segimg, objID, objimg=None, hdr=None, increase=0, relative_increase
     ---
     """
 
+    mask = np.where(segimg == id)
+    ypos = mask[0]
+    xpos = mask[1]
 
-    _id = objID;
+    # FITS is 1-indexed
+    xmin = min(xpos) + 1
+    ymin = min(ypos) + 1
+    xmax = max(xpos) + 1
+    ymax = max(ypos) + 1
 
-    print _id
-    ind = segmentation_ids.create_IDmask(segimg, _id);
-    print len(ind), ind
+    xsize = xmax - xmin + 1
+    ysize = ymax - ymin + 1
 
-    y_min = min( ind[0] );
-    x_min = min( ind[1] );
+    if centered:
+        yc = ysize/2 + ymin
+        xc = xsize/2 + xmin
 
-    print x_min, y_min
-
-    y_idx = ind[0] - y_min;
-    x_idx = ind[1] - x_min;
-
-    y_size = max( y_idx ) + 1;
-    x_size = max( x_idx ) + 1;
-    
-    if obj_centered==False:
-        pixels = np.where(segimg >=0)
-        y_size=max(pixels[0])
-        x_size=max(pixels[1]) 
-       
-
-    if (connected == True ):		
-      ind=separate_disconected(ind, high_area=True)
- 
-
-    # Central pixel on original image:
-    if obj_centered==True:
-        yo = y_size/2 + y_min;
-        xo = x_size/2 + x_min;
+        if increase != 0:
+            if relative_increase:
+                xsize = xsize * increase
+                ysize = ysize * increase
+            else:
+                xsize = xsize + 2*increase
+                ysize = ysize + 2*increase
     else:
-        yo = y_size/2; 
-        xo = x_size/2; 
+        yc = ysize/2
+        xc = xsize/2
 
+        pixels = np.where(segimg >= 0)
+        ysize = max(pixels[0])
+        xsize = max(pixels[1])
 
+    if connected:
+      mask = separate_disconected(mask, high_area = True)
 
-
-    if ( increase != 0 and obj_centered==True ):		
-        if (relative_increase == True):
-            x_size = x_size*increase;
-            y_size = y_size*increase;
-        else:
-            x_size = x_size + 2*increase;
-            y_size = y_size + 2*increase;
-    
-    if objimg!=None:
-        image_out, hdr = cutout( objimg, hdr, xc=int(xo), yc=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
+    if objimg.any():
+        image = objimg
     else:
-        image_out, hdr = cutout( segimg, hdr, xc=int(xo), yc=int(yo), x_size=int(x_size), y_size=int(y_size), mask=ind );
-    
-    return ( image_out, hdr );
+        image = segimg
+
+    newimage, hdr = cutout(image, hdr, xc = int(xc), yc = int(yc),
+	    x_size = int(xsize), y_size = int(ysize), mask = mask)
+
+    return newimage, hdr
 
 # ---
 def select(segimg,objimg,objID):
