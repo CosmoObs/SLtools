@@ -11,8 +11,12 @@
 import sys;
 import math as m;
 import pyfits;
-import pywcs
 import numpy
+
+try:
+    import pywcs
+except ImportError:
+    import astropy.wcs as pywcs
 
 def get_pixelscale(hdr):
     """ Read out header dimpix (pixel_scale) from CD_* (or CDELT*) keys

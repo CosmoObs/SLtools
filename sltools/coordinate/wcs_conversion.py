@@ -23,8 +23,12 @@
 import os
 import sys
 import pyfits
-import pywcs
 import numpy
+
+try:
+	import pywcs
+except ImportError:
+	import astropy.wcs as pywcs
 
 
 def radec2xy(hdr,ra,dec):
