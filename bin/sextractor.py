@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import sys
-import os
-import pyfits
 
 from optparse import OptionParser
 from sltools.io import config_parser as CP
