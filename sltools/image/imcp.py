@@ -180,8 +180,9 @@ def cutout(image, hdr = None, coord_unit = 'pixel', xc = 0, yc = 0,
     newimage = np.zeros((int(y_size), int(x_size)), dtype = image.dtype)
     newimage[newy.begin : newy.end, newx.begin : newx.end] = image[oldy.begin : oldy.end, oldx.begin : oldx.end]
 
-    hdr['XMIN'] = oldx.begin
-    hdr['YMIN'] = oldy.begin
+    if hdr:
+        hdr['XMIN'] = oldx.begin + 1
+        hdr['YMIN'] = oldy.begin + 1
 
     #
     # If 'mask', maintain just "central" object on it..
@@ -254,11 +255,15 @@ def segstamp(segimg, id, objimg = None, hdr = None, increase = 0,
     ypos = mask[0]
     xpos = mask[1]
 
-    # FITS is 1-indexed
-    xmin = min(xpos) + 1
-    ymin = min(ypos) + 1
-    xmax = max(xpos) + 1
-    ymax = max(ypos) + 1
+    try:
+        xmin = min(xpos)
+        ymin = min(ypos)
+        xmax = max(xpos)
+        ymax = max(ypos)
+    except ValueError:
+        xmin = ymin = 0
+        xmax = segimg.shape[1]
+        ymax = segimg.shape[0]
 
     xsize = xmax - xmin + 1
     ysize = ymax - ymin + 1
