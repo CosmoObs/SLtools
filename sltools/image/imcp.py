@@ -180,6 +180,9 @@ def cutout(image, hdr = None, coord_unit = 'pixel', xc = 0, yc = 0,
     newimage = np.zeros((int(y_size), int(x_size)), dtype = image.dtype)
     newimage[newy.begin : newy.end, newx.begin : newx.end] = image[oldy.begin : oldy.end, oldx.begin : oldx.end]
 
+    hdr['XMIN'] = oldx.begin
+    hdr['YMIN'] = oldy.begin
+
     #
     # If 'mask', maintain just "central" object on it..
     #
