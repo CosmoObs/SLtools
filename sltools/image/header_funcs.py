@@ -75,7 +75,6 @@ def get_pixelscale(hdr):
     # Scale is given, using CD1_1, CD1_2, CD2_1, CD2_2 header keys:
     #
     pixel_scale = m.sqrt((CD1_1**2 + CD1_2**2 + CD2_1**2 + CD2_2**2)/2.) #* conv_factor;
-    print "Unit: %s/px" % CUNIT
 
     return pixel_scale;
 
