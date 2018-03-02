@@ -120,6 +120,7 @@ def setup(config_path, params_path, images_paths, cmdline_config):
     create_status(now, config_path, params_path, new_images_paths)
     return rundir, config, params, new_images_paths
 
+
 parser = argparse.ArgumentParser(description = 'A wrapper for running sextractor')
 parser.add_argument('files', nargs = '+', help = 'Input files')
 parser.add_argument('-p', dest = 'params_path', default = 'default.param',
@@ -143,25 +144,21 @@ if args.list_presets:
     print 'Available instruments: %s' % inst
     sys.exit(0)
 
+if args.segobj:
+    run = sextractor.run_segobj
+else:
+    run = sextractor.run
+
+
 infiles, overrides = parse_rest(args.files)
 print infiles
 print overrides
 rundir, config, params, infiles = setup(args.config_path, args.params_path, infiles, overrides)
 
-for infile in infiles:
-    if args.segobj:
-        out = sextractor.run_segobj(infile, params = params, args = config,
-                   preset = args.preset, quiet = args.quiet)
-        if not out:
-            sys.exit(1)
 
-        print 'Output files'
-        print 'CATALOG: %s' % (out['CATALOG'])
-        print 'OBJECTS: %s' % (out['OBJECTS'])
-        print 'SEGMENT: %s' % (out['SEGMENTATION'])
-    else:
-        if not sextractor.run(infile, params = params, args = config, preset = args.preset,
-            quiet = args.quiet):
-            sys.exit(1)
+for infile in infiles:
+    if not run(infile, params = params, args = config,
+            preset = args.preset, quiet = args.quiet):
+        sys.exit(1)
 
 print 'Output directory: ' + rundir
