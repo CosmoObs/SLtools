@@ -4,9 +4,8 @@ import sys
 import os
 import re
 import datetime
-import shutil
+import argparse
 
-from optparse import OptionParser
 from sltools.image import sextractor
 
 #
@@ -53,11 +52,28 @@ def getconfig(path):
         file = []
     return dat2dict(file)
 
+def parse_rest(args):
+    infiles = []
+    overrides = {}
+
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg[0] == '-':
+            key = args[i][1:]
+            value = args[i+1]
+            print key, value
+            overrides[key] = value
+            i = i + 1
+        else:
+            infiles.append(arg)
+        i = i + 1
+
+    return infiles, overrides
+
 def override_config(config, overrides):
-    for i in range(0, len(overrides) - 1):
-        key = overrides[i][1:]    # skip leading -
-        value = overrides[i+1]
-        config[key] = value
+    for key in overrides:
+        config[key] = overrides[key]
     return config
 
 def create_rundir():
@@ -104,70 +120,38 @@ def setup(config_path, params_path, images_paths, cmdline_config):
     create_status(now, config_path, params_path, new_images_paths)
     return rundir, config, params, new_images_paths
 
-usage = '%prog [options] image.fits [-- -OPTION1 VALUE1 ... -OPTIONK VALUEK]'
-parser = OptionParser(usage = usage)
-
-parser.add_option('-p',
-    dest = 'params_path', default = 'default.param',
-    help = 'Sextractor params file (e.g. default.param)')
-
-parser.add_option('-c',
-    dest = 'config_path', default = 'default.sex',
-    help = 'Sextractor config file (e.g. default.sex)')
-
-parser.add_option('--segment',
-    action = 'store_true', dest = 'run_seg', default = False,
+parser = argparse.ArgumentParser(description = 'A wrapper for running sextractor')
+parser.add_argument('files', nargs = '+', help = 'Input files')
+parser.add_argument('-p', dest = 'params_path', default = 'default.param',
+    help = 'SExtractor params file')
+parser.add_argument('-c', dest = 'config_path', default = 'default.sex',
+    help = 'SExtractor config file')
+parser.add_argument('-segobj', action = 'store_true',
     help = 'Run sextractor in SEGMENTATION mode')
-
-parser.add_option('--list-presets',
-    action = 'store_true', dest = 'list_presets', default = False,
+parser.add_argument('-list-presets', action = 'store_true',
     help = "List available instruments' presets parameters")
-
-parser.add_option('--preset',
-    dest = 'preset', default = '',
+parser.add_argument('-preset', default = '',
     help = "Run sextractor with given instruments' preset parameters")
-
-parser.add_option('-q',
-    action = 'store_true', dest = 'quiet', default = False,
+parser.add_argument('-q', action = 'store_true', dest = 'quiet',
     help = 'Make SExtractor be quiet about diagnostic output.')
+args = parser.parse_args()
 
-(opts, args) = parser.parse_args()
-
-if opts.list_presets:
+if args.list_presets:
     inst = ''
     for i in sextractor.instrument_presets:
         inst = '%s%s ' % (inst, i)
     print 'Available instruments: %s' % inst
     sys.exit(0)
 
-if len(args) < 1:
-    parser.print_usage()
-    print "Try '--help' for more info."
-    sys.exit(0)
-
-
-infiles = []
-overrides = []
-
-i = 0
-while i < len(args):
-    arg = args[i]
-    if arg[0] == '-':
-        overrides.append(args[i])
-        overrides.append(args[i+1])
-        i = i + 1
-    else:
-        infiles.append(arg)
-    i = i + 1
-
+infiles, overrides = parse_rest(args.files)
 print infiles
 print overrides
-rundir, config, params, inpaths = setup(opts.config_path, opts.params_path, infiles, overrides)
+rundir, config, params, infiles = setup(args.config_path, args.params_path, infiles, overrides)
 
-for infits in inpaths:
-    if opts.run_seg:
-        out = sextractor.run_segobj(infits, params = params, args = config,
-                   preset = opts.preset, quiet = opts.quiet)
+for infile in infiles:
+    if args.segobj:
+        out = sextractor.run_segobj(infile, params = params, args = config,
+                   preset = args.preset, quiet = args.quiet)
         if not out:
             sys.exit(1)
 
@@ -176,8 +160,8 @@ for infits in inpaths:
         print 'OBJECTS: %s' % (out['OBJECTS'])
         print 'SEGMENT: %s' % (out['SEGMENTATION'])
     else:
-        if not sextractor.run(infits, params = params, args = config, preset = opts.preset,
-            quiet = opts.quiet):
+        if not sextractor.run(infile, params = params, args = config, preset = args.preset,
+            quiet = args.quiet):
             sys.exit(1)
 
 print 'Output directory: ' + rundir
