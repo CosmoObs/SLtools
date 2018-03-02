@@ -25,14 +25,14 @@ def dat2dict(file):
 
 def dict2datstring(d):
     s = ''
-    for key in d:
+    for key in sorted(d):
         s = '%s\n%s %s' % (s, key, d[key])
     s = s + '\n'
     return s
 
 def list2datstring(L):
     s = ''
-    for element in L:
+    for element in sorted(L):
         s = '%s\n%s' % (s, element)
     s = s + '\n'
     return s
