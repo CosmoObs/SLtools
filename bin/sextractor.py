@@ -151,10 +151,7 @@ else:
 
 
 infiles, overrides = parse_rest(args.files)
-print infiles
-print overrides
 rundir, config, params, infiles = setup(args.config_path, args.params_path, infiles, overrides)
-
 
 for infile in infiles:
     if not run(infile, params = params, args = config,
