@@ -5,7 +5,7 @@ import os
 import re
 import datetime
 import argparse
-
+from multiprocessing import Process
 from sltools.image import sextractor
 
 #
@@ -14,7 +14,7 @@ from sltools.image import sextractor
 # KEY1  VAL11, VAL12  # comment 1
 # KEY2  VAL21, VAL22  # comment 2
 #
-def dat2dict(file):
+def dict_read(file):
     d = {}
     for line in file:
         m = re.match('^(\w+)\s+([^#]+)', line)
@@ -23,36 +23,30 @@ def dat2dict(file):
         d.update({m.group(1) : m.group(2)})
     return d
 
-def dict2datstring(d):
+def dict_format(d):
     s = ''
     for key in sorted(d):
-        s = '%s\n%s %s' % (s, key, d[key])
-    s = s + '\n'
+        s = '%s%s %s\n' % (s, key, d[key])
     return s
 
-def list2datstring(L):
+def list_format(L):
     s = ''
     for element in sorted(L):
-        s = '%s\n%s' % (s, element)
-    s = s + '\n'
+        s = '%s%s\n' % (s, element)
     return s
 
-def dictsave(d, path):
+def save(data, path, formatter):
     file = open(path, 'w')
-    file.write(dict2datstring(d))
-
-def listsave(L, path):
-    file = open(path, 'w')
-    file.write(list2datstring(L))
+    file.write(formatter(data))
 
 def getconfig(path):
     try:
         file = open(path)
     except:
         file = []
-    return dat2dict(file)
+    return dict_read(file)
 
-def parse_rest(args):
+def parse_overrides(args):
     infiles = []
     overrides = {}
 
@@ -70,6 +64,9 @@ def parse_rest(args):
         i = i + 1
 
     return infiles, overrides
+
+def parse_params(path):
+    return path and [ line.rstrip('\n') for line in open(path).readlines() ] or []
 
 def override_config(config, overrides):
     for key in overrides:
@@ -101,8 +98,7 @@ def setup(config_path, params_path, images_paths, cmdline_config):
 
     config = getconfig(config_path)
     config = override_config(config, cmdline_config)
-
-    params = params_path and [ line.rstrip('\n') for line in open(params_path).readlines() ] or []
+    params = parse_params(params_path)
 
     new_images_paths = []
     for image_path in images_paths:
@@ -111,14 +107,20 @@ def setup(config_path, params_path, images_paths, cmdline_config):
         new_images_paths.append(link_path)
 
     absolute_link('default.conv', '%s/default.conv' % rundir)
-
+    absolute_link('default.psfex', '%s/default.psfex' % rundir)
     os.chdir(rundir)
 
-    dictsave(config, os.path.basename(config_path))
-    listsave(params, os.path.basename(params_path))
+    save(config, os.path.basename('default.sex'), dict_format)
+    save(params, os.path.basename('default.param'), list_format)
 
     create_status(now, config_path, params_path, new_images_paths)
     return rundir, config, params, new_images_paths
+
+def process_file(infile, func = None, params = None, args = None,
+    preset = None, quiet = False):
+
+    return func(infile, params = params, args = args,
+            preset = preset, quiet = quiet)
 
 
 parser = argparse.ArgumentParser(description = 'A wrapper for running sextractor')
@@ -127,6 +129,7 @@ parser.add_argument('-p', dest = 'params_path', default = 'default.param',
     help = 'SExtractor params file')
 parser.add_argument('-c', dest = 'config_path', default = 'default.sex',
     help = 'SExtractor config file')
+parser.add_argument('-nproc', type = int, help = 'Number of processors')
 parser.add_argument('-segobj', action = 'store_true',
     help = 'Run sextractor in SEGMENTATION mode')
 parser.add_argument('-list-presets', action = 'store_true',
@@ -144,18 +147,36 @@ if args.list_presets:
     print 'Available instruments: %s' % inst
     sys.exit(0)
 
+infiles, overrides = parse_overrides(args.files)
+rundir, config, params, infiles = setup(args.config_path, args.params_path,
+    infiles, overrides)
+
 if args.segobj:
     run = sextractor.run_segobj
 else:
     run = sextractor.run
 
+nproc = args.nproc or len(infiles)
+nblock = len(infiles) / nproc
+if (len(infiles) % nproc) > 0:
+    nblock = nblock + 1
 
-infiles, overrides = parse_rest(args.files)
-rundir, config, params, infiles = setup(args.config_path, args.params_path, infiles, overrides)
+for i in range(0, nblock):
+    start = i * nproc
+    end = (i+1) * nproc
+    procs = []
 
-for infile in infiles:
-    if not run(infile, params = params, args = config,
-            preset = args.preset, quiet = args.quiet):
-        sys.exit(1)
+    for infile in infiles[start:end]:
+        lastdot = infile.rfind('.fits')
+        catalog_name = infile[:lastdot] + '_cat.' + infile[lastdot+1:]
+        config.update({'CATALOG_TYPE': 'FITS_1.0', 'CATALOG_NAME': catalog_name})
+
+        p = Process(target=process_file, args=(infile, run, params, config,
+                args.preset, args.quiet))
+        procs.append(p)
+        p.start()
+
+    for p in procs:
+        p.join()
 
 print 'Output directory: ' + rundir
