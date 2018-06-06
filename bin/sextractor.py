@@ -93,7 +93,8 @@ def create_status(now, config_path, params_path, images_paths):
 def absolute_link(src, dst):
     os.symlink(os.path.abspath(src), dst)
 
-def setup(config_path, params_path, images_paths, cmdline_config):
+def setup(config_path, params_path, images_paths, cmdline_config,
+        psf_path=None):
     rundir, now = create_rundir()
 
     config = getconfig(config_path)
@@ -108,6 +109,9 @@ def setup(config_path, params_path, images_paths, cmdline_config):
 
     absolute_link('default.conv', '%s/default.conv' % rundir)
     absolute_link('default.psfex', '%s/default.psfex' % rundir)
+    if psf_path:
+        absolute_link(psf_path, '%s/default.psf' % rundir)
+
     os.chdir(rundir)
 
     save(config, os.path.basename('default.sex'), dict_format)
@@ -122,23 +126,24 @@ def process_file(infile, func = None, params = None, args = None,
     return func(infile, params = params, args = args,
             preset = preset, quiet = quiet)
 
-
-parser = argparse.ArgumentParser(description = 'A wrapper for running sextractor')
-parser.add_argument('files', nargs = '+', help = 'Input files')
-parser.add_argument('-p', dest = 'params_path', default = 'default.param',
-    help = 'SExtractor params file')
-parser.add_argument('-c', dest = 'config_path', default = 'default.sex',
-    help = 'SExtractor config file')
-parser.add_argument('-nproc', type = int, help = 'Number of processors')
-parser.add_argument('-segobj', action = 'store_true',
-    help = 'Run sextractor in SEGMENTATION mode')
-parser.add_argument('-list-presets', action = 'store_true',
-    help = "List available instruments' presets parameters")
-parser.add_argument('-preset', default = '',
-    help = "Run sextractor with given instruments' preset parameters")
-parser.add_argument('-q', action = 'store_true', dest = 'quiet',
-    help = 'Make SExtractor be quiet about diagnostic output.')
-args = parser.parse_args()
+parser=argparse.ArgumentParser(description='A wrapper for sextractor')
+parser.add_argument('files', nargs= '+', help='Input files')
+parser.add_argument('-p', dest='params_path', default='default.param',
+    help='SExtractor params file')
+parser.add_argument('-c', dest='config_path', default='default.sex',
+    help='SExtractor config file')
+parser.add_argument('-psf', dest='psf_path',
+    help='PSF model from PSFex')
+parser.add_argument('-nproc', type=int, help='Number of processors')
+parser.add_argument('-segobj', action='store_true',
+    help='Run sextractor in SEGMENTATION mode')
+parser.add_argument('-list-presets', action='store_true',
+    help="List available instruments' presets parameters")
+parser.add_argument('-preset', default='',
+    help="Run sextractor with given instruments' preset parameters")
+parser.add_argument('-q', action='store_true', dest='quiet',
+    help='Make SExtractor be quiet about diagnostic output.')
+args=parser.parse_args()
 
 if args.list_presets:
     inst = ''
@@ -149,7 +154,7 @@ if args.list_presets:
 
 infiles, overrides = parse_overrides(args.files)
 rundir, config, params, infiles = setup(args.config_path, args.params_path,
-    infiles, overrides)
+    infiles, overrides, psf_path=args.psf_path)
 
 if args.segobj:
     run = sextractor.run_segobj
@@ -169,7 +174,7 @@ for i in range(0, nblock):
     for infile in infiles[start:end]:
         lastdot = infile.rfind('.fits')
         catalog_name = infile[:lastdot] + '_cat.' + infile[lastdot+1:]
-        config.update({'CATALOG_TYPE': 'FITS_1.0', 'CATALOG_NAME': catalog_name})
+        config.update({'CATALOG_TYPE': 'FITS_LDAC', 'CATALOG_NAME': catalog_name})
 
         p = Process(target=process_file, args=(infile, run, params, config,
                 args.preset, args.quiet))
