@@ -5,40 +5,31 @@ import os
 import argparse
 import subprocess
 from datetime import datetime
+from sltools.io.rundir import Rundir
 
 parser=argparse.ArgumentParser(description='A wrapper for PSFex')
 parser.add_argument('catalog', help='Input catalog')
-parser.add_argument('-c', dest='config_path', help='SExtractor config file')
+parser.add_argument('-c', dest='config', help='PSFex config file')
 parser.add_argument('-nproc', default=1,
     help='Number of cores to use in processing')
 args = parser.parse_args()
 
-def mkrundir():
-    now = datetime.now().isoformat().replace(':', '')
-    path = 'modelfit-%s' % now
-
-    os.mkdir(path)
-    return path, now
-
-def mklink(src, dst):
-    os.symlink(os.path.abspath(src), dst)
-
 def setup(args):
-    rundir, now = mkrundir()
+    rd = Rundir('psfex')
 
-    link = os.path.basename(args.catalog)
-    mklink(args.catalog, '%s/%s' % (rundir, link))
+    catalog = rd.link(args.catalog)
+    config = args.config and rd.copy(args.config) or None
 
-    os.chdir(rundir)
-    return rundir
+    os.chdir(rd.path)
+    return rd.path, catalog, config
 
-def run(args):
+def run(catalog, config=None):
     L = ['psfex']
 
-    if args.config_path:
+    if config:
         L.append('-c')
-        L.append(args.config_path)
-    L.append(args.catalog)
+        L.append(config)
+    L.append(catalog)
 
     try:
         subprocess.check_output(L)
@@ -46,6 +37,6 @@ def run(args):
         print 'Process error: ', e
         return
 
-rundir = setup(args)
-run(args)
-print 'Output directory: ' + rundir
+rdir, catalog, config = setup(args)
+run(catalog, config)
+print 'Rundir: ' + rdir
