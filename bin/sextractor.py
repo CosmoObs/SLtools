@@ -7,6 +7,7 @@ import datetime
 import argparse
 from multiprocessing import Process
 from sltools.image import sextractor
+from sltools.io.rundir import Rundir
 
 #
 # path is a file in the following format:
@@ -73,52 +74,29 @@ def override_config(config, overrides):
         config[key] = overrides[key]
     return config
 
-def create_rundir():
-    now = datetime.datetime.now().isoformat().replace(':', '')
-    path = 'SErun-%s' % now
 
-    os.mkdir(path)
-    return path, now
-
-def create_status(now, config_path, params_path, images_paths):
-    status = open('status.txt', 'w')
-    status.write('# date,config file,params file,input files\n')
-
-    for image_path in images_paths:
-        images = '%s,' % image_path
-
-    status.write(now + ',' + config_path + ',' + params_path + ',' + images + '\n')
-    status.close()
-
-def absolute_link(src, dst):
-    os.symlink(os.path.abspath(src), dst)
-
-def setup(config_path, params_path, images_paths, cmdline_config,
-        psf_path=None):
-    rundir, now = create_rundir()
+def setup(config_path, params_path, images, cmdline_config,
+        psf=None):
+    rd = Rundir('SErun')
 
     config = getconfig(config_path)
     config = override_config(config, cmdline_config)
     params = parse_params(params_path)
 
-    new_images_paths = []
-    for image_path in images_paths:
-        link_path = os.path.basename(image_path)
-        absolute_link(image_path, '%s/%s' % (rundir, link_path))
-        new_images_paths.append(link_path)
+    newimages = []
+    for image in images:
+        newpath = rd.link(image)
+        newimages.append(newpath)
 
-    absolute_link('default.conv', '%s/default.conv' % rundir)
-    absolute_link('default.psfex', '%s/default.psfex' % rundir)
-    if psf_path:
-        absolute_link(psf_path, '%s/default.psf' % rundir)
+    rd.copy('default.conv')
+    psf = psf and rd.copy(psf)
 
-    os.chdir(rundir)
+    os.chdir(rd.path)
 
     save(config, os.path.basename('default.sex'), dict_format)
     save(params, os.path.basename('default.param'), list_format)
 
-    create_status(now, config_path, params_path, new_images_paths)
-    return rundir, config, params, new_images_paths
+    return rd.path, config, params, newimages, psf
 
 def process_file(infile, func = None, params = None, args = None,
     preset = None, quiet = False):
@@ -132,7 +110,7 @@ parser.add_argument('-p', dest='params_path', default='default.param',
     help='SExtractor params file')
 parser.add_argument('-c', dest='config_path', default='default.sex',
     help='SExtractor config file')
-parser.add_argument('-psf', dest='psf_path',
+parser.add_argument('-psf', dest='psf',
     help='PSF model from PSFex')
 parser.add_argument('-nproc', type=int, help='Number of processors')
 parser.add_argument('-segobj', action='store_true',
@@ -153,8 +131,8 @@ if args.list_presets:
     sys.exit(0)
 
 infiles, overrides = parse_overrides(args.files)
-rundir, config, params, infiles = setup(args.config_path, args.params_path,
-    infiles, overrides, psf_path=args.psf_path)
+rundir, config, params, infiles, psf = setup(args.config_path, args.params_path,
+    infiles, overrides, psf=args.psf)
 
 if args.segobj:
     run = sextractor.run_segobj
@@ -175,6 +153,9 @@ for i in range(0, nblock):
         lastdot = infile.rfind('.fits')
         catalog_name = infile[:lastdot] + '_cat.' + infile[lastdot+1:]
         config.update({'CATALOG_TYPE': 'FITS_LDAC', 'CATALOG_NAME': catalog_name})
+
+        if psf:
+            config.update({'PSF_NAME': psf})
 
         p = Process(target=process_file, args=(infile, run, params, config,
                 args.preset, args.quiet))
