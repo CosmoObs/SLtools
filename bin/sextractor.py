@@ -18,10 +18,10 @@ from sltools.io.rundir import Rundir
 def dict_read(file):
     d = {}
     for line in file:
-        m = re.match('^(\w+)\s+([^#]+)', line)
+        m = re.match('^(\w+)\s+([^#\n]+)', line)
         if not m: continue
 
-        d.update({m.group(1) : m.group(2)})
+        d.update({m.group(1) : m.group(2).rstrip()})
     return d
 
 def dict_format(d):
