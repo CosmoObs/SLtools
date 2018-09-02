@@ -88,7 +88,9 @@ def setup(config_path, params_path, images, cmdline_config,
         newpath = rd.link(image)
         newimages.append(newpath)
 
-    rd.copy('default.conv')
+    if config['FILTER'] == 'Y':
+        rd.copy(config['FILTER_NAME'])
+
     psf = psf and rd.copy(psf)
 
     os.chdir(rd.path)
