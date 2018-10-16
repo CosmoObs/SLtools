@@ -154,7 +154,7 @@ for i in range(0, nblock):
     for infile in infiles[start:end]:
         lastdot = infile.rfind('.fits')
         catalog_name = infile[:lastdot] + '_cat.' + infile[lastdot+1:]
-        config.update({'CATALOG_TYPE': 'FITS_LDAC', 'CATALOG_NAME': catalog_name})
+        config.update({'CATALOG_TYPE': 'FITS_1.0', 'CATALOG_NAME': catalog_name})
 
         if psf:
             config.update({'PSF_NAME': psf})
