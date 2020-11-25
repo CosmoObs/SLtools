@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as pyplot
 import string
 import random
-import pyfits
+import astropy.io.fits as pyfits
 
 from sltools.image.imcp import cutout
 

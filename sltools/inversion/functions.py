@@ -6,7 +6,7 @@ Package with stand alone functions of gbclib
 """
 from __future__ import division
 
-import pyfits
+import astropy.io.fits as pyfits
 
 import random
 

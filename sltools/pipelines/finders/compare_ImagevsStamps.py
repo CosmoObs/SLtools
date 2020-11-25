@@ -5,7 +5,7 @@ import sys;
 
 ##@ eyescan
 
-import pyfits;
+import astropy.io.fits as pyfits;
 import numpy as np;
 from numpy import asarray;
 import logging;

@@ -22,7 +22,7 @@
 
 import os
 import sys
-import pyfits
+import astropy.io.fits as pyfits
 import numpy
 
 try:

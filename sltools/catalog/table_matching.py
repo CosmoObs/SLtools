@@ -10,7 +10,7 @@ import os
 import logging
 
 import numpy as np
-import pyfits
+import astropy.io.fits as pyfits
 
 from sltools.catalog import fits_data,ascii_data
 from sltools.io import log

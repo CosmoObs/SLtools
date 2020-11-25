@@ -8,7 +8,7 @@ FIXME - Package to deal with astronomiacal coordinates
 """
 
 import pywcs
-import pyfits
+import astropy.io.fits as pyfits
 import numpy as np
 
 import os

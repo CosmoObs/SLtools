@@ -5,7 +5,7 @@ import os
 import numpy as np
 from math import sin, cos ,sqrt, fabs, atan 
 from pylab import *
-import pyfits
+import astropy.io.fits as pyfits
 from scipy.optimize import fmin
 from mediatrix_decomposition import get_length, get_length_c,plot_mediatrix, plot_mediatrixapl
 import imcp

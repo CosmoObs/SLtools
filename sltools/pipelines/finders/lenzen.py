@@ -5,7 +5,7 @@ import logging
 
 """Python interface fo Lenzen's arc detector"""
 
-import pyfits
+import astropy.io.fits as pyfits
 import ConfigParser
 import re
 

@@ -9,7 +9,7 @@ Package to read predefined catalogs
 
 import time
 
-import pyfits
+import astropy.io.fits as pyfits
 
 import socket
 

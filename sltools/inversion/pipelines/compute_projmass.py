@@ -9,7 +9,7 @@ Package to compute to projected mass distrubution
 
 import composite_model
 import argparse
-import pyfits
+import astropy.io.fits as pyfits
 import math
 import functions
 import lenstool

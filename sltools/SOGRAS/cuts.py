@@ -1,5 +1,5 @@
 import os
-import pyfits
+import astropy.io.fits as pyfits
 import glob #useful to fory all files in a directory
 
 from sltools.coordinate.wcs_conversion import radec2xy

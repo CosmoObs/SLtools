@@ -13,7 +13,7 @@
 # RA and DEC
 #
 
-import pyfits
+import astropy.io.fits as pyfits
 import sys
 import string
 

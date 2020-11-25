@@ -12,7 +12,7 @@ objects from a given image.
 """
 
 import os;
-import pyfits;
+import astropy.io.fits as pyfits;
 import numpy as np;
 from numpy import asarray as ndaa;
 import re;

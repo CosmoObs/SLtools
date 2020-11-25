@@ -8,7 +8,7 @@ FIXME - package description
 """
 from __future__ import division
 
-import pyfits
+import astropy.io.fits as pyfits
 import math
 from progress_bar import ProgressBar
 

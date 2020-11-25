@@ -14,7 +14,7 @@ import numpy as np
 
 import functions as fc
 
-import pyfits
+import astropy.io.fits as pyfits
 
 import math
 

@@ -25,7 +25,7 @@ import sys
 import os
 import numpy
 import math
-import pyfits
+import astropy.io.fits as pyfits
 import sltools
 import string 
 from sltools.image import convolve

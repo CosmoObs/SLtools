@@ -12,7 +12,7 @@ DS9 SAOImage imaging and data visualization : http://hea-www.harvard.edu/RD/ds9/
 ##@file eyescan
 
 import sys
-import pyfits
+import astropy.io.fits as pyfits
 from numpy import asarray
 import logging
 import os

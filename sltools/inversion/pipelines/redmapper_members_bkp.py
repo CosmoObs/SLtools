@@ -9,7 +9,7 @@ FIXME - package description
 
 import socket
 
-import pyfits
+import astropy.io.fits as pyfits
 
 import matplotlib.pylab as plt
 

@@ -49,7 +49,7 @@ import cmath
 from scipy import optimize
 import collections
 import glob
-import pyfits
+import astropy.io.fits as pyfits
 
 from sltools.catalog.cs82 import fit_mag as fmg
 from sltools.catalog import fits_data as fd

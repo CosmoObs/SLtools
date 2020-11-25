@@ -2,7 +2,7 @@
 
 import sys
 import sltools
-import pyfits
+import astropy.io.fits as fits
 import sltools.image.imcp as imcp
 
 from optparse import OptionParser

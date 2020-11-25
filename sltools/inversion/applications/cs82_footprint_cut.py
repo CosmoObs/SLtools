@@ -12,7 +12,7 @@ program read the catalog you want
 import coordinates as coo
 import read_catalogs as rcs
 import numpy as np
-import pyfits
+import astropy.io.fits as pyfits
 import functions as fuc
 
 import matplotlib.pylab as plt

@@ -17,7 +17,7 @@
 import os
 import logging
 import numpy as np
-import pyfits
+import astropy.io.fits as pyfits
 import random
 
 from sltools.gravlens.init_gravlens_parameters import lens_parameters

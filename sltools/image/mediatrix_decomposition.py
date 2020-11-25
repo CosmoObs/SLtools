@@ -24,7 +24,7 @@ import imcp
 import time
 import aplpy
 import numpy
-import pyfits
+import astropy.io.fits as pyfits
 
 def find_keydots (p1,p2,image_pixels,image,keydots,area, method="medium",alpha=1,near_distance=(sqrt(2)/2)):
     """

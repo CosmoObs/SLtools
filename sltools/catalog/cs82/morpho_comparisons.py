@@ -30,7 +30,7 @@ import sys
 import os
 import errno
 import numpy as np
-import pyfits
+import astropy.io.fits as pyfits
 import matplotlib.pyplot as pl
 from time import strftime
 from time import time

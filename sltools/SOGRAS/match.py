@@ -1,5 +1,5 @@
 
-import pyfits
+import astropy.io.fits as pyfits
 
 import sltools.pipelines.table_matching as p
 from sltools.coordinate.wcs_conversion import radec2xy_GBC

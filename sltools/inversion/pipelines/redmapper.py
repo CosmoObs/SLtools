@@ -17,7 +17,7 @@ import matplotlib.pylab as plt
 
 import position_match as pm
 
-import pyfits
+import astropy.io.fits as pyfits
 
 import numpy as np
 

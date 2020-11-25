@@ -6,7 +6,7 @@ from math import sqrt, fabs
 
 import numpy as np
 
-import pyfits
+import astropy.io.fits as pyfits
 
 import Image
 

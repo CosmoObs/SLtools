@@ -1,6 +1,6 @@
 """ Module to deal with tables matching """
 
-import pyfits
+import astropy.io.fits as pyfits
 import glob
 import os
 

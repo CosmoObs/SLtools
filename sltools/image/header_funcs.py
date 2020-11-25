@@ -10,7 +10,7 @@
 
 import sys;
 import math as m;
-import pyfits;
+import astropy.io.fits as pyfits;
 import numpy
 
 try:

@@ -8,7 +8,7 @@
 from __future__ import division
 import sys
 import numpy as np
-import pyfits
+import astropy.io.fits as pyfits
 import json
 import math
 import matplotlib.pyplot as plt

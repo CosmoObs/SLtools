@@ -6,7 +6,7 @@ import os;
 import re;
 import string;
 import numpy as np;
-import pyfits;
+import astropy.io.fits as pyfits;
 
 import sltools;
 from sltools.image import sextractor,imcp;

@@ -24,7 +24,7 @@ from __future__ import division
 import os
 from numpy import *
 import math
-import pyfits
+import astropy.io.fits as pyfits
 import sltools
 import string
 import minuit

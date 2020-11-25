@@ -4,7 +4,7 @@
 
 import sys;
 
-import pyfits;
+import astropy.io.fits as pyfits;
 import string;
 import numpy as np;
 import re;

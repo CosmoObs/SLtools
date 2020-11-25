@@ -2,7 +2,7 @@
 
 import sys;
 import os;
-import pyfits;
+import astropy.io.fits as pyfits;
 from pylab import *;
 from pywcs import WCS;
 
