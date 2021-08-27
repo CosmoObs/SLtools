@@ -13,8 +13,6 @@ import paint_arcs_v1_1 as pa
 import astropy.io.fits as pyfits
 from convert_arcsec_pix import convert_arcsec_pix
 
-#
-
 def run(params, seeing, background, pix_scale, suffix_name=''):
 
     hdu = pa.paint_arcs(params, pix_scale)
