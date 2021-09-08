@@ -128,7 +128,6 @@ def log_prior(theta, alpha_0, eps_alpha_0, beta_0, eps_beta_0):
     return - np.inf
 
 
-
 def log_probability(theta, z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, theta_ap, delta, 
                     alpha_0, eps_alpha_0, beta_0, eps_beta_0):
     """Log of probability of interest
@@ -182,7 +181,7 @@ def minimization_loglikelihood(z_S, z_L, velDisp, velDispErr, theta_E, seeing_at
     """
     np.random.seed(seed)
     nll = lambda *args: - log_likelihood(*args)
-    
+
     initial = np.array([alpha_ini, beta_ini, gamma_ini]) + \
         0.01 * np.random.randn(3)
 
@@ -223,7 +222,7 @@ def minimization_logprobability(z_S, z_L, velDisp, velDispErr, theta_E, seeing_a
 
     beta_0 = np.repeat(beta_0_value, len(z_S))
     eps_beta_0 = np.repeat(eps_beta_0_value, len(z_S))
-    
+
     np.random.seed(seed)
     nll_2 = lambda *args: - log_probability(*args)
     initial = np.array([alpha_ini, beta_ini, gamma_ini]) + \
@@ -271,7 +270,7 @@ def logprobability_sampling(z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, 
 
     beta_0 = np.repeat(beta_0_value, len(z_S))
     eps_beta_0 = np.repeat(eps_beta_0_value, len(z_S))
-        
+
     with Pool(processes = processes) as pool:
 
         sampler = emcee.EnsembleSampler(n_walkers, n_dim, log_probability, args = (z_S, z_L, velDisp, velDispErr, theta_E, 
