@@ -101,7 +101,6 @@ def log_likelihood(theta, z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, th
     return - 0.5*np.sum((velDisp - model) ** 2 / (velDispErr ** 2) + np.log(2 * np.pi * velDispErr ** 2))
 
 
-@np.vectorize
 def log_prior(theta, alpha_0, eps_alpha_0, beta_0, eps_beta_0):
     """Gaussian priors
 
@@ -117,8 +116,8 @@ def log_prior(theta, alpha_0, eps_alpha_0, beta_0, eps_beta_0):
     """
     alpha, beta, gamma = theta
     n_sigma = 3
-    if (alpha_0 - n_sigma * eps_alpha_0 < alpha < alpha_0 + n_sigma * eps_alpha_0) and \
-            beta_0 - n_sigma * eps_beta_0 < beta < beta_0 + n_sigma * eps_beta_0:
+    if (alpha_0[0] - n_sigma * eps_alpha_0[0] < alpha < alpha_0[0] + n_sigma * eps_alpha_0[0]) and \
+            (beta_0[0] - n_sigma * eps_beta_0[0] < beta < beta_0[0] + n_sigma * eps_beta_0[0]):
         log_prior_alpha = - 0.5 * \
             np.sum((alpha - alpha_0)**2 / eps_alpha_0 **
                    2 + np.log(2 * np.pi * eps_alpha_0**2))
@@ -129,7 +128,7 @@ def log_prior(theta, alpha_0, eps_alpha_0, beta_0, eps_beta_0):
     return - np.inf
 
 
-@np.vectorize
+
 def log_probability(theta, z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, theta_ap, delta, 
                     alpha_0, eps_alpha_0, beta_0, eps_beta_0):
     """Log of probability of interest
@@ -172,6 +171,7 @@ def minimization_loglikelihood(z_S, z_L, velDisp, velDispErr, theta_E, seeing_at
         theta_E (float): Einstein radius (in radians)
         seeing_atm (float): Atmospheric seeing (in radians)
         theta_ap (float): Aperture size (in radians)
+        seed (float): random seed for reproducibility purposes.
         alpha_ini (float, optional): Initial guess for alpha. Defaults to 2.0.
         beta_ini (float, optional): Initial guess for delta. Defaults to 0.18.
         gamma_ini (float, optional): Initial guess for gamma. Defaults to 1.0.
@@ -180,11 +180,12 @@ def minimization_loglikelihood(z_S, z_L, velDisp, velDispErr, theta_E, seeing_at
     Returns:
         list: list of alpha, beta and gamma obtained from minimization of likelihood function.
     """
+    np.random.seed(seed)
     nll = lambda *args: - log_likelihood(*args)
+    
     initial = np.array([alpha_ini, beta_ini, gamma_ini]) + \
         0.01 * np.random.randn(3)
 
-    np.random.seed(seed)
     soln = minimize(nll, initial, args = (z_S, z_L, velDisp, 
                     velDispErr, theta_E, seeing_atm, theta_ap, delta, ))
 
@@ -204,6 +205,7 @@ def minimization_logprobability(z_S, z_L, velDisp, velDispErr, theta_E, seeing_a
         theta_E (float): Einstein radius (in radians)
         seeing_atm (float): Atmospheric seeing (in radians)
         theta_ap (float): Aperture size (in radians)
+        seed (float): random seed for reproducibility purposes.
         alpha_ini (float, optional): Initial guess for alpha. Defaults to 2.0.
         beta_ini (float, optional): Initial guess for delta. Defaults to 0.18.
         gamma_ini (float, optional): Initial guess for gamma. Defaults to 1.0.
@@ -221,22 +223,22 @@ def minimization_logprobability(z_S, z_L, velDisp, velDispErr, theta_E, seeing_a
 
     beta_0 = np.repeat(beta_0_value, len(z_S))
     eps_beta_0 = np.repeat(eps_beta_0_value, len(z_S))
-
+    
+    np.random.seed(seed)
     nll_2 = lambda *args: - log_probability(*args)
     initial = np.array([alpha_ini, beta_ini, gamma_ini]) + \
         0.01 * np.random.randn(3)
 
-    np.random.seed(seed)
     soln_2 = minimize(nll_2, initial, args = (z_S, z_L, velDisp, velDispErr, theta_E, 
                       seeing_atm, theta_ap, delta, alpha_0, eps_alpha_0, beta_0, eps_beta_0, ))
     alpha_ml2, beta_ml2, gamma_ml2 = soln_2.x
 
-    return alpha_ml2, beta_ml2, gamma_ml2
+    return np.array([alpha_ml2, beta_ml2, gamma_ml2])
 
 
 def logprobability_sampling(z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, theta_ap, 
                             seed = 11, alpha_ini = 2.0, beta_ini = 0.18, gamma_ini = 1.0, delta = 2.4, 
-                            alpha_0 = 2.0, eps_alpha_0 = 0.08, beta_0 = 0.18, eps_beta_0 = 0.13, 
+                            alpha_0_value = 2.0, eps_alpha_0_value = 0.08, beta_0_value = 0.18, eps_beta_0_value = 0.13, 
                             n_dim = 3, n_walkers = 64, n_burn = 500, n_steps = 10000, progress = True, processes = 1):
     """Sampling logprobability function with emcee
 
@@ -248,14 +250,15 @@ def logprobability_sampling(z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, 
         theta_E (float): Einstein radius (in radians)
         seeing_atm (float): Atmospheric seeing (in radians)
         theta_ap (float): Aperture size (in radians)
+        seed (float): random seed for reproducibility purposes.
         alpha_ini (float, optional): Initial guess for alpha. Defaults to 2.0.
         beta_ini (float, optional): Initial guess for delta. Defaults to 0.18.
         gamma_ini (float, optional): Initial guess for gamma. Defaults to 1.0.
         delta (float, optional): luminosity density profile index. Defaults to 2.4.
-        alpha_0 (float, optional): expected value for alpha. Defaults to 2.0.
-        eps_alpha_0 (float, optional): variance for alpha. Defaults to 0.08.
-        beta_0 (float, optional): expected value for beta. Defaults to 0.18.
-        eps_beta_0 (float, optional): variance for beta. Defaults to 0.13.
+        alpha_0_value (float, optional): expected value for alpha. Defaults to 2.0.
+        eps_alpha_0_value (float, optional): variance for alpha. Defaults to 0.08.
+        beta_0_value (float, optional): expected value for beta. Defaults to 0.18.
+        eps_beta_0_value (float, optional): variance for beta. Defaults to 0.13.
         n_dim (int, optional): number of parameters in the model (r and p). Defaults to 3.
         n_walkers (int, optional): number of MCMC walkers. Defaults to 64.
         n_burn (int, optional): "burn-in" period to let chains stabilize. Defaults to 500.
@@ -263,12 +266,20 @@ def logprobability_sampling(z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, 
         progress (bool, optional): Show progress bar. Defaults to True.
         processes (int, optional): Number of processes in parallel. Defaults to 1.
     """
+    alpha_0 = np.repeat(alpha_0_value, len(z_S))
+    eps_alpha_0 = np.repeat(eps_alpha_0_value, len(z_S))
+
+    beta_0 = np.repeat(beta_0_value, len(z_S))
+    eps_beta_0 = np.repeat(eps_beta_0_value, len(z_S))
+        
     with Pool(processes = processes) as pool:
+
         sampler = emcee.EnsembleSampler(n_walkers, n_dim, log_probability, args = (z_S, z_L, velDisp, velDispErr, theta_E, 
                                                                                  seeing_atm, theta_ap, delta, alpha_0, 
                                                                                  eps_alpha_0, beta_0, eps_beta_0, ), pool = pool)
+        np.random.seed(seed)
         solu = np.asarray([alpha_ini, beta_ini, gamma_ini])
-        p0 = solu.x + 1e-5 * np.random.randn(n_walkers, n_dim)
+        p0 = solu + 1e-5 * np.random.randn(n_walkers, n_dim)
         # p0 = soln.x + 1e-5 * np.random.randn(n_walkers, n_dim)
 
         # Run n_burn steps as a burn-in:
