@@ -232,7 +232,7 @@ def minimization_logprobability(z_S, z_L, velDisp, velDispErr, theta_E, seeing_a
                       seeing_atm, theta_ap, delta, alpha_0, eps_alpha_0, beta_0, eps_beta_0, ))
     alpha_ml2, beta_ml2, gamma_ml2 = soln_2.x
 
-    return np.array([alpha_ml2, beta_ml2, gamma_ml2])
+    return float(alpha_ml2), float(beta_ml2), float(gamma_ml2)
 
 
 def logprobability_sampling(z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, theta_ap, 
@@ -277,7 +277,9 @@ def logprobability_sampling(z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, 
                                                                                  seeing_atm, theta_ap, delta, alpha_0, 
                                                                                  eps_alpha_0, beta_0, eps_beta_0, ), pool = pool)
         np.random.seed(seed)
-        solu = np.asarray([alpha_ini, beta_ini, gamma_ini])
+#         solu = np.asarray([alpha_ini, beta_ini, gamma_ini])
+        solu = minimization_loglikelihood(z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, theta_ap, 
+                               seed, alpha_ini, beta_ini, gamma_ini, delta)
         p0 = solu + 1e-5 * np.random.randn(n_walkers, n_dim)
         # p0 = soln.x + 1e-5 * np.random.randn(n_walkers, n_dim)
 
