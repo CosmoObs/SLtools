@@ -115,10 +115,10 @@ def integrando (r, R, z_L,z_S,theta_E, seeing_atm, theta_ap, alpha, beta, delta,
     return 2*nu*sigma*omega*anisotropy*spherical_coordinates/(np.sqrt(projection))
 
 #here I ain going to defnetely perform the sigma star calculation
-def sigma_star(z_L,z_S,theta_E, seeing_atm, theta_ap, alpha, beta, delta,gamma):
+def sigma_star(z_L,z_S,theta_E, seeing_atm, theta_ap, alpha, beta, delta,gamma, epsabs):
     integral = it.dblquad(integrando, 0, np.inf, lambda r: r, lambda r: np.inf, \
-                          args=(z_L,z_S, theta_E,seeing_atm, theta_ap, alpha, beta, delta,gamma), epsabs=1.49e-03)
+                          args=(z_L,z_S, theta_E,seeing_atm, theta_ap, alpha, beta, delta,gamma), epsabs=epsabs)
     sigma_star = integral[0]/Weight_normalization(seeing_atm, theta_ap,z_L, theta_E, delta)
-    return np.sqrt(sigma_star)
+    return (np.sqrt(sigma_star), integral[0], integral[1])
 
     
