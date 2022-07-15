@@ -125,7 +125,8 @@ def log_prior(theta, alpha_0, eps_alpha_0, beta_0, eps_beta_0):
             np.sum((beta - beta_0) ** 2 / eps_beta_0 **
                    2 + np.log(2 * np.pi * eps_beta_0**2))
         return log_prior_alpha + log_prior_beta  # + log_prior_gamma
-    return - np.inf
+    else:
+        return - np.inf
 
 
 def log_probability(theta, z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, theta_ap, delta, 
@@ -153,7 +154,8 @@ def log_probability(theta, z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, t
     lp = log_prior(theta, alpha_0, eps_alpha_0, beta_0, eps_beta_0)
     if not np.isfinite(lp):
         return - np.inf
-    return lp + log_likelihood(theta, z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, theta_ap, delta)
+    else:
+        return lp + log_likelihood(theta, z_S, z_L, velDisp, velDispErr, theta_E, seeing_atm, theta_ap, delta)
 
 
 # Minimizations and sampling methods
