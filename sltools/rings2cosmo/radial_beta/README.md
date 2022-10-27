@@ -1,0 +1,1 @@
+In this directory I made availiable the first solutiotions for the gamma estimation considering a model of $\beta = \beta(r)$. The model used here were presented by Mamon&Loka2005.
