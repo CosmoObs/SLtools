@@ -231,8 +231,15 @@ def minimization_logprobability(z_S, z_L, velDisp, velDispErr, theta_E, seeing_a
     initial = np.array([alpha_ini, beta_ini, gamma_ini]) + \
         0.01 * np.random.randn(3)
 
+
+    ####################################################
+    #this contrain is to enshure that none parameter is <0, cus the log function does not handle negative values
+    abstol = 1e-30
+    cons = ({'type': 'ineq', 'fun': lambda x: x - abstol})
     soln_2 = minimize(nll_2, initial, args = (z_S, z_L, velDisp, velDispErr, theta_E, 
-                      seeing_atm, theta_ap, delta, alpha_0, eps_alpha_0, beta_0, eps_beta_0, ))
+                      seeing_atm, theta_ap, delta, alpha_0, eps_alpha_0, beta_0, eps_beta_0, ),
+                      constraints = cons)
+                      
     alpha_ml2, beta_ml2, gamma_ml2 = soln_2.x
 
     return float(alpha_ml2), float(beta_ml2), float(gamma_ml2)
