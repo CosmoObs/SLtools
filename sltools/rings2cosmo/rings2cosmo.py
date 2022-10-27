@@ -10,7 +10,8 @@ from astropy.cosmology import FlatLambdaCDM
 from multiprocessing import Pool
 
 # Cosmology used:
-cosmo = FlatLambdaCDM(H0 = 67.3, Om0 = 0.315)
+Hubble = 67.74
+cosmo = FlatLambdaCDM(H0 = Hubble, Om0=0.3089)
 
 # Physical constants:
 c = (const.c).to(u.km/u.second)
